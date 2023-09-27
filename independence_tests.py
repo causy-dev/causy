@@ -127,7 +127,7 @@ class ExtendedPartialCorrelationTest(IndependenceTestInterface):
 
         """
         n = len(nodes)
-        sample_size = graph.nodes(nodes[0].values)
+        sample_size = len(graph.nodes[nodes[0]].values)
         nb_of_control_vars = n - 2
         results = []
         for i in range(n):
@@ -136,14 +136,17 @@ class ExtendedPartialCorrelationTest(IndependenceTestInterface):
                 y = graph.nodes[nodes[j]]
                 exclude_indices = [i, j]
                 other_nodes = [graph.nodes[n].values for idx, n in enumerate(nodes) if idx not in exclude_indices]
-                par_corr = get_correlation(x,y,other_nodes)
+                par_corr = get_correlation(x, y, other_nodes)
 
                 # make t test for independence of a and y given other nodes
                 t, critical_t = get_t_and_critial_t(sample_size, nb_of_control_vars, par_corr, self.threshold)
                 if abs(t) < critical_t:
-                    results.append(CorrelationTestResult(x=x, y=y, action=CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED, data={
+                    results.append(CorrelationTestResult(x=x, y=y,
+                                                         action=CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED,
+                                                         data={
                         "separatedBy": other_nodes
                     }))
+
         return results
 
 
