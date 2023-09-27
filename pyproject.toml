@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "causalib"
+version = "0.1.0"
+description = ""
+authors = ["Lilith Wittmann <mail@lilithwittmann.de>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+sympy = "^1.12"
+numpy = "^1.26.0"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.5.1"
+pyinstrument = "^4.5.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
