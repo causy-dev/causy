@@ -342,12 +342,12 @@ PCGraph = graph_model_factory(
         # ExtendedPartialCorrelationTest(threshold=0.1), # check replacing it with a loop of ExtendedPartialCorrelationTest
         UnshieldedTriplesTest(),
         ExtendedPartialCorrelationTest2(),
-        Loop(
-            pipeline_steps=[
-                PlaceholderTest(),
-            ],
-            exit_condition=lambda inputs: True if inputs[1] > 2 else False
-        )
+        #Loop(
+        #    pipeline_steps=[
+        #        PlaceholderTest(),
+        #    ],
+        #    exit_condition=lambda inputs: True if inputs[1] > 2 else False
+        #)
 
     ]
 )

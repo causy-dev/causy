@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from statistics import correlation, linear_regression, covariance
 from typing import Tuple, List, Optional
-
 import numpy as np
+import math
+from utils import get_t_and_critial_t
 
 from utils import get_correlation
 
@@ -46,7 +47,15 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
         """
         x = graph.nodes[edges[0]]
         y = graph.nodes[edges[1]]
-        if abs(graph.edge_value(x,y)["correlation"]) <= self.threshold:
+
+        #make t test for independency of x and y 
+        sample_size = len(x.values)
+        nb_of_control_vars = 0
+        corr = graph.edge_value(x,y)["correlation"]
+        t, critical_t = get_t_and_critial_t(sample_size, nb_of_control_vars, corr, self.threshold)
+        print("critical_t")
+        print(t, critical_t) 
+        if abs(t) < critical_t:
             return CorrelationTestResult(x=x, y=y, action=CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED, data={})
 
         return CorrelationTestResult(x=x, y=y, action=CorrelationTestResultAction.DO_NOTHING, data={})
@@ -79,6 +88,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
             cor_xz = graph.edge_value(x, z)["correlation"]
             cor_yz = graph.edge_value(y, z)["correlation"]
         except KeyError:
+            print("k_error")
             return CorrelationTestResult(x=x, y=y, action=CorrelationTestResultAction.DO_NOTHING)
 
         numerator = cor_xy - cor_xz * cor_yz
@@ -88,15 +98,19 @@ class PartialCorrelationTest(IndependenceTestInterface):
         if denominator == 0:
             return CorrelationTestResult(x=x, y=y, action=CorrelationTestResultAction.DO_NOTHING)
 
-        # TODO: implement real independence test without scipy and numpy, see here:
-        # https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html
-        # or do a t test for the correlation coefficient
+        par_corr = numerator / denominator
 
-        if abs(numerator / denominator) <= self.threshold:
+        #make t test for independency of x and y given z
+        sample_size = len(x.values)
+        nb_of_control_vars = len(edges) - 2
+        t, critical_t = get_t_and_critial_t(sample_size, nb_of_control_vars, par_corr, self.threshold)
+        print("critical_t")
+        print(t, critical_t)    
+
+        if abs(t) < critical_t:
             return CorrelationTestResult(x=x, y=y, action=CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED, data={
                 "separatedBy": [z]
             })
-
         return CorrelationTestResult(x=x, y=y, action=CorrelationTestResultAction.DO_NOTHING, data={})
 
 
@@ -112,29 +126,24 @@ class ExtendedPartialCorrelationTest(IndependenceTestInterface):
         we use this test for all combinations of more than 3 nodes because it is slower.
 
         """
-        x = graph.nodes[nodes[0]]
-        y = graph.nodes[nodes[1]]
-        other_nodes = [graph.nodes[n].values for n in nodes[2:]]
         n = len(nodes)
-
-        #insert function
-        correlation_list = []
+        sample_size = graph.nodes(nodes[0].values)
+        nb_of_control_vars = n - 2
+        results = []
         for i in range(n):
             for j in range(i+1,n):
                 x = graph.nodes[nodes[i]]
                 y = graph.nodes[nodes[j]]
                 exclude_indices = [i, j]
                 other_nodes = [graph.nodes[n].values for idx, n in enumerate(nodes) if idx not in exclude_indices]
-                corr = get_correlation(x,y,other_nodes)
-                correlation_list.append(corr)
+                par_corr = get_correlation(x,y,other_nodes)
 
-        # TODO  change to real independence test
-        results = []
-        for correlation in correlation_list:
-            if abs(corr) <= self.threshold:
-                results.append(CorrelationTestResult(x=x, y=y, action=CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED, data={
-                    "separatedBy": other_nodes
-                }))
+                # make t test for independence of a and y given other nodes
+                t, critical_t = get_t_and_critial_t(sample_size, nb_of_control_vars, par_corr, self.threshold)
+                if abs(t) < critical_t:
+                    results.append(CorrelationTestResult(x=x, y=y, action=CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED, data={
+                        "separatedBy": other_nodes
+                    }))
         return results
 
 
@@ -181,19 +190,13 @@ class ExtendedPartialCorrelationTest2(IndependenceTestInterface):
                     covariance_matrix[k][i] = covariance_matrix[i][k]
 
         cov_matrix = np.array(covariance_matrix)
-        print(cov_matrix)
         inverse_cov_matrix = np.linalg.inv(cov_matrix)
         n = len(inverse_cov_matrix)
         diagonal = np.diagonal(inverse_cov_matrix)
         diagonal_matrix = np.zeros((n, n))
         np.fill_diagonal(diagonal_matrix, diagonal)
-        print(diagonal_matrix)
-        print(inverse_cov_matrix)
-        print(diagonal_matrix[3][3] == inverse_cov_matrix[3][3])
         helper = np.dot(np.sqrt(diagonal_matrix), inverse_cov_matrix)
         partial_correlation_coefficients = np.dot(helper, np.sqrt(diagonal_matrix))
-        print("partial_correlation_coefficients")
-        print(partial_correlation_coefficients)
         par_corr_xy = partial_correlation_coefficients[1][0]
 
 class PlaceholderTest(IndependenceTestInterface):

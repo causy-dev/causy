@@ -9,6 +9,7 @@ readme = "README.md"
 python = ">=3.11,<3.13"
 sympy = "^1.12"
 numpy = "^1.26.0"
+scipy = "^1.11.2"
 
 
 [tool.poetry.group.dev.dependencies]
