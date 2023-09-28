@@ -17,16 +17,16 @@ class CalculateCorrelations(IndependenceTestInterface):
     CHUNK_SIZE_PARALLEL_PROCESSING = 10000
     PARALLEL = False
 
-    def test(self, edges: Tuple[str], graph: BaseGraphInterface) -> CorrelationTestResult:
+    def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> CorrelationTestResult:
         """
         Test if x and y are independent
-        :param edges: the Edges to test
+        :param nodes: the Edges to test
         :return: A CorrelationTestResult with the action to take
         """
-        x = graph.nodes[edges[0]]
-        y = graph.nodes[edges[1]]
+        x = graph.nodes[nodes[0]]
+        y = graph.nodes[nodes[1]]
 
-        edge_value = graph.edge_value(graph.nodes[edges[0]], graph.nodes[edges[1]])
+        edge_value = graph.edge_value(graph.nodes[nodes[0]], graph.nodes[nodes[1]])
         edge_value["correlation"] = correlation(x.values, y.values)
         # edge_value["covariance"] = covariance(x.values, y.values)
         return CorrelationTestResult(x=x, y=y, action=CorrelationTestResultAction.UPDATE_EDGE, data=edge_value,)
@@ -67,18 +67,18 @@ class PartialCorrelationTest(IndependenceTestInterface):
     CHUNK_SIZE_PARALLEL_PROCESSING = 10000
     PARALLEL = True
 
-    def test(self, edges: Tuple[str], graph: BaseGraphInterface) -> CorrelationTestResult:
+    def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> CorrelationTestResult:
         """
-            Test if edges x,y are independent based on partial correlation with z as conditioning variable
+            Test if nodes x,y are independent based on partial correlation with z as conditioning variable
             we use this test for all combinations of 3 nodes because it is faster than the extended test and we can
-            use it to remove edges which are not independent and so reduce the number of combinations for the extended
+            use it to remove nodes which are not independent and so reduce the number of combinations for the extended
             (See https://en.wikipedia.org/wiki/Partial_correlation#Using_recursive_formula)
-            :param edges: the Edges to test
+            :param nodes: the Edges to test
             :return: A CorrelationTestResult with the action to take
         """
-        x: NodeInterface = graph.nodes[edges[0]]
-        y: NodeInterface = graph.nodes[edges[1]]
-        z: NodeInterface = graph.nodes[edges[2]]
+        x: NodeInterface = graph.nodes[nodes[0]]
+        y: NodeInterface = graph.nodes[nodes[1]]
+        z: NodeInterface = graph.nodes[nodes[2]]
 
         # Avoid division by zero
         if x is None or y is None or z is None:
@@ -102,7 +102,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
 
         #make t test for independency of x and y given z
         sample_size = len(x.values)
-        nb_of_control_vars = len(edges) - 2
+        nb_of_control_vars = len(nodes) - 2
         t, critical_t = get_t_and_critial_t(sample_size, nb_of_control_vars, par_corr, self.threshold)
         print("critical_t")
         print(t, critical_t)    
@@ -122,7 +122,7 @@ class ExtendedPartialCorrelationTest(IndependenceTestInterface):
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> CorrelationTestResult:
         """
-        Test if edges x,y are independent based on partial correlation with z as conditioning variable
+        Test if nodes x,y are independent based on partial correlation with z as conditioning variable
         we use this test for all combinations of more than 3 nodes because it is slower.
 
         """
@@ -155,11 +155,11 @@ class UnshieldedTriplesTest(IndependenceTestInterface):
     CHUNK_SIZE_PARALLEL_PROCESSING = 1000
 
 
-    def test(self, edges: Tuple[str], graph: BaseGraphInterface) -> List[CorrelationTestResult]|CorrelationTestResult:
+    def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> List[CorrelationTestResult] | CorrelationTestResult:
         # https://github.com/pgmpy/pgmpy/blob/1fe10598df5430295a8fc5cdca85cf2d9e1c4330/pgmpy/estimators/PC.py#L416
 
-        x = graph.nodes[edges[0]]
-        y = graph.nodes[edges[1]]
+        x = graph.nodes[nodes[0]]
+        y = graph.nodes[nodes[1]]
 
         if graph.edge_exists(x, y):
             return CorrelationTestResult(x=x, y=y, action=CorrelationTestResultAction.DO_NOTHING, data={})
@@ -208,6 +208,6 @@ class PlaceholderTest(IndependenceTestInterface):
     PARALLEL = False
 
 
-    def test(self, edges: Tuple[str], graph: BaseGraphInterface) -> List[CorrelationTestResult]|CorrelationTestResult:
+    def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> List[CorrelationTestResult] | CorrelationTestResult:
         print("PlaceholderTest")
         return CorrelationTestResult(x=None, y=None, action=CorrelationTestResultAction.DO_NOTHING, data={})

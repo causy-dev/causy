@@ -89,9 +89,9 @@ class UndirectedGraph(BaseGraphInterface):
         if v.name not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
         if u not in self.edges:
-            raise UndirectedGraphError(f"Node {u} does not have any edges")
+            raise UndirectedGraphError(f"Node {u} does not have any nodes")
         if v not in self.edges:
-            raise UndirectedGraphError(f"Node {v} does not have any edges")
+            raise UndirectedGraphError(f"Node {v} does not have any nodes")
 
         if v not in self.edges[u]:
             return
@@ -114,9 +114,9 @@ class UndirectedGraph(BaseGraphInterface):
         if v.name not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
         if u not in self.edges:
-            raise UndirectedGraphError(f"Node {u} does not have any edges")
+            raise UndirectedGraphError(f"Node {u} does not have any nodes")
         if v not in self.edges:
-            raise UndirectedGraphError(f"Node {v} does not have any edges")
+            raise UndirectedGraphError(f"Node {v} does not have any nodes")
 
         if v not in self.edges[u]:
             return
@@ -135,9 +135,9 @@ class UndirectedGraph(BaseGraphInterface):
         if v.name not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
         if u not in self.edges:
-            raise UndirectedGraphError(f"Node {u} does not have any edges")
+            raise UndirectedGraphError(f"Node {u} does not have any nodes")
         if v not in self.edges:
-            raise UndirectedGraphError(f"Node {v} does not have any edges")
+            raise UndirectedGraphError(f"Node {v} does not have any nodes")
 
         self.edges[u][v] = value
         self.edges[v][u] = value
@@ -208,7 +208,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
     def create_all_possible_edges(self):
         """
-        Create all possible edges
+        Create all possible nodes
         :return:
         """
         for u in self.graph.nodes.values():

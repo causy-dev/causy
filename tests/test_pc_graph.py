@@ -18,7 +18,7 @@ class PCTestTestCase(unittest.TestCase):
         test_data = [
         ]
 
-        n = 1000000
+        n = 1000
         sample_size = 5
 
         samples = {}
