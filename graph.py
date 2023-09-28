@@ -366,7 +366,7 @@ PCGraph = graph_model_factory(
         CorrelationCoefficientTest(threshold=0.1),
         PartialCorrelationTest(threshold=0.1),
         UnshieldedTriplesTest(),
-        ExtendedPartialCorrelationTest(
+        ExtendedPartialCorrelationTest2(
             threshold=0.1
         ),  # check replacing it with a loop of ExtendedPartialCorrelationTest
         # Loop(

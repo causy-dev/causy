@@ -157,6 +157,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
 class ExtendedPartialCorrelationTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=5, max=AS_MANY_AS_FIELDS)
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
+    PARALLEL = False
 
     def test(
         self, nodes: List[str], graph: BaseGraphInterface
@@ -168,6 +169,8 @@ class ExtendedPartialCorrelationTest(IndependenceTestInterface):
         """
         n = len(nodes)
         sample_size = len(graph.nodes[nodes[0]].values)
+        nodes_set = set([graph.nodes[n] for n in nodes])
+
         nb_of_control_vars = n - 2
         results = []
         for i in range(n):
@@ -181,18 +184,19 @@ class ExtendedPartialCorrelationTest(IndependenceTestInterface):
                     if idx not in exclude_indices
                 ]
                 par_corr = get_correlation(x, y, other_nodes)
-
+                print(par_corr)
                 # make t test for independence of a and y given other nodes
                 t, critical_t = get_t_and_critial_t(
                     sample_size, nb_of_control_vars, par_corr, self.threshold
                 )
+
                 if abs(t) < critical_t:
                     results.append(
                         CorrelationTestResult(
                             x=x,
                             y=y,
                             action=CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED,
-                            data={"separatedBy": other_nodes},
+                            data={"separatedBy": list(nodes_set - {x, y})},
                         )
                     )
 
@@ -273,7 +277,48 @@ class ExtendedPartialCorrelationTest2(IndependenceTestInterface):
         np.fill_diagonal(diagonal_matrix, diagonal)
         helper = np.dot(np.sqrt(diagonal_matrix), inverse_cov_matrix)
         partial_correlation_coefficients = np.dot(helper, np.sqrt(diagonal_matrix))
-        par_corr_xy = partial_correlation_coefficients[1][0]
+
+        sample_size = len(graph.nodes[nodes[0]].values)
+        nb_of_control_vars = len(nodes) - 2
+        results = []
+
+        nodes_set = set([graph.nodes[n] for n in nodes])
+
+        for i in range(len(partial_correlation_coefficients)):
+            for k in range(len(partial_correlation_coefficients[i])):
+                if i == k:
+                    continue
+
+                print(partial_correlation_coefficients[i][k])
+                try:
+                    t, critical_t = get_t_and_critial_t(
+                        sample_size,
+                        nb_of_control_vars,
+                        partial_correlation_coefficients[i][k],
+                        self.threshold,
+                    )
+                except ValueError:
+                    # TODO: @sof fiugre out why this happens
+                    print("ValueError")
+                    print(partial_correlation_coefficients[i][k])
+                    continue
+
+                if abs(t) < critical_t:
+                    results.append(
+                        CorrelationTestResult(
+                            x=graph.nodes[nodes[i]],
+                            y=graph.nodes[nodes[k]],
+                            action=CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED,
+                            data={
+                                "separatedBy": list(
+                                    nodes_set
+                                    - {graph.nodes[nodes[i]], graph.nodes[nodes[k]]}
+                                )
+                            },
+                        )
+                    )
+
+        return results
 
 
 class PlaceholderTest(IndependenceTestInterface):

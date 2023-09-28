@@ -16,7 +16,7 @@ class PCTestTestCase(unittest.TestCase):
     def test_full_graph(self):
         test_data = []
 
-        n = 1000
+        n = 100000
         sample_size = 5
 
         samples = {}
