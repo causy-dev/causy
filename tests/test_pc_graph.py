@@ -11,12 +11,10 @@ def show_edges(graph):
         for v in graph.edges[u]:
             print(f"{u.name} -> {v.name}: {graph.edges[u][v]}")
 
+
 class PCTestTestCase(unittest.TestCase):
-
     def test_full_graph(self):
-
-        test_data = [
-        ]
+        test_data = []
 
         n = 1000
         sample_size = 5
@@ -52,12 +50,12 @@ class PCTestTestCase(unittest.TestCase):
 
                 test_data.append(row)
 
-
         tst = PCGraph()
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
         show_edges(tst.graph)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

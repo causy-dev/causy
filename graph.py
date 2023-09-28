@@ -1,14 +1,30 @@
 import itertools
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import dataclass
-from typing import List, Optional, Dict, Iterable, Sized, Set
+from typing import List, Optional, Dict, Set
 import multiprocessing as mp
 
-from independence_tests import CorrelationCoefficientTest, IndependenceTestInterface, PartialCorrelationTest, \
-    CalculateCorrelations, ExtendedPartialCorrelationTest, UnshieldedTriplesTest, PlaceholderTest, \
-    ExtendedPartialCorrelationTest2
-from interfaces import BaseGraphInterface, NodeInterface, CorrelationTestResultAction, ComparisonSettings, \
-    AS_MANY_AS_FIELDS, CorrelationTestResult, GraphModelInterface, LogicStepInterface
+from independence_tests import (
+    CorrelationCoefficientTest,
+    IndependenceTestInterface,
+    PartialCorrelationTest,
+    CalculateCorrelations,
+    ExtendedPartialCorrelationTest,
+    UnshieldedTriplesTest,
+    PlaceholderTest,
+    ExtendedPartialCorrelationTest2,
+)
+
+from interfaces import (
+    BaseGraphInterface,
+    NodeInterface,
+    CorrelationTestResultAction,
+    ComparisonSettings,
+    AS_MANY_AS_FIELDS,
+    CorrelationTestResult,
+    GraphModelInterface,
+    LogicStepInterface,
+)
 
 DEFAULT_INDEPENDENCE_TEST = CorrelationCoefficientTest
 
@@ -58,7 +74,9 @@ class UndirectedGraph(BaseGraphInterface):
         self.edge_history[(u, v)] = []
         self.edge_history[(v, u)] = []
 
-    def retrieve_edge_history(self, u, v, action: CorrelationTestResultAction = None) -> List[CorrelationTestResult]:
+    def retrieve_edge_history(
+        self, u, v, action: CorrelationTestResultAction = None
+    ) -> List[CorrelationTestResult]:
         """
         Retrieve the edge history
         :param u:
@@ -70,7 +88,6 @@ class UndirectedGraph(BaseGraphInterface):
             return self.edge_history[(u, v)]
 
         return [i for i in self.edge_history[(u, v)] if i.action == action]
-
 
     def add_edge_history(self, u, v, action: CorrelationTestResultAction):
         if (u, v) not in self.edge_history:
@@ -101,7 +118,6 @@ class UndirectedGraph(BaseGraphInterface):
             return
         del self.edges[v][u]
 
-
     def remove_directed_edge(self, u: Node, v: Node):
         """
         Remove an edge from the graph
@@ -121,7 +137,6 @@ class UndirectedGraph(BaseGraphInterface):
         if v not in self.edges[u]:
             return
         del self.edges[u][v]
-
 
     def update_edge(self, u: Node, v: Node, value: Dict):
         """
@@ -174,8 +189,11 @@ def unpack_run(args):
 
 
 class AbstractGraphModel(GraphModelInterface, ABC):
-
-    def __init__(self, graph=None, pipeline_steps: Optional[List[IndependenceTestInterface]] = None):
+    def __init__(
+        self,
+        graph=None,
+        pipeline_steps: Optional[List[IndependenceTestInterface]] = None,
+    ):
         self.graph = graph
         self.pipeline_steps = pipeline_steps or []
         self.pool = mp.Pool(mp.cpu_count() * 2)
@@ -223,14 +241,11 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :return:
         """
         for filter in self.pipeline_steps:
-
             if isinstance(filter, LogicStepInterface):
                 filter.execute(self.graph, self)
                 continue
 
             self.execute_pipeline_step(filter)
-
-
 
     def execute_pipeline_step(self, test_fn: IndependenceTestInterface):
         """
@@ -242,7 +257,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         combinations = []
 
         if type(test_fn.NUM_OF_COMPARISON_ELEMENTS) is int:
-            combinations = itertools.combinations(self.graph.nodes, test_fn.NUM_OF_COMPARISON_ELEMENTS)
+            combinations = itertools.combinations(
+                self.graph.nodes, test_fn.NUM_OF_COMPARISON_ELEMENTS
+            )
         elif type(test_fn.NUM_OF_COMPARISON_ELEMENTS) is ComparisonSettings:
             start = test_fn.NUM_OF_COMPARISON_ELEMENTS.min
             # if min is longer then our dataset, we can't create any combinations
@@ -274,14 +291,16 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         # run all combinations in parallel except if the number of combinations is smaller then the chunk size
         # because then we would create more overhead then we would definetly gain from parallel processing
         if test_fn.PARALLEL and len(args) > test_fn.CHUNK_SIZE_PARALLEL_PROCESSING:
-            iterator = self.pool.imap_unordered(unpack_run, args, chunksize=test_fn.CHUNK_SIZE_PARALLEL_PROCESSING)
+            iterator = self.pool.imap_unordered(
+                unpack_run, args, chunksize=test_fn.CHUNK_SIZE_PARALLEL_PROCESSING
+            )
         else:
             iterator = [unpack_run(i) for i in args]
 
         # run all combinations in parallel
         for result in iterator:
-        #for result in args:
-            #result = unpack_run(result)
+            # for result in args:
+            # result = unpack_run(result)
             if not isinstance(result, list):
                 result = [result]
             for i in result:
@@ -305,7 +324,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     self.graph.add_edge_history(i.x, i.y, i)
 
 
-def graph_model_factory(pipeline_steps: Optional[List[IndependenceTestInterface]] = None) -> type[AbstractGraphModel]:
+def graph_model_factory(
+    pipeline_steps: Optional[List[IndependenceTestInterface]] = None,
+) -> type[AbstractGraphModel]:
     """
     Create a graph model
     :param pipeline_steps: a list of pipeline_steps which should be applied to the graph
@@ -319,20 +340,25 @@ def graph_model_factory(pipeline_steps: Optional[List[IndependenceTestInterface]
     return GraphModel
 
 
-
 class Loop(LogicStepInterface):
-    def execute(self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface):
+    def execute(
+        self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
+    ):
         n = 0
         while not self.exit_condition((graph, n)):
             for pipeline_step in self.pipeline_steps:
                 graph_model_instance_.execute_pipeline_step(pipeline_step)
             n += 1
 
-
-    def __init__(self, pipeline_steps: Optional[List[IndependenceTestInterface]] = None, exit_condition=None):
+    def __init__(
+        self,
+        pipeline_steps: Optional[List[IndependenceTestInterface]] = None,
+        exit_condition=None,
+    ):
         super().__init__()
         self.pipeline_steps = pipeline_steps or []
         self.exit_condition = exit_condition
+
 
 PCGraph = graph_model_factory(
     pipeline_steps=[
@@ -340,14 +366,14 @@ PCGraph = graph_model_factory(
         CorrelationCoefficientTest(threshold=0.1),
         PartialCorrelationTest(threshold=0.1),
         UnshieldedTriplesTest(),
-        ExtendedPartialCorrelationTest(threshold=0.1), # check replacing it with a loop of ExtendedPartialCorrelationTest
-        #Loop(
+        ExtendedPartialCorrelationTest(
+            threshold=0.1
+        ),  # check replacing it with a loop of ExtendedPartialCorrelationTest
+        # Loop(
         #    pipeline_steps=[
         #        PlaceholderTest(),
         #    ],
         #    exit_condition=lambda inputs: True if inputs[1] > 2 else False
-        #)
-
+        # )
     ]
 )
-

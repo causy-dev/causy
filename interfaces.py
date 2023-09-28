@@ -8,20 +8,24 @@ DEFAULT_THRESHOLD = 0.01
 
 AS_MANY_AS_FIELDS = 0
 
+
 @dataclass
 class ComparisonSettings:
     min: int = 2
     max: int = AS_MANY_AS_FIELDS
 
+
 class NodeInterface:
     name: str
     values: List[float]
+
 
 class CorrelationTestResultAction(enum.Enum):
     REMOVE_EDGE_UNDIRECTED = 1
     UPDATE_EDGE = 2
     DO_NOTHING = 3
     REMOVE_EDGE_DIRECTED = 4
+
 
 @dataclass
 class CorrelationTestResult:
@@ -36,7 +40,9 @@ class BaseGraphInterface(ABC):
     edges: Dict[NodeInterface, Dict[NodeInterface, Dict]]
 
     @abstractmethod
-    def retrieve_edge_history(self, u, v, action: CorrelationTestResultAction) -> List[CorrelationTestResult]:
+    def retrieve_edge_history(
+        self, u, v, action: CorrelationTestResultAction
+    ) -> List[CorrelationTestResult]:
         pass
 
     @abstractmethod
@@ -73,25 +79,22 @@ class BaseGraphInterface(ABC):
 
 
 class GraphModelInterface(ABC):
-
     pool: multiprocessing.Pool
 
     @abstractmethod
     def create_graph_from_data(self, data: List[Dict]):
         pass
 
-
     @abstractmethod
     def execute_pipeline_steps(self):
         pass
-
 
     @abstractmethod
     def execute_pipeline_step(self, step):
         pass
 
-class IndependenceTestInterface(ABC):
 
+class IndependenceTestInterface(ABC):
     NUM_OF_COMPARISON_ELEMENTS = 0
 
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
@@ -102,7 +105,9 @@ class IndependenceTestInterface(ABC):
         self.threshold = threshold
 
     @abstractmethod
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> CorrelationTestResult:
+    def test(
+        self, nodes: List[str], graph: BaseGraphInterface
+    ) -> CorrelationTestResult:
         """
         Test if x and y are independent
         :param x: x values
@@ -111,12 +116,13 @@ class IndependenceTestInterface(ABC):
         """
         pass
 
-    def __call__(self, nodes: List[str], graph: BaseGraphInterface) -> CorrelationTestResult:
+    def __call__(
+        self, nodes: List[str], graph: BaseGraphInterface
+    ) -> CorrelationTestResult:
         return self.test(nodes, graph)
 
 
 class LogicStepInterface(ABC):
-
     @abstractmethod
     def execute(self, graph: BaseGraphInterface, graph_model_instance_: dict):
         pass
