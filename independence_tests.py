@@ -11,6 +11,10 @@ from utils import get_t_and_critial_t
 
 from utils import get_correlation
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from interfaces import (
     IndependenceTestInterface,
     BaseGraphInterface,
@@ -72,8 +76,7 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
         t, critical_t = get_t_and_critial_t(
             sample_size, nb_of_control_vars, corr, self.threshold
         )
-        print("critical_t")
-        print(t, critical_t)
+        logger.debug(f"t, critical_t {t} {critical_t}")
         if abs(t) < critical_t:
             return CorrelationTestResult(
                 x=x,
@@ -117,7 +120,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
             cor_xz = graph.edge_value(x, z)["correlation"]
             cor_yz = graph.edge_value(y, z)["correlation"]
         except KeyError:
-            print("k_error")
+            logger.debug(f"KeyError {x} {y} {z}")
             return CorrelationTestResult(
                 x=x, y=y, action=CorrelationTestResultAction.DO_NOTHING
             )
@@ -139,8 +142,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
         t, critical_t = get_t_and_critial_t(
             sample_size, nb_of_control_vars, par_corr, self.threshold
         )
-        print("critical_t")
-        print(t, critical_t)
+        logger.debug(f"t, critical_t {t} {critical_t}")
 
         if abs(t) < critical_t:
             return CorrelationTestResult(
@@ -156,8 +158,8 @@ class PartialCorrelationTest(IndependenceTestInterface):
 
 class ExtendedPartialCorrelationTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=5, max=AS_MANY_AS_FIELDS)
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1000
+    PARALLEL = True
 
     def test(
         self, nodes: List[str], graph: BaseGraphInterface
@@ -184,7 +186,7 @@ class ExtendedPartialCorrelationTest(IndependenceTestInterface):
                     if idx not in exclude_indices
                 ]
                 par_corr = get_correlation(x, y, other_nodes)
-                print(par_corr)
+                logger.debug(f"par_corr {par_corr}")
                 # make t test for independence of a and y given other nodes
                 t, critical_t = get_t_and_critial_t(
                     sample_size, nb_of_control_vars, par_corr, self.threshold
@@ -252,8 +254,8 @@ class UnshieldedTriplesTest(IndependenceTestInterface):
 
 class ExtendedPartialCorrelationTest2(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
-    CHUNK_SIZE_PARALLEL_PROCESSING = 50
-    PARALLEL = False
+    CHUNK_SIZE_PARALLEL_PROCESSING = 100
+    PARALLEL = True
 
     def test(
         self, nodes: List[str], graph: BaseGraphInterface
@@ -289,7 +291,7 @@ class ExtendedPartialCorrelationTest2(IndependenceTestInterface):
                 if i == k:
                     continue
 
-                print(partial_correlation_coefficients[i][k])
+                # print(partial_correlation_coefficients[i][k])
                 try:
                     t, critical_t = get_t_and_critial_t(
                         sample_size,
@@ -299,8 +301,9 @@ class ExtendedPartialCorrelationTest2(IndependenceTestInterface):
                     )
                 except ValueError:
                     # TODO: @sof fiugre out why this happens
-                    print("ValueError")
-                    print(partial_correlation_coefficients[i][k])
+                    logger.debug(
+                        f"ValueError {i} {k} ({partial_correlation_coefficients[i][k]})"
+                    )
                     continue
 
                 if abs(t) < critical_t:
@@ -329,7 +332,7 @@ class PlaceholderTest(IndependenceTestInterface):
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> List[CorrelationTestResult] | CorrelationTestResult:
-        print("PlaceholderTest")
+        logger.debug(f"PlaceholderTest {nodes}")
         return CorrelationTestResult(
             x=None, y=None, action=CorrelationTestResultAction.DO_NOTHING, data={}
         )

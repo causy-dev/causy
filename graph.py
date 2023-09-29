@@ -1,4 +1,6 @@
+import importlib
 import itertools
+import json
 from abc import ABC
 from dataclasses import dataclass
 from typing import List, Optional, Dict, Set
@@ -26,6 +28,10 @@ from interfaces import (
     LogicStepInterface,
 )
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 DEFAULT_INDEPENDENCE_TEST = CorrelationCoefficientTest
 
 
@@ -46,6 +52,7 @@ class UndirectedGraph(BaseGraphInterface):
     nodes: Dict[str, Node]
     edges: Dict[Node, Dict[Node, Dict]]
     edge_history: Dict[Set[Node], List[CorrelationTestResult]]
+    action_history: List[Dict[str, List[CorrelationTestResult]]]
 
     def __init__(self):
         self.nodes = {}
@@ -240,12 +247,19 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         Execute all pipeline_steps
         :return:
         """
+        action_history = []
+
         for filter in self.pipeline_steps:
             if isinstance(filter, LogicStepInterface):
                 filter.execute(self.graph, self)
                 continue
 
-            self.execute_pipeline_step(filter)
+            result = self.execute_pipeline_step(filter)
+            action_history.append(
+                {"step": filter.__class__.__name__, "actions": result}
+            )
+
+        self.graph.action_history = action_history
 
     def execute_pipeline_step(self, test_fn: IndependenceTestInterface):
         """
@@ -255,6 +269,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :return:
         """
         combinations = []
+        actions_taken = []
 
         if type(test_fn.NUM_OF_COMPARISON_ELEMENTS) is int:
             combinations = itertools.combinations(
@@ -307,7 +322,11 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 if i is None:
                     continue
                 if i.x is not None and i.y is not None:
-                    print(f"Action: {i.action} on {i.x.name} and {i.y.name}")
+                    logger.info(f"Action: {i.action} on {i.x.name} and {i.y.name}")
+
+                # add the action to the actions history
+                actions_taken.append(i)
+
                 # execute the action returned by the test
                 if i.action == CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED:
                     self.graph.remove_edge(i.x, i.y)
@@ -322,6 +341,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 elif i.action == CorrelationTestResultAction.REMOVE_EDGE_DIRECTED:
                     self.graph.remove_directed_edge(i.x, i.y)
                     self.graph.add_edge_history(i.x, i.y, i)
+        return actions_taken
 
 
 def graph_model_factory(

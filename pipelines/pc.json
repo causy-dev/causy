@@ -1,0 +1,28 @@
+{
+    "name": "PC",
+    "steps": [
+        {
+            "step": "independence_tests.CalculateCorrelations",
+            "params": {
+            }
+        },
+        {
+            "step": "independence_tests.CorrelationCoefficientTest",
+            "params": {
+                "threshold": 0.1
+            }
+        },
+        {
+            "step": "independence_tests.ExtendedPartialCorrelationTest2",
+            "params": {
+                "threshold": 0.1
+            }
+        },
+        {
+            "step": "independence_tests.UnshieldedTriplesTest",
+            "params": {
+            }
+        }
+    ]
+
+}

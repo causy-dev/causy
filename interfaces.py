@@ -3,6 +3,9 @@ import multiprocessing
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List, Dict
+import logging
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_THRESHOLD = 0.01
 
@@ -19,12 +22,15 @@ class NodeInterface:
     name: str
     values: List[float]
 
+    def to_dict(self):
+        return self.name
 
-class CorrelationTestResultAction(enum.Enum):
-    REMOVE_EDGE_UNDIRECTED = 1
-    UPDATE_EDGE = 2
-    DO_NOTHING = 3
-    REMOVE_EDGE_DIRECTED = 4
+
+class CorrelationTestResultAction(enum.StrEnum):
+    REMOVE_EDGE_UNDIRECTED = "REMOVE_EDGE_UNDIRECTED"
+    UPDATE_EDGE = "UPDATE_EDGE"
+    DO_NOTHING = "DO_NOTHING"
+    REMOVE_EDGE_DIRECTED = "REMOVE_EDGE_DIRECTED"
 
 
 @dataclass
@@ -33,6 +39,13 @@ class CorrelationTestResult:
     y: NodeInterface
     action: CorrelationTestResultAction
     data: Dict = None
+
+    def to_dict(self):
+        return {
+            "x": self.x.to_dict(),
+            "y": self.y.to_dict(),
+            "action": self.action.name,
+        }
 
 
 class BaseGraphInterface(ABC):
