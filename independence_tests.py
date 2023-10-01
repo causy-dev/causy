@@ -29,7 +29,7 @@ from interfaces import (
 
 class CalculateCorrelations(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
-    CHUNK_SIZE_PARALLEL_PROCESSING = 10000
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
     def test(
@@ -56,7 +56,7 @@ class CalculateCorrelations(IndependenceTestInterface):
 
 class CorrelationCoefficientTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
-    CHUNK_SIZE_PARALLEL_PROCESSING = 10000
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = True
 
     def test(
@@ -93,7 +93,7 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
 
 class PartialCorrelationTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 3
-    CHUNK_SIZE_PARALLEL_PROCESSING = 10000
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = True
 
     def test(
@@ -159,7 +159,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
 
 class ExtendedPartialCorrelationTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=5, max=AS_MANY_AS_FIELDS)
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1000
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = True
 
     def test(
@@ -208,7 +208,7 @@ class ExtendedPartialCorrelationTest(IndependenceTestInterface):
 
 class UnshieldedTriplesTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1000
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -255,7 +255,7 @@ class UnshieldedTriplesTest(IndependenceTestInterface):
 
 class ExtendedPartialCorrelationTest2(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
-    CHUNK_SIZE_PARALLEL_PROCESSING = 100
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = True
 
     def test(
@@ -292,20 +292,20 @@ class ExtendedPartialCorrelationTest2(IndependenceTestInterface):
                 if i == k:
                     continue
 
-
                 # print(partial_correlation_coefficients[i][k])
                 try:
                     t, critical_t = get_t_and_critial_t(
                         sample_size,
                         nb_of_control_vars,
-                        (- precision_matrix[i][k] / math.sqrt(precision_matrix[i][i]*precision_matrix[k][k])),
+                        (
+                            -precision_matrix[i][k]
+                            / math.sqrt(precision_matrix[i][i] * precision_matrix[k][k])
+                        ),
                         self.threshold,
                     )
                 except ValueError:
                     # TODO: @sof fiugre out why this happens
-                    logger.debug(
-                        f"ValueError {i} {k} ({precision_matrix[i][k]})"
-                    )
+                    logger.debug(f"ValueError {i} {k} ({precision_matrix[i][k]})")
                     continue
 
                 if abs(t) < critical_t:

@@ -1,0 +1,5032 @@
+[
+    {
+        "step": "CalculateCorrelations",
+        "actions": [
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "UPDATE_EDGE"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "UPDATE_EDGE"
+            }
+        ]
+    },
+    {
+        "step": "CorrelationCoefficientTest",
+        "actions": [
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "DO_NOTHING"
+            }
+        ]
+    },
+    {
+        "step": "ExtendedPartialCorrelationTest2",
+        "actions": [
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Haushaltseinkommen",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Akademischer Abschluss",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            },
+            {
+                "x": "Beschaeftigtenquote",
+                "y": "Erwerbsfaehige",
+                "action": "REMOVE_EDGE_UNDIRECTED"
+            }
+        ]
+    },
+    {
+        "step": "UnshieldedTriplesTest",
+        "actions": [
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Haushaltseinkommen",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_DIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_DIRECTED"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Akademischer Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Erwerbsfaehige",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schulabgaenger mit Hochschulreife",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Schulabgaenger mit Hochschulreife",
+                "action": "REMOVE_EDGE_DIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_DIRECTED"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Schuldnerquote",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Akademischer Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Erwerbsfaehige",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Haushaltseinkommen",
+                "y": "Beschaeftigtenquote",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Akademischer Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Erwerbsfaehige",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Schuldnerquote",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Schuldnerquote",
+                "action": "REMOVE_EDGE_DIRECTED"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "REMOVE_EDGE_DIRECTED"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Erwerbsfaehige",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Akademischer Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Erwerbsfaehige",
+                "y": "Beschaeftigtenquote",
+                "action": "DO_NOTHING"
+            },
+            {
+                "x": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "y": "Beschaeftigtenquote",
+                "action": "DO_NOTHING"
+            }
+        ]
+    }
+]
