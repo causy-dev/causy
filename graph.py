@@ -314,7 +314,6 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         # run all combinations in parallel
         for result in iterator:
-            print(".")
             # for result in args:
             # result = unpack_run(result)
             if not isinstance(result, list):

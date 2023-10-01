@@ -36,8 +36,8 @@ class CalculateCorrelations(IndependenceTestInterface):
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> CorrelationTestResult:
         """
-        Test if x and y are independent
-        :param nodes: the Edges to test
+        Calculate the correlation between each pair of nodes and store it to the respective edge.
+        :param nodes: list of nodes 
         :return: A CorrelationTestResult with the action to take
         """
         x = graph.nodes[nodes[0]]
@@ -60,15 +60,15 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
     PARALLEL = True
 
     def test(
-        self, edges: Tuple[str], graph: BaseGraphInterface
+        self, nodes: List[str], graph: BaseGraphInterface
     ) -> CorrelationTestResult:
         """
-        Test if x and y are independent
-        :param edges: the Edges to test
+        Test if x and y are independent and delete edge in graph if they are.
+        :param nodes: list of nodes
         :return: A CorrelationTestResult with the action to take
         """
-        x = graph.nodes[edges[0]]
-        y = graph.nodes[edges[1]]
+        x = graph.nodes[nodes[0]]
+        y = graph.nodes[nodes[1]]
 
         # make t test for independency of x and y
         sample_size = len(x.values)
@@ -100,11 +100,10 @@ class PartialCorrelationTest(IndependenceTestInterface):
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> CorrelationTestResult:
         """
-        Test if nodes x,y are independent based on partial correlation with z as conditioning variable
-        we use this test for all combinations of 3 nodes because it is faster than the extended test and we can
-        use it to remove nodes which are not independent and so reduce the number of combinations for the extended
-        (See https://en.wikipedia.org/wiki/Partial_correlation#Using_recursive_formula)
-        :param nodes: the Edges to test
+        Test if nodes x,y are independent with z as conditioning variable based on a partial correlation test.
+        We use this test for all combinations of 3 nodes because it is faster than the extended test (which supports combinations of n nodes). We can
+        use it to remove edges between nodes which are not independent given another node and so reduce the number of combinations for the extended test.
+        :param nodes: the nodes to test
         :return: A CorrelationTestResult with the action to take
         """
         x: NodeInterface = graph.nodes[nodes[0]]
@@ -166,8 +165,8 @@ class ExtendedPartialCorrelationTest(IndependenceTestInterface):
         self, nodes: List[str], graph: BaseGraphInterface
     ) -> CorrelationTestResult:
         """
-        Test if nodes x,y are independent based on partial correlation with z as conditioning variable
-        we use this test for all combinations of more than 3 nodes because it is slower.
+        Test if nodes x,y are independent with Z as a set of conditioning variables based on partial correlation using linear regression and a correlation test on the residuals.
+        We use this test for all combinations of more than 3 nodes because it is slower.
 
         """
         n = len(nodes)
