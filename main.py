@@ -32,9 +32,11 @@ def create_pipeline(pipeline_config: dict):
 
 
 def show_edges(graph):
+    edges = []
     for u in graph.edges:
         for v in graph.edges[u]:
-            print(f"{u.name} -> {v.name}: {graph.edges[u][v]}")
+            edges.append((u, v))
+    return edges
 
 
 class MyJSONEncoder(JSONEncoder):
@@ -47,6 +49,7 @@ def execute(
     pipeline_file: str,
     data_file: str,
     graph_actions_save_file: str = None,
+    render_save_file: str = None,
     log_level: str = "ERROR",
 ):
     typer.echo(f"💾 Loading pipeline from {pipeline_file}")
@@ -60,13 +63,33 @@ def execute(
     model.create_all_possible_edges()
     typer.echo("🕵🏻‍♀  Executing pipeline steps...")
     model.execute_pipeline_steps()
-    show_edges(model.graph)
+    edges = show_edges(model.graph)
+    for edge in edges:
+        print(
+            f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
+        )
+
     if graph_actions_save_file:
         typer.echo(f"💾 Saving graph actions to {graph_actions_save_file}")
         with open(graph_actions_save_file, "w") as file:
             file.write(
                 json.dumps(model.graph.action_history, cls=MyJSONEncoder, indent=4)
             )
+
+    if render_save_file:
+        typer.echo(f"💾 Saving graph to {render_save_file}")
+        import networkx as nx
+        import matplotlib.pyplot as plt
+
+        n_graph = nx.DiGraph()
+        for u in model.graph.edges:
+            for v in model.graph.edges[u]:
+                n_graph.add_edge(u.name, v.name)
+        fig = plt.figure(figsize=(10, 10))
+        plt = nx.draw(n_graph, with_labels=True, ax=fig.add_subplot(111))
+
+        print(plt)
+        fig.savefig(render_save_file)
         # model.save_graph_actions(graph_actions_save_file)
 
 
