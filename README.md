@@ -6,5 +6,5 @@ Causal discovery made easy.
 
 ```bash
 poetry run python main.py excute --help
-poetry run python main.py pipelines/pc.json tests/fixtures/rki.json
+poetry run python main.py excute pipelines/pc.json tests/fixtures/rki.json
 ```

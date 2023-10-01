@@ -7,7 +7,7 @@ from statistics import correlation
 def sum_lists(*lists):
     """
     :param lists: lists of numbers
-    :return: list (sum of lists)
+    :return: list (sum of$$ lists)
     """
     return list(map(sum, zip(*lists)))
 

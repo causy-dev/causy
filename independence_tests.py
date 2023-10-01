@@ -1,5 +1,6 @@
 from statistics import correlation, covariance  # , linear_regression
 from typing import Tuple, List, Optional
+import math
 
 # Use cupy for GPU support - if available - otherwise use numpy
 try:
@@ -278,7 +279,7 @@ class ExtendedPartialCorrelationTest2(IndependenceTestInterface):
         diagonal_matrix = np.zeros((n, n))
         np.fill_diagonal(diagonal_matrix, diagonal)
         helper = np.dot(np.sqrt(diagonal_matrix), inverse_cov_matrix)
-        partial_correlation_coefficients = np.dot(helper, np.sqrt(diagonal_matrix))
+        precision_matrix = np.dot(helper, np.sqrt(diagonal_matrix))
 
         sample_size = len(graph.nodes[nodes[0]].values)
         nb_of_control_vars = len(nodes) - 2
@@ -286,23 +287,24 @@ class ExtendedPartialCorrelationTest2(IndependenceTestInterface):
 
         nodes_set = set([graph.nodes[n] for n in nodes])
 
-        for i in range(len(partial_correlation_coefficients)):
-            for k in range(len(partial_correlation_coefficients[i])):
+        for i in range(len(precision_matrix)):
+            for k in range(len(precision_matrix[i])):
                 if i == k:
                     continue
+
 
                 # print(partial_correlation_coefficients[i][k])
                 try:
                     t, critical_t = get_t_and_critial_t(
                         sample_size,
                         nb_of_control_vars,
-                        partial_correlation_coefficients[i][k],
+                        (- precision_matrix[i][k] / math.sqrt(precision_matrix[i][i]*precision_matrix[k][k])),
                         self.threshold,
                     )
                 except ValueError:
                     # TODO: @sof fiugre out why this happens
                     logger.debug(
-                        f"ValueError {i} {k} ({partial_correlation_coefficients[i][k]})"
+                        f"ValueError {i} {k} ({precision_matrix[i][k]})"
                     )
                     continue
 

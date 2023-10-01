@@ -9,13 +9,19 @@
         {
             "step": "independence_tests.CorrelationCoefficientTest",
             "params": {
-                "threshold": 0.1
+                "threshold": 0.01
+            }
+        },
+        {
+            "step": "independence_tests.PartialCorrelationTest",
+            "params": {
+                "threshold": 0.01
             }
         },
         {
             "step": "independence_tests.ExtendedPartialCorrelationTest2",
             "params": {
-                "threshold": 0.1
+                "threshold": 0.01
             }
         },
         {
