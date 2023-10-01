@@ -1,7 +1,12 @@
 from typing import Tuple, List
 import itertools
 
-from interfaces import BaseGraphInterface, CorrelationTestResult, CorrelationTestResultAction, IndependenceTestInterface
+from interfaces import (
+    BaseGraphInterface,
+    TestResult,
+    TestResultAction,
+    IndependenceTestInterface,
+)
 
 
 class UnshieldedTripleColliderTest(IndependenceTestInterface):
@@ -10,9 +15,9 @@ class UnshieldedTripleColliderTest(IndependenceTestInterface):
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[CorrelationTestResult] | CorrelationTestResult:
+    ) -> List[TestResult] | TestResult:
         """
-        For all nodes x and y that are not adjacent but share an adjacent node z, we check if z is in the seperating set. 
+        For all nodes x and y that are not adjacent but share an adjacent node z, we check if z is in the seperating set.
         If z is not in the seperating set, we know that x and y are uncorrelated given z, so the edges must be oriented from x to z and from y to z.
         :param nodes: list of nodes
         :param graph: the current graph
@@ -25,9 +30,7 @@ class UnshieldedTripleColliderTest(IndependenceTestInterface):
 
         # if x and y are adjacent, do nothing
         if graph.edge_exists(x, y):
-            return CorrelationTestResult(
-                x=x, y=y, action=CorrelationTestResultAction.DO_NOTHING, data={}
-            )
+            return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={})
 
         # if x and y are NOT adjacent, store all shared adjacent nodes
         potential_zs = set(graph.edges[x].keys()).intersection(
@@ -38,26 +41,25 @@ class UnshieldedTripleColliderTest(IndependenceTestInterface):
         results = []
         for z in potential_zs:
             separators = graph.retrieve_edge_history(
-                x, y, CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED
+                x, y, TestResultAction.REMOVE_EDGE_UNDIRECTED
             )
 
             if z not in separators:
                 results += [
-                    CorrelationTestResult(
+                    TestResult(
                         x=z,
                         y=x,
-                        action=CorrelationTestResultAction.REMOVE_EDGE_DIRECTED,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     ),
-                    CorrelationTestResult(
+                    TestResult(
                         x=z,
                         y=y,
-                        action=CorrelationTestResultAction.REMOVE_EDGE_DIRECTED,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     ),
                 ]
         return results
-
 
 
 class UnshieldedTripleNonColliderTest(IndependenceTestInterface):
@@ -66,7 +68,7 @@ class UnshieldedTripleNonColliderTest(IndependenceTestInterface):
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[CorrelationTestResult] | CorrelationTestResult:
+    ) -> List[TestResult] | TestResult:
         """
         Further orientation rule.
         :param nodes: list of nodes
@@ -79,9 +81,7 @@ class UnshieldedTripleNonColliderTest(IndependenceTestInterface):
 
         # if x and y are adjacent, do nothing
         if graph.edge_exists(x, y):
-            return CorrelationTestResult(
-                x=x, y=y, action=CorrelationTestResultAction.DO_NOTHING, data={}
-            )
+            return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={})
 
         # if x and y are NOT adjacent, store all shared adjacent nodes
         potential_zs = set(graph.edges[x].keys()).intersection(
@@ -91,14 +91,15 @@ class UnshieldedTripleNonColliderTest(IndependenceTestInterface):
         for z in potential_zs:
             if graph.directed_edge_exists(x, z):
                 if graph.edge_exists(y, z):
-                    results.append(CorrelationTestResult(
-                        x=z,
-                        y=y,
-                        action=CorrelationTestResultAction.REMOVE_EDGE_DIRECTED,
-                        data={},
-                    ))
+                    results.append(
+                        TestResult(
+                            x=z,
+                            y=y,
+                            action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                            data={},
+                        )
+                    )
         return results
-
 
 
 class FurtherOrientTripleTest(IndependenceTestInterface):
@@ -107,14 +108,14 @@ class FurtherOrientTripleTest(IndependenceTestInterface):
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[CorrelationTestResult] | CorrelationTestResult:
+    ) -> List[TestResult] | TestResult:
         """
         Further orientation rule.
         :param nodes: list of nodes
         :param graph: the current graph
         :returns: list of actions that will be executed on graph
         """
-        
+
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
@@ -124,22 +125,34 @@ class FurtherOrientTripleTest(IndependenceTestInterface):
 
         results = []
         for z in potential_zs:
-            if graph.edge_exists(x,y) and graph.directed_edge_exists(x,z) and graph.directed_edge_exists(z,y):
-                results.append(CorrelationTestResult(
-                            x=y,
-                            y=x,
-                            action=CorrelationTestResultAction.REMOVE_EDGE_DIRECTED,
-                            data={},
-                        ))
-            if graph.edge_exists(x,y) and graph.directed_edge_exists(y,z) and graph.directed_edge_exists(z,x):
-                results.append(CorrelationTestResult(
-                            x=x,
-                            y=y,
-                            action=CorrelationTestResultAction.REMOVE_EDGE_DIRECTED,
-                            data={},
-                        ))
+            if (
+                graph.edge_exists(x, y)
+                and graph.directed_edge_exists(x, z)
+                and graph.directed_edge_exists(z, y)
+            ):
+                results.append(
+                    TestResult(
+                        x=y,
+                        y=x,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
+                )
+            if (
+                graph.edge_exists(x, y)
+                and graph.directed_edge_exists(y, z)
+                and graph.directed_edge_exists(z, x)
+            ):
+                results.append(
+                    TestResult(
+                        x=x,
+                        y=y,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
+                )
         return results
-    
+
 
 class OrientQuadrupleTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
@@ -147,14 +160,14 @@ class OrientQuadrupleTest(IndependenceTestInterface):
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[CorrelationTestResult] | CorrelationTestResult:
+    ) -> List[TestResult] | TestResult:
         """
         Further orientation rule.
         :param nodes: list of nodes
         :param graph: the current graph
         :returns: list of actions that will be executed on graph
         """
-        
+
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
@@ -164,36 +177,49 @@ class OrientQuadrupleTest(IndependenceTestInterface):
 
         results = []
         for z in potential_zs:
-            if graph.edge_exists(x,y) and graph.directed_edge_exists(x,z) and graph.directed_edge_exists(z,y):
-                results.append(CorrelationTestResult(
-                            x=y,
-                            y=x,
-                            action=CorrelationTestResultAction.REMOVE_EDGE_DIRECTED,
-                            data={},
-                        ))
-            if graph.edge_exists(x,y) and graph.directed_edge_exists(y,z) and graph.directed_edge_exists(z,x):
-                results.append(CorrelationTestResult(
-                            x=x,
-                            y=y,
-                            action=CorrelationTestResultAction.REMOVE_EDGE_DIRECTED,
-                            data={},
-                        ))
+            if (
+                graph.edge_exists(x, y)
+                and graph.directed_edge_exists(x, z)
+                and graph.directed_edge_exists(z, y)
+            ):
+                results.append(
+                    TestResult(
+                        x=y,
+                        y=x,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
+                )
+            if (
+                graph.edge_exists(x, y)
+                and graph.directed_edge_exists(y, z)
+                and graph.directed_edge_exists(z, x)
+            ):
+                results.append(
+                    TestResult(
+                        x=x,
+                        y=y,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
+                )
         return results
-    
+
+
 class OrientQuadrupleTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[CorrelationTestResult] | CorrelationTestResult:
+    ) -> List[TestResult] | TestResult:
         """
         Further orientation rule.
         :param nodes: list of nodes
         :param graph: the current graph
         :returns: list of actions that will be executed on graph
         """
-        
+
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
@@ -205,20 +231,34 @@ class OrientQuadrupleTest(IndependenceTestInterface):
         for zs in itertools.combinations(potential_zs, 2):
             z = zs[0]
             w = zs[1]
-            if not graph.edge_exists(x,y) and graph.directed_edge_exists(x,z) and graph.directed_edge_exists(y,z) \
-                and graph.edge_exists(x,w) and graph.edge_exists(y,w):
-                results.append(CorrelationTestResult(
-                            x=z,
-                            y=w,
-                            action=CorrelationTestResultAction.REMOVE_EDGE_DIRECTED,
-                            data={},
-                        ))
-            if not graph.edge_exists(x,y) and graph.directed_edge_exists(x,w) and graph.directed_edge_exists(y,w) \
-                and graph.edge_exists(x,z) and graph.edge_exists(y,z):
-                results.append(CorrelationTestResult(
-                            x=w,
-                            y=z,
-                            action=CorrelationTestResultAction.REMOVE_EDGE_DIRECTED,
-                            data={},
-                        ))
+            if (
+                not graph.edge_exists(x, y)
+                and graph.directed_edge_exists(x, z)
+                and graph.directed_edge_exists(y, z)
+                and graph.edge_exists(x, w)
+                and graph.edge_exists(y, w)
+            ):
+                results.append(
+                    TestResult(
+                        x=z,
+                        y=w,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
+                )
+            if (
+                not graph.edge_exists(x, y)
+                and graph.directed_edge_exists(x, w)
+                and graph.directed_edge_exists(y, w)
+                and graph.edge_exists(x, z)
+                and graph.edge_exists(y, z)
+            ):
+                results.append(
+                    TestResult(
+                        x=w,
+                        y=z,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
+                )
         return results

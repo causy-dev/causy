@@ -26,7 +26,7 @@ class NodeInterface:
         return self.name
 
 
-class CorrelationTestResultAction(enum.StrEnum):
+class TestResultAction(enum.StrEnum):
     REMOVE_EDGE_UNDIRECTED = "REMOVE_EDGE_UNDIRECTED"
     UPDATE_EDGE = "UPDATE_EDGE"
     DO_NOTHING = "DO_NOTHING"
@@ -34,10 +34,10 @@ class CorrelationTestResultAction(enum.StrEnum):
 
 
 @dataclass
-class CorrelationTestResult:
+class TestResult:
     x: NodeInterface
     y: NodeInterface
-    action: CorrelationTestResultAction
+    action: TestResultAction
     data: Dict = None
 
     def to_dict(self):
@@ -53,13 +53,11 @@ class BaseGraphInterface(ABC):
     edges: Dict[NodeInterface, Dict[NodeInterface, Dict]]
 
     @abstractmethod
-    def retrieve_edge_history(
-        self, u, v, action: CorrelationTestResultAction
-    ) -> List[CorrelationTestResult]:
+    def retrieve_edge_history(self, u, v, action: TestResultAction) -> List[TestResult]:
         pass
 
     @abstractmethod
-    def add_edge_history(self, u, v, action: CorrelationTestResultAction):
+    def add_edge_history(self, u, v, action: TestResultAction):
         pass
 
     @abstractmethod
@@ -118,9 +116,7 @@ class IndependenceTestInterface(ABC):
         self.threshold = threshold
 
     @abstractmethod
-    def test(
-        self, nodes: List[str], graph: BaseGraphInterface
-    ) -> CorrelationTestResult:
+    def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         """
         Test if x and y are independent
         :param x: x values
@@ -129,9 +125,7 @@ class IndependenceTestInterface(ABC):
         """
         pass
 
-    def __call__(
-        self, nodes: List[str], graph: BaseGraphInterface
-    ) -> CorrelationTestResult:
+    def __call__(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         return self.test(nodes, graph)
 
 

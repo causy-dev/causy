@@ -21,10 +21,10 @@ from orientation_tests import UnshieldedTripleColliderTest
 from interfaces import (
     BaseGraphInterface,
     NodeInterface,
-    CorrelationTestResultAction,
+    TestResultAction,
     ComparisonSettings,
     AS_MANY_AS_FIELDS,
-    CorrelationTestResult,
+    TestResult,
     GraphModelInterface,
     LogicStepInterface,
 )
@@ -52,8 +52,8 @@ class UndirectedGraphError(Exception):
 class UndirectedGraph(BaseGraphInterface):
     nodes: Dict[str, Node]
     edges: Dict[Node, Dict[Node, Dict]]
-    edge_history: Dict[Set[Node], List[CorrelationTestResult]]
-    action_history: List[Dict[str, List[CorrelationTestResult]]]
+    edge_history: Dict[Set[Node], List[TestResult]]
+    action_history: List[Dict[str, List[TestResult]]]
 
     def __init__(self):
         self.nodes = {}
@@ -83,8 +83,8 @@ class UndirectedGraph(BaseGraphInterface):
         self.edge_history[(v, u)] = []
 
     def retrieve_edge_history(
-        self, u, v, action: CorrelationTestResultAction = None
-    ) -> List[CorrelationTestResult]:
+        self, u, v, action: TestResultAction = None
+    ) -> List[TestResult]:
         """
         Retrieve the edge history
         :param u:
@@ -97,7 +97,7 @@ class UndirectedGraph(BaseGraphInterface):
 
         return [i for i in self.edge_history[(u, v)] if i.action == action]
 
-    def add_edge_history(self, u, v, action: CorrelationTestResultAction):
+    def add_edge_history(self, u, v, action: TestResultAction):
         if (u, v) not in self.edge_history:
             self.edge_history[(u, v)] = []
         self.edge_history[(u, v)].append(action)
@@ -179,7 +179,7 @@ class UndirectedGraph(BaseGraphInterface):
         if v not in self.edges[u]:
             return False
         return True
-        
+
     def directed_edge_exists(self, u: Node, v: Node):
         if u.name not in self.nodes:
             return False
@@ -345,17 +345,17 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 actions_taken.append(i)
 
                 # execute the action returned by the test
-                if i.action == CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED:
+                if i.action == TestResultAction.REMOVE_EDGE_UNDIRECTED:
                     self.graph.remove_edge(i.x, i.y)
                     self.graph.add_edge_history(i.x, i.y, i)
                     self.graph.add_edge_history(i.y, i.x, i)
-                elif i.action == CorrelationTestResultAction.UPDATE_EDGE:
+                elif i.action == TestResultAction.UPDATE_EDGE:
                     self.graph.update_edge(i.x, i.y, i.data)
                     self.graph.add_edge_history(i.x, i.y, i)
                     self.graph.add_edge_history(i.y, i.x, i)
-                elif i.action == CorrelationTestResultAction.DO_NOTHING:
+                elif i.action == TestResultAction.DO_NOTHING:
                     pass
-                elif i.action == CorrelationTestResultAction.REMOVE_EDGE_DIRECTED:
+                elif i.action == TestResultAction.REMOVE_EDGE_DIRECTED:
                     self.graph.remove_directed_edge(i.x, i.y)
                     self.graph.add_edge_history(i.x, i.y, i)
         return actions_taken
