@@ -1,5 +1,5 @@
 from statistics import correlation, covariance  # , linear_regression
-from typing import Tuple, List, Optional
+from typing import Tuple, List
 import math
 
 # Use cupy for GPU support - if available - otherwise use numpy
@@ -100,7 +100,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> CorrelationTestResult:
         """
-        Test if nodes x,y are independent with z as conditioning variable based on a partial correlation test.
+        Test if nodes x,y are independent given node z based on a partial correlation test.
         We use this test for all combinations of 3 nodes because it is faster than the extended test (which supports combinations of n nodes). We can
         use it to remove edges between nodes which are not independent given another node and so reduce the number of combinations for the extended test.
         :param nodes: the nodes to test
@@ -156,7 +156,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
         )
 
 
-class ExtendedPartialCorrelationTest(IndependenceTestInterface):
+class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=5, max=AS_MANY_AS_FIELDS)
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = True
@@ -165,9 +165,10 @@ class ExtendedPartialCorrelationTest(IndependenceTestInterface):
         self, nodes: List[str], graph: BaseGraphInterface
     ) -> CorrelationTestResult:
         """
-        Test if nodes x,y are independent with Z as a set of conditioning variables based on partial correlation using linear regression and a correlation test on the residuals.
+        Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using linear regression and a correlation test on the residuals.
         We use this test for all combinations of more than 3 nodes because it is slower.
-
+        :param nodes: the nodes to test
+        :return: A CorrelationTestResult with the action to take
         """
         n = len(nodes)
         sample_size = len(graph.nodes[nodes[0]].values)
@@ -205,57 +206,18 @@ class ExtendedPartialCorrelationTest(IndependenceTestInterface):
         return results
 
 
-class UnshieldedTriplesTest(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = 2
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-
-    def test(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[CorrelationTestResult] | CorrelationTestResult:
-        # https://github.com/pgmpy/pgmpy/blob/1fe10598df5430295a8fc5cdca85cf2d9e1c4330/pgmpy/estimators/PC.py#L416
-
-        x = graph.nodes[nodes[0]]
-        y = graph.nodes[nodes[1]]
-
-        if graph.edge_exists(x, y):
-            return CorrelationTestResult(
-                x=x, y=y, action=CorrelationTestResultAction.DO_NOTHING, data={}
-            )
-
-        potential_zs = set(graph.edges[x].keys()).intersection(
-            set(graph.edges[y].keys())
-        )
-
-        for z in potential_zs:
-            separators = graph.retrieve_edge_history(
-                x, y, CorrelationTestResultAction.REMOVE_EDGE_UNDIRECTED
-            )
-
-            if z not in separators:
-                return [
-                    CorrelationTestResult(
-                        x=z,
-                        y=x,
-                        action=CorrelationTestResultAction.REMOVE_EDGE_DIRECTED,
-                        data={},
-                    ),
-                    CorrelationTestResult(
-                        x=z,
-                        y=y,
-                        action=CorrelationTestResultAction.REMOVE_EDGE_DIRECTED,
-                        data={},
-                    ),
-                ]
-
-        return CorrelationTestResult(
-            x=x, y=y, action=CorrelationTestResultAction.DO_NOTHING, data={}
-        )
-
-
-class ExtendedPartialCorrelationTest2(IndependenceTestInterface):
+class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = True
+
+    """
+    Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using the inverted covariance matrix (precision matrix).
+    https://en.wikipedia.org/wiki/Partial_correlation#Using_matrix_inversion
+    We use this test for all combinations of more than 3 nodes because it is slower.
+    :param nodes: the nodes to test
+    :return: A CorrelationTestResult with the action to take
+    """
 
     def test(
         self, nodes: List[str], graph: BaseGraphInterface

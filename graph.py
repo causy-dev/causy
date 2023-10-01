@@ -11,11 +11,12 @@ from independence_tests import (
     IndependenceTestInterface,
     PartialCorrelationTest,
     CalculateCorrelations,
-    ExtendedPartialCorrelationTest,
-    UnshieldedTriplesTest,
+    ExtendedPartialCorrelationTestMatrix,
     PlaceholderTest,
-    ExtendedPartialCorrelationTest2,
+    ExtendedPartialCorrelationTestLinearRegression,
 )
+
+from orientation_tests import UnshieldedTripleColliderTest
 
 from interfaces import (
     BaseGraphInterface,
@@ -173,6 +174,22 @@ class UndirectedGraph(BaseGraphInterface):
             return False
         if v not in self.edges:
             return False
+        if u not in self.edges[v]:
+            return False
+        if v not in self.edges[u]:
+            return False
+        return True
+        
+    def directed_edge_exists(self, u: Node, v: Node):
+        if u.name not in self.nodes:
+            return False
+        if v.name not in self.nodes:
+            return False
+        if u not in self.edges:
+            return False
+        if v not in self.edges[u]:
+            return False
+        return True
 
     def edge_value(self, u: Node, v: Node):
         return self.edges[u][v]
@@ -385,8 +402,8 @@ PCGraph = graph_model_factory(
         CalculateCorrelations(),
         CorrelationCoefficientTest(threshold=0.1),
         PartialCorrelationTest(threshold=0.1),
-        ExtendedPartialCorrelationTest2(threshold=0.1),
-        UnshieldedTriplesTest(),
+        ExtendedPartialCorrelationTestMatrix(threshold=0.1),
+        UnshieldedTripleColliderTest(),
         # check replacing it with a loop of ExtendedPartialCorrelationTest
         # Loop(
         #    pipeline_steps=[
