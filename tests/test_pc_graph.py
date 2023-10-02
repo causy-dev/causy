@@ -3,20 +3,15 @@ import unittest
 import random
 
 from graph import PCGraph
+from main import show_edges
 from utils import sum_lists
-
-
-def show_edges(graph):
-    for u in graph.edges:
-        for v in graph.edges[u]:
-            print(f"{u.name} -> {v.name}: {graph.edges[u][v]}")
 
 
 class PCTestTestCase(unittest.TestCase):
     def test_full_graph(self):
         test_data = []
 
-        n = 1000
+        n = 100000
         sample_size = 5
 
         samples = {}
@@ -47,7 +42,6 @@ class PCTestTestCase(unittest.TestCase):
                     if row[k] == "":
                         row[k] = 0.0
                     row[k] = float(row[k])
-
                 test_data.append(row)
 
         tst = PCGraph()

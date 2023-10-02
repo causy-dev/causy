@@ -3,6 +3,9 @@ import multiprocessing
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List, Dict
+import logging
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_THRESHOLD = 0.01
 
@@ -19,20 +22,30 @@ class NodeInterface:
     name: str
     values: List[float]
 
+    def to_dict(self):
+        return self.name
 
-class CorrelationTestResultAction(enum.Enum):
-    REMOVE_EDGE_UNDIRECTED = 1
-    UPDATE_EDGE = 2
-    DO_NOTHING = 3
-    REMOVE_EDGE_DIRECTED = 4
+
+class TestResultAction(enum.StrEnum):
+    REMOVE_EDGE_UNDIRECTED = "REMOVE_EDGE_UNDIRECTED"
+    UPDATE_EDGE = "UPDATE_EDGE"
+    DO_NOTHING = "DO_NOTHING"
+    REMOVE_EDGE_DIRECTED = "REMOVE_EDGE_DIRECTED"
 
 
 @dataclass
-class CorrelationTestResult:
+class TestResult:
     x: NodeInterface
     y: NodeInterface
-    action: CorrelationTestResultAction
+    action: TestResultAction
     data: Dict = None
+
+    def to_dict(self):
+        return {
+            "x": self.x.to_dict(),
+            "y": self.y.to_dict(),
+            "action": self.action.name,
+        }
 
 
 class BaseGraphInterface(ABC):
@@ -40,13 +53,11 @@ class BaseGraphInterface(ABC):
     edges: Dict[NodeInterface, Dict[NodeInterface, Dict]]
 
     @abstractmethod
-    def retrieve_edge_history(
-        self, u, v, action: CorrelationTestResultAction
-    ) -> List[CorrelationTestResult]:
+    def retrieve_edge_history(self, u, v, action: TestResultAction) -> List[TestResult]:
         pass
 
     @abstractmethod
-    def add_edge_history(self, u, v, action: CorrelationTestResultAction):
+    def add_edge_history(self, u, v, action: TestResultAction):
         pass
 
     @abstractmethod
@@ -105,9 +116,7 @@ class IndependenceTestInterface(ABC):
         self.threshold = threshold
 
     @abstractmethod
-    def test(
-        self, nodes: List[str], graph: BaseGraphInterface
-    ) -> CorrelationTestResult:
+    def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         """
         Test if x and y are independent
         :param x: x values
@@ -116,9 +125,7 @@ class IndependenceTestInterface(ABC):
         """
         pass
 
-    def __call__(
-        self, nodes: List[str], graph: BaseGraphInterface
-    ) -> CorrelationTestResult:
+    def __call__(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         return self.test(nodes, graph)
 
 

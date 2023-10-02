@@ -1,0 +1,49 @@
+{
+    "name": "PC",
+    "steps": [
+        {
+            "step": "independence_tests.CalculateCorrelations",
+            "params": {
+            }
+        },
+        {
+            "step": "independence_tests.CorrelationCoefficientTest",
+            "params": {
+                "threshold": 0.01
+            }
+        },
+        {
+            "step": "independence_tests.PartialCorrelationTest",
+            "params": {
+                "threshold": 0.01
+            }
+        },
+        {
+            "step": "independence_tests.ExtendedPartialCorrelationTestMatrix",
+            "params": {
+                "threshold": 0.01
+            }
+        },
+        {
+            "step": "orientation_tests.UnshieldedTripleColliderTest",
+            "params": {
+            }
+        },
+        {
+            "step": "orientation_tests.UnshieldedTripleNonColliderTest",
+            "params": {
+            }
+        },
+        {
+            "step": "orientation_tests.FurtherOrientTripleTest",
+            "params": {
+            }
+        },
+        {
+            "step": "orientation_tests.OrientQuadrupleTest",
+            "params": {
+            }
+        }
+    ]
+
+}
