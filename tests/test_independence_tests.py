@@ -37,10 +37,10 @@ class IndependenceTestTestCase(unittest.TestCase):
         model.execute_pipeline_steps()
 
         self.assertEqual(
-            model.execute_pipeline_steps(),
-            TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={}),
+            model.graph.action_history[-1]["actions"][0].action,
+            TestResultAction.DO_NOTHING,
         )
-
+        
 
 if __name__ == "__main__":
     unittest.main()
