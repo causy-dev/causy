@@ -88,8 +88,8 @@ class UnshieldedTripleNonColliderTest(IndependenceTestInterface):
             set(graph.edges[y].keys())
         )
 
-        #if one edge has an arrowhead at z, orient the other one pointing away from z. 
-        #It cannot be a collider because we have already oriented all unshielded triples that contain colliders.
+        # if one edge has an arrowhead at z, orient the other one pointing away from z.
+        # It cannot be a collider because we have already oriented all unshielded triples that contain colliders.
         results = []
         for z in potential_zs:
             if graph.directed_edge_exists(x, z):

@@ -9,7 +9,6 @@ except ImportError:
     import numpy as np
 
 from utils import get_t_and_critial_t
-
 from utils import get_correlation
 
 import logging

@@ -8,7 +8,6 @@ from utils import sum_lists
 
 
 class PCTestTestCase(unittest.TestCase):
-
     def test_with_rki_data(self):
         with open("./tests/fixtures/rki-data.csv") as f:
             data = csv.DictReader(f)

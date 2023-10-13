@@ -2,11 +2,7 @@ import unittest
 
 from sympy import transpose, Matrix, solve_linear_system, symbols
 
-from utils import (
-    backward_substituion,
-    get_regression_coefficients,
-    get_residuals
-)
+from utils import backward_substituion
 
 
 class UtilsTestCase(unittest.TestCase):
@@ -23,6 +19,7 @@ class UtilsTestCase(unittest.TestCase):
         self.assertEqual(
             backward_substituion(R, b, n), Matrix([[-7 / 2], [-5 / 4], [4]])
         )
+
 
 if __name__ == "__main__":
     unittest.main()
