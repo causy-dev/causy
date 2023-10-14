@@ -1,4 +1,4 @@
-# causalib
+# causy
 
 Causal discovery made easy.
 
