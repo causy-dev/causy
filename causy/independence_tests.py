@@ -78,6 +78,7 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
             sample_size, nb_of_control_vars, corr, self.threshold
         )
         if abs(t) < critical_t:
+            logger.debug(f"Nodes {x.name} and {y.name} are uncorrelated")
             return TestResult(
                 x=x,
                 y=y,
@@ -136,6 +137,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
             )
 
             if abs(t) < critical_t:
+                logger.debug(f"Nodes {x.name} and {y.name} are uncorrelated given {z.name}")
                 results.append(TestResult(
                     x=x,
                     y=y,
@@ -158,6 +160,8 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
         We use this test for all combinations of more than 3 nodes because it is slower.
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
+
+        TODO: Does not run in reasonable time yet.
         """
         n = len(nodes)
         sample_size = len(graph.nodes[nodes[0]].values)
@@ -209,6 +213,8 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         We use this test for all combinations of more than 3 nodes because it is slower.
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
+
+        TODO: Debug using toy_data_larger.json, does not find A independent of F given Z = {D,B} yet
         """
         logger.info(f"ExtendedPartialCorrelationTestMatrix {nodes}")
         covariance_matrix = [
@@ -247,8 +253,8 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                         sample_size,
                         nb_of_control_vars,
                         (
-                            -precision_matrix[i][k]
-                            / math.sqrt(precision_matrix[i][i] * precision_matrix[k][k])
+                            (-1 * precision_matrix[i][k])
+                            / (math.sqrt(precision_matrix[i][i] * precision_matrix[k][k]))
                         ),
                         self.threshold,
                     )
@@ -258,6 +264,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                     continue
 
                 if abs(t) < critical_t:
+                    logger.debug(f"Nodes {x.name} and {y.name} are uncorrelated given other nodes (two or more)")
                     results.append(
                         TestResult(
                             x=graph.nodes[nodes[i]],

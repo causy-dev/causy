@@ -6,7 +6,7 @@ import numpy as np
 from causy.graph import PCGraph
 from causy.cli import show_edges
 
-def generate_data(a, b, c, d, sample_size):
+def generate_data_minimal_example(a, b, c, d, sample_size):
 
     V = d * np.random.normal(0, 1, sample_size)
     W = c * np.random.normal(0, 1, sample_size)
@@ -23,6 +23,27 @@ def generate_data(a, b, c, d, sample_size):
         for key in data.keys():
             entry[key] = data[key][i]
         test_data.append(entry)
+    return test_data
+
+def generate_data_further_example(a, b, c, d, e, f, g, sample_size):
+
+    A = a * np.random.normal(0, 1, sample_size)
+    B = b * np.random.normal(0, 1, sample_size)
+    C = A + c * B + np.random.normal(0, 1, sample_size)
+    D = d * A + B + C + np.random.normal(0, 1, sample_size)
+    E = e * B + np.random.normal(0, 1, sample_size)
+    F = f * E + g * B + C + D + np.random.normal(0, 1, sample_size)
+
+    data = {}
+    data["A"], data["B"], data["C"], data["D"], data["E"], data["F"] = A, B, C, D, E, F
+    test_data = []
+
+    for i in range(sample_size):
+        entry = {}
+        for key in data.keys():
+            entry[key] = data[key][i]
+        test_data.append(entry)
+
     return test_data
 
 
@@ -44,9 +65,18 @@ class PCTestTestCase(unittest.TestCase):
         tst.execute_pipeline_steps()
         show_edges(tst.graph)
 
-    def test_with_toy_model(self):
+    def test_with_minimal_toy_model(self):
         a, b, c, d, sample_size = 1.2, 1.7, 2, 1.5, 10000
-        test_data = generate_data(a, b, c, d, sample_size)
+        test_data = generate_data_minimal_example(a, b, c, d, sample_size)
+        tst = PCGraph()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+        show_edges(tst.graph)
+
+    def test_with_larger_toy_model(self):
+        a, b, c, d, e, f, g, sample_size = 1.2, 1.7, 2, 1.5, 3, 4, 1.8, 10000
+        test_data = generate_data_further_example(a, b, c, d, e, f, g, sample_size)
         tst = PCGraph()
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()

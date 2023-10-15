@@ -85,7 +85,7 @@ class BaseGraphInterface(ABC):
         pass
 
     @abstractmethod
-    def edge_exists(self, u, v):
+    def undirected_edge_exists(self, u, v):
         pass
 
 
