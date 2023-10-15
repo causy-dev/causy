@@ -186,7 +186,7 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
 class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    PARALLEL = True
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         """
@@ -196,7 +196,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
         """
-        logger.debug(f"ExtendedPartialCorrelationTestMatrix {nodes}")
+        logger.info(f"ExtendedPartialCorrelationTestMatrix {nodes}")
         covariance_matrix = [
             [None for _ in range(len(nodes))] for _ in range(len(nodes))
         ]

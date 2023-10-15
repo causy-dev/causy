@@ -231,7 +231,6 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :param data: is a list of dictionaries
         :return:
         """
-
         # initialize nodes
         keys = data[0].keys()
         nodes: Dict[str, List[float]] = {}
@@ -282,20 +281,12 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         self.graph.action_history = action_history
 
-    def execute_pipeline_step(self, test_fn: IndependenceTestInterface):
-        """
-        Filter the graph
-        :param test_fn: the test function
-        :param threshold: the threshold
-        :return:
-        """
-        combinations = []
-        actions_taken = []
-
+    def _generate_combinations(self, test_fn):
         if type(test_fn.NUM_OF_COMPARISON_ELEMENTS) is int:
-            combinations = itertools.combinations(
+            for i in itertools.combinations(
                 self.graph.nodes, test_fn.NUM_OF_COMPARISON_ELEMENTS
-            )
+            ):
+                yield i
         elif type(test_fn.NUM_OF_COMPARISON_ELEMENTS) is ComparisonSettings:
             start = test_fn.NUM_OF_COMPARISON_ELEMENTS.min
             # if min is longer then our dataset, we can't create any combinations
@@ -316,22 +307,42 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             if stop < start:
                 return
 
-                # create all combinations
+            # create all combinations
             for r in range(start, stop):
-                combinations.extend(itertools.combinations(self.graph.nodes, r))
+                print(r)
+                for i in itertools.combinations(self.graph.nodes, r):
+                    yield i
+
+    def execute_pipeline_step(self, test_fn: IndependenceTestInterface):
+        """
+        Filter the graph
+        :param test_fn: the test function
+        :param threshold: the threshold
+        :return:
+        """
+        actions_taken = []
 
         # initialize the worker pool (we currently use all available cores * 2)
 
-        args = [[test_fn, [*i], self.graph] for i in combinations]
-
         # run all combinations in parallel except if the number of combinations is smaller then the chunk size
         # because then we would create more overhead then we would definetly gain from parallel processing
-        if test_fn.PARALLEL and len(args) > test_fn.CHUNK_SIZE_PARALLEL_PROCESSING:
+        if test_fn.PARALLEL:
             iterator = self.pool.imap_unordered(
-                unpack_run, args, chunksize=test_fn.CHUNK_SIZE_PARALLEL_PROCESSING
+                unpack_run,
+                [
+                    [test_fn, [*i], self.graph]
+                    for i in self._generate_combinations(test_fn)
+                ],
+                chunksize=test_fn.CHUNK_SIZE_PARALLEL_PROCESSING,
             )
         else:
-            iterator = [unpack_run(i) for i in args]
+            iterator = [
+                unpack_run(i)
+                for i in [
+                    [test_fn, [*i], self.graph]
+                    for i in self._generate_combinations(test_fn)
+                ]
+            ]
 
         # run all combinations in parallel
         for result in iterator:
