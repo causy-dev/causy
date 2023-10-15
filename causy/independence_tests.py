@@ -2,6 +2,8 @@ from statistics import correlation, covariance  # , linear_regression
 from typing import Tuple, List
 import math
 
+from causy.generators import AllCombinationsGenerator
+
 # Use cupy for GPU support - if available - otherwise use numpy
 try:
     import cupy as np
@@ -26,7 +28,9 @@ from causy.interfaces import (
 
 
 class CalculateCorrelations(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = 2
+    GENERATOR = AllCombinationsGenerator(
+        comparison_settings=ComparisonSettings(min=2, max=2)
+    )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
@@ -38,7 +42,6 @@ class CalculateCorrelations(IndependenceTestInterface):
         """
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
-
         edge_value = graph.edge_value(graph.nodes[nodes[0]], graph.nodes[nodes[1]])
         edge_value["correlation"] = correlation(x.values, y.values)
         # edge_value["covariance"] = covariance(x.values, y.values)
@@ -51,7 +54,9 @@ class CalculateCorrelations(IndependenceTestInterface):
 
 
 class CorrelationCoefficientTest(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = 2
+    GENERATOR = AllCombinationsGenerator(
+        comparison_settings=ComparisonSettings(min=2, max=2)
+    )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
@@ -83,7 +88,9 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
 
 
 class PartialCorrelationTest(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = 3
+    GENERATOR = AllCombinationsGenerator(
+        comparison_settings=ComparisonSettings(min=3, max=3)
+    )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
@@ -136,7 +143,9 @@ class PartialCorrelationTest(IndependenceTestInterface):
 
 
 class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=5, max=AS_MANY_AS_FIELDS)
+    GENERATOR = AllCombinationsGenerator(
+        comparison_settings=ComparisonSettings(min=5, max=AS_MANY_AS_FIELDS)
+    )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
@@ -184,7 +193,9 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
 
 
 class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
+    GENERATOR = AllCombinationsGenerator(
+        comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
+    )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = True
 

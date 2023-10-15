@@ -1,18 +1,22 @@
 from typing import Tuple, List
 import itertools
 
+from causy.generators import AllCombinationsGenerator
 from causy.interfaces import (
     BaseGraphInterface,
     TestResult,
     TestResultAction,
     IndependenceTestInterface,
+    ComparisonSettings,
 )
 
 # theory for all orientation rules with pictures: https://hpi.de/fileadmin/user_upload/fachgebiete/plattner/teaching/CausalInference/2019/Introduction_to_Constraint-Based_Causal_Structure_Learning.pdf
 
 
 class ColliderTest(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = 2
+    GENERATOR = AllCombinationsGenerator(
+        comparison_settings=ComparisonSettings(min=2, max=2)
+    )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
@@ -74,7 +78,9 @@ class ColliderTest(IndependenceTestInterface):
 
 
 class NonColliderTest(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = 2
+    GENERATOR = AllCombinationsGenerator(
+        comparison_settings=ComparisonSettings(min=2, max=2)
+    )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
@@ -126,7 +132,9 @@ class NonColliderTest(IndependenceTestInterface):
 
 
 class FurtherOrientTripleTest(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = 2
+    GENERATOR = AllCombinationsGenerator(
+        comparison_settings=ComparisonSettings(min=2, max=2)
+    )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
@@ -179,7 +187,9 @@ class FurtherOrientTripleTest(IndependenceTestInterface):
 
 
 class OrientQuadrupleTest(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = 2
+    GENERATOR = AllCombinationsGenerator(
+        comparison_settings=ComparisonSettings(min=2, max=2)
+    )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 

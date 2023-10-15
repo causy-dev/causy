@@ -107,6 +107,7 @@ class GraphModelInterface(ABC):
 
 class IndependenceTestInterface(ABC):
     NUM_OF_COMPARISON_ELEMENTS = 0
+    GENERATOR = None
 
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
 
@@ -132,4 +133,10 @@ class IndependenceTestInterface(ABC):
 class LogicStepInterface(ABC):
     @abstractmethod
     def execute(self, graph: BaseGraphInterface, graph_model_instance_: dict):
+        pass
+
+
+class GeneratorInterface(ABC):
+    @abstractmethod
+    def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
         pass

@@ -25,6 +25,7 @@ from causy.interfaces import (
     TestResult,
     GraphModelInterface,
     LogicStepInterface,
+    GeneratorInterface,
 )
 
 import logging
@@ -281,38 +282,6 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         self.graph.action_history = action_history
 
-    def _generate_combinations(self, test_fn):
-        if type(test_fn.NUM_OF_COMPARISON_ELEMENTS) is int:
-            for i in itertools.combinations(
-                self.graph.nodes, test_fn.NUM_OF_COMPARISON_ELEMENTS
-            ):
-                yield i
-        elif type(test_fn.NUM_OF_COMPARISON_ELEMENTS) is ComparisonSettings:
-            start = test_fn.NUM_OF_COMPARISON_ELEMENTS.min
-            # if min is longer then our dataset, we can't create any combinations
-            if start > len(self.graph.nodes):
-                return
-
-            # if max is AS_MANY_AS_FIELDS, we set it to the length of the dataset + 1
-            if test_fn.NUM_OF_COMPARISON_ELEMENTS.max == AS_MANY_AS_FIELDS:
-                stop = len(self.graph.nodes) + 1
-            else:
-                stop = test_fn.NUM_OF_COMPARISON_ELEMENTS.max + 1
-
-            # if start is longer then our dataset, we set it to the length of the dataset
-            if stop > len(self.graph.nodes) + 1:
-                stop = len(self.graph.nodes) + 1
-
-            # if stop is smaller then start, we can't create any combinations
-            if stop < start:
-                return
-
-            # create all combinations
-            for r in range(start, stop):
-                print(r)
-                for i in itertools.combinations(self.graph.nodes, r):
-                    yield i
-
     def execute_pipeline_step(self, test_fn: IndependenceTestInterface):
         """
         Filter the graph
@@ -331,7 +300,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 unpack_run,
                 [
                     [test_fn, [*i], self.graph]
-                    for i in self._generate_combinations(test_fn)
+                    for i in test_fn.GENERATOR.generate(self.graph, self)
                 ],
                 chunksize=test_fn.CHUNK_SIZE_PARALLEL_PROCESSING,
             )
@@ -340,7 +309,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 unpack_run(i)
                 for i in [
                     [test_fn, [*i], self.graph]
-                    for i in self._generate_combinations(test_fn)
+                    for i in test_fn.GENERATOR.generate(self.graph, self)
                 ]
             ]
 
