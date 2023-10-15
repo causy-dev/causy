@@ -2,7 +2,7 @@ from statistics import correlation, covariance  # , linear_regression
 from typing import Tuple, List
 import math
 
-from causy.generators import AllCombinationsGenerator
+from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
 
 # Use cupy for GPU support - if available - otherwise use numpy
 try:
@@ -193,7 +193,7 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
 
 
 class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
-    GENERATOR = AllCombinationsGenerator(
+    GENERATOR = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
