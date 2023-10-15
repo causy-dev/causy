@@ -86,11 +86,8 @@ def execute(
             for v in model.graph.edges[u]:
                 n_graph.add_edge(u.name, v.name)
         fig = plt.figure(figsize=(10, 10))
-        plt = nx.draw(n_graph, with_labels=True, ax=fig.add_subplot(111))
-
-        print(plt)
+        nx.draw(n_graph, with_labels=True, ax=fig.add_subplot(111))
         fig.savefig(render_save_file)
-        # model.save_graph_actions(graph_actions_save_file)
 
 
 @app.command()

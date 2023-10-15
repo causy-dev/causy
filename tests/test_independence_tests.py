@@ -1,15 +1,11 @@
 import random
 import unittest
 
-import independence_tests
-from graph import UndirectedGraph, AbstractGraphModel, graph_model_factory
+from graph import graph_model_factory
 from utils import sum_lists
 from independence_tests import (
-    ExtendedPartialCorrelationTestMatrix,
-    ExtendedPartialCorrelationTestLinearRegression,
     CalculateCorrelations,
     CorrelationCoefficientTest,
-    TestResult,
     TestResultAction,
 )
 
@@ -40,7 +36,7 @@ class IndependenceTestTestCase(unittest.TestCase):
             model.graph.action_history[-1]["actions"][0].action,
             TestResultAction.DO_NOTHING,
         )
-        
+
 
 if __name__ == "__main__":
     unittest.main()

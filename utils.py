@@ -1,7 +1,11 @@
+import logging
+
 from sympy import transpose, Matrix, solve_linear_system, symbols, Symbol, shape
 from scipy import stats as scipy_stats
 import math
 from statistics import correlation
+
+logger = logging.getLogger(__name__)
 
 
 def sum_lists(*lists):
@@ -49,7 +53,7 @@ def get_regression_coefficients(x, Z):
     """
     z_matrix = Matrix(Z)
     (n, m) = shape(z_matrix)
-    print(f"(n,m)={(n, m)}")
+    logger.debug(f"(n,m)={(n, m)}")
     if m > n:
         raise ValueError(
             "Z must have at most as many rows as columns. (Otherwise you have more variables than samples - which seems to be the case here)"
@@ -58,13 +62,13 @@ def get_regression_coefficients(x, Z):
     if not shape(R) == (m, m):
         raise Exception("The matrix of data we regress on (Z) must have full rank.")
     q_transposed = transpose(Q)
-    print(f"Q_transposed shape = {shape(q_transposed)}")
-    print(f"R shape = {shape(R)}")
+    logger.debug(f"Q_transposed shape = {shape(q_transposed)}")
+    logger.debug(f"R shape = {shape(R)}")
     x_matrix = Matrix(x)
-    print(f"x shape = {shape(x_matrix)}")
+    logger.debug(f"x shape = {shape(x_matrix)}")
     b = q_transposed @ x_matrix
     b_transposed = transpose(b)
-    print(f"shape b={shape(b)}")
+    logger.debug(f"shape b={shape(b)}")
     regression_coefficients = backward_substituion(R, b_transposed, m - 1)
     return regression_coefficients
 

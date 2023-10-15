@@ -192,15 +192,14 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = True
 
-    """
-    Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using the inverted covariance matrix (precision matrix).
-    https://en.wikipedia.org/wiki/Partial_correlation#Using_matrix_inversion
-    We use this test for all combinations of more than 3 nodes because it is slower.
-    :param nodes: the nodes to test
-    :return: A TestResult with the action to take
-    """
-
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
+        """
+        Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using the inverted covariance matrix (precision matrix).
+        https://en.wikipedia.org/wiki/Partial_correlation#Using_matrix_inversion
+        We use this test for all combinations of more than 3 nodes because it is slower.
+        :param nodes: the nodes to test
+        :return: A TestResult with the action to take
+        """
         covariance_matrix = [
             [None for _ in range(len(nodes))] for _ in range(len(nodes))
         ]
@@ -232,7 +231,6 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                 if i == k:
                     continue
 
-                # print(partial_correlation_coefficients[i][k])
                 try:
                     t, critical_t = get_t_and_critial_t(
                         sample_size,
@@ -274,5 +272,11 @@ class PlaceholderTest(IndependenceTestInterface):
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> List[TestResult] | TestResult:
+        """
+        Placeholder test for testing purposes
+        :param nodes:
+        :param graph:
+        :return:
+        """
         logger.debug(f"PlaceholderTest {nodes}")
         return TestResult(x=None, y=None, action=TestResultAction.DO_NOTHING, data={})
