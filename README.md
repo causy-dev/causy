@@ -13,8 +13,8 @@ poetry install
 
 Run causy
 ```bash
-poetry run causy excute --help
-poetry run causy excute pipelines/pc.json tests/fixtures/rki.json
+poetry run causy execute --help
+poetry run causy execute pipelines/pc.json tests/fixtures/rki.json
 ```
 
 Execute tests
