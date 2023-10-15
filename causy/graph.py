@@ -265,6 +265,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         action_history = []
 
         for filter in self.pipeline_steps:
+            logger.info(f"Executing pipeline step {filter.__class__.__name__}")
             if isinstance(filter, LogicStepInterface):
                 filter.execute(self.graph, self)
                 continue

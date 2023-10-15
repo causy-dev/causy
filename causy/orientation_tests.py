@@ -10,9 +10,11 @@ from causy.interfaces import (
 
 # theory for all orientation rules with pictures: https://hpi.de/fileadmin/user_upload/fachgebiete/plattner/teaching/CausalInference/2019/Introduction_to_Constraint-Based_Causal_Structure_Learning.pdf
 
+
 class ColliderTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
+    PARALLEL = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -74,6 +76,7 @@ class ColliderTest(IndependenceTestInterface):
 class NonColliderTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
+    PARALLEL = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -125,6 +128,7 @@ class NonColliderTest(IndependenceTestInterface):
 class FurtherOrientTripleTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
+    PARALLEL = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -177,6 +181,7 @@ class FurtherOrientTripleTest(IndependenceTestInterface):
 class OrientQuadrupleTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
+    PARALLEL = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -233,9 +238,11 @@ class OrientQuadrupleTest(IndependenceTestInterface):
                 )
         return results
 
+
 class FurtherOrientQuadrupleTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
+    PARALLEL = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface

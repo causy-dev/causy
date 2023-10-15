@@ -31,11 +31,7 @@ class IndependenceTestTestCase(unittest.TestCase):
         model.create_graph_from_data(test_data)
         model.create_all_possible_edges()
         model.execute_pipeline_steps()
-
-        self.assertEqual(
-            model.graph.action_history[-1]["actions"][0].action,
-            TestResultAction.DO_NOTHING,
-        )
+        self.assertEqual(len(model.graph.action_history[-1]["actions"]), 0)
 
 
 if __name__ == "__main__":

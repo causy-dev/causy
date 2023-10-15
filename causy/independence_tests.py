@@ -53,7 +53,7 @@ class CalculateCorrelations(IndependenceTestInterface):
 class CorrelationCoefficientTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = True
+    PARALLEL = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         """
@@ -71,7 +71,6 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
         t, critical_t = get_t_and_critial_t(
             sample_size, nb_of_control_vars, corr, self.threshold
         )
-        logger.debug(f"t, critical_t {t} {critical_t}")
         if abs(t) < critical_t:
             return TestResult(
                 x=x,
@@ -80,13 +79,13 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
                 data={},
             )
 
-        return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={})
+        return
 
 
 class PartialCorrelationTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 3
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = True
+    PARALLEL = False
 
     def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
         """
@@ -102,21 +101,20 @@ class PartialCorrelationTest(IndependenceTestInterface):
 
         # Avoid division by zero
         if x is None or y is None or z is None:
-            return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING)
+            return
         try:
             cor_xy = graph.edge_value(x, y)["correlation"]
             cor_xz = graph.edge_value(x, z)["correlation"]
             cor_yz = graph.edge_value(y, z)["correlation"]
         except KeyError:
-            logger.debug(f"KeyError {x} {y} {z}")
-            return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING)
+            return
 
         numerator = cor_xy - cor_xz * cor_yz
         denominator = ((1 - cor_xz**2) * (1 - cor_yz**2)) ** 0.5
 
         # Avoid division by zero
         if denominator == 0:
-            return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING)
+            return
 
         par_corr = numerator / denominator
 
@@ -126,7 +124,6 @@ class PartialCorrelationTest(IndependenceTestInterface):
         t, critical_t = get_t_and_critial_t(
             sample_size, nb_of_control_vars, par_corr, self.threshold
         )
-        logger.debug(f"t, critical_t {t} {critical_t}")
 
         if abs(t) < critical_t:
             return TestResult(
@@ -135,13 +132,13 @@ class PartialCorrelationTest(IndependenceTestInterface):
                 action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
                 data={"separatedBy": [z]},
             )
-        return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={})
+        return
 
 
 class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=5, max=AS_MANY_AS_FIELDS)
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = True
+    PARALLEL = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         """
@@ -189,7 +186,7 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
 class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = True
+    PARALLEL = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         """
@@ -199,6 +196,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
         """
+        logger.debug(f"ExtendedPartialCorrelationTestMatrix {nodes}")
         covariance_matrix = [
             [None for _ in range(len(nodes))] for _ in range(len(nodes))
         ]

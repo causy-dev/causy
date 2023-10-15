@@ -98,6 +98,9 @@ def get_correlation(x, y, other_nodes):
 
 def get_t_and_critial_t(sample_size, nb_of_control_vars, par_corr, threshold):
     deg_of_freedom = sample_size - 2 - nb_of_control_vars
+
+    if abs(round(par_corr, 4)) == 1:
+        par_corr = 0.9999999999999999
     t = par_corr * math.sqrt((deg_of_freedom) / (1 - par_corr**2))
     critical_t = scipy_stats.t.ppf(1 - threshold / 2, deg_of_freedom)
     return (t, critical_t)
