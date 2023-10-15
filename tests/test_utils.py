@@ -1,8 +1,8 @@
 import unittest
 
-from sympy import transpose, Matrix, solve_linear_system, symbols
+from sympy import Matrix
 
-from utils import backward_substituion
+from causy.utils import backward_substituion
 
 
 class UtilsTestCase(unittest.TestCase):

@@ -1,9 +1,9 @@
 import random
 import unittest
 
-from graph import graph_model_factory
-from utils import sum_lists
-from independence_tests import (
+from causy.graph import graph_model_factory
+from causy.utils import sum_lists
+from causy.independence_tests import (
     CalculateCorrelations,
     CorrelationCoefficientTest,
     TestResultAction,

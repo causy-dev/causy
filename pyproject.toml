@@ -2,7 +2,7 @@
 name = "causy"
 version = "0.1.0"
 description = ""
-authors = ["Sofia Faltenbacher <faltenbacher.sofia@gmail.com", "Lilith Wittmann <mail@lilithwittmann.de>"]
+authors = ["Sofia Faltenbacher <faltenbacher.sofia@gmail.com>", "Lilith Wittmann <mail@lilithwittmann.de>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -24,3 +24,6 @@ pyinstrument = "^4.5.3"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+causy = "causy.cli:app"

@@ -8,14 +8,13 @@ try:
 except ImportError:
     import numpy as np
 
-from utils import get_t_and_critial_t
-from utils import get_correlation
+from causy.utils import get_t_and_critial_t, get_correlation
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-from interfaces import (
+from causy.interfaces import (
     IndependenceTestInterface,
     BaseGraphInterface,
     NodeInterface,

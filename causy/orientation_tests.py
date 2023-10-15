@@ -1,7 +1,7 @@
 from typing import Tuple, List
 import itertools
 
-from interfaces import (
+from causy.interfaces import (
     BaseGraphInterface,
     TestResult,
     TestResultAction,

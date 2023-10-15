@@ -6,19 +6,17 @@ from dataclasses import dataclass
 from typing import List, Optional, Dict, Set
 import multiprocessing as mp
 
-from independence_tests import (
+from causy.independence_tests import (
     CorrelationCoefficientTest,
     IndependenceTestInterface,
     PartialCorrelationTest,
     CalculateCorrelations,
     ExtendedPartialCorrelationTestMatrix,
-    PlaceholderTest,
-    ExtendedPartialCorrelationTestLinearRegression,
 )
 
-from orientation_tests import UnshieldedTripleColliderTest
+from causy.orientation_tests import UnshieldedTripleColliderTest
 
-from interfaces import (
+from causy.interfaces import (
     BaseGraphInterface,
     NodeInterface,
     TestResultAction,

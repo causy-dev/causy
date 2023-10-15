@@ -4,7 +4,7 @@ from json import JSONEncoder
 
 import typer
 
-from graph import graph_model_factory
+from causy.graph import graph_model_factory
 
 app = typer.Typer()
 import logging

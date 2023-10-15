@@ -1,10 +1,8 @@
 import csv
 import unittest
-import random
 
-from graph import PCGraph
-from main import show_edges
-from utils import sum_lists
+from causy.graph import PCGraph
+from causy.cli import show_edges
 
 
 class PCTestTestCase(unittest.TestCase):

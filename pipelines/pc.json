@@ -2,45 +2,45 @@
     "name": "PC",
     "steps": [
         {
-            "step": "independence_tests.CalculateCorrelations",
+            "step": "causy.independence_tests.CalculateCorrelations",
             "params": {
             }
         },
         {
-            "step": "independence_tests.CorrelationCoefficientTest",
-            "params": {
-                "threshold": 0.01
-            }
-        },
-        {
-            "step": "independence_tests.PartialCorrelationTest",
+            "step": "causy.independence_tests.CorrelationCoefficientTest",
             "params": {
                 "threshold": 0.01
             }
         },
         {
-            "step": "independence_tests.ExtendedPartialCorrelationTestMatrix",
+            "step": "causy.independence_tests.PartialCorrelationTest",
             "params": {
                 "threshold": 0.01
             }
         },
         {
-            "step": "orientation_tests.UnshieldedTripleColliderTest",
+            "step": "causy.independence_tests.ExtendedPartialCorrelationTestMatrix",
+            "params": {
+                "threshold": 0.01
+            }
+        },
+        {
+            "step": "causy.orientation_tests.UnshieldedTripleColliderTest",
             "params": {
             }
         },
         {
-            "step": "orientation_tests.UnshieldedTripleNonColliderTest",
+            "step": "causy.orientation_tests.UnshieldedTripleNonColliderTest",
             "params": {
             }
         },
         {
-            "step": "orientation_tests.FurtherOrientTripleTest",
+            "step": "causy.orientation_tests.FurtherOrientTripleTest",
             "params": {
             }
         },
         {
-            "step": "orientation_tests.OrientQuadrupleTest",
+            "step": "causy.orientation_tests.OrientQuadrupleTest",
             "params": {
             }
         }
