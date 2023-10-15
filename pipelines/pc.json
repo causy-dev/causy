@@ -25,12 +25,12 @@
             }
         },
         {
-            "step": "causy.orientation_tests.UnshieldedTripleColliderTest",
+            "step": "causy.orientation_tests.ColliderTest",
             "params": {
             }
         },
         {
-            "step": "causy.orientation_tests.UnshieldedTripleNonColliderTest",
+            "step": "causy.orientation_tests.NonColliderTest",
             "params": {
             }
         },
@@ -43,6 +43,11 @@
             "step": "causy.orientation_tests.OrientQuadrupleTest",
             "params": {
             }
+        },
+        {
+        "step": "causy.orientation_tests.OrientQuadrupleTest",
+        "params": {
+        }
         }
     ]
 

@@ -8,8 +8,9 @@ from causy.interfaces import (
     IndependenceTestInterface,
 )
 
+# theory for all orientation rules with pictures: https://hpi.de/fileadmin/user_upload/fachgebiete/plattner/teaching/CausalInference/2019/Introduction_to_Constraint-Based_Causal_Structure_Learning.pdf
 
-class UnshieldedTripleColliderTest(IndependenceTestInterface):
+class ColliderTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
 
@@ -17,8 +18,11 @@ class UnshieldedTripleColliderTest(IndependenceTestInterface):
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> List[TestResult] | TestResult:
         """
-        For all nodes x and y that are not adjacent but share an adjacent node z, we check if z is in the seperating set.
-        If z is not in the seperating set, we know that x and y are uncorrelated given z, so the edges must be oriented from x to z and from y to z.
+        We call triples x, y, z of nodes v structures if x and y that are NOT adjacent but share an adjacent node z.
+        V structures looks like this in the undirected skeleton: (x - z - y).
+        We now check if z is in the separating set.
+        If z is not in the separating set, we know that x and y are uncorrelated given z.
+        So, the edges must be oriented from x to z and from y to z (x -> z <- y).
         :param nodes: list of nodes
         :param graph: the current graph
         :returns: list of actions that will be executed on graph
@@ -40,9 +44,14 @@ class UnshieldedTripleColliderTest(IndependenceTestInterface):
         # if x and y are not independent given z, safe action: make z a collider
         results = []
         for z in potential_zs:
-            separators = graph.retrieve_edge_history(
+            actions = graph.retrieve_edge_history(
                 x, y, TestResultAction.REMOVE_EDGE_UNDIRECTED
             )
+
+            separators = []
+            for action in actions:
+                if "separatedBy" in action.data:
+                    separators += action.data["separatedBy"]
 
             if z not in separators:
                 results += [
@@ -62,7 +71,7 @@ class UnshieldedTripleColliderTest(IndependenceTestInterface):
         return results
 
 
-class UnshieldedTripleNonColliderTest(IndependenceTestInterface):
+class NonColliderTest(IndependenceTestInterface):
     NUM_OF_COMPARISON_ELEMENTS = 2
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
 
@@ -70,7 +79,8 @@ class UnshieldedTripleNonColliderTest(IndependenceTestInterface):
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> List[TestResult] | TestResult:
         """
-        Further orientation rule.
+        Further orientation rule: all v structures that are colliders are already oriented.
+        We now orient all v structures that have a single alternative to being a collider.
         :param nodes: list of nodes
         :param graph: the current graph
         :returns: list of actions that will be executed on graph
@@ -247,6 +257,7 @@ class OrientQuadrupleTest(IndependenceTestInterface):
                 and graph.directed_edge_exists(y, z)
                 and graph.edge_exists(x, w)
                 and graph.edge_exists(y, w)
+                and graph.edge_exists(z, w)
             ):
                 results.append(
                     TestResult(
@@ -262,10 +273,70 @@ class OrientQuadrupleTest(IndependenceTestInterface):
                 and graph.directed_edge_exists(y, w)
                 and graph.edge_exists(x, z)
                 and graph.edge_exists(y, z)
+                and graph.edge_exists(z, w)
             ):
                 results.append(
                     TestResult(
                         x=w,
+                        y=z,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
+                )
+        return results
+
+class FurtherOrientQuadrupleTest(IndependenceTestInterface):
+    NUM_OF_COMPARISON_ELEMENTS = 2
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1
+
+    def test(
+        self, nodes: Tuple[str], graph: BaseGraphInterface
+    ) -> List[TestResult] | TestResult:
+        """
+        Further orientation rule.
+        :param nodes: list of nodes
+        :param graph: the current graph
+        :returns: list of actions that will be executed on graph
+        """
+
+        x = graph.nodes[nodes[0]]
+        y = graph.nodes[nodes[1]]
+
+        potential_zs = set(graph.edges[x].keys()).intersection(
+            set(graph.edges[y].keys())
+        )
+
+        results = []
+        for zs in itertools.combinations(potential_zs, 2):
+            z = zs[0]
+            w = zs[1]
+            if (
+                not graph.edge_exists(x, y)
+                and graph.directed_edge_exists(x, z)
+                and graph.directed_edge_exists(z, y)
+                and graph.edge_exists(z, w)
+                and graph.edge_exists(x, z)
+                and graph.edge_exists(y, z)
+            ):
+                results.append(
+                    TestResult(
+                        x=y,
+                        y=z,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
+                )
+            if (
+                not graph.edge_exists(y, x)
+                and graph.directed_edge_exists(y, z)
+                and graph.directed_edge_exists(z, x)
+                and graph.edge_exists(z, w)
+                and graph.edge_exists(x, z)
+                and graph.edge_exists(y, z)
+            ):
+                results.append(
+                    TestResult(
+                        x=x,
                         y=z,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},

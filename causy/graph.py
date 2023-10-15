@@ -14,7 +14,7 @@ from causy.independence_tests import (
     ExtendedPartialCorrelationTestMatrix,
 )
 
-from causy.orientation_tests import UnshieldedTripleColliderTest
+from causy.orientation_tests import ColliderTest
 
 from causy.interfaces import (
     BaseGraphInterface,
@@ -401,7 +401,7 @@ PCGraph = graph_model_factory(
         CorrelationCoefficientTest(threshold=0.1),
         PartialCorrelationTest(threshold=0.1),
         ExtendedPartialCorrelationTestMatrix(threshold=0.1),
-        UnshieldedTripleColliderTest(),
+        ColliderTest(),
         # check replacing it with a loop of ExtendedPartialCorrelationTest
         # Loop(
         #    pipeline_steps=[
