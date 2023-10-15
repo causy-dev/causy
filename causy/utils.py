@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def sum_lists(*lists):
     """
     :param lists: lists of numbers
-    :return: list (sum of$$ lists)
+    :return: list (sum of lists)
     """
     return list(map(sum, zip(*lists)))
 
@@ -97,10 +97,10 @@ def get_correlation(x, y, other_nodes):
 
 
 def get_t_and_critial_t(sample_size, nb_of_control_vars, par_corr, threshold):
+    # check if we have to normalize data
     deg_of_freedom = sample_size - 2 - nb_of_control_vars
-
     if abs(round(par_corr, 4)) == 1:
-        par_corr = 0.9999999999999999
-    t = par_corr * math.sqrt((deg_of_freedom) / (1 - par_corr**2))
+        return (1, 0)
     critical_t = scipy_stats.t.ppf(1 - threshold / 2, deg_of_freedom)
+    t = par_corr * math.sqrt((deg_of_freedom) / (1 - par_corr**2))
     return (t, critical_t)
