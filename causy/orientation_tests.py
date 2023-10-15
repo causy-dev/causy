@@ -105,7 +105,7 @@ class NonColliderTest(IndependenceTestInterface):
         # It cannot be a collider because we have already oriented all unshielded triples that contain colliders.
         results = []
         for z in potential_zs:
-            if graph.directed_edge_exists(x, z):
+            if graph.only_directed_edge_exists(x, z):
                 results.append(
                     TestResult(
                         x=y,
@@ -114,7 +114,7 @@ class NonColliderTest(IndependenceTestInterface):
                         data={},
                     )
                 )
-            if graph.directed_edge_exists(y, z):
+            if graph.only_directed_edge_exists(y, z):
                 results.append(
                     TestResult(
                         x=x,
@@ -151,8 +151,8 @@ class FurtherOrientTripleTest(IndependenceTestInterface):
         for z in potential_zs:
             if (
                 graph.edge_exists(x, y)
-                and graph.directed_edge_exists(x, z)
-                and graph.directed_edge_exists(z, y)
+                and graph.only_directed_edge_exists(x, z)
+                and graph.only_directed_edge_exists(z, y)
             ):
                 results.append(
                     TestResult(
@@ -164,8 +164,8 @@ class FurtherOrientTripleTest(IndependenceTestInterface):
                 )
             if (
                 graph.edge_exists(x, y)
-                and graph.directed_edge_exists(y, z)
-                and graph.directed_edge_exists(z, x)
+                and graph.only_directed_edge_exists(y, z)
+                and graph.only_directed_edge_exists(z, x)
             ):
                 results.append(
                     TestResult(
@@ -206,8 +206,8 @@ class OrientQuadrupleTest(IndependenceTestInterface):
             w = zs[1]
             if (
                 not graph.edge_exists(x, y)
-                and graph.directed_edge_exists(x, z)
-                and graph.directed_edge_exists(y, z)
+                and graph.only_directed_edge_exists(x, z)
+                and graph.only_directed_edge_exists(y, z)
                 and graph.edge_exists(x, w)
                 and graph.edge_exists(y, w)
                 and graph.edge_exists(z, w)
@@ -222,8 +222,8 @@ class OrientQuadrupleTest(IndependenceTestInterface):
                 )
             if (
                 not graph.edge_exists(x, y)
-                and graph.directed_edge_exists(x, w)
-                and graph.directed_edge_exists(y, w)
+                and graph.only_directed_edge_exists(x, w)
+                and graph.only_directed_edge_exists(y, w)
                 and graph.edge_exists(x, z)
                 and graph.edge_exists(y, z)
                 and graph.edge_exists(z, w)
@@ -267,8 +267,8 @@ class FurtherOrientQuadrupleTest(IndependenceTestInterface):
             w = zs[1]
             if (
                 not graph.edge_exists(x, y)
-                and graph.directed_edge_exists(x, z)
-                and graph.directed_edge_exists(z, y)
+                and graph.only_directed_edge_exists(x, z)
+                and graph.only_directed_edge_exists(z, y)
                 and graph.edge_exists(z, w)
                 and graph.edge_exists(x, z)
                 and graph.edge_exists(y, z)
@@ -283,8 +283,8 @@ class FurtherOrientQuadrupleTest(IndependenceTestInterface):
                 )
             if (
                 not graph.edge_exists(y, x)
-                and graph.directed_edge_exists(y, z)
-                and graph.directed_edge_exists(z, x)
+                and graph.only_directed_edge_exists(y, z)
+                and graph.only_directed_edge_exists(z, x)
                 and graph.edge_exists(z, w)
                 and graph.edge_exists(x, z)
                 and graph.edge_exists(y, z)

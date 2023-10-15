@@ -189,6 +189,11 @@ class UndirectedGraph(BaseGraphInterface):
             return False
         return True
 
+    def only_directed_edge_exists(self, u: Node, v: Node):
+        if self.directed_edge_exists(u, v) and not self.directed_edge_exists(v, u):
+            return True
+        return False
+
     def edge_value(self, u: Node, v: Node):
         return self.edges[u][v]
 
