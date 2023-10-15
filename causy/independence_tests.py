@@ -136,12 +136,14 @@ class PartialCorrelationTest(IndependenceTestInterface):
             )
 
             if abs(t) < critical_t:
-                results.append(TestResult(
-                    x=x,
-                    y=y,
-                    action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                    data={"separatedBy": [z]},
-                ))
+                results.append(
+                    TestResult(
+                        x=x,
+                        y=y,
+                        action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                        data={"separatedBy": [z]},
+                    )
+                )
         return results
 
 
@@ -199,7 +201,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
     GENERATOR = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
+    CHUNK_SIZE_PARALLEL_PROCESSING = 100
     PARALLEL = True
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
@@ -210,7 +212,18 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
         """
-        logger.info(f"ExtendedPartialCorrelationTestMatrix {nodes}")
+        if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
+            return
+
+        other_neighbours = set(graph.edges[graph.nodes[nodes[0]]]) | set(
+            graph.edges[graph.nodes[nodes[1]]]
+        )
+        other_neighbours.remove(graph.nodes[nodes[0]])
+        other_neighbours.remove(graph.nodes[nodes[1]])
+
+        if not set(nodes[2:]).issubset(set([on.name for on in list(other_neighbours)])):
+            return
+
         covariance_matrix = [
             [None for _ in range(len(nodes))] for _ in range(len(nodes))
         ]
@@ -236,12 +249,17 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         results = []
 
         nodes_set = set([graph.nodes[n] for n in nodes])
+        deleted_edges = []
 
         for i in range(len(precision_matrix)):
             for k in range(len(precision_matrix[i])):
                 if i == k:
                     continue
-
+                if (nodes[i], nodes[k]) in deleted_edges or (
+                    nodes[k],
+                    nodes[i],
+                ) in deleted_edges:
+                    continue
                 try:
                     t, critical_t = get_t_and_critial_t(
                         sample_size,
@@ -258,6 +276,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                     continue
 
                 if abs(t) < critical_t:
+                    deleted_edges.append((nodes[i], nodes[k]))
                     results.append(
                         TestResult(
                             x=graph.nodes[nodes[i]],
@@ -271,7 +290,6 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                             },
                         )
                     )
-
         return results
 
 

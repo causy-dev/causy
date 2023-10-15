@@ -282,46 +282,19 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         self.graph.action_history = action_history
 
-    def execute_pipeline_step(self, test_fn: IndependenceTestInterface):
-        """
-        Filter the graph
-        :param test_fn: the test function
-        :param threshold: the threshold
-        :return:
-        """
+    def _format_yield(self, test_fn, graph, generator):
+        for i in generator:
+            yield [test_fn, [*i], graph]
+
+    def _take_action(self, results):
         actions_taken = []
+        for result_items in results:
+            if result_items is None:
+                continue
+            if not isinstance(result_items, list):
+                result_items = [result_items]
 
-        # initialize the worker pool (we currently use all available cores * 2)
-
-        # run all combinations in parallel except if the number of combinations is smaller then the chunk size
-        # because then we would create more overhead then we would definetly gain from parallel processing
-        if test_fn.PARALLEL:
-            iterator = self.pool.imap_unordered(
-                unpack_run,
-                [
-                    [test_fn, [*i], self.graph]
-                    for i in test_fn.GENERATOR.generate(self.graph, self)
-                ],
-                chunksize=test_fn.CHUNK_SIZE_PARALLEL_PROCESSING,
-            )
-        else:
-            iterator = [
-                unpack_run(i)
-                for i in [
-                    [test_fn, [*i], self.graph]
-                    for i in test_fn.GENERATOR.generate(self.graph, self)
-                ]
-            ]
-
-        # run all combinations in parallel
-        for result in iterator:
-            # for result in args:
-            # result = unpack_run(result)
-            if not isinstance(result, list):
-                result = [result]
-            for i in result:
-                if i is None:
-                    continue
+            for i in result_items:
                 if i.x is not None and i.y is not None:
                     logger.info(f"Action: {i.action} on {i.x.name} and {i.y.name}")
 
@@ -342,6 +315,43 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 elif i.action == TestResultAction.REMOVE_EDGE_DIRECTED:
                     self.graph.remove_directed_edge(i.x, i.y)
                     self.graph.add_edge_history(i.x, i.y, i)
+
+        return actions_taken
+
+    def execute_pipeline_step(self, test_fn: IndependenceTestInterface):
+        """
+        Filter the graph
+        :param test_fn: the test function
+        :param threshold: the threshold
+        :return:
+        """
+        actions_taken = []
+
+        # initialize the worker pool (we currently use all available cores * 2)
+
+        # run all combinations in parallel except if the number of combinations is smaller then the chunk size
+        # because then we would create more overhead then we would definetly gain from parallel processing
+        if test_fn.PARALLEL:
+            for result in self.pool.imap_unordered(
+                unpack_run,
+                self._format_yield(
+                    test_fn, self.graph, test_fn.GENERATOR.generate(self.graph, self)
+                ),
+                chunksize=test_fn.CHUNK_SIZE_PARALLEL_PROCESSING,
+            ):
+                if not isinstance(result, list):
+                    result = [result]
+                actions_taken.extend(self._take_action(result))
+        else:
+            iterator = [
+                unpack_run(i)
+                for i in [
+                    [test_fn, [*i], self.graph]
+                    for i in test_fn.GENERATOR.generate(self.graph, self)
+                ]
+            ]
+            actions_taken.extend(self._take_action(iterator))
+
         return actions_taken
 
 
