@@ -196,58 +196,6 @@ class OrientQuadrupleTest(IndependenceTestInterface):
         )
 
         results = []
-        for z in potential_zs:
-            if (
-                graph.edge_exists(x, y)
-                and graph.directed_edge_exists(x, z)
-                and graph.directed_edge_exists(z, y)
-            ):
-                results.append(
-                    TestResult(
-                        x=y,
-                        y=x,
-                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                        data={},
-                    )
-                )
-            if (
-                graph.edge_exists(x, y)
-                and graph.directed_edge_exists(y, z)
-                and graph.directed_edge_exists(z, x)
-            ):
-                results.append(
-                    TestResult(
-                        x=x,
-                        y=y,
-                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                        data={},
-                    )
-                )
-        return results
-
-
-class OrientQuadrupleTest(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = 2
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-
-    def test(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[TestResult] | TestResult:
-        """
-        Further orientation rule.
-        :param nodes: list of nodes
-        :param graph: the current graph
-        :returns: list of actions that will be executed on graph
-        """
-
-        x = graph.nodes[nodes[0]]
-        y = graph.nodes[nodes[1]]
-
-        potential_zs = set(graph.edges[x].keys()).intersection(
-            set(graph.edges[y].keys())
-        )
-
-        results = []
         for zs in itertools.combinations(potential_zs, 2):
             z = zs[0]
             w = zs[1]
