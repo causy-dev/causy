@@ -1,3 +1,4 @@
+import itertools
 from statistics import correlation, covariance  # , linear_regression
 from typing import Tuple, List
 import math
@@ -102,44 +103,46 @@ class PartialCorrelationTest(IndependenceTestInterface):
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
         """
-        x: NodeInterface = graph.nodes[nodes[0]]
-        y: NodeInterface = graph.nodes[nodes[1]]
-        z: NodeInterface = graph.nodes[nodes[2]]
+        results = []
+        for nodes in itertools.permutations(nodes):
+            x: NodeInterface = graph.nodes[nodes[0]]
+            y: NodeInterface = graph.nodes[nodes[1]]
+            z: NodeInterface = graph.nodes[nodes[2]]
 
-        # Avoid division by zero
-        if x is None or y is None or z is None:
-            return
-        try:
-            cor_xy = graph.edge_value(x, y)["correlation"]
-            cor_xz = graph.edge_value(x, z)["correlation"]
-            cor_yz = graph.edge_value(y, z)["correlation"]
-        except KeyError:
-            return
+            # Avoid division by zero
+            if x is None or y is None or z is None:
+                return
+            try:
+                cor_xy = graph.edge_value(x, y)["correlation"]
+                cor_xz = graph.edge_value(x, z)["correlation"]
+                cor_yz = graph.edge_value(y, z)["correlation"]
+            except KeyError:
+                return
 
-        numerator = cor_xy - cor_xz * cor_yz
-        denominator = ((1 - cor_xz**2) * (1 - cor_yz**2)) ** 0.5
+            numerator = cor_xy - cor_xz * cor_yz
+            denominator = ((1 - cor_xz**2) * (1 - cor_yz**2)) ** 0.5
 
-        # Avoid division by zero
-        if denominator == 0:
-            return
+            # Avoid division by zero
+            if denominator == 0:
+                return
 
-        par_corr = numerator / denominator
+            par_corr = numerator / denominator
 
-        # make t test for independency of x and y given z
-        sample_size = len(x.values)
-        nb_of_control_vars = len(nodes) - 2
-        t, critical_t = get_t_and_critial_t(
-            sample_size, nb_of_control_vars, par_corr, self.threshold
-        )
-
-        if abs(t) < critical_t:
-            return TestResult(
-                x=x,
-                y=y,
-                action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                data={"separatedBy": [z]},
+            # make t test for independency of x and y given z
+            sample_size = len(x.values)
+            nb_of_control_vars = len(nodes) - 2
+            t, critical_t = get_t_and_critial_t(
+                sample_size, nb_of_control_vars, par_corr, self.threshold
             )
-        return
+
+            if abs(t) < critical_t:
+                results.append(TestResult(
+                    x=x,
+                    y=y,
+                    action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                    data={"separatedBy": [z]},
+                ))
+        return results
 
 
 class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):

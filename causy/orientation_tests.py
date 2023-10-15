@@ -111,7 +111,7 @@ class NonColliderTest(IndependenceTestInterface):
         # It cannot be a collider because we have already oriented all unshielded triples that contain colliders.
         results = []
         for z in potential_zs:
-            if graph.only_directed_edge_exists(x, z):
+            if graph.only_directed_edge_exists(x, z) and graph.edge_exists(z, y):
                 results.append(
                     TestResult(
                         x=y,
@@ -120,7 +120,7 @@ class NonColliderTest(IndependenceTestInterface):
                         data={},
                     )
                 )
-            if graph.only_directed_edge_exists(y, z):
+            if graph.only_directed_edge_exists(y, z) and graph.edge_exists(z, x):
                 results.append(
                     TestResult(
                         x=x,
@@ -129,7 +129,7 @@ class NonColliderTest(IndependenceTestInterface):
                         data={},
                     )
                 )
-
+        return results
 
 class FurtherOrientTripleTest(IndependenceTestInterface):
     GENERATOR = AllCombinationsGenerator(
@@ -250,7 +250,9 @@ class OrientQuadrupleTest(IndependenceTestInterface):
 
 
 class FurtherOrientQuadrupleTest(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = 2
+    GENERATOR = AllCombinationsGenerator(
+        comparison_settings=ComparisonSettings(min=2, max=2)
+    )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 

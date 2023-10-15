@@ -45,8 +45,8 @@
             }
         },
         {
-        "step": "causy.orientation_tests.OrientQuadrupleTest",
-        "params": {
+            "step": "causy.orientation_tests.FurtherOrientQuadrupleTest",
+            "params": {
         }
         }
     ]
