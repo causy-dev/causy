@@ -1,4 +1,5 @@
 import itertools
+import logging
 
 from causy.interfaces import (
     ComparisonSettings,
@@ -7,6 +8,9 @@ from causy.interfaces import (
     GraphModelInterface,
     AS_MANY_AS_FIELDS,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 class AllCombinationsGenerator(GeneratorInterface):
@@ -70,6 +74,7 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
             raise ValueError("PairsWithNeighboursGenerator: start must be at least 2")
 
         for i in range(start, stop):
+            logger.debug(f"PairsWithNeighboursGenerator: i={i}")
             checked_combinations = set()
             for node in graph.edges:
                 for neighbour in graph.edges[node]:
