@@ -137,7 +137,6 @@ class PartialCorrelationTest(IndependenceTestInterface):
             )
 
             if abs(t) < critical_t:
-<<<<<<< HEAD
                 logger.debug(f"Nodes {x.name} and {y.name} are uncorrelated given {z.name}")
                 results.append(TestResult(
                     x=x,
@@ -145,7 +144,6 @@ class PartialCorrelationTest(IndependenceTestInterface):
                     action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
                     data={"separatedBy": [z]},
                 ))
-=======
                 results.append(
                     TestResult(
                         x=x,
@@ -154,7 +152,6 @@ class PartialCorrelationTest(IndependenceTestInterface):
                         data={"separatedBy": [z]},
                     )
                 )
->>>>>>> 0dfbe13ae57fcbcc6deb72988fa987e43020b91b
         return results
 
 
@@ -291,11 +288,8 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                     continue
 
                 if abs(t) < critical_t:
-<<<<<<< HEAD
                     logger.debug(f"Nodes {x.name} and {y.name} are uncorrelated given other nodes (two or more)")
-=======
                     deleted_edges.append((nodes[i], nodes[k]))
->>>>>>> 0dfbe13ae57fcbcc6deb72988fa987e43020b91b
                     results.append(
                         TestResult(
                             x=graph.nodes[nodes[i]],
