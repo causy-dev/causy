@@ -88,6 +88,14 @@ class BaseGraphInterface(ABC):
     def undirected_edge_exists(self, u, v):
         pass
 
+    @abstractmethod
+    def directed_edge_exists(self, u, v):
+        pass
+
+    @abstractmethod
+    def edge_exists(self, u, v):
+        pass
+
 
 class GraphModelInterface(ABC):
     pool: multiprocessing.Pool

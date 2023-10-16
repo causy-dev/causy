@@ -137,13 +137,9 @@ class PartialCorrelationTest(IndependenceTestInterface):
             )
 
             if abs(t) < critical_t:
-                logger.debug(f"Nodes {x.name} and {y.name} are uncorrelated given {z.name}")
-                results.append(TestResult(
-                    x=x,
-                    y=y,
-                    action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                    data={"separatedBy": [z]},
-                ))
+                logger.debug(
+                    f"Nodes {x.name} and {y.name} are uncorrelated given {z.name}"
+                )
                 results.append(
                     TestResult(
                         x=x,
@@ -211,8 +207,8 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
     GENERATOR = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 100
-    PARALLEL = True
+    CHUNK_SIZE_PARALLEL_PROCESSING = 200
+    PARALLEL = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         """
@@ -278,7 +274,11 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                         nb_of_control_vars,
                         (
                             (-1 * precision_matrix[i][k])
-                            / (math.sqrt(precision_matrix[i][i] * precision_matrix[k][k]))
+                            / (
+                                math.sqrt(
+                                    precision_matrix[i][i] * precision_matrix[k][k]
+                                )
+                            )
                         ),
                         self.threshold,
                     )
@@ -288,7 +288,9 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                     continue
 
                 if abs(t) < critical_t:
-                    logger.debug(f"Nodes {x.name} and {y.name} are uncorrelated given other nodes (two or more)")
+                    logger.debug(
+                        f"Nodes {graph.nodes[nodes[i]].name} and {graph.nodes[nodes[k]].name} are uncorrelated given other nodes (two or more)"
+                    )
                     deleted_edges.append((nodes[i], nodes[k]))
                     results.append(
                         TestResult(
