@@ -153,7 +153,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
 
 class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
     GENERATOR = AllCombinationsGenerator(
-        comparison_settings=ComparisonSettings(min=5, max=AS_MANY_AS_FIELDS)
+        comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
@@ -205,7 +205,7 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
 
 class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
     GENERATOR = PairsWithNeighboursGenerator(
-        comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
+        comparison_settings=ComparisonSettings(min=2, max=AS_MANY_AS_FIELDS)
     )
     CHUNK_SIZE_PARALLEL_PROCESSING = 200
     PARALLEL = False
