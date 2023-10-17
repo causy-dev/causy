@@ -78,10 +78,7 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
             checked_combinations = set()
             for node in graph.edges:
                 for neighbour in graph.edges[node]:
-                    if (neighbour, node) in checked_combinations or (
-                        node,
-                        neighbour,
-                    ) in checked_combinations:
+                    if (node, neighbour) in checked_combinations:
                         continue
 
                     checked_combinations.add((node, neighbour))
@@ -89,13 +86,9 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                         yield (node.name, neighbour.name)
                         continue
 
-                    other_neighbours = set(graph.edges[node]) | set(
-                        graph.edges[neighbour]
-                    )
-                    other_neighbours.remove(node)
+                    other_neighbours = set(graph.edges[node])
                     other_neighbours.remove(neighbour)
-
-                    if len(other_neighbours) <= i:
+                    if len(other_neighbours) + 2 < i:
                         continue
 
                     for k in itertools.combinations(other_neighbours, i):

@@ -103,6 +103,8 @@ class PartialCorrelationTest(IndependenceTestInterface):
         use it to remove edges between nodes which are not independent given another node and so reduce the number of combinations for the extended test.
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
+
+        TODO: we are testing (C and E given B) and (E and C given B), we just need one of these, remove redundant tests.
         """
         results = []
         for nodes in itertools.permutations(nodes):
@@ -205,7 +207,7 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
 
 class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
     GENERATOR = PairsWithNeighboursGenerator(
-        comparison_settings=ComparisonSettings(min=2, max=AS_MANY_AS_FIELDS)
+        comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
     CHUNK_SIZE_PARALLEL_PROCESSING = 200
     PARALLEL = False
@@ -217,16 +219,12 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         We use this test for all combinations of more than 3 nodes because it is slower.
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
-
-        TODO: Debug using toy_data_larger.json, does not find A independent of F given Z = {D,B} yet
         """
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
             return
 
-        other_neighbours = set(graph.edges[graph.nodes[nodes[0]]]) | set(
-            graph.edges[graph.nodes[nodes[1]]]
-        )
-        other_neighbours.remove(graph.nodes[nodes[0]])
+        other_neighbours = set(graph.edges[graph.nodes[nodes[0]]])
+
         other_neighbours.remove(graph.nodes[nodes[1]])
 
         if not set(nodes[2:]).issubset(set([on.name for on in list(other_neighbours)])):
@@ -257,54 +255,37 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         results = []
 
         nodes_set = set([graph.nodes[n] for n in nodes])
-        deleted_edges = []
 
-        for i in range(len(precision_matrix)):
-            for k in range(len(precision_matrix[i])):
-                if i == k:
-                    continue
-                if (nodes[i], nodes[k]) in deleted_edges or (
-                    nodes[k],
-                    nodes[i],
-                ) in deleted_edges:
-                    continue
-                try:
-                    t, critical_t = get_t_and_critial_t(
-                        sample_size,
-                        nb_of_control_vars,
-                        (
-                            (-1 * precision_matrix[i][k])
-                            / (
-                                math.sqrt(
-                                    precision_matrix[i][i] * precision_matrix[k][k]
-                                )
-                            )
-                        ),
-                        self.threshold,
-                    )
-                except ValueError:
-                    # TODO: @sof fiugre out why this happens
-                    logger.debug(f"ValueError {i} {k} ({precision_matrix[i][k]})")
-                    continue
-
-                if abs(t) < critical_t:
-                    logger.debug(
-                        f"Nodes {graph.nodes[nodes[i]].name} and {graph.nodes[nodes[k]].name} are uncorrelated given other nodes (two or more)"
-                    )
-                    deleted_edges.append((nodes[i], nodes[k]))
-                    results.append(
-                        TestResult(
-                            x=graph.nodes[nodes[i]],
-                            y=graph.nodes[nodes[k]],
-                            action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                            data={
-                                "separatedBy": list(
-                                    nodes_set
-                                    - {graph.nodes[nodes[i]], graph.nodes[nodes[k]]}
-                                )
-                            },
+        t, critical_t = get_t_and_critial_t(
+            sample_size,
+            nb_of_control_vars,
+            (
+                    (-1 * precision_matrix[0][1])
+                    / (
+                        math.sqrt(
+                            precision_matrix[0][0] * precision_matrix[1][1]
                         )
                     )
+            ),
+            self.threshold,
+        )
+
+        if abs(t) < critical_t:
+            logger.debug(
+                f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([on.name for on in other_neighbours])}"
+            )
+            return TestResult(
+                    x=graph.nodes[nodes[0]],
+                    y=graph.nodes[nodes[1]],
+                    action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                    data={
+                        "separatedBy": list(
+                            nodes_set
+                            - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
+                        )
+                    },
+                )
+
         return results
 
 

@@ -99,37 +99,42 @@ class NonColliderTest(IndependenceTestInterface):
         y = graph.nodes[nodes[1]]
 
         # if x and y are adjacent, do nothing
-        if graph.undirected_edge_exists(x, y):
-            return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={})
+        if graph.edge_exists(x, y):
+            return
 
         # if x and y are NOT adjacent, store all shared adjacent nodes
         potential_zs = set(graph.edges[x].keys()).intersection(
             set(graph.edges[y].keys())
         )
-
         # if one edge has an arrowhead at z, orient the other one pointing away from z.
         # It cannot be a collider because we have already oriented all unshielded triples that contain colliders.
-        results = []
         for z in potential_zs:
+            breakflag = False
             if graph.only_directed_edge_exists(x, z) and graph.undirected_edge_exists(z, y):
-                results.append(
-                    TestResult(
+                for node in graph.nodes:
+                    if graph.only_directed_edge_exists(graph.nodes[node], y):
+                        breakflag = True
+                        break
+                if breakflag is True:
+                    continue
+                return TestResult(
                         x=y,
                         y=z,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
-                )
+
             if graph.only_directed_edge_exists(y, z) and graph.undirected_edge_exists(z, x):
-                results.append(
-                    TestResult(
+                for node in graph.nodes:
+                    if graph.only_directed_edge_exists(graph.nodes[node], x):
+                        continue
+                return TestResult(
                         x=x,
                         y=z,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
-                )
-        return results
+        return
 
 class FurtherOrientTripleTest(IndependenceTestInterface):
     GENERATOR = AllCombinationsGenerator(
