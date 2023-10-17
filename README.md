@@ -14,7 +14,7 @@ poetry install
 Run causy
 ```bash
 poetry run causy execute --help
-poetry run causy execute pipelines/pc.json tests/fixtures/toy_data.json
+poetry run causy execute pipelines/pc.json tests/fixtures/toy_data_larger.json
 ```
 
 Execute tests

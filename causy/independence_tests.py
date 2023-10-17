@@ -260,12 +260,8 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
             sample_size,
             nb_of_control_vars,
             (
-                    (-1 * precision_matrix[0][1])
-                    / (
-                        math.sqrt(
-                            precision_matrix[0][0] * precision_matrix[1][1]
-                        )
-                    )
+                (-1 * precision_matrix[0][1])
+                / (math.sqrt(precision_matrix[0][0] * precision_matrix[1][1]))
             ),
             self.threshold,
         )
@@ -275,16 +271,15 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                 f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([on.name for on in other_neighbours])}"
             )
             return TestResult(
-                    x=graph.nodes[nodes[0]],
-                    y=graph.nodes[nodes[1]],
-                    action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                    data={
-                        "separatedBy": list(
-                            nodes_set
-                            - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
-                        )
-                    },
-                )
+                x=graph.nodes[nodes[0]],
+                y=graph.nodes[nodes[1]],
+                action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                data={
+                    "separatedBy": list(
+                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
+                    )
+                },
+            )
 
         return results
 

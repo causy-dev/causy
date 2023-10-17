@@ -110,7 +110,9 @@ class NonColliderTest(IndependenceTestInterface):
         # It cannot be a collider because we have already oriented all unshielded triples that contain colliders.
         for z in potential_zs:
             breakflag = False
-            if graph.only_directed_edge_exists(x, z) and graph.undirected_edge_exists(z, y):
+            if graph.only_directed_edge_exists(x, z) and graph.undirected_edge_exists(
+                z, y
+            ):
                 for node in graph.nodes:
                     if graph.only_directed_edge_exists(graph.nodes[node], y):
                         breakflag = True
@@ -118,23 +120,26 @@ class NonColliderTest(IndependenceTestInterface):
                 if breakflag is True:
                     continue
                 return TestResult(
-                        x=y,
-                        y=z,
-                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                        data={},
-                    )
+                    x=y,
+                    y=z,
+                    action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                    data={},
+                )
 
-            if graph.only_directed_edge_exists(y, z) and graph.undirected_edge_exists(z, x):
+            if graph.only_directed_edge_exists(y, z) and graph.undirected_edge_exists(
+                z, x
+            ):
                 for node in graph.nodes:
                     if graph.only_directed_edge_exists(graph.nodes[node], x):
                         continue
                 return TestResult(
-                        x=x,
-                        y=z,
-                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                        data={},
-                    )
+                    x=x,
+                    y=z,
+                    action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                    data={},
+                )
         return
+
 
 class FurtherOrientTripleTest(IndependenceTestInterface):
     GENERATOR = AllCombinationsGenerator(

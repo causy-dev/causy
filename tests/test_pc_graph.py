@@ -6,8 +6,9 @@ import numpy as np
 from causy.graph import PCGraph
 from causy.cli import show_edges
 
-def generate_data_minimal_example(a, b, c, d, sample_size):
 
+# TODO: generate larger toy model to test quadruple orientation rules.
+def generate_data_minimal_example(a, b, c, d, sample_size):
     V = d * np.random.normal(0, 1, sample_size)
     W = c * np.random.normal(0, 1, sample_size)
     Z = W + V + np.random.normal(0, 1, sample_size)
@@ -25,8 +26,8 @@ def generate_data_minimal_example(a, b, c, d, sample_size):
         test_data.append(entry)
     return test_data
 
-def generate_data_further_example(a, b, c, d, e, f, g, sample_size):
 
+def generate_data_further_example(a, b, c, d, e, f, g, sample_size):
     A = a * np.random.normal(0, 1, sample_size)
     B = b * np.random.normal(0, 1, sample_size)
     C = A + c * B + np.random.normal(0, 1, sample_size)
@@ -82,6 +83,7 @@ class PCTestTestCase(unittest.TestCase):
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
         show_edges(tst.graph)
+
 
 if __name__ == "__main__":
     unittest.main()

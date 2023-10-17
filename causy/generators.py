@@ -17,7 +17,6 @@ class AllCombinationsGenerator(GeneratorInterface):
     def generate(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
     ):
-
         start = self.comparison_settings.min
         # if min is longer then our dataset, we can't create any combinations
         if start > len(graph.nodes):
@@ -50,7 +49,6 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
     def generate(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
     ):
-
         start = self.comparison_settings.min
         # if min is longer then our dataset, we can't create any combinations
         if start > len(graph.nodes):
