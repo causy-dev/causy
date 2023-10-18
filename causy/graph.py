@@ -365,12 +365,18 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 # execute the action returned by the test
                 if i.action == TestResultAction.REMOVE_EDGE_UNDIRECTED:
                     if not self.graph.undirected_edge_exists(i.x, i.y):
+                        logger.debug(
+                            f"Tried to remove undirected edge {i.x.name} <-> {i.y.name}. But it does not exist."
+                        )
                         continue
                     self.graph.remove_edge(i.x, i.y)
                     self.graph.add_edge_history(i.x, i.y, i)
                     self.graph.add_edge_history(i.y, i.x, i)
                 elif i.action == TestResultAction.UPDATE_EDGE:
                     if not self.graph.edge_exists(i.x, i.y):
+                        logger.debug(
+                            f"Tried to update edge {i.x.name} -> {i.y.name}. But it does not exist."
+                        )
                         continue
                     self.graph.update_edge(i.x, i.y, i.data)
                     self.graph.add_edge_history(i.x, i.y, i)
@@ -379,6 +385,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     continue
                 elif i.action == TestResultAction.REMOVE_EDGE_DIRECTED:
                     if not self.graph.directed_edge_exists(i.x, i.y):
+                        logger.debug(
+                            f"Tried to remove directed edge {i.x.name} -> {i.y.name}. But it does not exist."
+                        )
                         continue
                     self.graph.remove_directed_edge(i.x, i.y)
                     self.graph.add_edge_history(i.x, i.y, i)
