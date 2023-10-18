@@ -19,10 +19,11 @@ poetry run causy execute --help
 poetry run causy execute tests/fixtures/toy_data_larger.json --algorithm PC
 ```
 
-Run causy with your custom pipeline
+Customize your causy pipeline by ejecting and modifying the pipeline file.
 ```bash
-poetry run causy execute --help
-poetry run causy execute tests/fixtures/toy_data_larger.json --pipeline pipelines/pc.json
+poetry run causy eject PC pc.json
+# edit pc.json
+poetry run causy execute tests/fixtures/toy_data_larger.json --pipeline pc.json
 ```
 
 Execute tests

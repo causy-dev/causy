@@ -22,6 +22,11 @@ from causy.interfaces import (
 
 import logging
 
+from causy.utils import (
+    load_pipeline_artefact_by_definition,
+    load_pipeline_steps_by_definition,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -281,6 +286,11 @@ def unpack_run(args):
 
 
 class AbstractGraphModel(GraphModelInterface, ABC):
+
+    pipeline_steps: List[IndependenceTestInterface]
+    graph: BaseGraphInterface
+    pool: mp.Pool
+
     def __init__(
         self,
         graph=None,
@@ -477,5 +487,22 @@ class Loop(LogicStepInterface):
         exit_condition: ExitConditionInterface = None,
     ):
         super().__init__()
+        # TODO check if this is a good idea
+        if type(exit_condition) == dict:
+            exit_condition = load_pipeline_artefact_by_definition(exit_condition)
+
+        # TODO: check if this is a good idea
+        if len(pipeline_steps) > 0 and type(pipeline_steps[0]) == dict:
+            pipeline_steps = load_pipeline_steps_by_definition(pipeline_steps)
+
         self.pipeline_steps = pipeline_steps or []
         self.exit_condition = exit_condition
+
+    def serialize(self) -> dict:
+        serialized = super().serialize()
+        serialized["params"] = {}
+        serialized["params"]["exit_condition"] = self.exit_condition.serialize()
+        serialized["params"]["pipeline_steps"] = [
+            i.serialize() for i in self.pipeline_steps
+        ]
+        return serialized

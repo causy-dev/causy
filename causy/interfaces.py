@@ -5,17 +5,29 @@ from dataclasses import dataclass
 from typing import List, Dict
 import logging
 
+from causy.utils import serialize_module_name, load_pipeline_artefact_by_definition
+
 logger = logging.getLogger(__name__)
 
 DEFAULT_THRESHOLD = 0.01
 
 AS_MANY_AS_FIELDS = 0
+import sys
 
 
 @dataclass
 class ComparisonSettings:
     min: int = 2
     max: int = AS_MANY_AS_FIELDS
+
+    def serialize(self):
+        return {
+            "name": serialize_module_name(self),
+            "params": {
+                "min": self.min,
+                "max": self.max,
+            },
+        }
 
 
 class NodeInterface:
@@ -113,15 +125,66 @@ class GraphModelInterface(ABC):
         pass
 
 
+class GeneratorInterface(ABC):
+    comparison_settings: ComparisonSettings
+
+    @abstractmethod
+    def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
+        pass
+
+    def serialize(self) -> dict:
+        return {
+            "name": serialize_module_name(self),
+            "params": {
+                "comparison_settings": self.comparison_settings.serialize(),
+            },
+        }
+
+    def __init__(self, comparison_settings: ComparisonSettings):
+        if type(comparison_settings) == dict:
+            comparison_settings = load_pipeline_artefact_by_definition(
+                comparison_settings
+            )
+
+        self.comparison_settings = comparison_settings
+
+
 class IndependenceTestInterface(ABC):
     NUM_OF_COMPARISON_ELEMENTS = 0
-    GENERATOR = None
+    GENERATOR: GeneratorInterface = None
 
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
 
     PARALLEL = True
 
-    def __init__(self, threshold: float = DEFAULT_THRESHOLD):
+    def __init__(
+        self,
+        threshold: float = DEFAULT_THRESHOLD,
+        generator: GeneratorInterface = None,
+        num_of_comparison_elements: int = None,
+        chunk_size_parallel_processing: int = None,
+        parallel: bool = None,
+    ):
+        if generator:
+            if type(generator) == dict:
+                self.GENERATOR = load_pipeline_artefact_by_definition(generator)
+            else:
+                self.GENERATOR = generator
+
+        if num_of_comparison_elements:
+            if type(num_of_comparison_elements) == dict:
+                self.NUM_OF_COMPARISON_ELEMENTS = load_pipeline_artefact_by_definition(
+                    num_of_comparison_elements
+                )
+            else:
+                self.NUM_OF_COMPARISON_ELEMENTS = num_of_comparison_elements
+
+        if chunk_size_parallel_processing:
+            self.CHUNK_SIZE_PARALLEL_PROCESSING = chunk_size_parallel_processing
+
+        if parallel:
+            self.PARALLEL = parallel
+
         self.threshold = threshold
 
     @abstractmethod
@@ -137,17 +200,28 @@ class IndependenceTestInterface(ABC):
     def __call__(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         return self.test(nodes, graph)
 
+    def serialize(self) -> dict:
+        return {
+            "name": serialize_module_name(self),
+            "params": {
+                "threshold": self.threshold,
+                "generator": self.GENERATOR.serialize(),
+                "num_of_comparison_elements": self.NUM_OF_COMPARISON_ELEMENTS,
+                "chunk_size_parallel_processing": self.CHUNK_SIZE_PARALLEL_PROCESSING,
+                "parallel": self.PARALLEL,
+            },
+        }
+
 
 class LogicStepInterface(ABC):
     @abstractmethod
     def execute(self, graph: BaseGraphInterface, graph_model_instance_: dict):
         pass
 
-
-class GeneratorInterface(ABC):
-    @abstractmethod
-    def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
-        pass
+    def serialize(self) -> dict:
+        return {
+            "name": serialize_module_name(self),
+        }
 
 
 class ExitConditionInterface(ABC):
@@ -176,3 +250,8 @@ class ExitConditionInterface(ABC):
         iteration: int,
     ) -> bool:
         return self.check(graph, graph_model_instance_, actions_taken, iteration)
+
+    def serialize(self):
+        return {
+            "name": serialize_module_name(self),
+        }

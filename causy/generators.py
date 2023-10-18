@@ -41,9 +41,6 @@ class AllCombinationsGenerator(GeneratorInterface):
             for i in itertools.combinations(graph.nodes, r):
                 yield i
 
-    def __init__(self, comparison_settings: ComparisonSettings):
-        self.comparison_settings = comparison_settings
-
 
 class PairsWithNeighboursGenerator(GeneratorInterface):
     def generate(
@@ -91,6 +88,3 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
 
                     for k in itertools.combinations(other_neighbours, i):
                         yield [node.name, neighbour.name] + [ks.name for ks in k]
-
-    def __init__(self, comparison_settings: ComparisonSettings):
-        self.comparison_settings = comparison_settings

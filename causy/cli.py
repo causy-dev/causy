@@ -5,6 +5,10 @@ from json import JSONEncoder
 import typer
 
 from causy.graph import graph_model_factory
+from causy.utils import (
+    load_pipeline_artefact_by_definition,
+    load_pipeline_steps_by_definition,
+)
 
 app = typer.Typer()
 import logging
@@ -25,19 +29,7 @@ def load_algorithm(algorithm: str):
 
 
 def create_pipeline(pipeline_config: dict):
-    # clean up, add different generators, add loops
-    pipeline = []
-    for step in pipeline_config["steps"]:
-        path = ".".join(step["step"].split(".")[:-1])
-        cls = step["step"].split(".")[-1]
-        st_function = importlib.import_module(path)
-        st_function = getattr(st_function, cls)
-        if "params" not in step.keys():
-            pipeline.append(st_function())
-        else:
-            pipeline.append(st_function(**step["params"]))
-
-    return pipeline
+    return load_pipeline_steps_by_definition(pipeline_config["steps"])
 
 
 def show_edges(graph):
@@ -51,6 +43,21 @@ def show_edges(graph):
 class MyJSONEncoder(JSONEncoder):
     def default(self, obj):
         return obj.to_dict()
+
+
+@app.command()
+def eject(algorithm: str, output_file: str):
+    typer.echo(f"💾 Loading algorithm {algorithm}")
+    model = load_algorithm(algorithm)()
+    output = []
+    for step in model.pipeline_steps:
+        output.append(step.serialize())
+
+    result = {"name": algorithm, "steps": output}
+
+    typer.echo(f"💾 Saving algorithm {algorithm} to {output_file}")
+    with open(output_file, "w") as file:
+        file.write(json.dumps(result, indent=4))
 
 
 @app.command()

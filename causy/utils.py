@@ -1,3 +1,4 @@
+import importlib
 import logging
 
 from sympy import transpose, Matrix, solve_linear_system, symbols, Symbol, shape
@@ -104,3 +105,30 @@ def get_t_and_critial_t(sample_size, nb_of_control_vars, par_corr, threshold):
     critical_t = scipy_stats.t.ppf(1 - threshold / 2, deg_of_freedom)
     t = par_corr * math.sqrt((deg_of_freedom) / (1 - par_corr**2))
     return (t, critical_t)
+
+
+def serialize_module_name(cls):
+    return f"{cls.__class__.__module__}.{cls.__class__.__name__}"
+
+
+def load_pipeline_artefact_by_definition(step):
+    name = step["name"]
+    path = ".".join(name.split(".")[:-1])
+    cls = name.split(".")[-1]
+    st_function = importlib.import_module(path)
+    st_function = getattr(st_function, cls)
+    if not st_function:
+        raise ValueError(f"{name} not found")
+
+    if "params" not in step.keys():
+        return st_function()
+    else:
+        return st_function(**step["params"])
+
+
+def load_pipeline_steps_by_definition(steps):
+    pipeline = []
+    for step in steps:
+        st_function = load_pipeline_artefact_by_definition(step)
+        pipeline.append(st_function)
+    return pipeline
