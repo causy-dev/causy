@@ -17,6 +17,7 @@ def load_json(pipeline_file: str):
 
 
 def create_pipeline(pipeline_config: dict):
+    # clean up, add different generators, add loops
     pipeline = []
     for step in pipeline_config["steps"]:
         path = ".".join(step["step"].split(".")[:-1])

@@ -157,14 +157,20 @@ class UndirectedGraph(BaseGraphInterface):
         if v.name not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
         if u not in self.edges:
-            raise UndirectedGraphError(f"Node {u} does not have any nodes")
+            raise UndirectedGraphError(f"Node {u} does not have any edges")
         if v not in self.edges:
-            raise UndirectedGraphError(f"Node {v} does not have any nodes")
+            raise UndirectedGraphError(f"Node {v} does not have any edges")
 
         self.edges[u][v] = value
         self.edges[v][u] = value
 
     def edge_exists(self, u: Node, v: Node):
+        """
+        Check if any edge exists between u and v. Cases: u -> v, u <-> v, u <- v
+        :param u: node u
+        :param v: node v
+        :return: True if any edge exists, False otherwise
+        """
         if u.name not in self.nodes:
             return False
         if v.name not in self.nodes:
@@ -176,6 +182,12 @@ class UndirectedGraph(BaseGraphInterface):
         return False
 
     def directed_edge_exists(self, u: Node, v: Node):
+        """
+        Check if a directed edge exists between u and v. Cases: u -> v, u <-> v
+        :param u: node u
+        :param v: node v
+        :return: True if a directed edge exists, False otherwise
+        """
         if u.name not in self.nodes:
             return False
         if v.name not in self.nodes:
@@ -187,11 +199,42 @@ class UndirectedGraph(BaseGraphInterface):
         return True
 
     def only_directed_edge_exists(self, u: Node, v: Node):
+        """
+        Check if a directed edge exists between u and v, but no directed edge exists between v and u. Case: u -> v
+        :param u: node u
+        :param v: node v
+        :return: True if only directed edge exists, False otherwise
+        """
         if self.directed_edge_exists(u, v) and not self.directed_edge_exists(v, u):
             return True
         return False
 
     def undirected_edge_exists(self, u: Node, v: Node):
+        """
+        Check if an undirected edge exists between u and v. Note: currently, an undirected edges is implemented just as
+        a directed edge. However, they are two functions as they mean different things in different algorithms.
+        Currently, this function is used in the PC algorithm, where an undirected edge is an edge which could not be
+        oriented in any direction by orientation rules.
+        Later, a cohersive naming scheme should be implemented.
+        :param u: node u
+        :param v: node v
+        :return: True if an undirected edge exists, False otherwise
+        """
+        if self.directed_edge_exists(u, v) and self.directed_edge_exists(v, u):
+            return True
+        return False
+
+    def bidirected_edge_exists(self, u: Node, v: Node):
+        """
+        Check if a bidirected edge exists between u and v. Note: currently, a bidirected edges is implemented just as
+        an undirected edge. However, they are two functions as they mean different things in different algorithms.
+        This function will be used for the FCI algorithm for now, where a bidirected edge is an edge between two nodes
+        that have been identified to have a common cause by orientation rules.
+        Later, a cohersive naming scheme should be implemented.
+        :param u: node u
+        :param v: node v
+        :return: True if a bidirected edge exists, False otherwise
+        """
         if self.directed_edge_exists(u, v) and self.directed_edge_exists(v, u):
             return True
         return False
@@ -209,6 +252,35 @@ class UndirectedGraph(BaseGraphInterface):
         :return:
         """
         self.nodes[name] = Node(name, values)
+
+    def directed_path_exists(self, u:Node, v:Node):
+        """
+        Check if a directed path from u to v exists
+        :param u: node u
+        :param v: node v
+        :return: True if a directed path exists, False otherwise
+        """
+        if self.directed_edge_exists(u, v):
+            return True
+        for w in self.edges[u]:
+            if self.directed_path_exists(w, v):
+                return True
+        return False
+
+    def inducing_path_exists(self, u:Node, v:Node):
+        """
+        Check if an inducing path from u to v exists.
+        An inducing path from u to v is a directed path from u to v on which all mediators are colliders.
+        :param u: node u
+        :param v: node v
+        :return: True if an inducing path exists, False otherwise
+        """
+        if not self.directed_path_exists(u, v):
+            return False
+        for w in self.edges[u]:
+            if self.directed_path_exists(w, v):
+                return True
+        return False
 
 
 def unpack_run(args):
@@ -399,7 +471,7 @@ PCGraph = graph_model_factory(
         PartialCorrelationTest(threshold=0.1),
         ExtendedPartialCorrelationTestMatrix(threshold=0.1),
         ColliderTest(),
-        # check replacing it with a loop of ExtendedPartialCorrelationTest
+        # check adding a loop on orientation rules
         # Loop(
         #    pipeline_steps=[
         #        PlaceholderTest(),

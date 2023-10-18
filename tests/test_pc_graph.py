@@ -8,6 +8,7 @@ from causy.cli import show_edges
 
 
 # TODO: generate larger toy model to test quadruple orientation rules.
+# TODO: build loop over last four orientation rules in pc.json
 def generate_data_minimal_example(a, b, c, d, sample_size):
     V = d * np.random.normal(0, 1, sample_size)
     W = c * np.random.normal(0, 1, sample_size)

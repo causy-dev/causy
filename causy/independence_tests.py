@@ -27,6 +27,7 @@ from causy.interfaces import (
     ComparisonSettings,
 )
 
+# TODO: make tests configurable (choosing different generators for different algorithms)
 
 class CalculateCorrelations(IndependenceTestInterface):
     GENERATOR = AllCombinationsGenerator(
