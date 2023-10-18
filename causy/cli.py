@@ -8,6 +8,7 @@ from causy.graph import graph_model_factory
 from causy.utils import (
     load_pipeline_artefact_by_definition,
     load_pipeline_steps_by_definition,
+    show_edges,
 )
 
 app = typer.Typer()
@@ -30,14 +31,6 @@ def load_algorithm(algorithm: str):
 
 def create_pipeline(pipeline_config: dict):
     return load_pipeline_steps_by_definition(pipeline_config["steps"])
-
-
-def show_edges(graph):
-    edges = []
-    for u in graph.edges:
-        for v in graph.edges[u]:
-            edges.append((u, v))
-    return edges
 
 
 class MyJSONEncoder(JSONEncoder):

@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 
 from causy.algorithms import PC
-from causy.cli import show_edges
+from causy.utils import show_edges
 
 
 # TODO: generate larger toy model to test quadruple orientation rules.

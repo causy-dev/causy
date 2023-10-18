@@ -7,11 +7,17 @@ Causal discovery made easy.
 ### Setup
 We recommend using poetry to manage the dependencies. To install poetry follow the instructions on https://python-poetry.org/docs/#installation.
 
+Install dependencies
 ```bash
 poetry install
 ```
 
-### Usage
+Execute tests
+```bash
+poetry run python -m unittest discover -s tests
+```
+
+### Usage via CLI
 
 Run causy with one of the default algorithms
 ```bash
@@ -26,7 +32,28 @@ poetry run causy eject PC pc.json
 poetry run causy execute tests/fixtures/toy_data_larger.json --pipeline pc.json
 ```
 
-Execute tests
-```bash
-poetry run python -m unittest discover -s tests
+
+### Usage via Code
+
+Use a default algorithm
+```python
+from causy.algorithms import PC
+from causy.utils import show_edges
+
+model = PC()
+model.create_graph_from_data(
+    [
+        {"a": 1, "b": 0.3}, 
+        {"a": 0.5, "b": 0.2}
+    ]
+)
+model.create_all_possible_edges()
+model.execute_pipeline_steps()
+edges = show_edges(model.graph)
+
+for edge in edges:
+    print(
+        f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
+    )
+
 ```

@@ -132,3 +132,11 @@ def load_pipeline_steps_by_definition(steps):
         st_function = load_pipeline_artefact_by_definition(step)
         pipeline.append(st_function)
     return pipeline
+
+
+def show_edges(graph):
+    edges = []
+    for u in graph.edges:
+        for v in graph.edges[u]:
+            edges.append((u, v))
+    return edges
