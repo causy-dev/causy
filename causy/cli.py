@@ -16,6 +16,14 @@ def load_json(pipeline_file: str):
     return pipeline
 
 
+def load_algorithm(algorithm: str):
+    st_function = importlib.import_module("causy.algorithms")
+    st_function = getattr(st_function, algorithm)
+    if not st_function:
+        raise ValueError(f"Algorithm {algorithm} not found")
+    return st_function
+
+
 def create_pipeline(pipeline_config: dict):
     # clean up, add different generators, add loops
     pipeline = []
@@ -47,21 +55,32 @@ class MyJSONEncoder(JSONEncoder):
 
 @app.command()
 def execute(
-    pipeline_file: str,
     data_file: str,
+    pipeline: str = None,
+    algorithm: str = None,
     graph_actions_save_file: str = None,
     render_save_file: str = None,
     log_level: str = "ERROR",
 ):
-    typer.echo(f"💾 Loading pipeline from {pipeline_file}")
-    pipeline_config = load_json(pipeline_file)
-    # set log level
     logging.basicConfig(level=log_level)
-    pipeline = create_pipeline(pipeline_config)
-    model = graph_model_factory(pipeline_steps=pipeline)()
+    if pipeline:
+        typer.echo(f"💾 Loading pipeline from {pipeline}")
+        pipeline_config = load_json(pipeline)
+        pipeline = create_pipeline(pipeline_config)
+        model = graph_model_factory(pipeline_steps=pipeline)()
+    elif algorithm:
+        typer.echo(f"💾 Creating pipeline from algorithm {algorithm}")
+        model = load_algorithm(algorithm)()
 
+    else:
+        raise ValueError("Either pipeline_file or algorithm must be specified")
+
+    # initialize from json
     model.create_graph_from_data(load_json(data_file))
+
+    # TODO: I should become a configurable skeleton builder
     model.create_all_possible_edges()
+
     typer.echo("🕵🏻‍♀  Executing pipeline steps...")
     model.execute_pipeline_steps()
     edges = show_edges(model.graph)
@@ -78,6 +97,7 @@ def execute(
             )
 
     if render_save_file:
+        # I'm just a hacky rendering function, pls replace me with causy ui 🙄
         typer.echo(f"💾 Saving graph to {render_save_file}")
         import networkx as nx
         import matplotlib.pyplot as plt
