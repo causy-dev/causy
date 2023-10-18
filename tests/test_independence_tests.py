@@ -6,7 +6,6 @@ from causy.utils import sum_lists
 from causy.independence_tests import (
     CalculateCorrelations,
     CorrelationCoefficientTest,
-    TestResultAction,
 )
 
 

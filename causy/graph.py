@@ -6,33 +6,23 @@ from dataclasses import dataclass
 from typing import List, Optional, Dict, Set
 import multiprocessing as mp
 
-from causy.independence_tests import (
-    CorrelationCoefficientTest,
+from causy.interfaces import (
     IndependenceTestInterface,
-    PartialCorrelationTest,
-    CalculateCorrelations,
-    ExtendedPartialCorrelationTestMatrix,
 )
-
-from causy.orientation_tests import ColliderTest
 
 from causy.interfaces import (
     BaseGraphInterface,
     NodeInterface,
     TestResultAction,
-    ComparisonSettings,
-    AS_MANY_AS_FIELDS,
     TestResult,
     GraphModelInterface,
     LogicStepInterface,
-    GeneratorInterface,
+    ExitConditionInterface,
 )
 
 import logging
 
 logger = logging.getLogger(__name__)
-
-DEFAULT_INDEPENDENCE_TEST = CorrelationCoefficientTest
 
 
 @dataclass
@@ -58,6 +48,7 @@ class UndirectedGraph(BaseGraphInterface):
         self.nodes = {}
         self.edges = {}
         self.edge_history = {}
+        self.action_history = []
 
     def add_edge(self, u: Node, v: Node, value: Dict):
         """
@@ -253,7 +244,7 @@ class UndirectedGraph(BaseGraphInterface):
         """
         self.nodes[name] = Node(name, values)
 
-    def directed_path_exists(self, u:Node, v:Node):
+    def directed_path_exists(self, u: Node, v: Node):
         """
         Check if a directed path from u to v exists
         :param u: node u
@@ -267,7 +258,7 @@ class UndirectedGraph(BaseGraphInterface):
                 return True
         return False
 
-    def inducing_path_exists(self, u:Node, v:Node):
+    def inducing_path_exists(self, u: Node, v: Node):
         """
         Check if an inducing path from u to v exists.
         An inducing path from u to v is a directed path from u to v on which all mediators are colliders.
@@ -338,7 +329,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     def execute_pipeline_steps(self):
         """
         Execute all pipeline_steps
-        :return:
+        :return: the steps taken during the step execution
         """
         action_history = []
 
@@ -353,7 +344,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 {"step": filter.__class__.__name__, "actions": result}
             )
 
-        self.graph.action_history = action_history
+        return action_history
 
     def _format_yield(self, test_fn, graph, generator):
         for i in generator:
@@ -371,23 +362,29 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 if i.x is not None and i.y is not None:
                     logger.info(f"Action: {i.action} on {i.x.name} and {i.y.name}")
 
-                # add the action to the actions history
-                actions_taken.append(i)
-
                 # execute the action returned by the test
                 if i.action == TestResultAction.REMOVE_EDGE_UNDIRECTED:
+                    if not self.graph.undirected_edge_exists(i.x, i.y):
+                        continue
                     self.graph.remove_edge(i.x, i.y)
                     self.graph.add_edge_history(i.x, i.y, i)
                     self.graph.add_edge_history(i.y, i.x, i)
                 elif i.action == TestResultAction.UPDATE_EDGE:
+                    if not self.graph.edge_exists(i.x, i.y):
+                        continue
                     self.graph.update_edge(i.x, i.y, i.data)
                     self.graph.add_edge_history(i.x, i.y, i)
                     self.graph.add_edge_history(i.y, i.x, i)
                 elif i.action == TestResultAction.DO_NOTHING:
-                    pass
+                    continue
                 elif i.action == TestResultAction.REMOVE_EDGE_DIRECTED:
+                    if not self.graph.directed_edge_exists(i.x, i.y):
+                        continue
                     self.graph.remove_directed_edge(i.x, i.y)
                     self.graph.add_edge_history(i.x, i.y, i)
+
+                # add the action to the actions history
+                actions_taken.append(i)
 
         return actions_taken
 
@@ -424,6 +421,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 ]
             ]
             actions_taken.extend(self._take_action(iterator))
+        self.graph.action_history.append(
+            {"step": type(test_fn).__name__, "actions": actions_taken}
+        )
 
         return actions_taken
 
@@ -449,34 +449,24 @@ class Loop(LogicStepInterface):
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
     ):
         n = 0
-        while not self.exit_condition((graph, n)):
+        steps = None
+        while not self.exit_condition(
+            graph=graph,
+            graph_model_instance_=graph_model_instance_,
+            actions_taken=steps,
+            iteration=n,
+        ):
+            steps = []
             for pipeline_step in self.pipeline_steps:
-                graph_model_instance_.execute_pipeline_step(pipeline_step)
+                result = graph_model_instance_.execute_pipeline_step(pipeline_step)
+                steps.extend(result)
             n += 1
 
     def __init__(
         self,
         pipeline_steps: Optional[List[IndependenceTestInterface]] = None,
-        exit_condition=None,
+        exit_condition: ExitConditionInterface = None,
     ):
         super().__init__()
         self.pipeline_steps = pipeline_steps or []
         self.exit_condition = exit_condition
-
-
-PCGraph = graph_model_factory(
-    pipeline_steps=[
-        CalculateCorrelations(),
-        CorrelationCoefficientTest(threshold=0.1),
-        PartialCorrelationTest(threshold=0.1),
-        ExtendedPartialCorrelationTestMatrix(threshold=0.1),
-        ColliderTest(),
-        # check adding a loop on orientation rules
-        # Loop(
-        #    pipeline_steps=[
-        #        PlaceholderTest(),
-        #    ],
-        #    exit_condition=lambda inputs: True if inputs[1] > 2 else False
-        # )
-    ]
-)

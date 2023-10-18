@@ -3,12 +3,11 @@ import json
 import unittest
 import numpy as np
 
-from causy.graph import PCGraph
+from causy.algorithms import PC
 from causy.cli import show_edges
 
 
 # TODO: generate larger toy model to test quadruple orientation rules.
-# TODO: build loop over last four orientation rules in pc.json
 def generate_data_minimal_example(a, b, c, d, sample_size):
     V = d * np.random.normal(0, 1, sample_size)
     W = c * np.random.normal(0, 1, sample_size)
@@ -61,7 +60,7 @@ class PCTestTestCase(unittest.TestCase):
                     row[k] = float(row[k])
                 test_data.append(row)
 
-        tst = PCGraph()
+        tst = PC()
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
@@ -70,7 +69,7 @@ class PCTestTestCase(unittest.TestCase):
     def test_with_minimal_toy_model(self):
         a, b, c, d, sample_size = 1.2, 1.7, 2, 1.5, 10000
         test_data = generate_data_minimal_example(a, b, c, d, sample_size)
-        tst = PCGraph()
+        tst = PC()
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
@@ -79,7 +78,7 @@ class PCTestTestCase(unittest.TestCase):
     def test_with_larger_toy_model(self):
         a, b, c, d, e, f, g, sample_size = 1.2, 1.7, 2, 1.5, 3, 4, 1.8, 10000
         test_data = generate_data_further_example(a, b, c, d, e, f, g, sample_size)
-        tst = PCGraph()
+        tst = PC()
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()

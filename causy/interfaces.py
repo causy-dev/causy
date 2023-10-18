@@ -148,3 +148,31 @@ class GeneratorInterface(ABC):
     @abstractmethod
     def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
         pass
+
+
+class ExitConditionInterface(ABC):
+    @abstractmethod
+    def check(
+        self,
+        graph: BaseGraphInterface,
+        graph_model_instance_: dict,
+        actions_taken: List[TestResult],
+        iteration: int,
+    ) -> bool:
+        """
+        :param graph:
+        :param graph_model_instance_:
+        :param actions_taken:
+        :param iteration:
+        :return: True if you want to break an iteration, False otherwise
+        """
+        pass
+
+    def __call__(
+        self,
+        graph: BaseGraphInterface,
+        graph_model_instance_: dict,
+        actions_taken: List[TestResult],
+        iteration: int,
+    ) -> bool:
+        return self.check(graph, graph_model_instance_, actions_taken, iteration)
