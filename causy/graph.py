@@ -263,6 +263,21 @@ class UndirectedGraph(BaseGraphInterface):
                 return True
         return False
 
+    def directed_paths(self, u: Node, v: Node):
+        """
+        Return all directed paths from u to v
+        :param u: node u
+        :param v: node v
+        :return: list of directed paths
+        """
+        if self.directed_edge_exists(u, v):
+            return [[(u, v)]]
+        paths = []
+        for w in self.edges[u]:
+            for path in self.directed_paths(w, v):
+                paths.append([(u, w)] + path)
+        return paths
+
     def inducing_path_exists(self, u: Node, v: Node):
         """
         Check if an inducing path from u to v exists.
@@ -273,9 +288,11 @@ class UndirectedGraph(BaseGraphInterface):
         """
         if not self.directed_path_exists(u, v):
             return False
-        for w in self.edges[u]:
-            if self.directed_path_exists(w, v):
-                return True
+        for path in self.directed_paths(u, v):
+            for i in range(1, len(path) - 1):
+                r, w = path[i]
+                if not self.bidirected_edge_exists(r, w):
+                    return False
         return False
 
 
