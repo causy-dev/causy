@@ -17,12 +17,12 @@ from causy.orientation_tests import (
 PC = graph_model_factory(
     pipeline_steps=[
         CalculateCorrelations(),
-        CorrelationCoefficientTest(threshold=0.1),
-        PartialCorrelationTest(threshold=0.1),
-        ExtendedPartialCorrelationTestMatrix(threshold=0.1),
+        CorrelationCoefficientTest(threshold=0.01),
+        PartialCorrelationTest(threshold=0.01),
+        ExtendedPartialCorrelationTestMatrix(threshold=0.01),
+        ColliderTest(),
         Loop(
             pipeline_steps=[
-                ColliderTest(),
                 NonColliderTest(),
                 FurtherOrientTripleTest(),
                 OrientQuadrupleTest(),
