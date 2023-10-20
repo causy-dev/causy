@@ -32,10 +32,11 @@ class ComparisonSettings:
 
 class NodeInterface:
     name: str
+    id: str
     values: List[float]
 
     def to_dict(self):
-        return self.name
+        return self.id
 
 
 class TestResultAction(enum.StrEnum):

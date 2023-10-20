@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 
 from causy.algorithms import PC
-from causy.utils import show_edges
+from causy.utils import retrieve_edges
 
 
 # TODO: generate larger toy model to test quadruple orientation rules.
@@ -64,7 +64,7 @@ class PCTestTestCase(unittest.TestCase):
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
-        show_edges(tst.graph)
+        retrieve_edges(tst.graph)
 
     def test_with_minimal_toy_model(self):
         a, b, c, d, sample_size = 1.2, 1.7, 2, 1.5, 10000
@@ -73,7 +73,7 @@ class PCTestTestCase(unittest.TestCase):
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
-        show_edges(tst.graph)
+        retrieve_edges(tst.graph)
 
     def test_with_larger_toy_model(self):
         a, b, c, d, e, f, g, sample_size = 1.2, 1.7, 2, 1.5, 3, 4, 1.8, 10000
@@ -82,7 +82,7 @@ class PCTestTestCase(unittest.TestCase):
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
-        show_edges(tst.graph)
+        retrieve_edges(tst.graph)
 
 
 if __name__ == "__main__":

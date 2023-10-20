@@ -1,10 +1,8 @@
-import importlib
-import itertools
-import json
 from abc import ABC
 from dataclasses import dataclass
 from typing import List, Optional, Dict, Set
 import multiprocessing as mp
+from uuid import uuid4
 
 from causy.interfaces import (
     IndependenceTestInterface,
@@ -33,10 +31,11 @@ logger = logging.getLogger(__name__)
 @dataclass
 class Node(NodeInterface):
     name: str
+    id: str
     values: List[float]
 
     def __hash__(self):
-        return hash(self.name)
+        return hash(self.id)
 
 
 class UndirectedGraphError(Exception):
@@ -62,9 +61,9 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: v node
         :return:
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             raise UndirectedGraphError(f"Node {u} does not exist")
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
         if u not in self.edges:
             self.edges[u] = {}
@@ -104,9 +103,9 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: v node
         :return:
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             raise UndirectedGraphError(f"Node {u} does not exist")
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
         if u not in self.edges:
             raise UndirectedGraphError(f"Node {u} does not have any nodes")
@@ -128,9 +127,9 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: v node
         :return:
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             raise UndirectedGraphError(f"Node {u} does not exist")
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
         if u not in self.edges:
             raise UndirectedGraphError(f"Node {u} does not have any nodes")
@@ -148,9 +147,9 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: v node
         :return:
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             raise UndirectedGraphError(f"Node {u} does not exist")
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
         if u not in self.edges:
             raise UndirectedGraphError(f"Node {u} does not have any edges")
@@ -167,9 +166,9 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: node v
         :return: True if any edge exists, False otherwise
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             return False
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             return False
         if u in self.edges and v in self.edges[u]:
             return True
@@ -184,9 +183,9 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: node v
         :return: True if a directed edge exists, False otherwise
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             return False
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             return False
         if u not in self.edges:
             return False
@@ -238,16 +237,19 @@ class UndirectedGraph(BaseGraphInterface):
     def edge_value(self, u: Node, v: Node):
         return self.edges[u][v]
 
-    def add_node(self, name: str, values: List[float]):
+    def add_node(self, name: str, values: List[float], id: str = None):
         """
         Add a node to the graph
         :param name: name of the node
         :param values: values of the node
+        :param id: id of the node
         :param : node
 
         :return:
         """
-        self.nodes[name] = Node(name, values)
+        if id is None:
+            id = str(uuid4())
+        self.nodes[id] = Node(name=name, id=id, values=values)
 
     def directed_path_exists(self, u: Node, v: Node):
         """

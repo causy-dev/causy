@@ -134,7 +134,7 @@ def load_pipeline_steps_by_definition(steps):
     return pipeline
 
 
-def show_edges(graph):
+def retrieve_edges(graph):
     edges = []
     for u in graph.edges:
         for v in graph.edges[u]:
