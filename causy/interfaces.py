@@ -36,7 +36,7 @@ class NodeInterface:
     values: List[float]
 
     def to_dict(self):
-        return self.id
+        return {"id": self.id, "name": self.name}
 
 
 class TestResultAction(enum.StrEnum):
