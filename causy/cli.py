@@ -92,10 +92,17 @@ def execute(
 
     typer.echo("🕵🏻‍♀  Executing pipeline steps...")
     model.execute_pipeline_steps()
-    edges = retrieve_edges(model.graph)
-    for edge in edges:
+    edges = []
+    for edge in retrieve_edges(model.graph):
         print(
             f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
+        )
+        edges.append(
+            {
+                "from": edge[0].to_dict(),
+                "to": edge[1].to_dict(),
+                "value": model.graph.edges[edge[0]][edge[1]],
+            }
         )
 
     if output_file:
