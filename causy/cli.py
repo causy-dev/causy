@@ -59,7 +59,7 @@ def execute(
     data_file: str,
     pipeline: str = None,
     algorithm: str = None,
-    graph_actions_save_file: str = None,
+    output_file: str = None,
     render_save_file: str = None,
     log_level: str = "ERROR",
 ):
@@ -98,9 +98,9 @@ def execute(
             f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
         )
 
-    if graph_actions_save_file:
-        typer.echo(f"💾 Saving graph actions to {graph_actions_save_file}")
-        with open(graph_actions_save_file, "w") as file:
+    if output_file:
+        typer.echo(f"💾 Saving graph actions to {output_file}")
+        with open(output_file, "w") as file:
             export = {
                 "name": algorithm,
                 "created_at": datetime.now().isoformat(),
