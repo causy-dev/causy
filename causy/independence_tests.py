@@ -29,6 +29,7 @@ from causy.interfaces import (
 
 # TODO: make tests configurable (choosing different generators for different algorithms)
 
+
 class CalculateCorrelations(IndependenceTestInterface):
     GENERATOR = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
@@ -228,7 +229,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
 
         other_neighbours.remove(graph.nodes[nodes[1]])
 
-        if not set(nodes[2:]).issubset(set([on.name for on in list(other_neighbours)])):
+        if not set(nodes[2:]).issubset(set([on.id for on in list(other_neighbours)])):
             return
 
         covariance_matrix = [
