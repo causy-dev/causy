@@ -6,7 +6,7 @@ authors = ["Sofia Faltenbacher <faltenbacher.sofia@gmail.com>", "Lilith Wittmann
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.13"
+python = ">=3.11,<3.12" # until torch is available for 3.12
 sympy = "^1.12"
 scipy = "^1.11.2"
 pre-commit = "^3.4.0"
