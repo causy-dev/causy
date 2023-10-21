@@ -154,8 +154,8 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
     GENERATOR = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1000
+    PARALLEL = True
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         """
@@ -206,7 +206,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
     GENERATOR = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 200
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1000
     PARALLEL = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
@@ -217,13 +217,14 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
         """
+
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
             return
 
-        other_neighbours = set(graph.edges[graph.nodes[nodes[0]]])
-        other_neighbours.remove(graph.nodes[nodes[1]])
+        other_neighbours = set(graph.edges[nodes[0]])
+        other_neighbours.remove(graph.nodes[nodes[1]].id)
 
-        if not set(nodes[2:]).issubset(set([on.id for on in list(other_neighbours)])):
+        if not set(nodes[2:]).issubset(set([on for on in list(other_neighbours)])):
             return
 
         inverse_cov_matrix = torch.inverse(
@@ -253,7 +254,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
 
         if abs(t) < critical_t:
             logger.debug(
-                f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([on.name for on in other_neighbours])}"
+                f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([graph.nodes[on].name for on in other_neighbours])}"
             )
             nodes_set = set([graph.nodes[n] for n in nodes])
             return TestResult(

@@ -63,7 +63,7 @@ class TestResult:
 
 class BaseGraphInterface(ABC):
     nodes: Dict[str, NodeInterface]
-    edges: Dict[NodeInterface, Dict[NodeInterface, Dict]]
+    edges: Dict[str, Dict[str, Dict]]
 
     @abstractmethod
     def retrieve_edge_history(self, u, v, action: TestResultAction) -> List[TestResult]:
@@ -128,6 +128,7 @@ class GraphModelInterface(ABC):
 
 class GeneratorInterface(ABC):
     comparison_settings: ComparisonSettings
+    chunked: bool = False
 
     @abstractmethod
     def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
@@ -138,14 +139,18 @@ class GeneratorInterface(ABC):
             "name": serialize_module_name(self),
             "params": {
                 "comparison_settings": self.comparison_settings.serialize(),
+                "chunked": self.chunked,
             },
         }
 
-    def __init__(self, comparison_settings: ComparisonSettings):
+    def __init__(self, comparison_settings: ComparisonSettings, chunked: bool = None):
         if type(comparison_settings) == dict:
             comparison_settings = load_pipeline_artefact_by_definition(
                 comparison_settings
             )
+
+        if chunked is not None:
+            self.chunked = chunked
 
         self.comparison_settings = comparison_settings
 

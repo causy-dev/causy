@@ -95,12 +95,12 @@ def execute(
     edges = []
     for edge in retrieve_edges(model.graph):
         print(
-            f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
+            f"{model.graph.nodes[edge[0]].name} -> {model.graph.nodes[edge[1]].name}: {model.graph.edges[edge[0]][edge[1]]}"
         )
         edges.append(
             {
-                "from": edge[0].to_dict(),
-                "to": edge[1].to_dict(),
+                "from": model.graph.nodes[edge[0]].to_dict(),
+                "to": model.graph.nodes[edge[1]].to_dict(),
                 "value": model.graph.edges[edge[0]][edge[1]],
             }
         )
@@ -127,7 +127,7 @@ def execute(
         n_graph = nx.DiGraph()
         for u in model.graph.edges:
             for v in model.graph.edges[u]:
-                n_graph.add_edge(u.name, v.name)
+                n_graph.add_edge(model.graph.nodes[u].name, model.graph.nodes[v].name)
         fig = plt.figure(figsize=(10, 10))
         nx.draw(n_graph, with_labels=True, ax=fig.add_subplot(111))
         fig.savefig(render_save_file)

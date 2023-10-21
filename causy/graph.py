@@ -1,6 +1,6 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Optional, Dict, Set
+from typing import List, Optional, Dict, Set, Tuple
 
 import torch
 import torch.multiprocessing as mp
@@ -47,8 +47,8 @@ class UndirectedGraphError(Exception):
 
 class UndirectedGraph(BaseGraphInterface):
     nodes: Dict[str, Node]
-    edges: Dict[Node, Dict[Node, Dict]]
-    edge_history: Dict[Set[Node], List[TestResult]]
+    edges: Dict[str, Dict[str, Dict]]
+    edge_history: Dict[Tuple[str, str], List[TestResult]]
     action_history: List[Dict[str, List[TestResult]]]
 
     def __init__(self):
@@ -68,16 +68,16 @@ class UndirectedGraph(BaseGraphInterface):
             raise UndirectedGraphError(f"Node {u} does not exist")
         if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
-        if u not in self.edges:
-            self.edges[u] = {}
-        if v not in self.edges:
-            self.edges[v] = {}
+        if u.id not in self.edges:
+            self.edges[u.id] = {}
+        if v.id not in self.edges:
+            self.edges[v.id] = {}
 
-        self.edges[u][v] = value
-        self.edges[v][u] = value
+        self.edges[u.id][v.id] = value
+        self.edges[v.id][u.id] = value
 
-        self.edge_history[(u, v)] = []
-        self.edge_history[(v, u)] = []
+        self.edge_history[(u.id, v.id)] = []
+        self.edge_history[(v.id, u.id)] = []
 
     def retrieve_edge_history(
         self, u, v, action: TestResultAction = None
@@ -90,14 +90,14 @@ class UndirectedGraph(BaseGraphInterface):
         :return:
         """
         if action is None:
-            return self.edge_history[(u, v)]
+            return self.edge_history[(u.id, v.id)]
 
-        return [i for i in self.edge_history[(u, v)] if i.action == action]
+        return [i for i in self.edge_history[(u.id, v.id)] if i.action == action]
 
     def add_edge_history(self, u, v, action: TestResultAction):
-        if (u, v) not in self.edge_history:
-            self.edge_history[(u, v)] = []
-        self.edge_history[(u, v)].append(action)
+        if (u.id, v.id) not in self.edge_history:
+            self.edge_history[(u.id, v.id)] = []
+        self.edge_history[(u.id, v.id)].append(action)
 
     def remove_edge(self, u: Node, v: Node):
         """
@@ -110,18 +110,18 @@ class UndirectedGraph(BaseGraphInterface):
             raise UndirectedGraphError(f"Node {u} does not exist")
         if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
-        if u not in self.edges:
+        if u.id not in self.edges:
             raise UndirectedGraphError(f"Node {u} does not have any nodes")
-        if v not in self.edges:
+        if v.id not in self.edges:
             raise UndirectedGraphError(f"Node {v} does not have any nodes")
 
-        if v not in self.edges[u]:
+        if v.id not in self.edges[u.id]:
             return
-        del self.edges[u][v]
+        del self.edges[u.id][v.id]
 
-        if u not in self.edges[v]:
+        if u.id not in self.edges[v.id]:
             return
-        del self.edges[v][u]
+        del self.edges[v.id][u.id]
 
     def remove_directed_edge(self, u: Node, v: Node):
         """
@@ -134,14 +134,14 @@ class UndirectedGraph(BaseGraphInterface):
             raise UndirectedGraphError(f"Node {u} does not exist")
         if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
-        if u not in self.edges:
+        if u.id not in self.edges:
             raise UndirectedGraphError(f"Node {u} does not have any nodes")
-        if v not in self.edges:
+        if v.id not in self.edges:
             raise UndirectedGraphError(f"Node {v} does not have any nodes")
 
-        if v not in self.edges[u]:
+        if v.id not in self.edges[u.id]:
             return
-        del self.edges[u][v]
+        del self.edges[u.id][v.id]
 
     def update_edge(self, u: Node, v: Node, value: Dict):
         """
@@ -154,13 +154,13 @@ class UndirectedGraph(BaseGraphInterface):
             raise UndirectedGraphError(f"Node {u} does not exist")
         if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
-        if u not in self.edges:
+        if u.id not in self.edges:
             raise UndirectedGraphError(f"Node {u} does not have any edges")
-        if v not in self.edges:
+        if v.id not in self.edges:
             raise UndirectedGraphError(f"Node {v} does not have any edges")
 
-        self.edges[u][v] = value
-        self.edges[v][u] = value
+        self.edges[u.id][v.id] = value
+        self.edges[v.id][u.id] = value
 
     def edge_exists(self, u: Node, v: Node):
         """
@@ -173,9 +173,9 @@ class UndirectedGraph(BaseGraphInterface):
             return False
         if v.id not in self.nodes:
             return False
-        if u in self.edges and v in self.edges[u]:
+        if u.id in self.edges and v.id in self.edges[u.id]:
             return True
-        if v in self.edges and u in self.edges[v]:
+        if v.id in self.edges and u.id in self.edges[v.id]:
             return True
         return False
 
@@ -190,9 +190,9 @@ class UndirectedGraph(BaseGraphInterface):
             return False
         if v.id not in self.nodes:
             return False
-        if u not in self.edges:
+        if u.id not in self.edges:
             return False
-        if v not in self.edges[u]:
+        if v.id not in self.edges[u.id]:
             return False
         return True
 
@@ -238,7 +238,7 @@ class UndirectedGraph(BaseGraphInterface):
         return False
 
     def edge_value(self, u: Node, v: Node):
-        return self.edges[u][v]
+        return self.edges[u.id][v.id]
 
     def add_node(self, name: str, values: List[float], id: str = None):
         """
@@ -265,8 +265,8 @@ class UndirectedGraph(BaseGraphInterface):
         """
         if self.directed_edge_exists(u, v):
             return True
-        for w in self.edges[u]:
-            if self.directed_path_exists(w, v):
+        for w in self.edges[u.id]:
+            if self.directed_path_exists(self.nodes[w], v):
                 return True
         return False
 
@@ -280,8 +280,8 @@ class UndirectedGraph(BaseGraphInterface):
         if self.directed_edge_exists(u, v):
             return [[(u, v)]]
         paths = []
-        for w in self.edges[u]:
-            for path in self.directed_paths(w, v):
+        for w in self.edges[u.id]:
+            for path in self.directed_paths(self.nodes[w], v):
                 paths.append([(u, w)] + path)
         return paths
 
@@ -310,7 +310,6 @@ def unpack_run(args):
 
 
 class AbstractGraphModel(GraphModelInterface, ABC):
-
     pipeline_steps: List[IndependenceTestInterface]
     graph: BaseGraphInterface
     pool: mp.Pool
@@ -456,14 +455,23 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     result = [result]
                 actions_taken.extend(self._take_action(result))
         else:
-            iterator = [
-                unpack_run(i)
-                for i in [
-                    [test_fn, [*i], self.graph]
-                    for i in test_fn.GENERATOR.generate(self.graph, self)
+            if test_fn.GENERATOR.chunked:
+                for chunk in test_fn.GENERATOR.generate(self.graph, self):
+                    iterator = [
+                        unpack_run(i)
+                        for i in [[test_fn, [*c], self.graph] for c in chunk]
+                    ]
+                    actions_taken.extend(self._take_action(iterator))
+            else:
+                iterator = [
+                    unpack_run(i)
+                    for i in [
+                        [test_fn, [*i], self.graph]
+                        for i in test_fn.GENERATOR.generate(self.graph, self)
+                    ]
                 ]
-            ]
-            actions_taken.extend(self._take_action(iterator))
+                actions_taken.extend(self._take_action(iterator))
+
         self.graph.action_history.append(
             {"step": type(test_fn).__name__, "actions": actions_taken}
         )

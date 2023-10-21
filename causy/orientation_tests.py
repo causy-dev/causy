@@ -43,13 +43,14 @@ class ColliderTest(IndependenceTestInterface):
             return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={})
 
         # if x and y are NOT adjacent, store all shared adjacent nodes
-        potential_zs = set(graph.edges[x].keys()).intersection(
-            set(graph.edges[y].keys())
+        potential_zs = set(graph.edges[x.id].keys()).intersection(
+            set(graph.edges[y.id].keys())
         )
 
         # if x and y are not independent given z, safe action: make z a collider
         results = []
         for z in potential_zs:
+            z = graph.nodes[z]
             actions = graph.retrieve_edge_history(
                 x, y, TestResultAction.REMOVE_EDGE_UNDIRECTED
             )
@@ -57,9 +58,9 @@ class ColliderTest(IndependenceTestInterface):
             separators = []
             for action in actions:
                 if "separatedBy" in action.data:
-                    separators += action.data["separatedBy"]
+                    separators += [a.id for a in action.data["separatedBy"]]
 
-            if z not in separators:
+            if z.id not in separators:
                 results += [
                     TestResult(
                         x=z,
@@ -103,12 +104,13 @@ class NonColliderTest(IndependenceTestInterface):
             return
 
         # if x and y are NOT adjacent, store all shared adjacent nodes
-        potential_zs = set(graph.edges[x].keys()).intersection(
-            set(graph.edges[y].keys())
+        potential_zs = set(graph.edges[x.id].keys()).intersection(
+            set(graph.edges[y.id].keys())
         )
         # if one edge has an arrowhead at z, orient the other one pointing away from z.
         # It cannot be a collider because we have already oriented all unshielded triples that contain colliders.
         for z in potential_zs:
+            z = graph.nodes[z]
             breakflag = False
             if graph.only_directed_edge_exists(x, z) and graph.undirected_edge_exists(
                 z, y
@@ -161,12 +163,13 @@ class FurtherOrientTripleTest(IndependenceTestInterface):
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
-        potential_zs = set(graph.edges[x].keys()).intersection(
-            set(graph.edges[y].keys())
+        potential_zs = set(graph.edges[x.id].keys()).intersection(
+            set(graph.edges[y.id].keys())
         )
 
         results = []
         for z in potential_zs:
+            z = graph.nodes[z]
             if (
                 graph.undirected_edge_exists(x, y)
                 and graph.only_directed_edge_exists(x, z)
@@ -216,14 +219,14 @@ class OrientQuadrupleTest(IndependenceTestInterface):
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
-        potential_zs = set(graph.edges[x].keys()).intersection(
-            set(graph.edges[y].keys())
+        potential_zs = set(graph.edges[x.id].keys()).intersection(
+            set(graph.edges[y.id].keys())
         )
 
         results = []
         for zs in itertools.combinations(potential_zs, 2):
-            z = zs[0]
-            w = zs[1]
+            z = graph.nodes[zs[0]]
+            w = graph.nodes[zs[1]]
             if (
                 not graph.undirected_edge_exists(x, y)
                 and graph.only_directed_edge_exists(x, z)
@@ -279,14 +282,14 @@ class FurtherOrientQuadrupleTest(IndependenceTestInterface):
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
-        potential_zs = set(graph.edges[x].keys()).intersection(
-            set(graph.edges[y].keys())
+        potential_zs = set(graph.edges[x.id].keys()).intersection(
+            set(graph.edges[y.id].keys())
         )
 
         results = []
         for zs in itertools.combinations(potential_zs, 2):
-            z = zs[0]
-            w = zs[1]
+            z = graph.nodes[zs[0]]
+            w = graph.nodes[zs[1]]
             if (
                 not graph.undirected_edge_exists(x, y)
                 and graph.only_directed_edge_exists(x, z)
