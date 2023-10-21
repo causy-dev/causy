@@ -2,6 +2,7 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import List, Optional, Dict, Set
 
+import torch
 import torch.multiprocessing as mp
 
 from uuid import uuid4
@@ -34,7 +35,7 @@ logger = logging.getLogger(__name__)
 class Node(NodeInterface):
     name: str
     id: str
-    values: List[float]
+    values: torch.Tensor
 
     def __hash__(self):
         return hash(self.id)
@@ -251,7 +252,9 @@ class UndirectedGraph(BaseGraphInterface):
         """
         if id is None:
             id = str(uuid4())
-        self.nodes[id] = Node(name=name, id=id, values=values)
+        self.nodes[id] = Node(
+            name=name, id=id, values=torch.tensor(values, dtype=torch.float64)
+        )
 
     def directed_path_exists(self, u: Node, v: Node):
         """

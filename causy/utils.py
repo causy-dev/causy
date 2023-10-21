@@ -1,6 +1,7 @@
 import importlib
 import logging
 
+import torch
 from sympy import transpose, Matrix, solve_linear_system, symbols, Symbol, shape
 from scipy import stats as scipy_stats
 import math
@@ -97,14 +98,14 @@ def get_correlation(x, y, other_nodes):
     return corr
 
 
-def get_t_and_critial_t(sample_size, nb_of_control_vars, par_corr, threshold):
+def get_t_and_critical_t(sample_size, nb_of_control_vars, par_corr, threshold):
     # check if we have to normalize data
     deg_of_freedom = sample_size - 2 - nb_of_control_vars
     if abs(round(par_corr, 4)) == 1:
         return (1, 0)
     critical_t = scipy_stats.t.ppf(1 - threshold / 2, deg_of_freedom)
-    t = par_corr * math.sqrt((deg_of_freedom) / (1 - par_corr**2))
-    return (t, critical_t)
+    t = par_corr * math.sqrt(deg_of_freedom / (1 - par_corr**2))
+    return t, critical_t
 
 
 def serialize_module_name(cls):
@@ -140,3 +141,10 @@ def retrieve_edges(graph):
         for v in graph.edges[u]:
             edges.append((u, v))
     return edges
+
+
+def pearson_correlation(x, y):
+    cov_xy = torch.mean((x - x.mean()) * (y - y.mean()))
+    std_x = x.std()
+    std_y = y.std()
+    return cov_xy / (std_x * std_y)

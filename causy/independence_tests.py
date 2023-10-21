@@ -1,12 +1,10 @@
 import itertools
-from statistics import correlation
 from typing import Tuple, List
-
-from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
 
 import torch
 
-from causy.utils import get_t_and_critial_t, get_correlation
+from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
+from causy.utils import get_t_and_critical_t, get_correlation, pearson_correlation
 
 import logging
 
@@ -41,8 +39,10 @@ class CalculateCorrelations(IndependenceTestInterface):
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
         edge_value = graph.edge_value(graph.nodes[nodes[0]], graph.nodes[nodes[1]])
-        edge_value["correlation"] = correlation(x.values, y.values)
-        # edge_value["covariance"] = covariance(x.values, y.values)
+        edge_value["correlation"] = pearson_correlation(
+            x.values,
+            y.values,
+        ).item()
         return TestResult(
             x=x,
             y=y,
@@ -71,7 +71,7 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
         sample_size = len(x.values)
         nb_of_control_vars = 0
         corr = graph.edge_value(x, y)["correlation"]
-        t, critical_t = get_t_and_critial_t(
+        t, critical_t = get_t_and_critical_t(
             sample_size, nb_of_control_vars, corr, self.threshold
         )
         if abs(t) < critical_t:
@@ -131,7 +131,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
             # make t test for independency of x and y given z
             sample_size = len(x.values)
             nb_of_control_vars = len(nodes) - 2
-            t, critical_t = get_t_and_critial_t(
+            t, critical_t = get_t_and_critical_t(
                 sample_size, nb_of_control_vars, par_corr, self.threshold
             )
 
@@ -185,7 +185,7 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
                 par_corr = get_correlation(x, y, other_nodes)
                 logger.debug(f"par_corr {par_corr}")
                 # make t test for independence of a and y given other nodes
-                t, critical_t = get_t_and_critial_t(
+                t, critical_t = get_t_and_critical_t(
                     sample_size, nb_of_control_vars, par_corr, self.threshold
                 )
 
@@ -207,7 +207,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
     CHUNK_SIZE_PARALLEL_PROCESSING = 200
-    PARALLEL = True
+    PARALLEL = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         """
@@ -226,12 +226,8 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         if not set(nodes[2:]).issubset(set([on.id for on in list(other_neighbours)])):
             return
 
-        covariance_matrix = []
-        for node in nodes:
-            covariance_matrix.append(graph.nodes[node].values)
-
         inverse_cov_matrix = torch.inverse(
-            torch.cov(torch.tensor(covariance_matrix, dtype=torch.float64))
+            torch.cov(torch.stack([graph.nodes[node].values for node in nodes]))
         )
         n = inverse_cov_matrix.size(0)
         diagonal = torch.diag(inverse_cov_matrix)
@@ -244,11 +240,8 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
 
         sample_size = len(graph.nodes[nodes[0]].values)
         nb_of_control_vars = len(nodes) - 2
-        results = []
 
-        nodes_set = set([graph.nodes[n] for n in nodes])
-
-        t, critical_t = get_t_and_critial_t(
+        t, critical_t = get_t_and_critical_t(
             sample_size,
             nb_of_control_vars,
             (
@@ -262,6 +255,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
             logger.debug(
                 f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([on.name for on in other_neighbours])}"
             )
+            nodes_set = set([graph.nodes[n] for n in nodes])
             return TestResult(
                 x=graph.nodes[nodes[0]],
                 y=graph.nodes[nodes[1]],
@@ -272,8 +266,6 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                     )
                 },
             )
-
-        return results
 
 
 class PlaceholderTest(IndependenceTestInterface):
