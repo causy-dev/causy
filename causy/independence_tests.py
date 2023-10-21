@@ -1,15 +1,10 @@
 import itertools
-from statistics import correlation, covariance  # , linear_regression
+from statistics import correlation
 from typing import Tuple, List
-import math
 
 from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
 
-# Use cupy for GPU support - if available - otherwise use numpy
-try:
-    import cupy as np
-except ImportError:
-    import numpy as np
+import torch
 
 from causy.utils import get_t_and_critial_t, get_correlation
 
@@ -212,7 +207,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
     CHUNK_SIZE_PARALLEL_PROCESSING = 200
-    PARALLEL = False
+    PARALLEL = True
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
         """
@@ -226,31 +221,26 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
             return
 
         other_neighbours = set(graph.edges[graph.nodes[nodes[0]]])
-
         other_neighbours.remove(graph.nodes[nodes[1]])
 
         if not set(nodes[2:]).issubset(set([on.id for on in list(other_neighbours)])):
             return
 
-        covariance_matrix = [
-            [None for _ in range(len(nodes))] for _ in range(len(nodes))
-        ]
-        for i in range(len(nodes)):
-            for k in range(i, len(nodes)):
-                if covariance_matrix[i][k] is None:
-                    covariance_matrix[i][k] = covariance(
-                        graph.nodes[nodes[i]].values, graph.nodes[nodes[k]].values
-                    )
-                    covariance_matrix[k][i] = covariance_matrix[i][k]
+        covariance_matrix = []
+        for node in nodes:
+            covariance_matrix.append(graph.nodes[node].values)
 
-        cov_matrix = np.array(covariance_matrix)
-        inverse_cov_matrix = np.linalg.inv(cov_matrix)
-        n = len(inverse_cov_matrix)
-        diagonal = np.diagonal(inverse_cov_matrix)
-        diagonal_matrix = np.zeros((n, n))
-        np.fill_diagonal(diagonal_matrix, diagonal)
-        helper = np.dot(np.sqrt(diagonal_matrix), inverse_cov_matrix)
-        precision_matrix = np.dot(helper, np.sqrt(diagonal_matrix))
+        inverse_cov_matrix = torch.inverse(
+            torch.cov(torch.tensor(covariance_matrix, dtype=torch.float64))
+        )
+        n = inverse_cov_matrix.size(0)
+        diagonal = torch.diag(inverse_cov_matrix)
+        diagonal_matrix = torch.zeros((n, n), dtype=torch.float64)
+        for i in range(n):
+            diagonal_matrix[i, i] = diagonal[i]
+
+        helper = torch.mm(torch.sqrt(diagonal_matrix), inverse_cov_matrix)
+        precision_matrix = torch.mm(helper, torch.sqrt(diagonal_matrix))
 
         sample_size = len(graph.nodes[nodes[0]].values)
         nb_of_control_vars = len(nodes) - 2
@@ -263,8 +253,8 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
             nb_of_control_vars,
             (
                 (-1 * precision_matrix[0][1])
-                / (math.sqrt(precision_matrix[0][0] * precision_matrix[1][1]))
-            ),
+                / torch.sqrt(precision_matrix[0][0] * precision_matrix[1][1])
+            ).item(),
             self.threshold,
         )
 
