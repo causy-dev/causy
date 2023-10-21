@@ -29,6 +29,7 @@ from causy.interfaces import (
 
 # TODO: make tests configurable (choosing different generators for different algorithms)
 
+
 class CalculateCorrelations(IndependenceTestInterface):
     GENERATOR = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)

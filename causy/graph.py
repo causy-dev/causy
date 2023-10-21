@@ -321,7 +321,6 @@ def unpack_run(args):
 
 
 class AbstractGraphModel(GraphModelInterface, ABC):
-
     pipeline_steps: List[IndependenceTestInterface]
     graph: BaseGraphInterface
     pool: mp.Pool
