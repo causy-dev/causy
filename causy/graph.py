@@ -160,6 +160,24 @@ class UndirectedGraph(BaseGraphInterface):
         self.edges[u][v] = value
         self.edges[v][u] = value
 
+    def update_directed_edge(self, u: Node, v: Node, value: Dict):
+        """
+        Update an edge in the graph
+        :param u: u node
+        :param v: v node
+        :return:
+        """
+        if u.name not in self.nodes:
+            raise UndirectedGraphError(f"Node {u} does not exist")
+        if v.name not in self.nodes:
+            raise UndirectedGraphError(f"Node {v} does not exist")
+        if u not in self.edges:
+            raise UndirectedGraphError(f"Node {u} does not have any edges")
+        if v not in self.edges[u]:
+            raise UndirectedGraphError(f"There is no edge from {u} to {v}")
+
+        self.edges[u][v] = value
+
     def edge_exists(self, u: Node, v: Node):
         """
         Check if any edge exists between u and v. Cases: u -> v, u <-> v, u <- v
@@ -408,6 +426,14 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     self.graph.update_edge(i.x, i.y, i.data)
                     self.graph.add_edge_history(i.x, i.y, i)
                     self.graph.add_edge_history(i.y, i.x, i)
+                elif i.action == TestResultAction.UPDATE_EDGE_DIRECTED:
+                    if not self.graph.directed_edge_exists(i.x, i.y):
+                        logger.debug(
+                            f"Tried to update directed edge {i.x.name} -> {i.y.name}. But it does not exist."
+                        )
+                        continue
+                    self.graph.update_directed_edge(i.x, i.y, i.data)
+                    self.graph.add_edge_history(i.x, i.y, i)
                 elif i.action == TestResultAction.DO_NOTHING:
                     continue
                 elif i.action == TestResultAction.REMOVE_EDGE_DIRECTED:
