@@ -138,7 +138,9 @@ class GeneratorInterface(ABC):
         return {
             "name": serialize_module_name(self),
             "params": {
-                "comparison_settings": self.comparison_settings.serialize(),
+                "comparison_settings": self.comparison_settings.serialize()
+                if self.comparison_settings
+                else None,
                 "chunked": self.chunked,
             },
         }

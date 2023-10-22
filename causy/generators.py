@@ -1,6 +1,7 @@
 import copy
 import itertools
 import logging
+import random
 
 from causy.interfaces import (
     ComparisonSettings,
@@ -9,11 +10,16 @@ from causy.interfaces import (
     GraphModelInterface,
     AS_MANY_AS_FIELDS,
 )
+from causy.utils import load_pipeline_artefact_by_definition
 
 logger = logging.getLogger(__name__)
 
 
 class AllCombinationsGenerator(GeneratorInterface):
+    """
+    Generates all combinations of nodes in the graph
+    """
+
     def generate(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
     ):
@@ -43,6 +49,10 @@ class AllCombinationsGenerator(GeneratorInterface):
 
 
 class PairsWithNeighboursGenerator(GeneratorInterface):
+    """
+    Generates all combinations of pairs of nodes with their neighbours
+    """
+
     shuffle_combinations = True
     chunked = True
 
@@ -56,8 +66,8 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
         if shuffle_combinations is not None:
             self.shuffle_combinations = shuffle_combinations
 
-    def to_dict(self):
-        result = super().to_dict()
+    def serialize(self):
+        result = super().serialize()
         result["params"]["shuffle_combinations"] = self.shuffle_combinations
         return result
 
@@ -122,3 +132,47 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                     else:
                         for k in combinations:
                             yield [node, neighbour] + [ks for ks in k]
+
+
+class RandomSampleGenerator(GeneratorInterface):
+    """
+    Executes another generator and returns a random sample of the results
+    """
+
+    every_nth = 100
+
+    def __init__(
+        self,
+        comparison_settings: ComparisonSettings = None,
+        chunked: bool = None,
+        every_nth: int = None,
+        generator: GeneratorInterface = None,
+    ):
+        super().__init__(comparison_settings, chunked)
+        if every_nth is not None:
+            self.every_nth = every_nth
+
+        if generator is not None:
+            if isinstance(generator, GeneratorInterface):
+                self.generator = generator
+            else:
+                self.generator = load_pipeline_artefact_by_definition(generator)
+        else:
+            raise ValueError("RandomSampleGenerator: generator must be set")
+
+    def serialize(self):
+        result = super().serialize()
+        result["params"]["every_nth"] = self.every_nth
+        result["params"]["generator"] = self.generator.serialize()
+        return result
+
+    def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
+        """
+        Executes another generator and returns a random sample of the results
+        :param graph:
+        :param graph_model_instance_:
+        :return: yields a random sample of the results
+        """
+        for combination in self.generator.generate(graph, graph_model_instance_):
+            if random.randint(0, self.every_nth) == 0:
+                yield combination
