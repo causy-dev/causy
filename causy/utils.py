@@ -64,6 +64,6 @@ def retrieve_edges(graph):
 
 def pearson_correlation(x, y):
     cov_xy = torch.mean((x - x.mean()) * (y - y.mean()))
-    std_x = x.std()
-    std_y = y.std()
+    std_x = x.std(unbiased=False)
+    std_y = y.std(unbiased=False)
     return cov_xy / (std_x * std_y)
