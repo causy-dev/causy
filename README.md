@@ -1,3 +1,5 @@
+> [!WARNING]
+> causy is currently in a very early stage of development. We do not recommend using it in production.
 # causy
 
 Causal discovery made easy.
