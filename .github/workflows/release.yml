@@ -22,6 +22,11 @@ jobs:
         python-version: [ "3.11" ]
         platform: [ macos-latest ] # TODO: change add ubuntu-latest
     runs-on: ${{ matrix.platform }}
+    environment:
+      name: pypi
+      url: https://pypi.org/p/causy
+      permissions:
+        id-token: write
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -39,16 +44,6 @@ jobs:
     - uses: ncipollo/release-action@v1
       with:
         artifacts: "dist/*"
-  pypi-publish:
-    name: Upload release to PyPI
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: pypi
-      url: https://pypi.org/p/causy
-      permissions:
-        id-token: write
-    steps:
     - name: Publish package to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
