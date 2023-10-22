@@ -34,7 +34,7 @@ You can customize your causy pipeline by ejecting and modifying the pipeline fil
 ```bash
 causy eject PC pc.json
 # edit pc.json
-causy execute tests/fixtures/toy_data_larger.json --pipeline pc.json
+causy execute your_data.json --pipeline pc.json
 ```
 
 This might be useful if you want to use a custom algorithm or if you want to customize the pipeline of a default algorithm.

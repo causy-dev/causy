@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "causy"
 version = "0.1.0"
-description = "Causal Dicovery made easy."
+description = "Causal discovery made easy."
 authors = ["Sofia Faltenbacher <faltenbacher.sofia@gmail.com>", "Lilith Wittmann <mail@lilithwittmann.de>"]
 readme = "README.md"
 
