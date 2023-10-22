@@ -39,6 +39,10 @@ jobs:
     - uses: ncipollo/release-action@v1
       with:
         artifacts: "dist/*"
+    - uses: actions/upload-artifact@master
+      with:
+        name: Build
+        path: dist/
   pypi-publish:
     needs: build
     runs-on: ubuntu-latest
@@ -48,9 +52,11 @@ jobs:
     permissions:
       id-token: write
     steps:
-    # retrieve your distributions here
-
-    - name: Publish package distributions to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        packages-dir: dist/
+      - uses: actions/download-artifact@master
+        with:
+          name: Build
+          path: dist/
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
