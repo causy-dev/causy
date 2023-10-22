@@ -1,15 +1,15 @@
-import importlib
-import itertools
-import json
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Optional, Dict, Set
-import multiprocessing as mp
+from typing import List, Optional, Dict, Set, Tuple
+from uuid import uuid4
+import logging
+
+import torch
+import torch.multiprocessing as mp
 
 from causy.interfaces import (
     IndependenceTestInterface,
 )
-
 from causy.interfaces import (
     BaseGraphInterface,
     NodeInterface,
@@ -19,9 +19,6 @@ from causy.interfaces import (
     LogicStepInterface,
     ExitConditionInterface,
 )
-
-import logging
-
 from causy.utils import (
     load_pipeline_artefact_by_definition,
     load_pipeline_steps_by_definition,
@@ -33,10 +30,11 @@ logger = logging.getLogger(__name__)
 @dataclass
 class Node(NodeInterface):
     name: str
-    values: List[float]
+    id: str
+    values: torch.Tensor
 
     def __hash__(self):
-        return hash(self.name)
+        return hash(self.id)
 
 
 class UndirectedGraphError(Exception):
@@ -45,8 +43,8 @@ class UndirectedGraphError(Exception):
 
 class UndirectedGraph(BaseGraphInterface):
     nodes: Dict[str, Node]
-    edges: Dict[Node, Dict[Node, Dict]]
-    edge_history: Dict[Set[Node], List[TestResult]]
+    edges: Dict[str, Dict[str, Dict]]
+    edge_history: Dict[Tuple[str, str], List[TestResult]]
     action_history: List[Dict[str, List[TestResult]]]
 
     def __init__(self):
@@ -62,20 +60,20 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: v node
         :return:
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             raise UndirectedGraphError(f"Node {u} does not exist")
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
-        if u not in self.edges:
-            self.edges[u] = {}
-        if v not in self.edges:
-            self.edges[v] = {}
+        if u.id not in self.edges:
+            self.edges[u.id] = {}
+        if v.id not in self.edges:
+            self.edges[v.id] = {}
 
-        self.edges[u][v] = value
-        self.edges[v][u] = value
+        self.edges[u.id][v.id] = value
+        self.edges[v.id][u.id] = value
 
-        self.edge_history[(u, v)] = []
-        self.edge_history[(v, u)] = []
+        self.edge_history[(u.id, v.id)] = []
+        self.edge_history[(v.id, u.id)] = []
 
     def retrieve_edge_history(
         self, u, v, action: TestResultAction = None
@@ -88,14 +86,14 @@ class UndirectedGraph(BaseGraphInterface):
         :return:
         """
         if action is None:
-            return self.edge_history[(u, v)]
+            return self.edge_history[(u.id, v.id)]
 
-        return [i for i in self.edge_history[(u, v)] if i.action == action]
+        return [i for i in self.edge_history[(u.id, v.id)] if i.action == action]
 
     def add_edge_history(self, u, v, action: TestResultAction):
-        if (u, v) not in self.edge_history:
-            self.edge_history[(u, v)] = []
-        self.edge_history[(u, v)].append(action)
+        if (u.id, v.id) not in self.edge_history:
+            self.edge_history[(u.id, v.id)] = []
+        self.edge_history[(u.id, v.id)].append(action)
 
     def remove_edge(self, u: Node, v: Node):
         """
@@ -104,22 +102,22 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: v node
         :return:
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             raise UndirectedGraphError(f"Node {u} does not exist")
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
-        if u not in self.edges:
+        if u.id not in self.edges:
             raise UndirectedGraphError(f"Node {u} does not have any nodes")
-        if v not in self.edges:
+        if v.id not in self.edges:
             raise UndirectedGraphError(f"Node {v} does not have any nodes")
 
-        if v not in self.edges[u]:
+        if v.id not in self.edges[u.id]:
             return
-        del self.edges[u][v]
+        del self.edges[u.id][v.id]
 
-        if u not in self.edges[v]:
+        if u.id not in self.edges[v.id]:
             return
-        del self.edges[v][u]
+        del self.edges[v.id][u.id]
 
     def remove_directed_edge(self, u: Node, v: Node):
         """
@@ -128,18 +126,18 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: v node
         :return:
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             raise UndirectedGraphError(f"Node {u} does not exist")
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
-        if u not in self.edges:
+        if u.id not in self.edges:
             raise UndirectedGraphError(f"Node {u} does not have any nodes")
-        if v not in self.edges:
+        if v.id not in self.edges:
             raise UndirectedGraphError(f"Node {v} does not have any nodes")
 
-        if v not in self.edges[u]:
+        if v.id not in self.edges[u.id]:
             return
-        del self.edges[u][v]
+        del self.edges[u.id][v.id]
 
     def update_edge(self, u: Node, v: Node, value: Dict):
         """
@@ -148,17 +146,17 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: v node
         :return:
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             raise UndirectedGraphError(f"Node {u} does not exist")
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             raise UndirectedGraphError(f"Node {v} does not exist")
-        if u not in self.edges:
+        if u.id not in self.edges:
             raise UndirectedGraphError(f"Node {u} does not have any edges")
-        if v not in self.edges:
+        if v.id not in self.edges:
             raise UndirectedGraphError(f"Node {v} does not have any edges")
 
-        self.edges[u][v] = value
-        self.edges[v][u] = value
+        self.edges[u.id][v.id] = value
+        self.edges[v.id][u.id] = value
 
     def update_directed_edge(self, u: Node, v: Node, value: Dict):
         """
@@ -185,13 +183,13 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: node v
         :return: True if any edge exists, False otherwise
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             return False
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             return False
-        if u in self.edges and v in self.edges[u]:
+        if u.id in self.edges and v.id in self.edges[u.id]:
             return True
-        if v in self.edges and u in self.edges[v]:
+        if v.id in self.edges and u.id in self.edges[v.id]:
             return True
         return False
 
@@ -202,13 +200,13 @@ class UndirectedGraph(BaseGraphInterface):
         :param v: node v
         :return: True if a directed edge exists, False otherwise
         """
-        if u.name not in self.nodes:
+        if u.id not in self.nodes:
             return False
-        if v.name not in self.nodes:
+        if v.id not in self.nodes:
             return False
-        if u not in self.edges:
+        if u.id not in self.edges:
             return False
-        if v not in self.edges[u]:
+        if v.id not in self.edges[u.id]:
             return False
         return True
 
@@ -254,18 +252,23 @@ class UndirectedGraph(BaseGraphInterface):
         return False
 
     def edge_value(self, u: Node, v: Node):
-        return self.edges[u][v]
+        return self.edges[u.id][v.id]
 
-    def add_node(self, name: str, values: List[float]):
+    def add_node(self, name: str, values: List[float], id_: str = None):
         """
         Add a node to the graph
         :param name: name of the node
         :param values: values of the node
+        :param id_: id_ of the node
         :param : node
 
         :return:
         """
-        self.nodes[name] = Node(name, values)
+        if id_ is None:
+            id_ = str(uuid4())
+        self.nodes[id_] = Node(
+            name=name, id=id_, values=torch.tensor(values, dtype=torch.float64)
+        )
 
     def directed_path_exists(self, u: Node, v: Node):
         """
@@ -276,8 +279,8 @@ class UndirectedGraph(BaseGraphInterface):
         """
         if self.directed_edge_exists(u, v):
             return True
-        for w in self.edges[u]:
-            if self.directed_path_exists(w, v):
+        for w in self.edges[u.id]:
+            if self.directed_path_exists(self.nodes[w], v):
                 return True
         return False
 
@@ -291,8 +294,8 @@ class UndirectedGraph(BaseGraphInterface):
         if self.directed_edge_exists(u, v):
             return [[(u, v)]]
         paths = []
-        for w in self.edges[u]:
-            for path in self.directed_paths(w, v):
+        for w in self.edges[u.id]:
+            for path in self.directed_paths(self.nodes[w], v):
                 paths.append([(u, w)] + path)
         return paths
 
@@ -310,7 +313,8 @@ class UndirectedGraph(BaseGraphInterface):
             for i in range(1, len(path) - 1):
                 r, w = path[i]
                 if not self.bidirected_edge_exists(r, w):
-                    return False
+                    # TODO: check if this is correct (@sof)
+                    return True
         return False
 
 
@@ -332,7 +336,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     ):
         self.graph = graph
         self.pipeline_steps = pipeline_steps or []
-        self.pool = mp.Pool(mp.cpu_count() * 2)
+        self.pool = mp.Pool(round(mp.cpu_count() / 2))
 
     def create_graph_from_data(self, data: List[Dict[str, float]]):
         """
@@ -474,14 +478,23 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     result = [result]
                 actions_taken.extend(self._take_action(result))
         else:
-            iterator = [
-                unpack_run(i)
-                for i in [
-                    [test_fn, [*i], self.graph]
-                    for i in test_fn.GENERATOR.generate(self.graph, self)
+            if test_fn.GENERATOR.chunked:
+                for chunk in test_fn.GENERATOR.generate(self.graph, self):
+                    iterator = [
+                        unpack_run(i)
+                        for i in [[test_fn, [*c], self.graph] for c in chunk]
+                    ]
+                    actions_taken.extend(self._take_action(iterator))
+            else:
+                iterator = [
+                    unpack_run(i)
+                    for i in [
+                        [test_fn, [*i], self.graph]
+                        for i in test_fn.GENERATOR.generate(self.graph, self)
+                    ]
                 ]
-            ]
-            actions_taken.extend(self._take_action(iterator))
+                actions_taken.extend(self._take_action(iterator))
+
         self.graph.action_history.append(
             {"step": type(test_fn).__name__, "actions": actions_taken}
         )
@@ -530,11 +543,11 @@ class Loop(LogicStepInterface):
     ):
         super().__init__()
         # TODO check if this is a good idea
-        if type(exit_condition) == dict:
+        if isinstance(exit_condition, dict):
             exit_condition = load_pipeline_artefact_by_definition(exit_condition)
 
         # TODO: check if this is a good idea
-        if len(pipeline_steps) > 0 and type(pipeline_steps[0]) == dict:
+        if len(pipeline_steps) > 0 and isinstance(pipeline_steps[0], dict):
             pipeline_steps = load_pipeline_steps_by_definition(pipeline_steps)
 
         self.pipeline_steps = pipeline_steps or []

@@ -1,18 +1,18 @@
 import importlib
 import json
+from datetime import datetime
 from json import JSONEncoder
+import logging
 
 import typer
 
 from causy.graph import graph_model_factory
 from causy.utils import (
-    load_pipeline_artefact_by_definition,
     load_pipeline_steps_by_definition,
-    show_edges,
+    retrieve_edges,
 )
 
 app = typer.Typer()
-import logging
 
 
 def load_json(pipeline_file: str):
@@ -58,7 +58,7 @@ def execute(
     data_file: str,
     pipeline: str = None,
     algorithm: str = None,
-    graph_actions_save_file: str = None,
+    output_file: str = None,
     render_save_file: str = None,
     log_level: str = "ERROR",
 ):
@@ -68,9 +68,17 @@ def execute(
         pipeline_config = load_json(pipeline)
         pipeline = create_pipeline(pipeline_config)
         model = graph_model_factory(pipeline_steps=pipeline)()
+        algorithm_reference = {
+            "type": "pipeline",
+            "reference": pipeline,  # TODO: how to reference pipeline in a way that it can be loaded?
+        }
     elif algorithm:
         typer.echo(f"💾 Creating pipeline from algorithm {algorithm}")
         model = load_algorithm(algorithm)()
+        algorithm_reference = {
+            "type": "default",
+            "reference": algorithm,
+        }
 
     else:
         raise ValueError("Either pipeline_file or algorithm must be specified")
@@ -83,18 +91,31 @@ def execute(
 
     typer.echo("🕵🏻‍♀  Executing pipeline steps...")
     model.execute_pipeline_steps()
-    edges = show_edges(model.graph)
-    for edge in edges:
+    edges = []
+    for edge in retrieve_edges(model.graph):
         print(
-            f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
+            f"{model.graph.nodes[edge[0]].name} -> {model.graph.nodes[edge[1]].name}: {model.graph.edges[edge[0]][edge[1]]}"
+        )
+        edges.append(
+            {
+                "from": model.graph.nodes[edge[0]].to_dict(),
+                "to": model.graph.nodes[edge[1]].to_dict(),
+                "value": model.graph.edges[edge[0]][edge[1]],
+            }
         )
 
-    if graph_actions_save_file:
-        typer.echo(f"💾 Saving graph actions to {graph_actions_save_file}")
-        with open(graph_actions_save_file, "w") as file:
-            file.write(
-                json.dumps(model.graph.action_history, cls=MyJSONEncoder, indent=4)
-            )
+    if output_file:
+        typer.echo(f"💾 Saving graph actions to {output_file}")
+        with open(output_file, "w") as file:
+            export = {
+                "name": algorithm,
+                "created_at": datetime.now().isoformat(),
+                "algorithm": algorithm_reference,
+                "steps": model.graph.action_history,
+                "nodes": model.graph.nodes,
+                "edges": edges,
+            }
+            file.write(json.dumps(export, cls=MyJSONEncoder, indent=4))
 
     if render_save_file:
         # I'm just a hacky rendering function, pls replace me with causy ui 🙄
@@ -105,7 +126,7 @@ def execute(
         n_graph = nx.DiGraph()
         for u in model.graph.edges:
             for v in model.graph.edges[u]:
-                n_graph.add_edge(u.name, v.name)
+                n_graph.add_edge(model.graph.nodes[u].name, model.graph.nodes[v].name)
         fig = plt.figure(figsize=(10, 10))
         nx.draw(n_graph, with_labels=True, ax=fig.add_subplot(111))
         fig.savefig(render_save_file)

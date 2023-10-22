@@ -2,7 +2,7 @@ import enum
 import multiprocessing
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List, Dict, Optional
 import logging
 
 from causy.utils import serialize_module_name, load_pipeline_artefact_by_definition
@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 DEFAULT_THRESHOLD = 0.01
 
 AS_MANY_AS_FIELDS = 0
-import sys
 
 
 @dataclass
@@ -32,10 +31,11 @@ class ComparisonSettings:
 
 class NodeInterface:
     name: str
+    id: str
     values: List[float]
 
     def to_dict(self):
-        return self.name
+        return {"id": self.id, "name": self.name}
 
 
 class TestResultAction(enum.StrEnum):
@@ -51,7 +51,7 @@ class TestResult:
     x: NodeInterface
     y: NodeInterface
     action: TestResultAction
-    data: Dict = None
+    data: Optional[Dict] = None
 
     def to_dict(self):
         return {
@@ -63,7 +63,7 @@ class TestResult:
 
 class BaseGraphInterface(ABC):
     nodes: Dict[str, NodeInterface]
-    edges: Dict[NodeInterface, Dict[NodeInterface, Dict]]
+    edges: Dict[str, Dict[str, Dict]]
 
     @abstractmethod
     def retrieve_edge_history(self, u, v, action: TestResultAction) -> List[TestResult]:
@@ -128,6 +128,7 @@ class GraphModelInterface(ABC):
 
 class GeneratorInterface(ABC):
     comparison_settings: ComparisonSettings
+    chunked: bool = False
 
     @abstractmethod
     def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
@@ -138,42 +139,46 @@ class GeneratorInterface(ABC):
             "name": serialize_module_name(self),
             "params": {
                 "comparison_settings": self.comparison_settings.serialize(),
+                "chunked": self.chunked,
             },
         }
 
-    def __init__(self, comparison_settings: ComparisonSettings):
-        if type(comparison_settings) == dict:
+    def __init__(self, comparison_settings: ComparisonSettings, chunked: bool = None):
+        if isinstance(comparison_settings, dict):
             comparison_settings = load_pipeline_artefact_by_definition(
                 comparison_settings
             )
+
+        if chunked is not None:
+            self.chunked = chunked
 
         self.comparison_settings = comparison_settings
 
 
 class IndependenceTestInterface(ABC):
-    NUM_OF_COMPARISON_ELEMENTS = 0
-    GENERATOR: GeneratorInterface = None
+    NUM_OF_COMPARISON_ELEMENTS: int = 0
+    GENERATOR: Optional[GeneratorInterface] = None
 
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
+    CHUNK_SIZE_PARALLEL_PROCESSING: int = 1
 
-    PARALLEL = True
+    PARALLEL: bool = True
 
     def __init__(
         self,
         threshold: float = DEFAULT_THRESHOLD,
-        generator: GeneratorInterface = None,
+        generator: Optional[GeneratorInterface] = None,
         num_of_comparison_elements: int = None,
         chunk_size_parallel_processing: int = None,
         parallel: bool = None,
     ):
         if generator:
-            if type(generator) == dict:
+            if isinstance(generator, dict):
                 self.GENERATOR = load_pipeline_artefact_by_definition(generator)
             else:
                 self.GENERATOR = generator
 
         if num_of_comparison_elements:
-            if type(num_of_comparison_elements) == dict:
+            if isinstance(num_of_comparison_elements, dict):
                 self.NUM_OF_COMPARISON_ELEMENTS = load_pipeline_artefact_by_definition(
                     num_of_comparison_elements
                 )
@@ -189,7 +194,7 @@ class IndependenceTestInterface(ABC):
         self.threshold = threshold
 
     @abstractmethod
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
+    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
         Test if x and y are independent
         :param x: x values
@@ -198,7 +203,9 @@ class IndependenceTestInterface(ABC):
         """
         pass
 
-    def __call__(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
+    def __call__(
+        self, nodes: List[str], graph: BaseGraphInterface
+    ) -> Optional[TestResult]:
         return self.test(nodes, graph)
 
     def serialize(self) -> dict:

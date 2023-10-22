@@ -36,20 +36,21 @@ poetry run causy execute tests/fixtures/toy_data_larger.json --pipeline pc.json
 ### Usage via Code
 
 Use a default algorithm
+
 ```python
 from causy.algorithms import PC
-from causy.utils import show_edges
+from causy.utils import retrieve_edges
 
 model = PC()
 model.create_graph_from_data(
     [
-        {"a": 1, "b": 0.3}, 
+        {"a": 1, "b": 0.3},
         {"a": 0.5, "b": 0.2}
     ]
 )
 model.create_all_possible_edges()
 model.execute_pipeline_steps()
-edges = show_edges(model.graph)
+edges = retrieve_edges(model.graph)
 
 for edge in edges:
     print(

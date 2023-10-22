@@ -1,3 +1,4 @@
+import copy
 import itertools
 import logging
 
@@ -8,7 +9,6 @@ from causy.interfaces import (
     GraphModelInterface,
     AS_MANY_AS_FIELDS,
 )
-
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +43,24 @@ class AllCombinationsGenerator(GeneratorInterface):
 
 
 class PairsWithNeighboursGenerator(GeneratorInterface):
+    shuffle_combinations = True
+    chunked = True
+
+    def __init__(
+        self,
+        comparison_settings: ComparisonSettings,
+        chunked: bool = None,
+        shuffle_combinations: bool = None,
+    ):
+        super().__init__(comparison_settings, chunked)
+        if shuffle_combinations is not None:
+            self.shuffle_combinations = shuffle_combinations
+
+    def to_dict(self):
+        result = super().to_dict()
+        result["params"]["shuffle_combinations"] = self.shuffle_combinations
+        return result
+
     def generate(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
     ):
@@ -71,20 +89,36 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
         for i in range(start, stop):
             logger.debug(f"PairsWithNeighboursGenerator: i={i}")
             checked_combinations = set()
-            for node in graph.edges:
-                for neighbour in graph.edges[node]:
+            local_edges = copy.deepcopy(graph.edges)
+            for node in local_edges:
+                for neighbour in local_edges[node]:
                     if (node, neighbour) in checked_combinations:
                         continue
 
                     checked_combinations.add((node, neighbour))
                     if i == 2:
-                        yield (node.name, neighbour.name)
+                        yield (node, neighbour)
                         continue
 
                     other_neighbours = set(graph.edges[node])
-                    other_neighbours.remove(neighbour)
+                    if neighbour in other_neighbours:
+                        other_neighbours.remove(neighbour)
+                    else:
+                        continue
                     if len(other_neighbours) + 2 < i:
                         continue
+                    combinations = itertools.combinations(other_neighbours, i)
+                    if self.shuffle_combinations:
+                        combinations = list(combinations)
+                        import random
 
-                    for k in itertools.combinations(other_neighbours, i):
-                        yield [node.name, neighbour.name] + [ks.name for ks in k]
+                        random.shuffle(combinations)
+
+                    if self.chunked:
+                        chunk = []
+                        for k in combinations:
+                            chunk.append([node, neighbour] + [ks for ks in k])
+                        yield chunk
+                    else:
+                        for k in combinations:
+                            yield [node, neighbour] + [ks for ks in k]

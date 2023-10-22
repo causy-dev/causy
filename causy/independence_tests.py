@@ -1,22 +1,11 @@
 import itertools
-from statistics import correlation, covariance  # , linear_regression
-from typing import Tuple, List
-import math
-
-from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
-
-# Use cupy for GPU support - if available - otherwise use numpy
-try:
-    import cupy as np
-except ImportError:
-    import numpy as np
-
-from causy.utils import get_t_and_critial_t, get_correlation
-
+from typing import Tuple, List, Optional
 import logging
 
-logger = logging.getLogger(__name__)
+import torch
 
+from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
+from causy.utils import get_t_and_critical_t, get_correlation, pearson_correlation
 from causy.interfaces import (
     IndependenceTestInterface,
     BaseGraphInterface,
@@ -27,7 +16,7 @@ from causy.interfaces import (
     ComparisonSettings,
 )
 
-# TODO: make tests configurable (choosing different generators for different algorithms)
+logger = logging.getLogger(__name__)
 
 
 class CalculateCorrelations(IndependenceTestInterface):
@@ -46,8 +35,10 @@ class CalculateCorrelations(IndependenceTestInterface):
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
         edge_value = graph.edge_value(graph.nodes[nodes[0]], graph.nodes[nodes[1]])
-        edge_value["correlation"] = correlation(x.values, y.values)
-        # edge_value["covariance"] = covariance(x.values, y.values)
+        edge_value["correlation"] = pearson_correlation(
+            x.values,
+            y.values,
+        ).item()
         return TestResult(
             x=x,
             y=y,
@@ -63,7 +54,7 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
+    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
         Test if x and y are independent and delete edge in graph if they are.
         :param nodes: list of nodes
@@ -76,7 +67,7 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
         sample_size = len(x.values)
         nb_of_control_vars = 0
         corr = graph.edge_value(x, y)["correlation"]
-        t, critical_t = get_t_and_critial_t(
+        t, critical_t = get_t_and_critical_t(
             sample_size, nb_of_control_vars, corr, self.threshold
         )
         if abs(t) < critical_t:
@@ -88,8 +79,6 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
                 data={},
             )
 
-        return
-
 
 class PartialCorrelationTest(IndependenceTestInterface):
     GENERATOR = AllCombinationsGenerator(
@@ -98,7 +87,9 @@ class PartialCorrelationTest(IndependenceTestInterface):
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
-    def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
+    def test(
+        self, nodes: Tuple[str], graph: BaseGraphInterface
+    ) -> Optional[List[TestResult]]:
         """
         Test if nodes x,y are independent given node z based on a partial correlation test.
         We use this test for all combinations of 3 nodes because it is faster than the extended test (which supports combinations of n nodes). We can
@@ -109,6 +100,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
         TODO: we are testing (C and E given B) and (E and C given B), we just need one of these, remove redundant tests.
         """
         results = []
+        already_deleted_edges = set()
         for nodes in itertools.permutations(nodes):
             x: NodeInterface = graph.nodes[nodes[0]]
             y: NodeInterface = graph.nodes[nodes[1]]
@@ -117,6 +109,10 @@ class PartialCorrelationTest(IndependenceTestInterface):
             # Avoid division by zero
             if x is None or y is None or z is None:
                 return
+
+            if not graph.edge_exists(x, y) or (y, x) in already_deleted_edges:
+                continue
+
             try:
                 cor_xy = graph.edge_value(x, y)["correlation"]
                 cor_xz = graph.edge_value(x, z)["correlation"]
@@ -136,7 +132,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
             # make t test for independency of x and y given z
             sample_size = len(x.values)
             nb_of_control_vars = len(nodes) - 2
-            t, critical_t = get_t_and_critial_t(
+            t, critical_t = get_t_and_critical_t(
                 sample_size, nb_of_control_vars, par_corr, self.threshold
             )
 
@@ -144,6 +140,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
                 logger.debug(
                     f"Nodes {x.name} and {y.name} are uncorrelated given {z.name}"
                 )
+
                 results.append(
                     TestResult(
                         x=x,
@@ -152,6 +149,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
                         data={"separatedBy": [z]},
                     )
                 )
+                already_deleted_edges.add((x, y))
         return results
 
 
@@ -159,10 +157,12 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
     GENERATOR = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1000
+    PARALLEL = True
 
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
+    def test(
+        self, nodes: List[str], graph: BaseGraphInterface
+    ) -> Optional[List[TestResult]]:
         """
         Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using linear regression and a correlation test on the residuals.
         We use this test for all combinations of more than 3 nodes because it is slower.
@@ -190,7 +190,7 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
                 par_corr = get_correlation(x, y, other_nodes)
                 logger.debug(f"par_corr {par_corr}")
                 # make t test for independence of a and y given other nodes
-                t, critical_t = get_t_and_critial_t(
+                t, critical_t = get_t_and_critical_t(
                     sample_size, nb_of_control_vars, par_corr, self.threshold
                 )
 
@@ -211,10 +211,10 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
     GENERATOR = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 200
+    CHUNK_SIZE_PARALLEL_PROCESSING = 1000
     PARALLEL = False
 
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
+    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
         Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using the inverted covariance matrix (precision matrix).
         https://en.wikipedia.org/wiki/Partial_correlation#Using_matrix_inversion
@@ -222,56 +222,46 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
         """
+
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
             return
 
-        other_neighbours = set(graph.edges[graph.nodes[nodes[0]]])
+        other_neighbours = set(graph.edges[nodes[0]])
+        other_neighbours.remove(graph.nodes[nodes[1]].id)
 
-        other_neighbours.remove(graph.nodes[nodes[1]])
-
-        if not set(nodes[2:]).issubset(set([on.name for on in list(other_neighbours)])):
+        if not set(nodes[2:]).issubset(set([on for on in list(other_neighbours)])):
             return
 
-        covariance_matrix = [
-            [None for _ in range(len(nodes))] for _ in range(len(nodes))
-        ]
-        for i in range(len(nodes)):
-            for k in range(i, len(nodes)):
-                if covariance_matrix[i][k] is None:
-                    covariance_matrix[i][k] = covariance(
-                        graph.nodes[nodes[i]].values, graph.nodes[nodes[k]].values
-                    )
-                    covariance_matrix[k][i] = covariance_matrix[i][k]
+        inverse_cov_matrix = torch.inverse(
+            torch.cov(torch.stack([graph.nodes[node].values for node in nodes]))
+        )
+        n = inverse_cov_matrix.size(0)
+        diagonal = torch.diag(inverse_cov_matrix)
+        diagonal_matrix = torch.zeros((n, n), dtype=torch.float64)
+        for i in range(n):
+            diagonal_matrix[i, i] = diagonal[i]
 
-        cov_matrix = np.array(covariance_matrix)
-        inverse_cov_matrix = np.linalg.inv(cov_matrix)
-        n = len(inverse_cov_matrix)
-        diagonal = np.diagonal(inverse_cov_matrix)
-        diagonal_matrix = np.zeros((n, n))
-        np.fill_diagonal(diagonal_matrix, diagonal)
-        helper = np.dot(np.sqrt(diagonal_matrix), inverse_cov_matrix)
-        precision_matrix = np.dot(helper, np.sqrt(diagonal_matrix))
+        helper = torch.mm(torch.sqrt(diagonal_matrix), inverse_cov_matrix)
+        precision_matrix = torch.mm(helper, torch.sqrt(diagonal_matrix))
 
         sample_size = len(graph.nodes[nodes[0]].values)
         nb_of_control_vars = len(nodes) - 2
-        results = []
 
-        nodes_set = set([graph.nodes[n] for n in nodes])
-
-        t, critical_t = get_t_and_critial_t(
+        t, critical_t = get_t_and_critical_t(
             sample_size,
             nb_of_control_vars,
             (
                 (-1 * precision_matrix[0][1])
-                / (math.sqrt(precision_matrix[0][0] * precision_matrix[1][1]))
-            ),
+                / torch.sqrt(precision_matrix[0][0] * precision_matrix[1][1])
+            ).item(),
             self.threshold,
         )
 
         if abs(t) < critical_t:
             logger.debug(
-                f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([on.name for on in other_neighbours])}"
+                f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([graph.nodes[on].name for on in other_neighbours])}"
             )
+            nodes_set = set([graph.nodes[n] for n in nodes])
             return TestResult(
                 x=graph.nodes[nodes[0]],
                 y=graph.nodes[nodes[1]],
@@ -282,8 +272,6 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                     )
                 },
             )
-
-        return results
 
 
 class PlaceholderTest(IndependenceTestInterface):
