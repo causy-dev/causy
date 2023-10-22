@@ -2,18 +2,17 @@ import importlib
 import json
 from datetime import datetime
 from json import JSONEncoder
+import logging
 
 import typer
 
 from causy.graph import graph_model_factory
 from causy.utils import (
-    load_pipeline_artefact_by_definition,
     load_pipeline_steps_by_definition,
     retrieve_edges,
 )
 
 app = typer.Typer()
-import logging
 
 
 def load_json(pipeline_file: str):

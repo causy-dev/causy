@@ -9,7 +9,6 @@ from causy.interfaces import (
     GraphModelInterface,
     AS_MANY_AS_FIELDS,
 )
-from causy.utils import serialize_module_name
 
 logger = logging.getLogger(__name__)
 

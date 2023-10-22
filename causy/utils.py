@@ -2,7 +2,7 @@ import importlib
 import logging
 
 import torch
-from sympy import transpose, Matrix, solve_linear_system, symbols, Symbol, shape
+from sympy import transpose, Matrix, Symbol, shape
 from scipy import stats as scipy_stats
 import math
 from statistics import correlation
@@ -25,7 +25,7 @@ def backward_substituion(R, b, n):
     :param n: int, dimension
     :return: Matrix, n-dimensional regression coefficient vector
     """
-
+    # TODO: rewrite this function with torch or remove it
     # Define the symbolic variables
     my_symbols = []
     for z in range(n + 1):
@@ -53,6 +53,7 @@ def get_regression_coefficients(x, Z):
     :param Z: list of lists (length of outer list = # of samples, length of inner list = # of variables in Z)
     :return: sympy matrix, regression coefficients from regressing x on Z
     """
+    # TODO: rewrite this function with torch or remove it
     z_matrix = Matrix(Z)
     (n, m) = shape(z_matrix)
     logger.debug(f"(n,m)={(n, m)}")
@@ -61,7 +62,7 @@ def get_regression_coefficients(x, Z):
             "Z must have at most as many rows as columns. (Otherwise you have more variables than samples - which seems to be the case here)"
         )
     Q, R = z_matrix.QRdecomposition()
-    if not shape(R) == (m, m):
+    if shape(R) != (m, m):
         raise Exception("The matrix of data we regress on (Z) must have full rank.")
     q_transposed = transpose(Q)
     logger.debug(f"Q_transposed shape = {shape(q_transposed)}")
@@ -85,12 +86,15 @@ def get_residuals(x, Z):
     CAUTION: Z must have full rank
     TODO: add optional check
     """
+    # TODO: rewrite this function with torch or remove it
+
     n = len(x)
     res_x = Matrix(n, 1, x) - Matrix(Z) @ get_regression_coefficients(x, Z)
     return list(res_x)
 
 
 def get_correlation(x, y, other_nodes):
+    # TODO: rewrite this function with torch or remove it
     other_nodes_transposed = [list(i) for i in zip(*other_nodes)]
     residuals_x = get_residuals(x.values, other_nodes_transposed)
     residuals_y = get_residuals(y.values, other_nodes_transposed)
@@ -99,6 +103,7 @@ def get_correlation(x, y, other_nodes):
 
 
 def get_t_and_critical_t(sample_size, nb_of_control_vars, par_corr, threshold):
+    # TODO: rewrite this function with torch
     # check if we have to normalize data
     deg_of_freedom = sample_size - 2 - nb_of_control_vars
     if abs(round(par_corr, 4)) == 1:

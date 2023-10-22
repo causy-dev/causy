@@ -1,16 +1,15 @@
 from abc import ABC
 from dataclasses import dataclass
 from typing import List, Optional, Dict, Set, Tuple
+from uuid import uuid4
+import logging
 
 import torch
 import torch.multiprocessing as mp
 
-from uuid import uuid4
-
 from causy.interfaces import (
     IndependenceTestInterface,
 )
-
 from causy.interfaces import (
     BaseGraphInterface,
     NodeInterface,
@@ -20,9 +19,6 @@ from causy.interfaces import (
     LogicStepInterface,
     ExitConditionInterface,
 )
-
-import logging
-
 from causy.utils import (
     load_pipeline_artefact_by_definition,
     load_pipeline_steps_by_definition,
@@ -258,20 +254,20 @@ class UndirectedGraph(BaseGraphInterface):
     def edge_value(self, u: Node, v: Node):
         return self.edges[u.id][v.id]
 
-    def add_node(self, name: str, values: List[float], id: str = None):
+    def add_node(self, name: str, values: List[float], id_: str = None):
         """
         Add a node to the graph
         :param name: name of the node
         :param values: values of the node
-        :param id: id of the node
+        :param id_: id_ of the node
         :param : node
 
         :return:
         """
-        if id is None:
-            id = str(uuid4())
-        self.nodes[id] = Node(
-            name=name, id=id, values=torch.tensor(values, dtype=torch.float64)
+        if id_ is None:
+            id_ = str(uuid4())
+        self.nodes[id_] = Node(
+            name=name, id=id_, values=torch.tensor(values, dtype=torch.float64)
         )
 
     def directed_path_exists(self, u: Node, v: Node):
@@ -317,7 +313,8 @@ class UndirectedGraph(BaseGraphInterface):
             for i in range(1, len(path) - 1):
                 r, w = path[i]
                 if not self.bidirected_edge_exists(r, w):
-                    return False
+                    # TODO: check if this is correct (@sof)
+                    return True
         return False
 
 
@@ -546,11 +543,11 @@ class Loop(LogicStepInterface):
     ):
         super().__init__()
         # TODO check if this is a good idea
-        if type(exit_condition) == dict:
+        if isinstance(exit_condition, dict):
             exit_condition = load_pipeline_artefact_by_definition(exit_condition)
 
         # TODO: check if this is a good idea
-        if len(pipeline_steps) > 0 and type(pipeline_steps[0]) == dict:
+        if len(pipeline_steps) > 0 and isinstance(pipeline_steps[0], dict):
             pipeline_steps = load_pipeline_steps_by_definition(pipeline_steps)
 
         self.pipeline_steps = pipeline_steps or []

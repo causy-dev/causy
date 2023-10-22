@@ -1,15 +1,11 @@
 import itertools
-from typing import Tuple, List
+from typing import Tuple, List, Optional
+import logging
 
 import torch
 
 from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
 from causy.utils import get_t_and_critical_t, get_correlation, pearson_correlation
-
-import logging
-
-logger = logging.getLogger(__name__)
-
 from causy.interfaces import (
     IndependenceTestInterface,
     BaseGraphInterface,
@@ -20,7 +16,7 @@ from causy.interfaces import (
     ComparisonSettings,
 )
 
-# TODO: make tests configurable (choosing different generators for different algorithms)
+logger = logging.getLogger(__name__)
 
 
 class CalculateCorrelations(IndependenceTestInterface):
@@ -58,7 +54,7 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
+    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
         Test if x and y are independent and delete edge in graph if they are.
         :param nodes: list of nodes
@@ -83,8 +79,6 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
                 data={},
             )
 
-        return
-
 
 class PartialCorrelationTest(IndependenceTestInterface):
     GENERATOR = AllCombinationsGenerator(
@@ -93,7 +87,9 @@ class PartialCorrelationTest(IndependenceTestInterface):
     CHUNK_SIZE_PARALLEL_PROCESSING = 1
     PARALLEL = False
 
-    def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
+    def test(
+        self, nodes: Tuple[str], graph: BaseGraphInterface
+    ) -> Optional[List[TestResult]]:
         """
         Test if nodes x,y are independent given node z based on a partial correlation test.
         We use this test for all combinations of 3 nodes because it is faster than the extended test (which supports combinations of n nodes). We can
@@ -104,6 +100,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
         TODO: we are testing (C and E given B) and (E and C given B), we just need one of these, remove redundant tests.
         """
         results = []
+        already_deleted_edges = set()
         for nodes in itertools.permutations(nodes):
             x: NodeInterface = graph.nodes[nodes[0]]
             y: NodeInterface = graph.nodes[nodes[1]]
@@ -112,6 +109,10 @@ class PartialCorrelationTest(IndependenceTestInterface):
             # Avoid division by zero
             if x is None or y is None or z is None:
                 return
+
+            if not graph.edge_exists(x, y) or (y, x) in already_deleted_edges:
+                continue
+
             try:
                 cor_xy = graph.edge_value(x, y)["correlation"]
                 cor_xz = graph.edge_value(x, z)["correlation"]
@@ -139,6 +140,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
                 logger.debug(
                     f"Nodes {x.name} and {y.name} are uncorrelated given {z.name}"
                 )
+
                 results.append(
                     TestResult(
                         x=x,
@@ -147,6 +149,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
                         data={"separatedBy": [z]},
                     )
                 )
+                already_deleted_edges.add((x, y))
         return results
 
 
@@ -157,7 +160,9 @@ class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
     CHUNK_SIZE_PARALLEL_PROCESSING = 1000
     PARALLEL = True
 
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
+    def test(
+        self, nodes: List[str], graph: BaseGraphInterface
+    ) -> Optional[List[TestResult]]:
         """
         Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using linear regression and a correlation test on the residuals.
         We use this test for all combinations of more than 3 nodes because it is slower.
@@ -209,7 +214,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
     CHUNK_SIZE_PARALLEL_PROCESSING = 1000
     PARALLEL = False
 
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> TestResult:
+    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
         Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using the inverted covariance matrix (precision matrix).
         https://en.wikipedia.org/wiki/Partial_correlation#Using_matrix_inversion
