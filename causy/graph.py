@@ -336,7 +336,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     ):
         self.graph = graph
         self.pipeline_steps = pipeline_steps or []
-        self.pool = mp.Pool(round(mp.cpu_count() / 2))
+        self.pool = mp.Pool(mp.cpu_count() * 2)
 
     def create_graph_from_data(self, data: List[Dict[str, float]]):
         """

@@ -41,11 +41,11 @@ ParallelPC = graph_model_factory(
         CalculateCorrelations(),
         CorrelationCoefficientTest(threshold=0.01),
         PartialCorrelationTest(
-            threshold=0.01, parallel=True, chunk_size_parallel_processing=10000
+            threshold=0.01, parallel=True, chunk_size_parallel_processing=50000
         ),
         ExtendedPartialCorrelationTestMatrix(
             threshold=0.01,
-            chunk_size_parallel_processing=1000,
+            chunk_size_parallel_processing=20000,
             parallel=True,
             generator=PairsWithNeighboursGenerator(
                 chunked=False,

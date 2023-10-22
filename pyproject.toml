@@ -23,6 +23,9 @@ black = "^23.9.1"
 numpy = "^1.26.0"
 pdoc = "^14.1.0"
 
+[tool.poetry-version-plugin]
+source = "git-tag"
+
 
 [build-system]
 requires = ["poetry-core"]
