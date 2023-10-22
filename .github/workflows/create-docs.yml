@@ -3,6 +3,16 @@
 
 name: Python package
 
+permissions:
+  contents: write
+  issues: write
+  metadata: read
+  packages: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: write
+
 on:
   push:
     branches: [ "main" ]
