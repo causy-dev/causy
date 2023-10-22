@@ -58,7 +58,7 @@
                         <label class="view-source-button" for="mod-algorithms-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">causy.exit_conditions</span> <span class="kn">import</span> <span class="n">ExitOnNoActions</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span> <span class="nn">causy.generators</span> <span class="kn">import</span> <span class="n">PairsWithNeighboursGenerator</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span> <span class="nn">causy.generators</span> <span class="kn">import</span> <span class="n">PairsWithNeighboursGenerator</span><span class="p">,</span> <span class="n">RandomSampleGenerator</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span> <span class="nn">causy.graph</span> <span class="kn">import</span> <span class="n">graph_model_factory</span><span class="p">,</span> <span class="n">Loop</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">causy.independence_tests</span> <span class="kn">import</span> <span class="p">(</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>    <span class="n">CalculateCorrelations</span><span class="p">,</span>
@@ -103,27 +103,44 @@
 </span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>            <span class="n">threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">chunk_size_parallel_processing</span><span class="o">=</span><span class="mi">50000</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="p">),</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="n">ExtendedPartialCorrelationTestMatrix</span><span class="p">(</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>            <span class="n">threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>            <span class="n">chunk_size_parallel_processing</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>            <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>            <span class="n">generator</span><span class="o">=</span><span class="n">PairsWithNeighboursGenerator</span><span class="p">(</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>                <span class="n">chunked</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>                <span class="n">shuffle_combinations</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>                <span class="n">comparison_settings</span><span class="o">=</span><span class="n">ComparisonSettings</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">AS_MANY_AS_FIELDS</span><span class="p">),</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>            <span class="p">),</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>        <span class="p">),</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="n">ColliderTest</span><span class="p">(),</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="n">Loop</span><span class="p">(</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>            <span class="n">pipeline_steps</span><span class="o">=</span><span class="p">[</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>                <span class="n">NonColliderTest</span><span class="p">(),</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>                <span class="n">FurtherOrientTripleTest</span><span class="p">(),</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>                <span class="n">OrientQuadrupleTest</span><span class="p">(),</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>                <span class="n">FurtherOrientQuadrupleTest</span><span class="p">(),</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>            <span class="p">],</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>            <span class="n">exit_condition</span><span class="o">=</span><span class="n">ExitOnNoActions</span><span class="p">(),</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="p">),</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="p">]</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="p">)</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>            <span class="c1"># run first a sampled version of the test so we can minimize the number of tests in the full version</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>            <span class="n">threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>            <span class="n">chunk_size_parallel_processing</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>            <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>            <span class="n">generator</span><span class="o">=</span><span class="n">RandomSampleGenerator</span><span class="p">(</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>                <span class="n">generator</span><span class="o">=</span><span class="n">PairsWithNeighboursGenerator</span><span class="p">(</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>                    <span class="n">chunked</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>                    <span class="n">shuffle_combinations</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>                    <span class="n">comparison_settings</span><span class="o">=</span><span class="n">ComparisonSettings</span><span class="p">(</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>                        <span class="nb">min</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">AS_MANY_AS_FIELDS</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>                    <span class="p">),</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>                <span class="p">),</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>                <span class="n">chunked</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>                <span class="n">every_nth</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>            <span class="p">),</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="p">),</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="n">ExtendedPartialCorrelationTestMatrix</span><span class="p">(</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>            <span class="n">threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>            <span class="n">chunk_size_parallel_processing</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>            <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>            <span class="n">generator</span><span class="o">=</span><span class="n">PairsWithNeighboursGenerator</span><span class="p">(</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>                <span class="n">chunked</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>                <span class="n">shuffle_combinations</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>                <span class="n">comparison_settings</span><span class="o">=</span><span class="n">ComparisonSettings</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">AS_MANY_AS_FIELDS</span><span class="p">),</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>            <span class="p">),</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="p">),</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>        <span class="n">ColliderTest</span><span class="p">(),</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>        <span class="n">Loop</span><span class="p">(</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>            <span class="n">pipeline_steps</span><span class="o">=</span><span class="p">[</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>                <span class="n">NonColliderTest</span><span class="p">(),</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>                <span class="n">FurtherOrientTripleTest</span><span class="p">(),</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>                <span class="n">OrientQuadrupleTest</span><span class="p">(),</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>                <span class="n">FurtherOrientQuadrupleTest</span><span class="p">(),</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>            <span class="p">],</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>            <span class="n">exit_condition</span><span class="o">=</span><span class="n">ExitOnNoActions</span><span class="p">(),</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="p">),</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>    <span class="p">]</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a><span class="p">)</span>
 </span></pre></div>
 
 
