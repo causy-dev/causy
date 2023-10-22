@@ -66,6 +66,9 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
         if shuffle_combinations is not None:
             self.shuffle_combinations = shuffle_combinations
 
+        if chunked is not None:
+            self.chunked = chunked
+
     def serialize(self):
         result = super().serialize()
         result["params"]["shuffle_combinations"] = self.shuffle_combinations

@@ -5,7 +5,7 @@ import logging
 import torch
 
 from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
-from causy.utils import get_t_and_critical_t, get_correlation, pearson_correlation
+from causy.utils import get_t_and_critical_t, pearson_correlation
 from causy.interfaces import (
     IndependenceTestInterface,
     BaseGraphInterface,
@@ -150,60 +150,6 @@ class PartialCorrelationTest(IndependenceTestInterface):
                     )
                 )
                 already_deleted_edges.add((x, y))
-        return results
-
-
-class ExtendedPartialCorrelationTestLinearRegression(IndependenceTestInterface):
-    GENERATOR = AllCombinationsGenerator(
-        comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
-    )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1000
-    PARALLEL = True
-
-    def test(
-        self, nodes: List[str], graph: BaseGraphInterface
-    ) -> Optional[List[TestResult]]:
-        """
-        Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using linear regression and a correlation test on the residuals.
-        We use this test for all combinations of more than 3 nodes because it is slower.
-        :param nodes: the nodes to test
-        :return: A TestResult with the action to take
-
-        TODO: Does not run in reasonable time yet.
-        """
-        n = len(nodes)
-        sample_size = len(graph.nodes[nodes[0]].values)
-        nodes_set = set([graph.nodes[n] for n in nodes])
-
-        nb_of_control_vars = n - 2
-        results = []
-        for i in range(n):
-            for j in range(i + 1, n):
-                x = graph.nodes[nodes[i]]
-                y = graph.nodes[nodes[j]]
-                exclude_indices = [i, j]
-                other_nodes = [
-                    graph.nodes[n].values
-                    for idx, n in enumerate(nodes)
-                    if idx not in exclude_indices
-                ]
-                par_corr = get_correlation(x, y, other_nodes)
-                logger.debug(f"par_corr {par_corr}")
-                # make t test for independence of a and y given other nodes
-                t, critical_t = get_t_and_critical_t(
-                    sample_size, nb_of_control_vars, par_corr, self.threshold
-                )
-
-                if abs(t) < critical_t:
-                    results.append(
-                        TestResult(
-                            x=x,
-                            y=y,
-                            action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                            data={"separatedBy": list(nodes_set - {x, y})},
-                        )
-                    )
-
         return results
 
 

@@ -1,15 +1,13 @@
 [tool.poetry]
 name = "causy"
 version = "0.1.0"
-description = ""
+description = "Causal Dicovery made easy."
 authors = ["Sofia Faltenbacher <faltenbacher.sofia@gmail.com>", "Lilith Wittmann <mail@lilithwittmann.de>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12" # until torch is available for 3.12
-sympy = "^1.12"
 scipy = "^1.11.2"
-pre-commit = "^3.4.0"
 typer = "^0.9.0"
 networkx = "^3.1"
 matplotlib = "^3.8.0"
@@ -22,6 +20,8 @@ pyinstrument = "^4.5.3"
 black = "^23.9.1"
 numpy = "^1.26.0"
 pdoc = "^14.1.0"
+pre-commit = "^3.4.0"
+
 
 [tool.poetry-version-plugin]
 source = "git-tag"
