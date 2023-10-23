@@ -70,7 +70,7 @@ class BaseGraphInterface(ABC):
         pass
 
     @abstractmethod
-    def add_edge_history(self, u, v, action: TestResultAction):
+    def add_edge_history(self, u, v, action: TestResult):
         pass
 
     @abstractmethod

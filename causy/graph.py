@@ -93,7 +93,7 @@ class UndirectedGraph(BaseGraphInterface):
 
         return [i for i in self.edge_history[(u.id, v.id)] if i.action == action]
 
-    def add_edge_history(self, u, v, action: TestResultAction):
+    def add_edge_history(self, u, v, action: TestResult):
         if (u.id, v.id) not in self.edge_history:
             self.edge_history[(u.id, v.id)] = []
         self.edge_history[(u.id, v.id)].append(action)

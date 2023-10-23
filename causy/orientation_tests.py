@@ -10,7 +10,8 @@ from causy.interfaces import (
     ComparisonSettings,
 )
 
-# theory for all orientation rules with pictures: https://hpi.de/fileadmin/user_upload/fachgebiete/plattner/teaching/CausalInference/2019/Introduction_to_Constraint-Based_Causal_Structure_Learning.pdf
+# theory for all orientation rules with pictures:
+# https://hpi.de/fileadmin/user_upload/fachgebiete/plattner/teaching/CausalInference/2019/Introduction_to_Constraint-Based_Causal_Structure_Learning.pdf
 
 
 class ColliderTest(IndependenceTestInterface):
@@ -47,13 +48,14 @@ class ColliderTest(IndependenceTestInterface):
             set(graph.edges[y.id].keys())
         )
 
+        actions = graph.retrieve_edge_history(
+            x, y, TestResultAction.REMOVE_EDGE_UNDIRECTED
+        )
+
         # if x and y are not independent given z, safe action: make z a collider
         results = []
         for z in potential_zs:
             z = graph.nodes[z]
-            actions = graph.retrieve_edge_history(
-                x, y, TestResultAction.REMOVE_EDGE_UNDIRECTED
-            )
 
             separators = []
             for action in actions:
@@ -163,13 +165,13 @@ class FurtherOrientTripleTest(IndependenceTestInterface):
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
-        potential_zs = set(graph.edges[x.id].keys()).intersection(
-            set(graph.edges[y.id].keys())
-        )
-
         results = []
-        for z in potential_zs:
+        for z in graph.nodes:
             z = graph.nodes[z]
+            # check if it is a potential z
+            if not (graph.edge_exists(y, z) and graph.edge_exists(x, z)):
+                continue
+
             if (
                 graph.undirected_edge_exists(x, y)
                 and graph.only_directed_edge_exists(x, z)
@@ -216,44 +218,48 @@ class OrientQuadrupleTest(IndependenceTestInterface):
         :returns: list of actions that will be executed on graph
         """
 
-        x = graph.nodes[nodes[0]]
-        y = graph.nodes[nodes[1]]
+        y = graph.nodes[nodes[0]]
+        w = graph.nodes[nodes[1]]
 
-        potential_zs = set(graph.edges[x.id].keys()).intersection(
-            set(graph.edges[y.id].keys())
-        )
+        potential_zs = set()
+
+        # TODO: just iterate over edges
+        for z in graph.nodes:
+            z = graph.nodes[z]
+            if graph.edge_exists(y, z) and graph.edge_exists(z, w):
+                potential_zs.add(z)
+
 
         results = []
         for zs in itertools.combinations(potential_zs, 2):
-            z = graph.nodes[zs[0]]
-            w = graph.nodes[zs[1]]
+            x, z = zs
             if (
-                not graph.undirected_edge_exists(x, y)
-                and graph.only_directed_edge_exists(x, z)
+                not graph.edge_exists(y, w)
                 and graph.only_directed_edge_exists(y, z)
+                and graph.only_directed_edge_exists(w, z)
+                and graph.undirected_edge_exists(x, y)
                 and graph.undirected_edge_exists(x, w)
-                and graph.undirected_edge_exists(y, w)
-                and graph.undirected_edge_exists(z, w)
+                and graph.undirected_edge_exists(x, z)
             ):
                 results.append(
                     TestResult(
                         x=z,
-                        y=w,
+                        y=x,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
                 )
             if (
-                not graph.undirected_edge_exists(x, y)
-                and graph.only_directed_edge_exists(x, w)
-                and graph.only_directed_edge_exists(y, w)
-                and graph.undirected_edge_exists(x, z)
+                not graph.edge_exists(y, w)
+                and graph.only_directed_edge_exists(y, x)
+                and graph.only_directed_edge_exists(w, x)
                 and graph.undirected_edge_exists(y, z)
-                and graph.undirected_edge_exists(z, w)
+                and graph.undirected_edge_exists(w, z)
+                and graph.undirected_edge_exists(x, z)
             ):
                 results.append(
                     TestResult(
-                        x=w,
+                        x=x,
                         y=z,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
@@ -280,44 +286,79 @@ class FurtherOrientQuadrupleTest(IndependenceTestInterface):
         """
 
         x = graph.nodes[nodes[0]]
-        y = graph.nodes[nodes[1]]
+        w = graph.nodes[nodes[1]]
 
-        potential_zs = set(graph.edges[x.id].keys()).intersection(
-            set(graph.edges[y.id].keys())
-        )
+        potential_zs = set()
+
+        # TODO: just iterate over edges
+        for z in graph.nodes:
+            z = graph.nodes[z]
+            if graph.edge_exists(x, z) and graph.edge_exists(z, w):
+                potential_zs.add(z)
 
         results = []
         for zs in itertools.combinations(potential_zs, 2):
-            z = graph.nodes[zs[0]]
-            w = graph.nodes[zs[1]]
+            y, z = zs
             if (
-                not graph.undirected_edge_exists(x, y)
-                and graph.only_directed_edge_exists(x, z)
-                and graph.only_directed_edge_exists(z, y)
-                and graph.undirected_edge_exists(z, w)
+                not graph.edge_exists(y, z)
                 and graph.undirected_edge_exists(x, z)
-                and graph.undirected_edge_exists(y, z)
+                and graph.undirected_edge_exists(x, w)
+                and graph.undirected_edge_exists(x, y)
+                and graph.only_directed_edge_exists(y, w)
+                and graph.only_directed_edge_exists(w, z)
             ):
                 results.append(
                     TestResult(
-                        x=y,
-                        y=z,
+                        x=z,
+                        y=x,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
                 )
-            if (
-                not graph.undirected_edge_exists(y, x)
-                and graph.only_directed_edge_exists(y, z)
-                and graph.only_directed_edge_exists(z, x)
-                and graph.undirected_edge_exists(z, w)
+            elif (
+                not graph.edge_exists(z, y)
+                and graph.undirected_edge_exists(x, y)
+                and graph.undirected_edge_exists(x, w)
                 and graph.undirected_edge_exists(x, z)
-                and graph.undirected_edge_exists(y, z)
+                and graph.only_directed_edge_exists(z, w)
+                and graph.only_directed_edge_exists(w, y)
             ):
                 results.append(
                     TestResult(
-                        x=x,
-                        y=z,
+                        x=y,
+                        y=x,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
+                )
+            elif (
+                not graph.edge_exists(y, z)
+                and graph.undirected_edge_exists(w, z)
+                and graph.undirected_edge_exists(x, w)
+                and graph.undirected_edge_exists(w, y)
+                and graph.only_directed_edge_exists(y, x)
+                and graph.only_directed_edge_exists(x, z)
+            ):
+                results.append(
+                    TestResult(
+                        x=z,
+                        y=w,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
+                )
+            elif (
+                not graph.edge_exists(z, y)
+                and graph.undirected_edge_exists(w, y)
+                and graph.undirected_edge_exists(x, w)
+                and graph.undirected_edge_exists(w, z)
+                and graph.only_directed_edge_exists(z, x)
+                and graph.only_directed_edge_exists(x, y)
+            ):
+                results.append(
+                    TestResult(
+                        x=y,
+                        y=w,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
