@@ -90,7 +90,7 @@ class BaseGraphInterface(ABC):
         pass
 
     @abstractmethod
-    def add_node(self, name, values):
+    def add_node(self, name, values) -> NodeInterface:
         pass
 
     @abstractmethod

@@ -144,5 +144,5 @@ poetry install
 
 Execute tests
 ```bash
-poetry run python -m unittest discover -s tests
+poetry run python -m unittest
 ```
