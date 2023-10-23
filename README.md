@@ -6,7 +6,7 @@ Causal discovery made easy. Causy allows you to use and implement causal discove
 
 ## Background
 
-Current causal discovery algorithms are often designed for the primary purpose of research. They are often implemented in a monolithic way, which makes it hard to understand and extend them. Causy aims to solve this problem by providing a framework which allows you to easily implement and use causal discovery algorithms by splitting them up into smaller logic steps which can be stacked together to form a pipeline. This allows you to easily understand, extend, optimize, maintain, and experiment with the algorithms.
+Current causal discovery algorithms are often designed for the primary purpose of research. They are often implemented in a monolithic way, which makes it hard to understand and extend them. Causy aims to solve this problem by providing a framework which allows you to easily implement and use causal discovery algorithms by splitting them up into smaller logic steps which can be stacked together to form a pipeline. This allows you to easily understand, extend, optimize, and experiment with the algorithms.
 
 By shipping causy with sensitively configured default pipelines, we also aim to provide a tool that can be used by non-experts to get started with causal discovery.
 
