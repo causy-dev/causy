@@ -365,7 +365,7 @@
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="k">pass</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NodeInterface</span><span class="p">:</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="k">pass</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="nd">@abstractmethod</span>
@@ -1044,7 +1044,7 @@
 </span><span id="BaseGraphInterface-91"><a href="#BaseGraphInterface-91"><span class="linenos"> 91</span></a>        <span class="k">pass</span>
 </span><span id="BaseGraphInterface-92"><a href="#BaseGraphInterface-92"><span class="linenos"> 92</span></a>
 </span><span id="BaseGraphInterface-93"><a href="#BaseGraphInterface-93"><span class="linenos"> 93</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseGraphInterface-94"><a href="#BaseGraphInterface-94"><span class="linenos"> 94</span></a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+</span><span id="BaseGraphInterface-94"><a href="#BaseGraphInterface-94"><span class="linenos"> 94</span></a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NodeInterface</span><span class="p">:</span>
 </span><span id="BaseGraphInterface-95"><a href="#BaseGraphInterface-95"><span class="linenos"> 95</span></a>        <span class="k">pass</span>
 </span><span id="BaseGraphInterface-96"><a href="#BaseGraphInterface-96"><span class="linenos"> 96</span></a>
 </span><span id="BaseGraphInterface-97"><a href="#BaseGraphInterface-97"><span class="linenos"> 97</span></a>    <span class="nd">@abstractmethod</span>
@@ -1224,14 +1224,14 @@ inheritance.</p>
                     <div class="decorator">@abstractmethod</div>
 
         <span class="def">def</span>
-        <span class="name">add_node</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">name</span>, </span><span class="param"><span class="n">values</span></span><span class="return-annotation">):</span></span>
+        <span class="name">add_node</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">name</span>, </span><span class="param"><span class="n">values</span></span><span class="return-annotation">) -> <span class="n"><a href="#NodeInterface">NodeInterface</a></span>:</span></span>
 
                 <label class="view-source-button" for="BaseGraphInterface.add_node-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#BaseGraphInterface.add_node"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BaseGraphInterface.add_node-93"><a href="#BaseGraphInterface.add_node-93"><span class="linenos">93</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseGraphInterface.add_node-94"><a href="#BaseGraphInterface.add_node-94"><span class="linenos">94</span></a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+</span><span id="BaseGraphInterface.add_node-94"><a href="#BaseGraphInterface.add_node-94"><span class="linenos">94</span></a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NodeInterface</span><span class="p">:</span>
 </span><span id="BaseGraphInterface.add_node-95"><a href="#BaseGraphInterface.add_node-95"><span class="linenos">95</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
@@ -1359,7 +1359,7 @@ inheritance.</p>
 
                             <div id="GraphModelInterface.pool" class="classattr">
                                 <div class="attr variable">
-            <span class="name">pool</span><span class="annotation">: &lt;bound method BaseContext.Pool of &lt;multiprocessing.context.DefaultContext object at 0x102c49f50&gt;&gt;</span>
+            <span class="name">pool</span><span class="annotation">: &lt;bound method BaseContext.Pool of &lt;multiprocessing.context.DefaultContext object at 0x103d29bd0&gt;&gt;</span>
 
         
     </div>
