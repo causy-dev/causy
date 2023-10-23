@@ -1,8 +1,18 @@
 > [!WARNING]
-> causy is currently in a very early stage of development. We do not recommend using it in production.
+> causy is currently in a very early and experimental stage of development. It currently only supports one algorithm. We do not recommend using it in production.
 # causy
 
-Causal discovery made easy.
+Causal discovery made easy. Causy allows you to use and implement causal discovery algorithms with easy to use, extend and maintain pipelines. It is built based on pytorch which allows you to run the algorithms on CPUs as well as GPUs seamlessly.
+
+## Background
+
+Current causal discovery algorithms are often designed for the primary purpose of research. They are often implemented in a monolithic way, which makes it hard to understand and extend them. Causy aims to solve this problem by providing a framework which allows you to easily implement and use causal discovery algorithms by splitting them up into smaller logic steps which can be stacked together to form a pipeline. This allows you to easily understand, extend, optimize, maintain, and experiment with the algorithms.
+
+By shipping causy with sensitively configured default pipelines, we also aim to provide a tool that can be used by non-experts to get started with causal discovery.
+
+Thanks to the pytorch backend, causy is remarkably faster compared to serial CPU based implementations. 
+
+In the future, causy aims to provide interactive visualizations which allow you to understand the causal discovery process.
 
 ## Installation
 Currently we only support python 3.11. To install causy run
@@ -21,7 +31,7 @@ causy execute --help
 causy execute your_data.json --algorithm PC --output-file output.json
 ```
 
-The data you can use is a json file with a list of dictionaries. Each dictionary represents a data point. The keys of the dictionary are the variable names and the values are the values of the variables. The values can be either numeric or categorical. 
+The input data should be a json file with a list of dictionaries. Each dictionary represents a data point. The keys of the dictionary are the variable names and the values are the values of the variables. The values can be either numeric or categorical. 
 
 ```json
 [
@@ -37,7 +47,7 @@ causy eject PC pc.json
 causy execute your_data.json --pipeline pc.json
 ```
 
-This might be useful if you want to use a custom algorithm or if you want to customize the pipeline of a default algorithm.
+This might be useful if you want to configure a custom algorithm or if you want to customize the pipeline of a default algorithm.
 
 
 ### Usage via Code
@@ -144,5 +154,5 @@ poetry install
 
 Execute tests
 ```bash
-poetry run python -m unittest discover -s tests
+poetry run python -m unittest
 ```

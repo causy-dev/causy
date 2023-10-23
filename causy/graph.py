@@ -88,6 +88,9 @@ class UndirectedGraph(BaseGraphInterface):
         if action is None:
             return self.edge_history[(u.id, v.id)]
 
+        if (u.id, v.id) not in self.edge_history:
+            return []
+
         return [i for i in self.edge_history[(u.id, v.id)] if i.action == action]
 
     def add_edge_history(self, u, v, action: TestResultAction):
@@ -254,7 +257,7 @@ class UndirectedGraph(BaseGraphInterface):
     def edge_value(self, u: Node, v: Node):
         return self.edges[u.id][v.id]
 
-    def add_node(self, name: str, values: List[float], id_: str = None):
+    def add_node(self, name: str, values: List[float], id_: str = None) -> Node:
         """
         Add a node to the graph
         :param name: name of the node
@@ -262,13 +265,15 @@ class UndirectedGraph(BaseGraphInterface):
         :param id_: id_ of the node
         :param : node
 
-        :return:
+        :return: created Node
         """
         if id_ is None:
             id_ = str(uuid4())
-        self.nodes[id_] = Node(
+        node = Node(
             name=name, id=id_, values=torch.tensor(values, dtype=torch.float64)
         )
+        self.nodes[id_] = node
+        return node
 
     def directed_path_exists(self, u: Node, v: Node):
         """
