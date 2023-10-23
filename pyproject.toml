@@ -21,6 +21,7 @@ black = "^23.9.1"
 numpy = "^1.26.0"
 pdoc = "^14.1.0"
 pre-commit = "^3.4.0"
+coverage = "^7.3.2"
 
 
 [tool.poetry-version-plugin]
