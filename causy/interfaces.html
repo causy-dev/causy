@@ -345,7 +345,7 @@
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>        <span class="k">pass</span>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="k">def</span> <span class="nf">add_edge_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">TestResultAction</span><span class="p">):</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="k">def</span> <span class="nf">add_edge_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">TestResult</span><span class="p">):</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>        <span class="k">pass</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="nd">@abstractmethod</span>
@@ -1024,7 +1024,7 @@
 </span><span id="BaseGraphInterface-71"><a href="#BaseGraphInterface-71"><span class="linenos"> 71</span></a>        <span class="k">pass</span>
 </span><span id="BaseGraphInterface-72"><a href="#BaseGraphInterface-72"><span class="linenos"> 72</span></a>
 </span><span id="BaseGraphInterface-73"><a href="#BaseGraphInterface-73"><span class="linenos"> 73</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseGraphInterface-74"><a href="#BaseGraphInterface-74"><span class="linenos"> 74</span></a>    <span class="k">def</span> <span class="nf">add_edge_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">TestResultAction</span><span class="p">):</span>
+</span><span id="BaseGraphInterface-74"><a href="#BaseGraphInterface-74"><span class="linenos"> 74</span></a>    <span class="k">def</span> <span class="nf">add_edge_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">TestResult</span><span class="p">):</span>
 </span><span id="BaseGraphInterface-75"><a href="#BaseGraphInterface-75"><span class="linenos"> 75</span></a>        <span class="k">pass</span>
 </span><span id="BaseGraphInterface-76"><a href="#BaseGraphInterface-76"><span class="linenos"> 76</span></a>
 </span><span id="BaseGraphInterface-77"><a href="#BaseGraphInterface-77"><span class="linenos"> 77</span></a>    <span class="nd">@abstractmethod</span>
@@ -1119,14 +1119,14 @@ inheritance.</p>
                     <div class="decorator">@abstractmethod</div>
 
         <span class="def">def</span>
-        <span class="name">add_edge_history</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">u</span>, </span><span class="param"><span class="n">v</span>, </span><span class="param"><span class="n">action</span><span class="p">:</span> <span class="n"><a href="#TestResultAction">TestResultAction</a></span></span><span class="return-annotation">):</span></span>
+        <span class="name">add_edge_history</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">u</span>, </span><span class="param"><span class="n">v</span>, </span><span class="param"><span class="n">action</span><span class="p">:</span> <span class="n"><a href="#TestResult">TestResult</a></span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="BaseGraphInterface.add_edge_history-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#BaseGraphInterface.add_edge_history"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BaseGraphInterface.add_edge_history-73"><a href="#BaseGraphInterface.add_edge_history-73"><span class="linenos">73</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseGraphInterface.add_edge_history-74"><a href="#BaseGraphInterface.add_edge_history-74"><span class="linenos">74</span></a>    <span class="k">def</span> <span class="nf">add_edge_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">TestResultAction</span><span class="p">):</span>
+</span><span id="BaseGraphInterface.add_edge_history-74"><a href="#BaseGraphInterface.add_edge_history-74"><span class="linenos">74</span></a>    <span class="k">def</span> <span class="nf">add_edge_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">TestResult</span><span class="p">):</span>
 </span><span id="BaseGraphInterface.add_edge_history-75"><a href="#BaseGraphInterface.add_edge_history-75"><span class="linenos">75</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
@@ -1359,7 +1359,7 @@ inheritance.</p>
 
                             <div id="GraphModelInterface.pool" class="classattr">
                                 <div class="attr variable">
-            <span class="name">pool</span><span class="annotation">: &lt;bound method BaseContext.Pool of &lt;multiprocessing.context.DefaultContext object at 0x10c5f6050&gt;&gt;</span>
+            <span class="name">pool</span><span class="annotation">: &lt;bound method BaseContext.Pool of &lt;multiprocessing.context.DefaultContext object at 0x107ca9d90&gt;&gt;</span>
 
         
     </div>
