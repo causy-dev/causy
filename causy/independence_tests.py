@@ -117,7 +117,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
                 cor_xy = graph.edge_value(x, y)["correlation"]
                 cor_xz = graph.edge_value(x, z)["correlation"]
                 cor_yz = graph.edge_value(y, z)["correlation"]
-            except KeyError:
+            except (KeyError, TypeError):
                 return
 
             numerator = cor_xy - cor_xz * cor_yz

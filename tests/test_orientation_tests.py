@@ -1,9 +1,14 @@
 import unittest
 
-from causy.graph import graph_model_factory, UndirectedGraph
+from causy.graph import graph_model_factory, Graph
 from causy.interfaces import TestResult, TestResultAction
-from causy.orientation_tests import ColliderTest, NonColliderTest, FurtherOrientTripleTest, OrientQuadrupleTest, \
-    FurtherOrientQuadrupleTest
+from causy.orientation_tests import (
+    ColliderTest,
+    NonColliderTest,
+    FurtherOrientTripleTest,
+    OrientQuadrupleTest,
+    FurtherOrientQuadrupleTest,
+)
 from causy.utils import retrieve_edges
 
 
@@ -11,18 +16,22 @@ class OrientationRuleTestCase(unittest.TestCase):
     def test_collider_test(self):
         pipeline = [ColliderTest()]
         model = graph_model_factory(pipeline_steps=pipeline)()
-        model.graph = UndirectedGraph()
-        x = model.graph.add_node("X", [0,1,2])
+        model.graph = Graph()
+        x = model.graph.add_node("X", [0, 1, 2])
         y = model.graph.add_node("Y", [3, 4, 5])
         z = model.graph.add_node("Z", [6, 7, 8])
-        model.graph.add_edge(x, y,{})
-        model.graph.add_edge(z, y,{})
-        model.graph.add_edge_history(x, y, TestResult(
-                        x=x,
-                        y=z,
-                        action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                        data={"separatedBy": []},
-                    ))
+        model.graph.add_edge(x, y, {})
+        model.graph.add_edge(z, y, {})
+        model.graph.add_edge_history(
+            x,
+            y,
+            TestResult(
+                x=x,
+                y=z,
+                action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                data={"separatedBy": []},
+            ),
+        )
         model.execute_pipeline_steps()
         self.assertTrue(model.graph.only_directed_edge_exists(x, y))
         self.assertTrue(model.graph.only_directed_edge_exists(z, y))
@@ -30,31 +39,35 @@ class OrientationRuleTestCase(unittest.TestCase):
     def test_collider_test_with_nonempty_separation_set(self):
         pipeline = [ColliderTest()]
         model = graph_model_factory(pipeline_steps=pipeline)()
-        model.graph = UndirectedGraph()
+        model.graph = Graph()
         x = model.graph.add_node("X", [])
         y = model.graph.add_node("Y", [])
         z = model.graph.add_node("Z", [])
         model.graph.add_edge(x, y, {})
         model.graph.add_edge(z, y, {})
-        model.graph.add_edge_history(x, y, TestResult(
-                        x=x,
-                        y=z,
-                        action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                        data={"separatedBy": [y]},
-                    ))
+        model.graph.add_edge_history(
+            x,
+            y,
+            TestResult(
+                x=x,
+                y=z,
+                action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                data={"separatedBy": [y]},
+            ),
+        )
         self.assertTrue(model.graph.undirected_edge_exists(x, y))
         self.assertTrue(model.graph.undirected_edge_exists(y, z))
 
     def test_non_collider_test(self):
         pipeline = [NonColliderTest()]
         model = graph_model_factory(pipeline_steps=pipeline)()
-        model.graph = UndirectedGraph()
+        model.graph = Graph()
         x = model.graph.add_node("X", [])
         y = model.graph.add_node("Y", [])
         z = model.graph.add_node("Z", [])
-        model.graph.add_edge(x, y,{})
+        model.graph.add_edge(x, y, {})
         model.graph.remove_directed_edge(y, x)
-        model.graph.add_edge(z, y,{})
+        model.graph.add_edge(z, y, {})
         model.execute_pipeline_steps()
         self.assertTrue(model.graph.only_directed_edge_exists(x, y))
         self.assertTrue(model.graph.only_directed_edge_exists(y, z))
@@ -62,13 +75,13 @@ class OrientationRuleTestCase(unittest.TestCase):
     def test_further_orient_triple_test(self):
         pipeline = [FurtherOrientTripleTest()]
         model = graph_model_factory(pipeline_steps=pipeline)()
-        model.graph = UndirectedGraph()
+        model.graph = Graph()
         x = model.graph.add_node("X", [])
         y = model.graph.add_node("Y", [])
         z = model.graph.add_node("Z", [])
-        model.graph.add_edge(x, y,{})
+        model.graph.add_edge(x, y, {})
         model.graph.add_edge(x, z, {})
-        model.graph.add_edge(z, y,{})
+        model.graph.add_edge(z, y, {})
         model.graph.remove_directed_edge(y, x)
         model.graph.remove_directed_edge(z, y)
         self.assertTrue(model.graph.only_directed_edge_exists(x, y))
@@ -77,18 +90,17 @@ class OrientationRuleTestCase(unittest.TestCase):
         model.execute_pipeline_steps()
         self.assertTrue(model.graph.only_directed_edge_exists(x, z))
 
-
     def test_orient_quadruple_test(self):
         pipeline = [OrientQuadrupleTest()]
         model = graph_model_factory(pipeline_steps=pipeline)()
-        model.graph = UndirectedGraph()
+        model.graph = Graph()
         x = model.graph.add_node("X", [])
         y = model.graph.add_node("Y", [])
         z = model.graph.add_node("Z", [])
         w = model.graph.add_node("W", [])
-        model.graph.add_edge(x, y,{})
+        model.graph.add_edge(x, y, {})
         model.graph.add_edge(x, w, {})
-        model.graph.add_edge(w, z,{})
+        model.graph.add_edge(w, z, {})
         model.graph.add_edge(z, y, {})
         model.graph.add_edge(x, z, {})
         model.graph.remove_directed_edge(z, y)
@@ -102,15 +114,15 @@ class OrientationRuleTestCase(unittest.TestCase):
     def test_further_orient_quadruple_test(self):
         pipeline = [FurtherOrientQuadrupleTest()]
         model = graph_model_factory(pipeline_steps=pipeline)()
-        model.graph = UndirectedGraph()
+        model.graph = Graph()
         x = model.graph.add_node("X", [])
         y = model.graph.add_node("Y", [])
         z = model.graph.add_node("Z", [])
         w = model.graph.add_node("W", [])
-        model.graph.add_edge(x, y,{})
+        model.graph.add_edge(x, y, {})
         model.graph.add_edge(x, w, {})
         model.graph.add_edge(x, z, {})
-        model.graph.add_edge(w, z,{})
+        model.graph.add_edge(w, z, {})
         model.graph.add_edge(w, y, {})
         model.graph.remove_directed_edge(w, y)
         model.graph.remove_directed_edge(z, w)
@@ -122,6 +134,7 @@ class OrientationRuleTestCase(unittest.TestCase):
         self.assertFalse(model.graph.undirected_edge_exists(x, z))
         self.assertFalse(model.graph.only_directed_edge_exists(z, x))
         self.assertTrue(model.graph.only_directed_edge_exists(x, z))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -2,7 +2,7 @@ from causy.interfaces import ExitConditionInterface
 
 
 class ExitOnNoActions(ExitConditionInterface):
-    def check(self, graph, graph_model_instance_, actions_taken, iteration):
+    def check(self, graph, graph_model_instance_, actions_taken, iteration) -> bool:
         """
         Check if there are no actions taken in the last iteration and if so, break the loop
         If it is the first iteration, do not break the loop (we need to execute the first step)

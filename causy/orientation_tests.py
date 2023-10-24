@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 import itertools
 
 from causy.generators import AllCombinationsGenerator
@@ -23,7 +23,7 @@ class ColliderTest(IndependenceTestInterface):
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[TestResult] | TestResult:
+    ) -> Optional[List[TestResult] | TestResult]:
         """
         We call triples x, y, z of nodes v structures if x and y that are NOT adjacent but share an adjacent node z.
         V structures looks like this in the undirected skeleton: (x - z - y).
@@ -89,7 +89,7 @@ class NonColliderTest(IndependenceTestInterface):
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[TestResult] | TestResult:
+    ) -> Optional[List[TestResult] | TestResult]:
         """
         Further orientation rule: all v structures that are colliders are already oriented.
         We now orient all v structures that have a single alternative to being a collider.
@@ -142,7 +142,6 @@ class NonColliderTest(IndependenceTestInterface):
                     action=TestResultAction.REMOVE_EDGE_DIRECTED,
                     data={},
                 )
-        return
 
 
 class FurtherOrientTripleTest(IndependenceTestInterface):
@@ -154,7 +153,7 @@ class FurtherOrientTripleTest(IndependenceTestInterface):
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[TestResult] | TestResult:
+    ) -> Optional[List[TestResult] | TestResult]:
         """
         Further orientation rule.
         :param nodes: list of nodes
@@ -210,7 +209,7 @@ class OrientQuadrupleTest(IndependenceTestInterface):
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[TestResult] | TestResult:
+    ) -> Optional[List[TestResult] | TestResult]:
         """
         Further orientation rule.
         :param nodes: list of nodes
@@ -228,7 +227,6 @@ class OrientQuadrupleTest(IndependenceTestInterface):
             z = graph.nodes[z]
             if graph.edge_exists(y, z) and graph.edge_exists(z, w):
                 potential_zs.add(z)
-
 
         results = []
         for zs in itertools.combinations(potential_zs, 2):
@@ -277,7 +275,7 @@ class FurtherOrientQuadrupleTest(IndependenceTestInterface):
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[TestResult] | TestResult:
+    ) -> Optional[List[TestResult] | TestResult]:
         """
         Further orientation rule.
         :param nodes: list of nodes

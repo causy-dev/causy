@@ -1,9 +1,11 @@
 import importlib
 import logging
+from typing import List, Tuple
 
 import torch
 from scipy import stats as scipy_stats
 import math
+
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +56,12 @@ def load_pipeline_steps_by_definition(steps):
     return pipeline
 
 
-def retrieve_edges(graph):
+def retrieve_edges(graph) -> List[Tuple[str, str]]:
+    """
+    Returns a list of edges from the graph
+    :param graph: a graph
+    :return: a list of edges
+    """
     edges = []
     for u in graph.edges:
         for v in graph.edges[u]:
@@ -62,7 +69,13 @@ def retrieve_edges(graph):
     return edges
 
 
-def pearson_correlation(x, y):
+def pearson_correlation(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+    """
+    Returns the pearson correlation coefficient between x and y
+    :param x: a tensor
+    :param y: a tensor
+    :return: the correlation coefficient
+    """
     cov_xy = torch.mean((x - x.mean()) * (y - y.mean()))
     std_x = x.std(unbiased=False)
     std_y = y.std(unbiased=False)

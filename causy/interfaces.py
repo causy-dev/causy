@@ -239,7 +239,7 @@ class ExitConditionInterface(ABC):
     def check(
         self,
         graph: BaseGraphInterface,
-        graph_model_instance_: dict,
+        graph_model_instance_: GraphModelInterface,
         actions_taken: List[TestResult],
         iteration: int,
     ) -> bool:
@@ -255,7 +255,7 @@ class ExitConditionInterface(ABC):
     def __call__(
         self,
         graph: BaseGraphInterface,
-        graph_model_instance_: dict,
+        graph_model_instance_: GraphModelInterface,
         actions_taken: List[TestResult],
         iteration: int,
     ) -> bool:
