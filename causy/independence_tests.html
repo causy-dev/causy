@@ -37,13 +37,13 @@
                     <a class="class" href="#CalculateCorrelations">CalculateCorrelations</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#CalculateCorrelations.GENERATOR">GENERATOR</a>
+                                <a class="variable" href="#CalculateCorrelations.generator">generator</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CalculateCorrelations.CHUNK_SIZE_PARALLEL_PROCESSING">CHUNK_SIZE_PARALLEL_PROCESSING</a>
+                                <a class="variable" href="#CalculateCorrelations.chunk_size_parallel_processing">chunk_size_parallel_processing</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CalculateCorrelations.PARALLEL">PARALLEL</a>
+                                <a class="variable" href="#CalculateCorrelations.parallel">parallel</a>
                         </li>
                         <li>
                                 <a class="function" href="#CalculateCorrelations.test">test</a>
@@ -55,13 +55,13 @@
                     <a class="class" href="#CorrelationCoefficientTest">CorrelationCoefficientTest</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#CorrelationCoefficientTest.GENERATOR">GENERATOR</a>
+                                <a class="variable" href="#CorrelationCoefficientTest.generator">generator</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CorrelationCoefficientTest.CHUNK_SIZE_PARALLEL_PROCESSING">CHUNK_SIZE_PARALLEL_PROCESSING</a>
+                                <a class="variable" href="#CorrelationCoefficientTest.chunk_size_parallel_processing">chunk_size_parallel_processing</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CorrelationCoefficientTest.PARALLEL">PARALLEL</a>
+                                <a class="variable" href="#CorrelationCoefficientTest.parallel">parallel</a>
                         </li>
                         <li>
                                 <a class="function" href="#CorrelationCoefficientTest.test">test</a>
@@ -73,13 +73,13 @@
                     <a class="class" href="#PartialCorrelationTest">PartialCorrelationTest</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#PartialCorrelationTest.GENERATOR">GENERATOR</a>
+                                <a class="variable" href="#PartialCorrelationTest.generator">generator</a>
                         </li>
                         <li>
-                                <a class="variable" href="#PartialCorrelationTest.CHUNK_SIZE_PARALLEL_PROCESSING">CHUNK_SIZE_PARALLEL_PROCESSING</a>
+                                <a class="variable" href="#PartialCorrelationTest.chunk_size_parallel_processing">chunk_size_parallel_processing</a>
                         </li>
                         <li>
-                                <a class="variable" href="#PartialCorrelationTest.PARALLEL">PARALLEL</a>
+                                <a class="variable" href="#PartialCorrelationTest.parallel">parallel</a>
                         </li>
                         <li>
                                 <a class="function" href="#PartialCorrelationTest.test">test</a>
@@ -91,13 +91,13 @@
                     <a class="class" href="#ExtendedPartialCorrelationTestMatrix">ExtendedPartialCorrelationTestMatrix</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#ExtendedPartialCorrelationTestMatrix.GENERATOR">GENERATOR</a>
+                                <a class="variable" href="#ExtendedPartialCorrelationTestMatrix.generator">generator</a>
                         </li>
                         <li>
-                                <a class="variable" href="#ExtendedPartialCorrelationTestMatrix.CHUNK_SIZE_PARALLEL_PROCESSING">CHUNK_SIZE_PARALLEL_PROCESSING</a>
+                                <a class="variable" href="#ExtendedPartialCorrelationTestMatrix.chunk_size_parallel_processing">chunk_size_parallel_processing</a>
                         </li>
                         <li>
-                                <a class="variable" href="#ExtendedPartialCorrelationTestMatrix.PARALLEL">PARALLEL</a>
+                                <a class="variable" href="#ExtendedPartialCorrelationTestMatrix.parallel">parallel</a>
                         </li>
                         <li>
                                 <a class="function" href="#ExtendedPartialCorrelationTestMatrix.test">test</a>
@@ -109,13 +109,13 @@
                     <a class="class" href="#PlaceholderTest">PlaceholderTest</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#PlaceholderTest.NUM_OF_COMPARISON_ELEMENTS">NUM_OF_COMPARISON_ELEMENTS</a>
+                                <a class="variable" href="#PlaceholderTest.num_of_comparison_elements">num_of_comparison_elements</a>
                         </li>
                         <li>
-                                <a class="variable" href="#PlaceholderTest.CHUNK_SIZE_PARALLEL_PROCESSING">CHUNK_SIZE_PARALLEL_PROCESSING</a>
+                                <a class="variable" href="#PlaceholderTest.chunk_size_parallel_processing">chunk_size_parallel_processing</a>
                         </li>
                         <li>
-                                <a class="variable" href="#PlaceholderTest.PARALLEL">PARALLEL</a>
+                                <a class="variable" href="#PlaceholderTest.parallel">parallel</a>
                         </li>
                         <li>
                                 <a class="function" href="#PlaceholderTest.test">test</a>
@@ -166,11 +166,11 @@
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="k">class</span> <span class="nc">CalculateCorrelations</span><span class="p">(</span><span class="n">IndependenceTestInterface</span><span class="p">):</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">GENERATOR</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">generator</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>        <span class="n">comparison_settings</span><span class="o">=</span><span class="n">ComparisonSettings</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>    <span class="p">)</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>    <span class="n">CHUNK_SIZE_PARALLEL_PROCESSING</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="n">PARALLEL</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>    <span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="n">parallel</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TestResult</span><span class="p">:</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -194,11 +194,11 @@
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
 </span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="k">class</span> <span class="nc">CorrelationCoefficientTest</span><span class="p">(</span><span class="n">IndependenceTestInterface</span><span class="p">):</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="n">GENERATOR</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="n">generator</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
 </span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>        <span class="n">comparison_settings</span><span class="o">=</span><span class="n">ComparisonSettings</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="p">)</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="n">CHUNK_SIZE_PARALLEL_PROCESSING</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="n">PARALLEL</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="n">parallel</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -227,11 +227,11 @@
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
 </span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="k">class</span> <span class="nc">PartialCorrelationTest</span><span class="p">(</span><span class="n">IndependenceTestInterface</span><span class="p">):</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="n">GENERATOR</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="n">generator</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="n">comparison_settings</span><span class="o">=</span><span class="n">ComparisonSettings</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="p">)</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="n">CHUNK_SIZE_PARALLEL_PROCESSING</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">PARALLEL</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">parallel</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
@@ -300,11 +300,11 @@
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
 </span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="k">class</span> <span class="nc">ExtendedPartialCorrelationTestMatrix</span><span class="p">(</span><span class="n">IndependenceTestInterface</span><span class="p">):</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>    <span class="n">GENERATOR</span> <span class="o">=</span> <span class="n">PairsWithNeighboursGenerator</span><span class="p">(</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>    <span class="n">generator</span> <span class="o">=</span> <span class="n">PairsWithNeighboursGenerator</span><span class="p">(</span>
 </span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>        <span class="n">comparison_settings</span><span class="o">=</span><span class="n">ComparisonSettings</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">AS_MANY_AS_FIELDS</span><span class="p">)</span>
 </span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>    <span class="p">)</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="n">CHUNK_SIZE_PARALLEL_PROCESSING</span> <span class="o">=</span> <span class="mi">1000</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>    <span class="n">PARALLEL</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="mi">1000</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>    <span class="n">parallel</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -367,9 +367,9 @@
 </span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>
 </span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>
 </span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a><span class="k">class</span> <span class="nc">PlaceholderTest</span><span class="p">(</span><span class="n">IndependenceTestInterface</span><span class="p">):</span>
-</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>    <span class="n">NUM_OF_COMPARISON_ELEMENTS</span> <span class="o">=</span> <span class="mi">2</span>
-</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>    <span class="n">CHUNK_SIZE_PARALLEL_PROCESSING</span> <span class="o">=</span> <span class="mi">10</span>
-</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a>    <span class="n">PARALLEL</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>    <span class="n">num_of_comparison_elements</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>    <span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a>    <span class="n">parallel</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>
 </span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
 </span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
@@ -410,11 +410,11 @@
     </div>
     <a class="headerlink" href="#CalculateCorrelations"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="CalculateCorrelations-23"><a href="#CalculateCorrelations-23"><span class="linenos">23</span></a><span class="k">class</span> <span class="nc">CalculateCorrelations</span><span class="p">(</span><span class="n">IndependenceTestInterface</span><span class="p">):</span>
-</span><span id="CalculateCorrelations-24"><a href="#CalculateCorrelations-24"><span class="linenos">24</span></a>    <span class="n">GENERATOR</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
+</span><span id="CalculateCorrelations-24"><a href="#CalculateCorrelations-24"><span class="linenos">24</span></a>    <span class="n">generator</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
 </span><span id="CalculateCorrelations-25"><a href="#CalculateCorrelations-25"><span class="linenos">25</span></a>        <span class="n">comparison_settings</span><span class="o">=</span><span class="n">ComparisonSettings</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </span><span id="CalculateCorrelations-26"><a href="#CalculateCorrelations-26"><span class="linenos">26</span></a>    <span class="p">)</span>
-</span><span id="CalculateCorrelations-27"><a href="#CalculateCorrelations-27"><span class="linenos">27</span></a>    <span class="n">CHUNK_SIZE_PARALLEL_PROCESSING</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="CalculateCorrelations-28"><a href="#CalculateCorrelations-28"><span class="linenos">28</span></a>    <span class="n">PARALLEL</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="CalculateCorrelations-27"><a href="#CalculateCorrelations-27"><span class="linenos">27</span></a>    <span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span id="CalculateCorrelations-28"><a href="#CalculateCorrelations-28"><span class="linenos">28</span></a>    <span class="n">parallel</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="CalculateCorrelations-29"><a href="#CalculateCorrelations-29"><span class="linenos">29</span></a>
 </span><span id="CalculateCorrelations-30"><a href="#CalculateCorrelations-30"><span class="linenos">30</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TestResult</span><span class="p">:</span>
 </span><span id="CalculateCorrelations-31"><a href="#CalculateCorrelations-31"><span class="linenos">31</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -443,38 +443,38 @@ inheritance.</p>
 </div>
 
 
-                            <div id="CalculateCorrelations.GENERATOR" class="classattr">
+                            <div id="CalculateCorrelations.generator" class="classattr">
                                 <div class="attr variable">
-            <span class="name">GENERATOR</span>        =
+            <span class="name">generator</span>        =
 <span class="default_value">&lt;<a href="generators.html#AllCombinationsGenerator">causy.generators.AllCombinationsGenerator</a> object&gt;</span>
 
         
     </div>
-    <a class="headerlink" href="#CalculateCorrelations.GENERATOR"></a>
+    <a class="headerlink" href="#CalculateCorrelations.generator"></a>
     
     
 
                             </div>
-                            <div id="CalculateCorrelations.CHUNK_SIZE_PARALLEL_PROCESSING" class="classattr">
+                            <div id="CalculateCorrelations.chunk_size_parallel_processing" class="classattr">
                                 <div class="attr variable">
-            <span class="name">CHUNK_SIZE_PARALLEL_PROCESSING</span>        =
+            <span class="name">chunk_size_parallel_processing</span>        =
 <span class="default_value">1</span>
 
         
     </div>
-    <a class="headerlink" href="#CalculateCorrelations.CHUNK_SIZE_PARALLEL_PROCESSING"></a>
+    <a class="headerlink" href="#CalculateCorrelations.chunk_size_parallel_processing"></a>
     
     
 
                             </div>
-                            <div id="CalculateCorrelations.PARALLEL" class="classattr">
+                            <div id="CalculateCorrelations.parallel" class="classattr">
                                 <div class="attr variable">
-            <span class="name">PARALLEL</span>        =
+            <span class="name">parallel</span>        =
 <span class="default_value">False</span>
 
         
     </div>
-    <a class="headerlink" href="#CalculateCorrelations.PARALLEL"></a>
+    <a class="headerlink" href="#CalculateCorrelations.parallel"></a>
     
     
 
@@ -534,9 +534,12 @@ inheritance.</p>
                                 <dl>
                                     <div><dt><a href="interfaces.html#IndependenceTestInterface">causy.interfaces.IndependenceTestInterface</a></dt>
                                 <dd id="CalculateCorrelations.__init__" class="function"><a href="interfaces.html#IndependenceTestInterface.__init__">IndependenceTestInterface</a></dd>
-                <dd id="CalculateCorrelations.NUM_OF_COMPARISON_ELEMENTS" class="variable"><a href="interfaces.html#IndependenceTestInterface.NUM_OF_COMPARISON_ELEMENTS">NUM_OF_COMPARISON_ELEMENTS</a></dd>
+                <dd id="CalculateCorrelations.num_of_comparison_elements" class="variable"><a href="interfaces.html#IndependenceTestInterface.num_of_comparison_elements">num_of_comparison_elements</a></dd>
                 <dd id="CalculateCorrelations.threshold" class="variable"><a href="interfaces.html#IndependenceTestInterface.threshold">threshold</a></dd>
-                <dd id="CalculateCorrelations.serialize" class="function"><a href="interfaces.html#IndependenceTestInterface.serialize">serialize</a></dd>
+
+            </div>
+            <div><dt><a href="serialization.html#SerializeMixin">causy.serialization.SerializeMixin</a></dt>
+                                <dd id="CalculateCorrelations.serialize" class="function"><a href="serialization.html#SerializeMixin.serialize">serialize</a></dd>
 
             </div>
                                 </dl>
@@ -554,11 +557,11 @@ inheritance.</p>
     </div>
     <a class="headerlink" href="#CorrelationCoefficientTest"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="CorrelationCoefficientTest-51"><a href="#CorrelationCoefficientTest-51"><span class="linenos">51</span></a><span class="k">class</span> <span class="nc">CorrelationCoefficientTest</span><span class="p">(</span><span class="n">IndependenceTestInterface</span><span class="p">):</span>
-</span><span id="CorrelationCoefficientTest-52"><a href="#CorrelationCoefficientTest-52"><span class="linenos">52</span></a>    <span class="n">GENERATOR</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
+</span><span id="CorrelationCoefficientTest-52"><a href="#CorrelationCoefficientTest-52"><span class="linenos">52</span></a>    <span class="n">generator</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
 </span><span id="CorrelationCoefficientTest-53"><a href="#CorrelationCoefficientTest-53"><span class="linenos">53</span></a>        <span class="n">comparison_settings</span><span class="o">=</span><span class="n">ComparisonSettings</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </span><span id="CorrelationCoefficientTest-54"><a href="#CorrelationCoefficientTest-54"><span class="linenos">54</span></a>    <span class="p">)</span>
-</span><span id="CorrelationCoefficientTest-55"><a href="#CorrelationCoefficientTest-55"><span class="linenos">55</span></a>    <span class="n">CHUNK_SIZE_PARALLEL_PROCESSING</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="CorrelationCoefficientTest-56"><a href="#CorrelationCoefficientTest-56"><span class="linenos">56</span></a>    <span class="n">PARALLEL</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="CorrelationCoefficientTest-55"><a href="#CorrelationCoefficientTest-55"><span class="linenos">55</span></a>    <span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span id="CorrelationCoefficientTest-56"><a href="#CorrelationCoefficientTest-56"><span class="linenos">56</span></a>    <span class="n">parallel</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="CorrelationCoefficientTest-57"><a href="#CorrelationCoefficientTest-57"><span class="linenos">57</span></a>
 </span><span id="CorrelationCoefficientTest-58"><a href="#CorrelationCoefficientTest-58"><span class="linenos">58</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="CorrelationCoefficientTest-59"><a href="#CorrelationCoefficientTest-59"><span class="linenos">59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -592,38 +595,38 @@ inheritance.</p>
 </div>
 
 
-                            <div id="CorrelationCoefficientTest.GENERATOR" class="classattr">
+                            <div id="CorrelationCoefficientTest.generator" class="classattr">
                                 <div class="attr variable">
-            <span class="name">GENERATOR</span>        =
+            <span class="name">generator</span>        =
 <span class="default_value">&lt;<a href="generators.html#AllCombinationsGenerator">causy.generators.AllCombinationsGenerator</a> object&gt;</span>
 
         
     </div>
-    <a class="headerlink" href="#CorrelationCoefficientTest.GENERATOR"></a>
+    <a class="headerlink" href="#CorrelationCoefficientTest.generator"></a>
     
     
 
                             </div>
-                            <div id="CorrelationCoefficientTest.CHUNK_SIZE_PARALLEL_PROCESSING" class="classattr">
+                            <div id="CorrelationCoefficientTest.chunk_size_parallel_processing" class="classattr">
                                 <div class="attr variable">
-            <span class="name">CHUNK_SIZE_PARALLEL_PROCESSING</span>        =
+            <span class="name">chunk_size_parallel_processing</span>        =
 <span class="default_value">1</span>
 
         
     </div>
-    <a class="headerlink" href="#CorrelationCoefficientTest.CHUNK_SIZE_PARALLEL_PROCESSING"></a>
+    <a class="headerlink" href="#CorrelationCoefficientTest.chunk_size_parallel_processing"></a>
     
     
 
                             </div>
-                            <div id="CorrelationCoefficientTest.PARALLEL" class="classattr">
+                            <div id="CorrelationCoefficientTest.parallel" class="classattr">
                                 <div class="attr variable">
-            <span class="name">PARALLEL</span>        =
+            <span class="name">parallel</span>        =
 <span class="default_value">False</span>
 
         
     </div>
-    <a class="headerlink" href="#CorrelationCoefficientTest.PARALLEL"></a>
+    <a class="headerlink" href="#CorrelationCoefficientTest.parallel"></a>
     
     
 
@@ -688,9 +691,12 @@ inheritance.</p>
                                 <dl>
                                     <div><dt><a href="interfaces.html#IndependenceTestInterface">causy.interfaces.IndependenceTestInterface</a></dt>
                                 <dd id="CorrelationCoefficientTest.__init__" class="function"><a href="interfaces.html#IndependenceTestInterface.__init__">IndependenceTestInterface</a></dd>
-                <dd id="CorrelationCoefficientTest.NUM_OF_COMPARISON_ELEMENTS" class="variable"><a href="interfaces.html#IndependenceTestInterface.NUM_OF_COMPARISON_ELEMENTS">NUM_OF_COMPARISON_ELEMENTS</a></dd>
+                <dd id="CorrelationCoefficientTest.num_of_comparison_elements" class="variable"><a href="interfaces.html#IndependenceTestInterface.num_of_comparison_elements">num_of_comparison_elements</a></dd>
                 <dd id="CorrelationCoefficientTest.threshold" class="variable"><a href="interfaces.html#IndependenceTestInterface.threshold">threshold</a></dd>
-                <dd id="CorrelationCoefficientTest.serialize" class="function"><a href="interfaces.html#IndependenceTestInterface.serialize">serialize</a></dd>
+
+            </div>
+            <div><dt><a href="serialization.html#SerializeMixin">causy.serialization.SerializeMixin</a></dt>
+                                <dd id="CorrelationCoefficientTest.serialize" class="function"><a href="serialization.html#SerializeMixin.serialize">serialize</a></dd>
 
             </div>
                                 </dl>
@@ -708,11 +714,11 @@ inheritance.</p>
     </div>
     <a class="headerlink" href="#PartialCorrelationTest"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="PartialCorrelationTest-84"><a href="#PartialCorrelationTest-84"><span class="linenos"> 84</span></a><span class="k">class</span> <span class="nc">PartialCorrelationTest</span><span class="p">(</span><span class="n">IndependenceTestInterface</span><span class="p">):</span>
-</span><span id="PartialCorrelationTest-85"><a href="#PartialCorrelationTest-85"><span class="linenos"> 85</span></a>    <span class="n">GENERATOR</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
+</span><span id="PartialCorrelationTest-85"><a href="#PartialCorrelationTest-85"><span class="linenos"> 85</span></a>    <span class="n">generator</span> <span class="o">=</span> <span class="n">AllCombinationsGenerator</span><span class="p">(</span>
 </span><span id="PartialCorrelationTest-86"><a href="#PartialCorrelationTest-86"><span class="linenos"> 86</span></a>        <span class="n">comparison_settings</span><span class="o">=</span><span class="n">ComparisonSettings</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </span><span id="PartialCorrelationTest-87"><a href="#PartialCorrelationTest-87"><span class="linenos"> 87</span></a>    <span class="p">)</span>
-</span><span id="PartialCorrelationTest-88"><a href="#PartialCorrelationTest-88"><span class="linenos"> 88</span></a>    <span class="n">CHUNK_SIZE_PARALLEL_PROCESSING</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="PartialCorrelationTest-89"><a href="#PartialCorrelationTest-89"><span class="linenos"> 89</span></a>    <span class="n">PARALLEL</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="PartialCorrelationTest-88"><a href="#PartialCorrelationTest-88"><span class="linenos"> 88</span></a>    <span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span id="PartialCorrelationTest-89"><a href="#PartialCorrelationTest-89"><span class="linenos"> 89</span></a>    <span class="n">parallel</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="PartialCorrelationTest-90"><a href="#PartialCorrelationTest-90"><span class="linenos"> 90</span></a>
 </span><span id="PartialCorrelationTest-91"><a href="#PartialCorrelationTest-91"><span class="linenos"> 91</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
 </span><span id="PartialCorrelationTest-92"><a href="#PartialCorrelationTest-92"><span class="linenos"> 92</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
@@ -786,38 +792,38 @@ inheritance.</p>
 </div>
 
 
-                            <div id="PartialCorrelationTest.GENERATOR" class="classattr">
+                            <div id="PartialCorrelationTest.generator" class="classattr">
                                 <div class="attr variable">
-            <span class="name">GENERATOR</span>        =
+            <span class="name">generator</span>        =
 <span class="default_value">&lt;<a href="generators.html#AllCombinationsGenerator">causy.generators.AllCombinationsGenerator</a> object&gt;</span>
 
         
     </div>
-    <a class="headerlink" href="#PartialCorrelationTest.GENERATOR"></a>
+    <a class="headerlink" href="#PartialCorrelationTest.generator"></a>
     
     
 
                             </div>
-                            <div id="PartialCorrelationTest.CHUNK_SIZE_PARALLEL_PROCESSING" class="classattr">
+                            <div id="PartialCorrelationTest.chunk_size_parallel_processing" class="classattr">
                                 <div class="attr variable">
-            <span class="name">CHUNK_SIZE_PARALLEL_PROCESSING</span>        =
+            <span class="name">chunk_size_parallel_processing</span>        =
 <span class="default_value">1</span>
 
         
     </div>
-    <a class="headerlink" href="#PartialCorrelationTest.CHUNK_SIZE_PARALLEL_PROCESSING"></a>
+    <a class="headerlink" href="#PartialCorrelationTest.chunk_size_parallel_processing"></a>
     
     
 
                             </div>
-                            <div id="PartialCorrelationTest.PARALLEL" class="classattr">
+                            <div id="PartialCorrelationTest.parallel" class="classattr">
                                 <div class="attr variable">
-            <span class="name">PARALLEL</span>        =
+            <span class="name">parallel</span>        =
 <span class="default_value">False</span>
 
         
     </div>
-    <a class="headerlink" href="#PartialCorrelationTest.PARALLEL"></a>
+    <a class="headerlink" href="#PartialCorrelationTest.parallel"></a>
     
     
 
@@ -926,9 +932,12 @@ use it to remove edges between nodes which are not independent given another nod
                                 <dl>
                                     <div><dt><a href="interfaces.html#IndependenceTestInterface">causy.interfaces.IndependenceTestInterface</a></dt>
                                 <dd id="PartialCorrelationTest.__init__" class="function"><a href="interfaces.html#IndependenceTestInterface.__init__">IndependenceTestInterface</a></dd>
-                <dd id="PartialCorrelationTest.NUM_OF_COMPARISON_ELEMENTS" class="variable"><a href="interfaces.html#IndependenceTestInterface.NUM_OF_COMPARISON_ELEMENTS">NUM_OF_COMPARISON_ELEMENTS</a></dd>
+                <dd id="PartialCorrelationTest.num_of_comparison_elements" class="variable"><a href="interfaces.html#IndependenceTestInterface.num_of_comparison_elements">num_of_comparison_elements</a></dd>
                 <dd id="PartialCorrelationTest.threshold" class="variable"><a href="interfaces.html#IndependenceTestInterface.threshold">threshold</a></dd>
-                <dd id="PartialCorrelationTest.serialize" class="function"><a href="interfaces.html#IndependenceTestInterface.serialize">serialize</a></dd>
+
+            </div>
+            <div><dt><a href="serialization.html#SerializeMixin">causy.serialization.SerializeMixin</a></dt>
+                                <dd id="PartialCorrelationTest.serialize" class="function"><a href="serialization.html#SerializeMixin.serialize">serialize</a></dd>
 
             </div>
                                 </dl>
@@ -946,11 +955,11 @@ use it to remove edges between nodes which are not independent given another nod
     </div>
     <a class="headerlink" href="#ExtendedPartialCorrelationTestMatrix"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="ExtendedPartialCorrelationTestMatrix-157"><a href="#ExtendedPartialCorrelationTestMatrix-157"><span class="linenos">157</span></a><span class="k">class</span> <span class="nc">ExtendedPartialCorrelationTestMatrix</span><span class="p">(</span><span class="n">IndependenceTestInterface</span><span class="p">):</span>
-</span><span id="ExtendedPartialCorrelationTestMatrix-158"><a href="#ExtendedPartialCorrelationTestMatrix-158"><span class="linenos">158</span></a>    <span class="n">GENERATOR</span> <span class="o">=</span> <span class="n">PairsWithNeighboursGenerator</span><span class="p">(</span>
+</span><span id="ExtendedPartialCorrelationTestMatrix-158"><a href="#ExtendedPartialCorrelationTestMatrix-158"><span class="linenos">158</span></a>    <span class="n">generator</span> <span class="o">=</span> <span class="n">PairsWithNeighboursGenerator</span><span class="p">(</span>
 </span><span id="ExtendedPartialCorrelationTestMatrix-159"><a href="#ExtendedPartialCorrelationTestMatrix-159"><span class="linenos">159</span></a>        <span class="n">comparison_settings</span><span class="o">=</span><span class="n">ComparisonSettings</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">AS_MANY_AS_FIELDS</span><span class="p">)</span>
 </span><span id="ExtendedPartialCorrelationTestMatrix-160"><a href="#ExtendedPartialCorrelationTestMatrix-160"><span class="linenos">160</span></a>    <span class="p">)</span>
-</span><span id="ExtendedPartialCorrelationTestMatrix-161"><a href="#ExtendedPartialCorrelationTestMatrix-161"><span class="linenos">161</span></a>    <span class="n">CHUNK_SIZE_PARALLEL_PROCESSING</span> <span class="o">=</span> <span class="mi">1000</span>
-</span><span id="ExtendedPartialCorrelationTestMatrix-162"><a href="#ExtendedPartialCorrelationTestMatrix-162"><span class="linenos">162</span></a>    <span class="n">PARALLEL</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="ExtendedPartialCorrelationTestMatrix-161"><a href="#ExtendedPartialCorrelationTestMatrix-161"><span class="linenos">161</span></a>    <span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="mi">1000</span>
+</span><span id="ExtendedPartialCorrelationTestMatrix-162"><a href="#ExtendedPartialCorrelationTestMatrix-162"><span class="linenos">162</span></a>    <span class="n">parallel</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="ExtendedPartialCorrelationTestMatrix-163"><a href="#ExtendedPartialCorrelationTestMatrix-163"><span class="linenos">163</span></a>
 </span><span id="ExtendedPartialCorrelationTestMatrix-164"><a href="#ExtendedPartialCorrelationTestMatrix-164"><span class="linenos">164</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="ExtendedPartialCorrelationTestMatrix-165"><a href="#ExtendedPartialCorrelationTestMatrix-165"><span class="linenos">165</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1018,38 +1027,38 @@ inheritance.</p>
 </div>
 
 
-                            <div id="ExtendedPartialCorrelationTestMatrix.GENERATOR" class="classattr">
+                            <div id="ExtendedPartialCorrelationTestMatrix.generator" class="classattr">
                                 <div class="attr variable">
-            <span class="name">GENERATOR</span>        =
+            <span class="name">generator</span>        =
 <span class="default_value">&lt;<a href="generators.html#PairsWithNeighboursGenerator">causy.generators.PairsWithNeighboursGenerator</a> object&gt;</span>
 
         
     </div>
-    <a class="headerlink" href="#ExtendedPartialCorrelationTestMatrix.GENERATOR"></a>
+    <a class="headerlink" href="#ExtendedPartialCorrelationTestMatrix.generator"></a>
     
     
 
                             </div>
-                            <div id="ExtendedPartialCorrelationTestMatrix.CHUNK_SIZE_PARALLEL_PROCESSING" class="classattr">
+                            <div id="ExtendedPartialCorrelationTestMatrix.chunk_size_parallel_processing" class="classattr">
                                 <div class="attr variable">
-            <span class="name">CHUNK_SIZE_PARALLEL_PROCESSING</span>        =
+            <span class="name">chunk_size_parallel_processing</span>        =
 <span class="default_value">1000</span>
 
         
     </div>
-    <a class="headerlink" href="#ExtendedPartialCorrelationTestMatrix.CHUNK_SIZE_PARALLEL_PROCESSING"></a>
+    <a class="headerlink" href="#ExtendedPartialCorrelationTestMatrix.chunk_size_parallel_processing"></a>
     
     
 
                             </div>
-                            <div id="ExtendedPartialCorrelationTestMatrix.PARALLEL" class="classattr">
+                            <div id="ExtendedPartialCorrelationTestMatrix.parallel" class="classattr">
                                 <div class="attr variable">
-            <span class="name">PARALLEL</span>        =
+            <span class="name">parallel</span>        =
 <span class="default_value">False</span>
 
         
     </div>
-    <a class="headerlink" href="#ExtendedPartialCorrelationTestMatrix.PARALLEL"></a>
+    <a class="headerlink" href="#ExtendedPartialCorrelationTestMatrix.parallel"></a>
     
     
 
@@ -1150,9 +1159,12 @@ We use this test for all combinations of more than 3 nodes because it is slower.
                                 <dl>
                                     <div><dt><a href="interfaces.html#IndependenceTestInterface">causy.interfaces.IndependenceTestInterface</a></dt>
                                 <dd id="ExtendedPartialCorrelationTestMatrix.__init__" class="function"><a href="interfaces.html#IndependenceTestInterface.__init__">IndependenceTestInterface</a></dd>
-                <dd id="ExtendedPartialCorrelationTestMatrix.NUM_OF_COMPARISON_ELEMENTS" class="variable"><a href="interfaces.html#IndependenceTestInterface.NUM_OF_COMPARISON_ELEMENTS">NUM_OF_COMPARISON_ELEMENTS</a></dd>
+                <dd id="ExtendedPartialCorrelationTestMatrix.num_of_comparison_elements" class="variable"><a href="interfaces.html#IndependenceTestInterface.num_of_comparison_elements">num_of_comparison_elements</a></dd>
                 <dd id="ExtendedPartialCorrelationTestMatrix.threshold" class="variable"><a href="interfaces.html#IndependenceTestInterface.threshold">threshold</a></dd>
-                <dd id="ExtendedPartialCorrelationTestMatrix.serialize" class="function"><a href="interfaces.html#IndependenceTestInterface.serialize">serialize</a></dd>
+
+            </div>
+            <div><dt><a href="serialization.html#SerializeMixin">causy.serialization.SerializeMixin</a></dt>
+                                <dd id="ExtendedPartialCorrelationTestMatrix.serialize" class="function"><a href="serialization.html#SerializeMixin.serialize">serialize</a></dd>
 
             </div>
                                 </dl>
@@ -1170,9 +1182,9 @@ We use this test for all combinations of more than 3 nodes because it is slower.
     </div>
     <a class="headerlink" href="#PlaceholderTest"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="PlaceholderTest-224"><a href="#PlaceholderTest-224"><span class="linenos">224</span></a><span class="k">class</span> <span class="nc">PlaceholderTest</span><span class="p">(</span><span class="n">IndependenceTestInterface</span><span class="p">):</span>
-</span><span id="PlaceholderTest-225"><a href="#PlaceholderTest-225"><span class="linenos">225</span></a>    <span class="n">NUM_OF_COMPARISON_ELEMENTS</span> <span class="o">=</span> <span class="mi">2</span>
-</span><span id="PlaceholderTest-226"><a href="#PlaceholderTest-226"><span class="linenos">226</span></a>    <span class="n">CHUNK_SIZE_PARALLEL_PROCESSING</span> <span class="o">=</span> <span class="mi">10</span>
-</span><span id="PlaceholderTest-227"><a href="#PlaceholderTest-227"><span class="linenos">227</span></a>    <span class="n">PARALLEL</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="PlaceholderTest-225"><a href="#PlaceholderTest-225"><span class="linenos">225</span></a>    <span class="n">num_of_comparison_elements</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span id="PlaceholderTest-226"><a href="#PlaceholderTest-226"><span class="linenos">226</span></a>    <span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span id="PlaceholderTest-227"><a href="#PlaceholderTest-227"><span class="linenos">227</span></a>    <span class="n">parallel</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="PlaceholderTest-228"><a href="#PlaceholderTest-228"><span class="linenos">228</span></a>
 </span><span id="PlaceholderTest-229"><a href="#PlaceholderTest-229"><span class="linenos">229</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
 </span><span id="PlaceholderTest-230"><a href="#PlaceholderTest-230"><span class="linenos">230</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
@@ -1193,38 +1205,38 @@ inheritance.</p>
 </div>
 
 
-                            <div id="PlaceholderTest.NUM_OF_COMPARISON_ELEMENTS" class="classattr">
+                            <div id="PlaceholderTest.num_of_comparison_elements" class="classattr">
                                 <div class="attr variable">
-            <span class="name">NUM_OF_COMPARISON_ELEMENTS</span>        =
+            <span class="name">num_of_comparison_elements</span>        =
 <span class="default_value">2</span>
 
         
     </div>
-    <a class="headerlink" href="#PlaceholderTest.NUM_OF_COMPARISON_ELEMENTS"></a>
+    <a class="headerlink" href="#PlaceholderTest.num_of_comparison_elements"></a>
     
     
 
                             </div>
-                            <div id="PlaceholderTest.CHUNK_SIZE_PARALLEL_PROCESSING" class="classattr">
+                            <div id="PlaceholderTest.chunk_size_parallel_processing" class="classattr">
                                 <div class="attr variable">
-            <span class="name">CHUNK_SIZE_PARALLEL_PROCESSING</span>        =
+            <span class="name">chunk_size_parallel_processing</span>        =
 <span class="default_value">10</span>
 
         
     </div>
-    <a class="headerlink" href="#PlaceholderTest.CHUNK_SIZE_PARALLEL_PROCESSING"></a>
+    <a class="headerlink" href="#PlaceholderTest.chunk_size_parallel_processing"></a>
     
     
 
                             </div>
-                            <div id="PlaceholderTest.PARALLEL" class="classattr">
+                            <div id="PlaceholderTest.parallel" class="classattr">
                                 <div class="attr variable">
-            <span class="name">PARALLEL</span>        =
+            <span class="name">parallel</span>        =
 <span class="default_value">False</span>
 
         
     </div>
-    <a class="headerlink" href="#PlaceholderTest.PARALLEL"></a>
+    <a class="headerlink" href="#PlaceholderTest.parallel"></a>
     
     
 
@@ -1273,9 +1285,12 @@ inheritance.</p>
                                 <dl>
                                     <div><dt><a href="interfaces.html#IndependenceTestInterface">causy.interfaces.IndependenceTestInterface</a></dt>
                                 <dd id="PlaceholderTest.__init__" class="function"><a href="interfaces.html#IndependenceTestInterface.__init__">IndependenceTestInterface</a></dd>
-                <dd id="PlaceholderTest.GENERATOR" class="variable"><a href="interfaces.html#IndependenceTestInterface.GENERATOR">GENERATOR</a></dd>
+                <dd id="PlaceholderTest.generator" class="variable"><a href="interfaces.html#IndependenceTestInterface.generator">generator</a></dd>
                 <dd id="PlaceholderTest.threshold" class="variable"><a href="interfaces.html#IndependenceTestInterface.threshold">threshold</a></dd>
-                <dd id="PlaceholderTest.serialize" class="function"><a href="interfaces.html#IndependenceTestInterface.serialize">serialize</a></dd>
+
+            </div>
+            <div><dt><a href="serialization.html#SerializeMixin">causy.serialization.SerializeMixin</a></dt>
+                                <dd id="PlaceholderTest.serialize" class="function"><a href="serialization.html#SerializeMixin.serialize">serialize</a></dd>
 
             </div>
                                 </dl>
