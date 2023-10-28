@@ -15,11 +15,11 @@ from causy.interfaces import (
 
 
 class ColliderTest(IndependenceTestInterface):
-    GENERATOR = AllCombinationsGenerator(
+    generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    chunk_size_parallel_processing = 1
+    parallel = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -81,11 +81,11 @@ class ColliderTest(IndependenceTestInterface):
 
 
 class NonColliderTest(IndependenceTestInterface):
-    GENERATOR = AllCombinationsGenerator(
+    generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    chunk_size_parallel_processing = 1
+    parallel = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -145,11 +145,11 @@ class NonColliderTest(IndependenceTestInterface):
 
 
 class FurtherOrientTripleTest(IndependenceTestInterface):
-    GENERATOR = AllCombinationsGenerator(
+    generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    chunk_size_parallel_processing = 1
+    parallel = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -201,11 +201,11 @@ class FurtherOrientTripleTest(IndependenceTestInterface):
 
 
 class OrientQuadrupleTest(IndependenceTestInterface):
-    GENERATOR = AllCombinationsGenerator(
+    generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    chunk_size_parallel_processing = 1
+    parallel = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -267,11 +267,11 @@ class OrientQuadrupleTest(IndependenceTestInterface):
 
 
 class FurtherOrientQuadrupleTest(IndependenceTestInterface):
-    GENERATOR = AllCombinationsGenerator(
+    generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    chunk_size_parallel_processing = 1
+    parallel = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface

@@ -5,7 +5,8 @@ from dataclasses import dataclass
 from typing import List, Dict, Optional
 import logging
 
-from causy.utils import serialize_module_name, load_pipeline_artefact_by_definition
+from causy.serialization import SerializeMixin
+from causy.utils import load_pipeline_artefact_by_definition
 
 logger = logging.getLogger(__name__)
 
@@ -15,26 +16,17 @@ AS_MANY_AS_FIELDS = 0
 
 
 @dataclass
-class ComparisonSettings:
+class ComparisonSettings(SerializeMixin):
     min: int = 2
     max: int = AS_MANY_AS_FIELDS
 
-    def serialize(self):
-        return {
-            "name": serialize_module_name(self),
-            "params": {
-                "min": self.min,
-                "max": self.max,
-            },
-        }
 
-
-class NodeInterface:
+class NodeInterface(SerializeMixin):
     name: str
     id: str
     values: List[float]
 
-    def to_dict(self):
+    def serialize(self):
         return {"id": self.id, "name": self.name}
 
 
@@ -47,16 +39,16 @@ class TestResultAction(enum.StrEnum):
 
 
 @dataclass
-class TestResult:
+class TestResult(SerializeMixin):
     x: NodeInterface
     y: NodeInterface
     action: TestResultAction
     data: Optional[Dict] = None
 
-    def to_dict(self):
+    def serialize(self):
         return {
-            "x": self.x.to_dict(),
-            "y": self.y.to_dict(),
+            "x": self.x.serialize(),
+            "y": self.y.serialize(),
             "action": self.action.name,
         }
 
@@ -126,24 +118,13 @@ class GraphModelInterface(ABC):
         pass
 
 
-class GeneratorInterface(ABC):
+class GeneratorInterface(ABC, SerializeMixin):
     comparison_settings: ComparisonSettings
     chunked: bool = False
 
     @abstractmethod
     def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
         pass
-
-    def serialize(self) -> dict:
-        return {
-            "name": serialize_module_name(self),
-            "params": {
-                "comparison_settings": self.comparison_settings.serialize()
-                if self.comparison_settings
-                else None,
-                "chunked": self.chunked,
-            },
-        }
 
     def __init__(self, comparison_settings: ComparisonSettings, chunked: bool = None):
         if isinstance(comparison_settings, dict):
@@ -157,13 +138,13 @@ class GeneratorInterface(ABC):
         self.comparison_settings = comparison_settings
 
 
-class IndependenceTestInterface(ABC):
-    NUM_OF_COMPARISON_ELEMENTS: int = 0
-    GENERATOR: Optional[GeneratorInterface] = None
+class IndependenceTestInterface(ABC, SerializeMixin):
+    num_of_comparison_elements: int = 0
+    generator: Optional[GeneratorInterface] = None
 
-    CHUNK_SIZE_PARALLEL_PROCESSING: int = 1
+    chunk_size_parallel_processing: int = 1
 
-    PARALLEL: bool = True
+    parallel: bool = True
 
     def __init__(
         self,
@@ -175,23 +156,23 @@ class IndependenceTestInterface(ABC):
     ):
         if generator:
             if isinstance(generator, dict):
-                self.GENERATOR = load_pipeline_artefact_by_definition(generator)
+                self.generator = load_pipeline_artefact_by_definition(generator)
             else:
-                self.GENERATOR = generator
+                self.generator = generator
 
         if num_of_comparison_elements:
             if isinstance(num_of_comparison_elements, dict):
-                self.NUM_OF_COMPARISON_ELEMENTS = load_pipeline_artefact_by_definition(
+                self.num_of_comparison_elements = load_pipeline_artefact_by_definition(
                     num_of_comparison_elements
                 )
             else:
-                self.NUM_OF_COMPARISON_ELEMENTS = num_of_comparison_elements
+                self.num_of_comparison_elements = num_of_comparison_elements
 
         if chunk_size_parallel_processing:
-            self.CHUNK_SIZE_PARALLEL_PROCESSING = chunk_size_parallel_processing
+            self.chunk_size_parallel_processing = chunk_size_parallel_processing
 
         if parallel:
-            self.PARALLEL = parallel
+            self.parallel = parallel
 
         self.threshold = threshold
 
@@ -210,31 +191,14 @@ class IndependenceTestInterface(ABC):
     ) -> Optional[TestResult]:
         return self.test(nodes, graph)
 
-    def serialize(self) -> dict:
-        return {
-            "name": serialize_module_name(self),
-            "params": {
-                "threshold": self.threshold,
-                "generator": self.GENERATOR.serialize(),
-                "num_of_comparison_elements": self.NUM_OF_COMPARISON_ELEMENTS,
-                "chunk_size_parallel_processing": self.CHUNK_SIZE_PARALLEL_PROCESSING,
-                "parallel": self.PARALLEL,
-            },
-        }
 
-
-class LogicStepInterface(ABC):
+class LogicStepInterface(ABC, SerializeMixin):
     @abstractmethod
     def execute(self, graph: BaseGraphInterface, graph_model_instance_: dict):
         pass
 
-    def serialize(self) -> dict:
-        return {
-            "name": serialize_module_name(self),
-        }
 
-
-class ExitConditionInterface(ABC):
+class ExitConditionInterface(ABC, SerializeMixin):
     @abstractmethod
     def check(
         self,
@@ -260,8 +224,3 @@ class ExitConditionInterface(ABC):
         iteration: int,
     ) -> bool:
         return self.check(graph, graph_model_instance_, actions_taken, iteration)
-
-    def serialize(self):
-        return {
-            "name": serialize_module_name(self),
-        }

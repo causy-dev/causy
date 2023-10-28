@@ -69,11 +69,6 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
         if chunked is not None:
             self.chunked = chunked
 
-    def serialize(self):
-        result = super().serialize()
-        result["params"]["shuffle_combinations"] = self.shuffle_combinations
-        return result
-
     def generate(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
     ):
@@ -162,12 +157,6 @@ class RandomSampleGenerator(GeneratorInterface):
                 self.generator = load_pipeline_artefact_by_definition(generator)
         else:
             raise ValueError("RandomSampleGenerator: generator must be set")
-
-    def serialize(self):
-        result = super().serialize()
-        result["params"]["every_nth"] = self.every_nth
-        result["params"]["generator"] = self.generator.serialize()
-        return result
 
     def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
         """

@@ -528,7 +528,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
     def execute_pipeline_step(self, test_fn: IndependenceTestInterface):
         """
-        Execute a single pipeline_step on the graph. either in parallel or in a single process depending on the test_fn.PARALLEL flag
+        Execute a single pipeline_step on the graph. either in parallel or in a single process depending on the test_fn.parallel flag
         :param test_fn: the test function
         :param threshold: the threshold
         :return:
@@ -539,20 +539,20 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         # run all combinations in parallel except if the number of combinations is smaller then the chunk size
         # because then we would create more overhead then we would definetly gain from parallel processing
-        if test_fn.PARALLEL:
+        if test_fn.parallel:
             for result in self.pool.imap_unordered(
                 unpack_run,
                 self._format_yield(
-                    test_fn, self.graph, test_fn.GENERATOR.generate(self.graph, self)
+                    test_fn, self.graph, test_fn.generator.generate(self.graph, self)
                 ),
-                chunksize=test_fn.CHUNK_SIZE_PARALLEL_PROCESSING,
+                chunksize=test_fn.chunk_size_parallel_processing,
             ):
                 if not isinstance(result, list):
                     result = [result]
                 actions_taken.extend(self._take_action(result))
         else:
-            if test_fn.GENERATOR.chunked:
-                for chunk in test_fn.GENERATOR.generate(self.graph, self):
+            if test_fn.generator.chunked:
+                for chunk in test_fn.generator.generate(self.graph, self):
                     iterator = [
                         unpack_run(i)
                         for i in [[test_fn, [*c], self.graph] for c in chunk]
@@ -563,7 +563,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     unpack_run(i)
                     for i in [
                         [test_fn, [*i], self.graph]
-                        for i in test_fn.GENERATOR.generate(self.graph, self)
+                        for i in test_fn.generator.generate(self.graph, self)
                     ]
                 ]
                 actions_taken.extend(self._take_action(iterator))
@@ -635,12 +635,3 @@ class Loop(LogicStepInterface):
 
         self.pipeline_steps = pipeline_steps or []
         self.exit_condition = exit_condition
-
-    def serialize(self) -> dict:
-        serialized = super().serialize()
-        serialized["params"] = {}
-        serialized["params"]["exit_condition"] = self.exit_condition.serialize()
-        serialized["params"]["pipeline_steps"] = [
-            i.serialize() for i in self.pipeline_steps
-        ]
-        return serialized

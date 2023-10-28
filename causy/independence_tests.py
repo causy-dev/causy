@@ -20,11 +20,11 @@ logger = logging.getLogger(__name__)
 
 
 class CalculateCorrelations(IndependenceTestInterface):
-    GENERATOR = AllCombinationsGenerator(
+    generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    chunk_size_parallel_processing = 1
+    parallel = False
 
     def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
         """
@@ -48,11 +48,11 @@ class CalculateCorrelations(IndependenceTestInterface):
 
 
 class CorrelationCoefficientTest(IndependenceTestInterface):
-    GENERATOR = AllCombinationsGenerator(
+    generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    chunk_size_parallel_processing = 1
+    parallel = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
@@ -81,11 +81,11 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
 
 
 class PartialCorrelationTest(IndependenceTestInterface):
-    GENERATOR = AllCombinationsGenerator(
+    generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=3, max=3)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1
-    PARALLEL = False
+    chunk_size_parallel_processing = 1
+    parallel = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -154,11 +154,11 @@ class PartialCorrelationTest(IndependenceTestInterface):
 
 
 class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
-    GENERATOR = PairsWithNeighboursGenerator(
+    generator = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
-    CHUNK_SIZE_PARALLEL_PROCESSING = 1000
-    PARALLEL = False
+    chunk_size_parallel_processing = 1000
+    parallel = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
@@ -221,9 +221,9 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
 
 
 class PlaceholderTest(IndependenceTestInterface):
-    NUM_OF_COMPARISON_ELEMENTS = 2
-    CHUNK_SIZE_PARALLEL_PROCESSING = 10
-    PARALLEL = False
+    num_of_comparison_elements = 2
+    chunk_size_parallel_processing = 10
+    parallel = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface

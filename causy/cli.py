@@ -7,6 +7,7 @@ import logging
 import typer
 
 from causy.graph import graph_model_factory
+from causy.serialization import serialize_model
 from causy.utils import (
     load_pipeline_steps_by_definition,
     retrieve_edges,
@@ -35,19 +36,14 @@ def create_pipeline(pipeline_config: dict):
 
 class MyJSONEncoder(JSONEncoder):
     def default(self, obj):
-        return obj.to_dict()
+        return obj.serialize()
 
 
 @app.command()
 def eject(algorithm: str, output_file: str):
     typer.echo(f"💾 Loading algorithm {algorithm}")
     model = load_algorithm(algorithm)()
-    output = []
-    for step in model.pipeline_steps:
-        output.append(step.serialize())
-
-    result = {"name": algorithm, "steps": output}
-
+    result = serialize_model(model, algorithm_name=algorithm)
     typer.echo(f"💾 Saving algorithm {algorithm} to {output_file}")
     with open(output_file, "w") as file:
         file.write(json.dumps(result, indent=4))
@@ -98,8 +94,8 @@ def execute(
         )
         edges.append(
             {
-                "from": model.graph.nodes[edge[0]].to_dict(),
-                "to": model.graph.nodes[edge[1]].to_dict(),
+                "from": model.graph.nodes[edge[0]].serialize(),
+                "to": model.graph.nodes[edge[1]].serialize(),
                 "value": model.graph.edges[edge[0]][edge[1]],
             }
         )
