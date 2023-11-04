@@ -139,6 +139,7 @@ class GeneratorInterface(ABC, SerializeMixin):
 
 
 class IndependenceTestInterface(ABC, SerializeMixin):
+    # TODO: refactor IndependenceTestInterface -> PipelineStepInterface or so
     num_of_comparison_elements: int = 0
     generator: Optional[GeneratorInterface] = None
 
