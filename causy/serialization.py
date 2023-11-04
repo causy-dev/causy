@@ -35,14 +35,10 @@ class SerializeMixin:
                     x.serialize() if isinstance(x, SerializeMixin) else x
                     for x in getattr(self, attr)
                 }
-            elif isinstance(getattr(self, attr), tuple):
+            elif isinstance(getattr(self, attr), tuple) or isinstance(
+                getattr(self, attr), set
+            ):
                 # tuples are immutable, so we have to convert them to lists
-                result[attr] = [
-                    x.serialize() if isinstance(x, SerializeMixin) else x
-                    for x in getattr(self, attr)
-                ]
-            elif isinstance(getattr(self, attr), set):
-                # sets are immutable, so we have to convert them to lists
                 result[attr] = [
                     x.serialize() if isinstance(x, SerializeMixin) else x
                     for x in getattr(self, attr)
