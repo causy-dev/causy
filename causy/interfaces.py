@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from typing import List, Dict, Optional
 import logging
 
+import torch
+
 from causy.serialization import SerializeMixin
 from causy.utils import load_pipeline_artefact_by_definition
 
@@ -24,7 +26,7 @@ class ComparisonSettings(SerializeMixin):
 class NodeInterface(SerializeMixin):
     name: str
     id: str
-    values: List[float]
+    values: torch.Tensor
 
     def serialize(self):
         return {"id": self.id, "name": self.name}

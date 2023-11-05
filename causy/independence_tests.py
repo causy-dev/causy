@@ -183,7 +183,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
         )
         n = inverse_cov_matrix.size(0)
         diagonal = torch.diag(inverse_cov_matrix)
-        diagonal_matrix = torch.zeros((n, n), dtype=torch.float64)
+        diagonal_matrix = torch.zeros((n, n), dtype=torch.float32)
         for i in range(n):
             diagonal_matrix[i, i] = diagonal[i]
 
