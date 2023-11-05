@@ -13,6 +13,8 @@ from causy.interfaces import (
 # theory for all orientation rules with pictures:
 # https://hpi.de/fileadmin/user_upload/fachgebiete/plattner/teaching/CausalInference/2019/Introduction_to_Constraint-Based_Causal_Structure_Learning.pdf
 
+# TODO: refactor ColliderTest -> ColliderRule and move to folder orientation_rules (after checking for duplicates)
+
 
 class ColliderTest(IndependenceTestInterface):
     generator = AllCombinationsGenerator(

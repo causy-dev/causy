@@ -79,10 +79,26 @@ class PCTestTestCase(unittest.TestCase):
         for key, node in tst.graph.nodes.items():
             node_mapping[node.name] = key
 
-        self.assertTrue(tst.graph.only_directed_edge_exists(tst.graph.nodes[node_mapping["V"]], tst.graph.nodes[node_mapping["Z"]]))
-        self.assertTrue(tst.graph.only_directed_edge_exists(tst.graph.nodes[node_mapping["W"]], tst.graph.nodes[node_mapping["Z"]]))
-        self.assertTrue(tst.graph.only_directed_edge_exists(tst.graph.nodes[node_mapping["Z"]], tst.graph.nodes[node_mapping["X"]]))
-        self.assertTrue(tst.graph.only_directed_edge_exists(tst.graph.nodes[node_mapping["Z"]], tst.graph.nodes[node_mapping["Y"]]))
+        self.assertTrue(
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes[node_mapping["V"]], tst.graph.nodes[node_mapping["Z"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes[node_mapping["W"]], tst.graph.nodes[node_mapping["Z"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes[node_mapping["Z"]], tst.graph.nodes[node_mapping["X"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes[node_mapping["Z"]], tst.graph.nodes[node_mapping["Y"]]
+            )
+        )
 
     def test_with_larger_toy_model(self):
         a, b, c, d, e, f, g, sample_size = 1.2, 1.7, 2, 1.5, 3, 4, 1.8, 10000
@@ -98,19 +114,72 @@ class PCTestTestCase(unittest.TestCase):
         for key, node in tst.graph.nodes.items():
             node_mapping[node.name] = key
 
-        self.assertFalse(tst.graph.edge_exists(tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["B"]]))
-        self.assertTrue(tst.graph.directed_edge_exists(tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["C"]]))
-        self.assertTrue(tst.graph.directed_edge_exists(tst.graph.nodes[node_mapping["B"]], tst.graph.nodes[node_mapping["C"]]))
-        self.assertTrue(tst.graph.directed_edge_exists(tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["D"]]))
-        self.assertTrue(tst.graph.directed_edge_exists(tst.graph.nodes[node_mapping["B"]], tst.graph.nodes[node_mapping["D"]]))
-        self.assertTrue(tst.graph.directed_edge_exists(tst.graph.nodes[node_mapping["C"]], tst.graph.nodes[node_mapping["D"]]))
-        self.assertTrue(tst.graph.directed_edge_exists(tst.graph.nodes[node_mapping["B"]], tst.graph.nodes[node_mapping["E"]]))
-        self.assertTrue(tst.graph.directed_edge_exists(tst.graph.nodes[node_mapping["E"]], tst.graph.nodes[node_mapping["F"]]))
-        self.assertTrue(tst.graph.directed_edge_exists(tst.graph.nodes[node_mapping["B"]], tst.graph.nodes[node_mapping["F"]]))
-        self.assertTrue(tst.graph.directed_edge_exists(tst.graph.nodes[node_mapping["C"]], tst.graph.nodes[node_mapping["F"]]))
-        self.assertTrue(tst.graph.directed_edge_exists(tst.graph.nodes[node_mapping["D"]], tst.graph.nodes[node_mapping["F"]]))
-        self.assertFalse(tst.graph.edge_exists(tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["E"]]))
-        self.assertFalse(tst.graph.edge_exists(tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["F"]]))
+        self.assertFalse(
+            tst.graph.edge_exists(
+                tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["B"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(
+                tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["C"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(
+                tst.graph.nodes[node_mapping["B"]], tst.graph.nodes[node_mapping["C"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(
+                tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["D"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(
+                tst.graph.nodes[node_mapping["B"]], tst.graph.nodes[node_mapping["D"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(
+                tst.graph.nodes[node_mapping["C"]], tst.graph.nodes[node_mapping["D"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(
+                tst.graph.nodes[node_mapping["B"]], tst.graph.nodes[node_mapping["E"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(
+                tst.graph.nodes[node_mapping["E"]], tst.graph.nodes[node_mapping["F"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(
+                tst.graph.nodes[node_mapping["B"]], tst.graph.nodes[node_mapping["F"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(
+                tst.graph.nodes[node_mapping["C"]], tst.graph.nodes[node_mapping["F"]]
+            )
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(
+                tst.graph.nodes[node_mapping["D"]], tst.graph.nodes[node_mapping["F"]]
+            )
+        )
+        self.assertFalse(
+            tst.graph.edge_exists(
+                tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["E"]]
+            )
+        )
+        self.assertFalse(
+            tst.graph.edge_exists(
+                tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["F"]]
+            )
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
