@@ -1,9 +1,10 @@
+import asyncio
 import importlib
 import json
 from datetime import datetime
 from json import JSONEncoder
 import logging
-
+import platform
 import typer
 
 from causy.graph import graph_model_factory
@@ -14,6 +15,7 @@ from causy.utils import (
 )
 
 app = typer.Typer()
+print(platform.platform())
 
 
 def load_json(pipeline_file: str):

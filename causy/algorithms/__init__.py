@@ -1,1 +1,1 @@
-from .pc import PC, ParallelPC
+from .pc import PC, ParallelPC, ParallelPCTest

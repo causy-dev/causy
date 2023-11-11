@@ -1,3 +1,4 @@
+import asyncio
 from abc import ABC
 from dataclasses import dataclass
 from typing import List, Optional, Dict, Set, Tuple
@@ -391,7 +392,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     ):
         self.graph = graph
         self.pipeline_steps = pipeline_steps or []
-        self.pool = mp.Pool(mp.cpu_count() * 2)
+        self.pool = mp.Pool(round(mp.cpu_count() * 2))
 
     def create_graph_from_data(self, data: List[Dict[str, float]]):
         """
@@ -440,10 +441,10 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         for filter in self.pipeline_steps:
             logger.info(f"Executing pipeline step {filter.__class__.__name__}")
             if isinstance(filter, LogicStepInterface):
-                filter.execute(self.graph, self)
+                asyncio.run(filter.execute(self.graph, self))
                 continue
 
-            result = self.execute_pipeline_step(filter)
+            result = asyncio.run(self.execute_pipeline_step(filter))
             action_history.append(
                 {"step": filter.__class__.__name__, "actions": result}
             )
@@ -526,7 +527,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         return actions_taken
 
-    def execute_pipeline_step(self, test_fn: IndependenceTestInterface):
+    async def execute_pipeline_step(self, test_fn: IndependenceTestInterface):
         """
         Execute a single pipeline_step on the graph. either in parallel or in a single process depending on the test_fn.parallel flag
         :param test_fn: the test function
@@ -551,28 +552,24 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     result = [result]
                 actions_taken.extend(self._take_action(result))
         else:
-            if test_fn.generator.chunked:
-                for chunk in test_fn.generator.generate(self.graph, self):
-                    iterator = [
-                        unpack_run(i)
-                        for i in [[test_fn, [*c], self.graph] for c in chunk]
-                    ]
-                    actions_taken.extend(self._take_action(iterator))
-            else:
-                iterator = [
-                    unpack_run(i)
-                    for i in [
-                        [test_fn, [*i], self.graph]
-                        for i in test_fn.generator.generate(self.graph, self)
-                    ]
-                ]
-                actions_taken.extend(self._take_action(iterator))
+
+            async for fun in self.async_func_wrapper(test_fn):
+                result = unpack_run(fun)
+
+                if isinstance(result, TestResult):
+                    actions_taken.extend(self._take_action([result]))
+                elif isinstance(result, list):
+                    actions_taken.extend(self._take_action(result))
 
         self.graph.action_history.append(
             {"step": type(test_fn).__name__, "actions": actions_taken}
         )
 
         return actions_taken
+
+    async def async_func_wrapper(self, test_fn):
+        for i in test_fn.generator.generate(self.graph, self):
+            yield [test_fn, [*i], self.graph]
 
 
 def graph_model_factory(
@@ -596,7 +593,7 @@ class Loop(LogicStepInterface):
     A loop which executes a list of pipeline_steps until the exit_condition is met.
     """
 
-    def execute(
+    async def execute(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
     ):
         """
@@ -615,7 +612,9 @@ class Loop(LogicStepInterface):
         ):
             steps = []
             for pipeline_step in self.pipeline_steps:
-                result = graph_model_instance_.execute_pipeline_step(pipeline_step)
+                result = await graph_model_instance_.execute_pipeline_step(
+                    pipeline_step
+                )
                 steps.extend(result)
             n += 1
 

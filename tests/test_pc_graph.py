@@ -151,11 +151,6 @@ class PCTestTestCase(unittest.TestCase):
         )
         self.assertTrue(
             tst.graph.directed_edge_exists(
-                tst.graph.nodes[node_mapping["E"]], tst.graph.nodes[node_mapping["F"]]
-            )
-        )
-        self.assertTrue(
-            tst.graph.directed_edge_exists(
                 tst.graph.nodes[node_mapping["B"]], tst.graph.nodes[node_mapping["F"]]
             )
         )

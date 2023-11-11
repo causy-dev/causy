@@ -1,10 +1,15 @@
 import itertools
+from copy import deepcopy
 from typing import Tuple, List, Optional
 import logging
 
 import torch
 
-from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
+from causy.generators import (
+    AllCombinationsGenerator,
+    PairsWithNeighboursGenerator,
+    BatchGenerator,
+)
 from causy.utils import get_t_and_critical_t, pearson_correlation
 from causy.interfaces import (
     IndependenceTestInterface,
@@ -17,6 +22,8 @@ from causy.interfaces import (
 )
 
 logger = logging.getLogger(__name__)
+
+from scipy import stats as scipy_stats
 
 
 class CalculateCorrelations(IndependenceTestInterface):
@@ -38,7 +45,7 @@ class CalculateCorrelations(IndependenceTestInterface):
         edge_value["correlation"] = pearson_correlation(
             x.values,
             y.values,
-        ).item()
+        )
         return TestResult(
             x=x,
             y=y,
@@ -177,7 +184,6 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
 
         if not set(nodes[2:]).issubset(set([on for on in list(other_neighbours)])):
             return
-
         inverse_cov_matrix = torch.inverse(
             torch.cov(torch.stack([graph.nodes[node].values for node in nodes]))
         )
@@ -199,7 +205,7 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
             (
                 (-1 * precision_matrix[0][1])
                 / torch.sqrt(precision_matrix[0][0] * precision_matrix[1][1])
-            ).item(),
+            ),
             self.threshold,
         )
 
@@ -236,3 +242,113 @@ class PlaceholderTest(IndependenceTestInterface):
         """
         logger.debug(f"PlaceholderTest {nodes}")
         return TestResult(x=None, y=None, action=TestResultAction.DO_NOTHING, data={})
+
+
+class ExtendedPartialCorrelationTestMatrixWithTorchBatching(IndependenceTestInterface):
+    generator = None
+    chunk_size_parallel_processing = 1
+    parallel = False
+    current_device = "cpu"
+
+    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
+        """
+        Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using the inverted covariance matrix (precision matrix).
+        https://en.wikipedia.org/wiki/Partial_correlation#Using_matrix_inversion
+
+        This version uses torch batching to speed up the calculation.
+
+        :param nodes: the nodes to test
+        :return: A TestResult with the action to take
+        """
+        mapped_nodes = {}
+
+        test_results = []
+
+        for node in set(itertools.chain.from_iterable(nodes)):
+            mapped_nodes[node] = graph.nodes[node].values.to(self.current_device)
+
+        combinations = []
+        local_edges = deepcopy(graph.edges)
+        local_nodes = deepcopy(graph.nodes)
+        for combination in nodes:
+            if not graph.edge_exists(
+                local_nodes[combination[0]], local_nodes[combination[1]]
+            ):
+                continue
+
+            other_neighbours = set(local_edges[combination[0]])
+            other_neighbours.remove(local_nodes[combination[1]].id)
+
+            if not set(combination[2:]).issubset(
+                set([on for on in list(other_neighbours)])
+            ):
+                continue
+            combinations.append(
+                torch.stack([mapped_nodes[node] for node in combination])
+            )
+
+        if len(combinations) == 0:
+            return
+        node_combinations = combinations
+        stacked_matrices = torch.stack(node_combinations)
+
+        calculated_matrices = torch.vmap(torch.cov)(stacked_matrices)
+        inverted_matrices = torch.vmap(torch.inverse)(calculated_matrices)
+        diagonal = torch.vmap(torch.diag)(inverted_matrices)
+
+        diagonal_matrix = torch.vmap(lambda x: torch.diag(x))(diagonal)
+        diagonal_matrix = torch.vmap(torch.sqrt)(diagonal_matrix)
+
+        helper = torch.vmap(torch.mm)(diagonal_matrix, inverted_matrices)
+        precision_matrix = torch.vmap(torch.mm)(helper, diagonal_matrix)
+
+        del diagonal_matrix
+        del inverted_matrices
+
+        parr_corrs = torch.vmap(
+            lambda x: x[0][1].mul(-1).div(torch.sqrt(x[0][0].mul(x[1][1])))
+        )(precision_matrix)
+
+        del precision_matrix
+
+        sample_size = graph.nodes[nodes[0][0]].values.size(0)
+        nb_of_control_vars = len(nodes[0]) - 2
+        deg_of_freedom = sample_size - 2 - nb_of_control_vars
+        critical_t = torch.tensor(
+            float(scipy_stats.t.ppf(1 - self.threshold / 2, deg_of_freedom)),
+            dtype=torch.float16,
+            device=self.current_device,
+        )
+        deg_of_freedom = torch.tensor(
+            deg_of_freedom, dtype=torch.float16, device=self.current_device
+        )
+
+        ts = torch.vmap(
+            lambda x: torch.abs(
+                x.mul(torch.sqrt(deg_of_freedom / (1 - torch.pow(x, 2))))
+            )
+        )(parr_corrs)
+
+        del parr_corrs
+
+        indices_to_remove = torch.where(ts < critical_t)[0]
+
+        for i in indices_to_remove:
+            nodes_set = set([graph.nodes[n] for n in nodes[i]])
+            other_neighbours = nodes_set - {
+                graph.nodes[nodes[i][0]],
+                graph.nodes[nodes[i][1]],
+            }
+            logger.debug(
+                f"Nodes {graph.nodes[nodes[i][0]].name} and {graph.nodes[nodes[i][1]].name} are uncorrelated given nodes {','.join([on.name for on in other_neighbours])}"
+            )
+
+            test_results.append(
+                TestResult(
+                    x=graph.nodes[nodes[i][0]],
+                    y=graph.nodes[nodes[i][1]],
+                    action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                    data={"separatedBy": list(other_neighbours)},
+                )
+            )
+        return test_results

@@ -93,7 +93,6 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
 
         if start < 2:
             raise ValueError("PairsWithNeighboursGenerator: start must be at least 2")
-
         for i in range(start, stop):
             logger.debug(f"PairsWithNeighboursGenerator: i={i}")
             checked_combinations = set()
@@ -108,7 +107,7 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                         yield (node, neighbour)
                         continue
 
-                    other_neighbours = set(graph.edges[node])
+                    other_neighbours = set(local_edges[node])
                     if neighbour in other_neighbours:
                         other_neighbours.remove(neighbour)
                     else:
@@ -165,6 +164,83 @@ class RandomSampleGenerator(GeneratorInterface):
         :param graph_model_instance_:
         :return: yields a random sample of the results
         """
+        self.generator.comparison_settings = self.comparison_settings
         for combination in self.generator.generate(graph, graph_model_instance_):
             if random.randint(0, self.every_nth) == 0:
                 yield combination
+
+
+class BatchGenerator(GeneratorInterface):
+    """
+    BatchGenerator which batches the input of another generator into chunks that are directly passed to the test
+    This is not supported by most tests.
+    """
+
+    def __init__(
+        self,
+        comparison_settings: ComparisonSettings = None,
+        chunk_size: int = None,
+        generator: GeneratorInterface = None,
+    ):
+        super().__init__(comparison_settings, False)
+
+        if chunk_size is not None:
+            self.chunk_size = chunk_size
+        else:
+            self.chunk_size = 4000
+
+        if generator is not None:
+            if isinstance(generator, GeneratorInterface):
+                self.generator = generator
+            else:
+                self.generator = load_pipeline_artefact_by_definition(generator)
+        else:
+            raise ValueError("BatchGenerator: generator must be set")
+
+    def generate(
+        self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
+    ):
+        self.generator.comparison_settings = self.comparison_settings
+        chunk = []
+        for i in self.generator.generate(graph, graph_model_instance_):
+            chunk.append(i)
+            if len(chunk) == self.chunk_size:
+                print("yielding chunk")
+                yield chunk
+                chunk = []
+        if len(chunk) > 0:
+            yield chunk
+
+
+class ComparisonSettingsMinMaxGenerator(GeneratorInterface):
+    """
+    Generates all combinations of nodes in the graph
+    """
+
+    def __init__(
+        self,
+        comparison_settings: ComparisonSettings,
+        generator: GeneratorInterface = None,
+    ):
+        super().__init__(comparison_settings, False)
+        if generator is not None:
+            if isinstance(generator, GeneratorInterface):
+                self.generator = generator
+            else:
+                self.generator = load_pipeline_artefact_by_definition(generator)
+        else:
+            raise ValueError("ComparisonSettingsMinMaxGenerator: generator must be set")
+
+    def generate(
+        self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
+    ):
+        self.generator.comparison_settings = self.comparison_settings
+        min_combinations = self.comparison_settings.min
+        max_combinations = self.comparison_settings.max
+        if max_combinations == AS_MANY_AS_FIELDS:
+            max_combinations = len(graph.nodes) + 1
+        for i in range(min_combinations, max_combinations):
+            self.generator.comparison_settings.min = i
+            self.generator.comparison_settings.max = i
+            for j in self.generator.generate(graph, graph_model_instance_):
+                yield j

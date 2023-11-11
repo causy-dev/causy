@@ -18,14 +18,37 @@ def sum_lists(*lists):
     return list(map(sum, zip(*lists)))
 
 
-def get_t_and_critical_t(sample_size, nb_of_control_vars, par_corr, threshold):
+def custom_round_single_number(number: torch.Tensor, precision: int = 4):
+    """
+    custom round function for a single number as torch does not support round on all devices
+    :param number:
+    :param precision:
+    :return:
+    """
+    factor = 10**precision
+    rounded_number = torch.floor(number * factor + 0.5) / factor
+    return rounded_number
+
+
+def get_t_and_critical_t(
+    sample_size: int, nb_of_control_vars: int, par_corr: torch.Tensor, threshold: float
+):
+    """
+    Returns the t and critical t values for a given sample size, number of control variables, partial correlation and threshold
+    :param sample_size:
+    :param nb_of_control_vars:
+    :param par_corr: the partial correlation as a tensor
+    :param threshold:
+    :return:
+    """
     # TODO: rewrite this function with torch
     # check if we have to normalize data
     deg_of_freedom = sample_size - 2 - nb_of_control_vars
-    if abs(round(par_corr, 4)) == 1:
+    if torch.eq(torch.abs(custom_round_single_number(par_corr, precision=4)), 1).any():
         return (1, 0)
     critical_t = scipy_stats.t.ppf(1 - threshold / 2, deg_of_freedom)
-    t = par_corr * math.sqrt(deg_of_freedom / (1 - par_corr**2))
+
+    t = par_corr.mul(torch.sqrt(deg_of_freedom / (1 - torch.pow(par_corr, 2))))
     return t, critical_t
 
 
