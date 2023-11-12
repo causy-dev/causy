@@ -18,7 +18,6 @@ class SerializationTestCase(unittest.TestCase):
         )
 
     def test_serialize_and_load(self):
-        print("test_serialize_and_load")
         pipeline = [CalculateCorrelations(), CorrelationCoefficientTest(threshold=0.1)]
         model = graph_model_factory(pipeline_steps=pipeline)()
         model_dict = serialize_model(model)
