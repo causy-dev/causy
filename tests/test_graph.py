@@ -50,6 +50,17 @@ class GraphTestCase(unittest.TestCase):
         self.assertEqual(graph.edge_value(node2, node1), {"test": "test"})
         self.assertTrue(graph.edge_exists(node1, node2))
 
+    def test_add_directed_edge(self):
+        graph = Graph()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        self.assertEqual(len(graph.nodes), 2)
+        self.assertEqual(len(graph.edges), 1)
+        self.assertEqual(graph.edge_value(node1, node2), {"test": "test"})
+        self.assertTrue(graph.directed_edge_exists(node1, node2))
+        self.assertFalse(graph.directed_edge_exists(node2, node1))
+
     def test_add_edge_with_non_existing_node(self):
         graph = Graph()
         node1 = graph.add_node("test1", [1, 2, 3])
@@ -223,3 +234,37 @@ class GraphTestCase(unittest.TestCase):
 
         self.assertFalse(graph.undirected_edge_exists(node1, node2))
         self.assertFalse(graph.undirected_edge_exists(node2, node1))
+
+    def test_parents_of_node_two_nodes(self):
+        graph = Graph()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        self.assertEqual(graph.parents_of_node(node2), [node1])
+
+    def test_parents_of_node_three_nodes(self):
+        graph = Graph()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test2", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node3, node2, {"test": "test"})
+        self.assertEqual(graph.parents_of_node(node2), [node1, node3])
+
+    def test_directed_paths_two_nodes(self):
+        graph = Graph()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        self.assertEqual(graph.directed_paths(node1, node2), [[(node1, node2)]])
+
+    def test_directed_paths_three_nodes(self):
+        graph = Graph()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test2", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        self.assertEqual(
+            graph.directed_paths(node1, node3), [[(node1, node2), (node2, node3)]]
+        )

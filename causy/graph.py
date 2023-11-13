@@ -86,6 +86,29 @@ class Graph(BaseGraphInterface):
         self.edge_history[(u.id, v.id)] = []
         self.edge_history[(v.id, u.id)] = []
 
+    def add_directed_edge(self, u: Node, v: Node, value: Dict):
+        """
+        Add a directed edge from u to v to the graph
+        :param u: u node
+        :param v: v node
+        :return:
+        """
+
+        if u.id not in self.nodes:
+            raise GraphError(f"Node {u} does not exist")
+        if v.id not in self.nodes:
+            raise GraphError(f"Node {v} does not exist")
+
+        if u.id == v.id:
+            raise GraphError("Self loops are currently not allowed")
+
+        if u.id not in self.edges:
+            self.edges[u.id] = {}
+
+        self.edges[u.id][v.id] = value
+
+        self.edge_history[(u.id, v.id)] = []
+
     def retrieve_edge_history(
         self, u, v, action: TestResultAction = None
     ) -> List[TestResult]:
@@ -334,13 +357,27 @@ class Graph(BaseGraphInterface):
         :param v: node v
         :return: list of directed paths
         """
+        # TODO: try a better data structure for this
         if self.directed_edge_exists(u, v):
             return [[(u, v)]]
         paths = []
         for w in self.edges[u.id]:
-            for path in self.directed_paths(self.nodes[w], v):
-                paths.append([(u, w)] + path)
+            if self.directed_edge_exists(u, self.nodes[w]):
+                for path in self.directed_paths(self.nodes[w], v):
+                    paths.append([(u, self.nodes[w])] + path)
         return paths
+
+    def parents_of_node(self, u: Node):
+        """
+        Return all parents of a node u
+        :param u: node u
+        :return: list of nodes (parents)
+        """
+        parents = []
+        for w in self.edges:
+            if self.directed_edge_exists(self.nodes[w], u):
+                parents.append(self.nodes[w])
+        return parents
 
     def inducing_path_exists(self, u: Node, v: Node):
         """
