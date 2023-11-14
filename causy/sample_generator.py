@@ -227,7 +227,10 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
             output[i] = internal_repr[i].to_list()
             for t in range(size):
                 graph.add_node(
-                    f"{i} - t{t}", [output[i][t]], id_=f"{i}-t{t}", metadata={"time": t}
+                    f"{i} - t{t}",
+                    [output[i][t]],
+                    id_=f"{i}-t{t}",
+                    metadata={"time": t, "variable": i},
                 )
 
         for t in range(1, size):
