@@ -51,12 +51,14 @@ class Graph(BaseGraphInterface):
 
     nodes: Dict[str, Node]
     edges: Dict[str, Dict[str, Dict]]
+    _reverse_edges: Dict[str, Dict[str, Dict]]
     edge_history: Dict[Tuple[str, str], List[TestResult]]
     action_history: List[Dict[str, List[TestResult]]]
 
     def __init__(self):
         self.nodes = {}
         self.edges = {}
+        self._reverse_edges = {}
         self.edge_history = {}
         self.action_history = []
 
@@ -78,11 +80,16 @@ class Graph(BaseGraphInterface):
 
         if u.id not in self.edges:
             self.edges[u.id] = {}
+            self._reverse_edges[u.id] = {}
         if v.id not in self.edges:
             self.edges[v.id] = {}
+            self._reverse_edges[v.id] = {}
 
         self.edges[u.id][v.id] = value
         self.edges[v.id][u.id] = value
+
+        self._reverse_edges[u.id][v.id] = value
+        self._reverse_edges[v.id][u.id] = value
 
         self.edge_history[(u.id, v.id)] = []
         self.edge_history[(v.id, u.id)] = []
@@ -105,8 +112,11 @@ class Graph(BaseGraphInterface):
 
         if u.id not in self.edges:
             self.edges[u.id] = {}
+        if v.id not in self._reverse_edges:
+            self._reverse_edges[v.id] = {}
 
         self.edges[u.id][v.id] = value
+        self._reverse_edges[v.id][u.id] = value
 
         self.edge_history[(u.id, v.id)] = []
 
@@ -154,9 +164,11 @@ class Graph(BaseGraphInterface):
 
         if u.id in self.edges and v.id in self.edges[u.id]:
             del self.edges[u.id][v.id]
+            del self._reverse_edges[u.id][v.id]
 
         if v.id in self.edges and u.id in self.edges[v.id]:
             del self.edges[v.id][u.id]
+            del self._reverse_edges[v.id][u.id]
 
     def remove_directed_edge(self, u: Node, v: Node):
         """
@@ -176,6 +188,7 @@ class Graph(BaseGraphInterface):
             return
 
         del self.edges[u.id][v.id]
+        del self._reverse_edges[v.id][u.id]
 
     def update_edge(self, u: Node, v: Node, value: Dict):
         """
@@ -203,6 +216,9 @@ class Graph(BaseGraphInterface):
         self.edges[u.id][v.id] = value
         self.edges[v.id][u.id] = value
 
+        self._reverse_edges[u.id][v.id] = value
+        self._reverse_edges[v.id][u.id] = value
+
     def update_directed_edge(self, u: Node, v: Node, value: Dict):
         """
         Update an edge in the graph
@@ -220,6 +236,7 @@ class Graph(BaseGraphInterface):
             raise GraphError(f"There is no edge from {u} to {v}")
 
         self.edges[u.id][v.id] = value
+        self._reverse_edges[v.id][u.id] = value
 
     def edge_exists(self, u: Node, v: Node):
         """
@@ -383,11 +400,7 @@ class Graph(BaseGraphInterface):
         :param u: node u
         :return: list of nodes (parents)
         """
-        parents = []
-        for w in self.edges:
-            if self.directed_edge_exists(self.nodes[w], u):
-                parents.append(self.nodes[w])
-        return parents
+        return [self.nodes[n] for n in self._reverse_edges[u.id].keys()]
 
     def inducing_path_exists(self, u: Node, v: Node):
         """
