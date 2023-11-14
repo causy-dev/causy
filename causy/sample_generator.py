@@ -226,7 +226,9 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
         for i in self.generators.keys():
             output[i] = internal_repr[i].to_list()
             for t in range(size):
-                graph.add_node(f"{i} - t{t}", [output[i][t]], id_=f"{i}-t{t}")
+                graph.add_node(
+                    f"{i} - t{t}", [output[i][t]], id_=f"{i}-t{t}", metadata={"time": t}
+                )
 
         for t in range(1, size):
             for edge in self.edges:

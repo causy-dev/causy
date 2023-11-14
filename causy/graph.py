@@ -32,6 +32,7 @@ class Node(NodeInterface):
     name: str
     id: str
     values: torch.Tensor
+    metadata: Dict[str, any] = None
 
     def __hash__(self):
         return hash(self.id)
@@ -310,7 +311,13 @@ class Graph(BaseGraphInterface):
 
         return self.edges[u.id][v.id]
 
-    def add_node(self, name: str, values: List[float], id_: str = None) -> Node:
+    def add_node(
+        self,
+        name: str,
+        values: List[float],
+        id_: str = None,
+        metadata: Dict[str, any] = None,
+    ) -> Node:
         """
         Add a node to the graph
         :param name: name of the node
@@ -331,7 +338,10 @@ class Graph(BaseGraphInterface):
         except TypeError as e:
             raise ValueError(f"Currently only numeric values are supported. {e}")
 
-        node = Node(name=name, id=id_, values=tensor_values)
+        if metadata is None:
+            metadata = {}
+
+        node = Node(name=name, id=id_, values=tensor_values, metadata=metadata)
 
         self.nodes[id_] = node
         return node
