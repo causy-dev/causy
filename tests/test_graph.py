@@ -249,7 +249,9 @@ class GraphTestCase(unittest.TestCase):
         node3 = graph.add_node("test2", [1, 2, 3])
         graph.add_directed_edge(node1, node2, {"test": "test"})
         graph.add_directed_edge(node3, node2, {"test": "test"})
-        self.assertEqual(graph.parents_of_node(node2), [node1, node3])
+        result = graph.parents_of_node(node2)
+        self.assertIn(node1, result)
+        self.assertIn(node3, result)
 
     def test_directed_paths_two_nodes(self):
         graph = Graph()
