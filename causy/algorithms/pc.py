@@ -19,9 +19,9 @@ from causy.orientation_tests import (
 PC = graph_model_factory(
     pipeline_steps=[
         CalculateCorrelations(),
-        CorrelationCoefficientTest(threshold=0.01),
-        PartialCorrelationTest(threshold=0.01),
-        ExtendedPartialCorrelationTestMatrix(threshold=0.01),
+        CorrelationCoefficientTest(threshold=0.005),
+        PartialCorrelationTest(threshold=0.005),
+        ExtendedPartialCorrelationTestMatrix(threshold=0.005),
         ColliderTest(),
         Loop(
             pipeline_steps=[
@@ -39,13 +39,13 @@ PC = graph_model_factory(
 ParallelPC = graph_model_factory(
     pipeline_steps=[
         CalculateCorrelations(),
-        CorrelationCoefficientTest(threshold=0.01),
+        CorrelationCoefficientTest(threshold=0.005),
         PartialCorrelationTest(
-            threshold=0.01, parallel=True, chunk_size_parallel_processing=50000
+            threshold=0.005, parallel=True, chunk_size_parallel_processing=50000
         ),
         ExtendedPartialCorrelationTestMatrix(
             # run first a sampled version of the test so we can minimize the number of tests in the full version
-            threshold=0.01,
+            threshold=0.005,
             chunk_size_parallel_processing=5000,
             parallel=True,
             generator=RandomSampleGenerator(
@@ -61,7 +61,7 @@ ParallelPC = graph_model_factory(
             ),
         ),
         ExtendedPartialCorrelationTestMatrix(
-            threshold=0.01,
+            threshold=0.005,
             chunk_size_parallel_processing=20000,
             parallel=True,
             generator=PairsWithNeighboursGenerator(
