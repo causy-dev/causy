@@ -11,12 +11,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def random():
+def random() -> torch.Tensor:
     """
     Returns a random number from a normal distribution
     :return: the random number as a float
     """
-    return torch.randn(1).item()
+    return torch.randn(1, dtype=torch.float32).item()
 
 
 class SampleEdge:
@@ -69,10 +69,12 @@ class TimeProxy:
     5
     """
 
-    def __init__(self, initial_value: float):
+    def __init__(self, initial_value: torch.Tensor):
         """
         :param initial_value: the initial value of the variable
         """
+        if not isinstance(initial_value, torch.Tensor):
+            initial_value = torch.tensor(initial_value, dtype=torch.float32)
         self._lst = [initial_value]
         self._t = 0
 
@@ -106,6 +108,8 @@ class TimeProxy:
         :param value: the value to append
         :return:
         """
+        if not isinstance(value, torch.Tensor):
+            value = torch.tensor(value, dtype=torch.float32)
         self._lst.append(value)
 
     def to_list(self):
@@ -113,7 +117,7 @@ class TimeProxy:
         Return the list of values
         :return: the list
         """
-        return self._lst
+        return torch.stack(self._lst)
 
     def __repr__(self):
         return f"{self._lst} at {self._t}"
@@ -125,16 +129,23 @@ class CurrentElementProxy(float):
     as a float.
     """
 
-    def __init__(self, initial_value: float):
+    # TODO: fix this class. Bug: IIDSampleGenerator only depends on the initial value, it should depend on the step
+
+    def __init__(self, initial_value: torch.Tensor):
+        if not isinstance(initial_value, torch.Tensor):
+            initial_value = torch.tensor(initial_value, dtype=torch.float32)
         self.lst = [initial_value]
         self.value = initial_value
 
     def append(self, value):
+        if not isinstance(value, torch.Tensor):
+            value = torch.tensor(value, dtype=torch.float32)
+
         self.lst.append(value)
         self.value = value
 
     def to_list(self):
-        return self.lst
+        return torch.stack(self.lst)
 
 
 class AbstractSampleGenerator(abc.ABC):
@@ -204,7 +215,12 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
     >>> )
     """
 
-    def generate(self, size):
+    def _generate_data(self, size):
+        """
+        Generate data for a sample graph with a time dimension
+        :param size:
+        :return:
+        """
         internal_repr = {}
 
         # Initialize the output dictionary
@@ -221,10 +237,21 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
                     self.generators[value](t, SimpleNamespace(**generator_input))
                 )
 
-        graph = Graph()
         output = {}
         for i in self.generators.keys():
             output[i] = internal_repr[i].to_list()
+
+        return output
+
+    def generate(self, size):
+        """
+        Generate data for a sample graph with a time dimension
+        :param size: the number of time steps to generate
+        :return: the generated data and the sample graph
+        """
+        output = self._generate_data(size)
+        graph = Graph()
+        for i in self.generators.keys():
             for t in range(size):
                 graph.add_node(
                     f"{i} - t{t}",
@@ -272,13 +299,14 @@ class IIDSampleGenerator(AbstractSampleGenerator):
     >>>         "X": random(),
     >>>     },
     >>>     variables={
-    >>>         "alpha": 0.9,
+    >>>         "param1": 2,
+    >>>         "param2": 3,
     >>>     },
     >>>     # generate the dependencies of variables on values of themselves and other variables
     >>>     generators={
-    >>>         "Z": lambda s, i: i.alpha + random(),
-    >>>         "Y": lambda s, i: i.alpha + i.Z + random(),
-    >>>         "X": lambda s, i: i.alpha + i.Y + random()
+    >>>         "Z": lambda s, i: random(),
+    >>>         "Y": lambda s, i: i.param1 * i.Z + random(),
+    >>>         "X": lambda s, i: i.param2 * i.Y + random()
     >>>     },
     >>>     edges=[
     >>>         SampleEdge("Z", "Y"),
@@ -288,7 +316,8 @@ class IIDSampleGenerator(AbstractSampleGenerator):
 
     """
 
-    def generate(self, size):
+    # TODO: fix this class. Bug: IIDSampleGenerator only depends on the initial value, it should depend on the step
+    def _generate_data(self, size):
         internal_repr = {}
 
         # Initialize the output dictionary
@@ -303,12 +332,22 @@ class IIDSampleGenerator(AbstractSampleGenerator):
                 internal_repr[value].append(
                     self.generators[value](step, SimpleNamespace(**generator_input))
                 )
-
-        graph = Graph()
         output = {}
-
         for i in self.generators.keys():
             output[i] = internal_repr[i].to_list()
+
+        return output
+
+    def generate(self, size):
+        """
+        Generate data for a sample graph without a time dimension
+        :param size: the number of data points to generate
+        :return: the generated data and the sample graph
+        """
+        output = self._generate_data(size)
+        graph = Graph()
+
+        for i in self.generators.keys():
             graph.add_node(f"{i}", output[i], id_=f"{i}")
 
         for edge in self.edges:
@@ -320,32 +359,3 @@ class IIDSampleGenerator(AbstractSampleGenerator):
             )
 
         return output, graph
-
-
-if __name__ == "__main__":
-    sg = IIDSampleGenerator(
-        initial_values={
-            "Z": random(),
-            "Y": random(),
-            "X": random(),
-        },
-        variables={
-            "alpha": 0.9,
-            "beta": 0.9,
-            "gamma": 0.9,
-            "param_1": 5,
-            "param_2": 7,
-        },
-        # generate the dependencies of variables on past values of themselves and other variables
-        generators={
-            "Z": lambda t, i: i.alpha + random(),
-            "Y": lambda t, i: i.beta + i.param_1 * i.Z + random(),
-            "X": lambda t, i: i.gamma + i.param_2 * i.Y + random(),
-        },
-        edges=[
-            SampleEdge("Z", "Y"),
-            SampleEdge("Y", "X"),
-        ],
-    )
-
-    print(sg.generate(10))

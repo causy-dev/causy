@@ -1,6 +1,6 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Optional, Dict, Set, Tuple
+from typing import List, Optional, Dict, Set, Tuple, Union
 from uuid import uuid4
 import logging
 
@@ -331,7 +331,7 @@ class Graph(BaseGraphInterface):
     def add_node(
         self,
         name: str,
-        values: List[float],
+        values: Union[List[float], torch.Tensor],
         id_: str = None,
         metadata: Dict[str, any] = None,
     ) -> Node:
@@ -350,10 +350,13 @@ class Graph(BaseGraphInterface):
         if id_ in self.nodes:
             raise ValueError(f"Node with id {id_} already exists")
 
-        try:
-            tensor_values = torch.tensor(values, dtype=torch.float32)
-        except TypeError as e:
-            raise ValueError(f"Currently only numeric values are supported. {e}")
+        if isinstance(values, torch.Tensor):
+            tensor_values = values
+        else:
+            try:
+                tensor_values = torch.tensor(values, dtype=torch.float32)
+            except TypeError as e:
+                raise ValueError(f"Currently only numeric values are supported. {e}")
 
         if metadata is None:
             metadata = {}
