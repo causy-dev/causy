@@ -1,7 +1,7 @@
 import asyncio
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Optional, Dict, Set, Tuple
+from typing import List, Optional, Dict, Set, Tuple, Union
 from uuid import uuid4
 import logging
 
@@ -33,6 +33,7 @@ class Node(NodeInterface):
     name: str
     id: str
     values: torch.Tensor
+    metadata: Dict[str, any] = None
 
     def __hash__(self):
         return hash(self.id)
@@ -51,12 +52,14 @@ class Graph(BaseGraphInterface):
 
     nodes: Dict[str, Node]
     edges: Dict[str, Dict[str, Dict]]
+    _reverse_edges: Dict[str, Dict[str, Dict]]
     edge_history: Dict[Tuple[str, str], List[TestResult]]
     action_history: List[Dict[str, List[TestResult]]]
 
     def __init__(self):
         self.nodes = {}
         self.edges = {}
+        self._reverse_edges = {}
         self.edge_history = {}
         self.action_history = []
 
@@ -78,14 +81,45 @@ class Graph(BaseGraphInterface):
 
         if u.id not in self.edges:
             self.edges[u.id] = {}
+            self._reverse_edges[u.id] = {}
         if v.id not in self.edges:
             self.edges[v.id] = {}
+            self._reverse_edges[v.id] = {}
 
         self.edges[u.id][v.id] = value
         self.edges[v.id][u.id] = value
 
+        self._reverse_edges[u.id][v.id] = value
+        self._reverse_edges[v.id][u.id] = value
+
         self.edge_history[(u.id, v.id)] = []
         self.edge_history[(v.id, u.id)] = []
+
+    def add_directed_edge(self, u: Node, v: Node, value: Dict):
+        """
+        Add a directed edge from u to v to the graph
+        :param u: u node
+        :param v: v node
+        :return:
+        """
+
+        if u.id not in self.nodes:
+            raise GraphError(f"Node {u} does not exist")
+        if v.id not in self.nodes:
+            raise GraphError(f"Node {v} does not exist")
+
+        if u.id == v.id:
+            raise GraphError("Self loops are currently not allowed")
+
+        if u.id not in self.edges:
+            self.edges[u.id] = {}
+        if v.id not in self._reverse_edges:
+            self._reverse_edges[v.id] = {}
+
+        self.edges[u.id][v.id] = value
+        self._reverse_edges[v.id][u.id] = value
+
+        self.edge_history[(u.id, v.id)] = []
 
     def retrieve_edge_history(
         self, u, v, action: TestResultAction = None
@@ -131,9 +165,11 @@ class Graph(BaseGraphInterface):
 
         if u.id in self.edges and v.id in self.edges[u.id]:
             del self.edges[u.id][v.id]
+            del self._reverse_edges[u.id][v.id]
 
         if v.id in self.edges and u.id in self.edges[v.id]:
             del self.edges[v.id][u.id]
+            del self._reverse_edges[v.id][u.id]
 
     def remove_directed_edge(self, u: Node, v: Node):
         """
@@ -153,6 +189,7 @@ class Graph(BaseGraphInterface):
             return
 
         del self.edges[u.id][v.id]
+        del self._reverse_edges[v.id][u.id]
 
     def update_edge(self, u: Node, v: Node, value: Dict):
         """
@@ -180,6 +217,9 @@ class Graph(BaseGraphInterface):
         self.edges[u.id][v.id] = value
         self.edges[v.id][u.id] = value
 
+        self._reverse_edges[u.id][v.id] = value
+        self._reverse_edges[v.id][u.id] = value
+
     def update_directed_edge(self, u: Node, v: Node, value: Dict):
         """
         Update an edge in the graph
@@ -197,6 +237,7 @@ class Graph(BaseGraphInterface):
             raise GraphError(f"There is no edge from {u} to {v}")
 
         self.edges[u.id][v.id] = value
+        self._reverse_edges[v.id][u.id] = value
 
     def edge_exists(self, u: Node, v: Node):
         """
@@ -288,7 +329,13 @@ class Graph(BaseGraphInterface):
 
         return self.edges[u.id][v.id]
 
-    def add_node(self, name: str, values: List[float], id_: str = None) -> Node:
+    def add_node(
+        self,
+        name: str,
+        values: Union[List[float], torch.Tensor],
+        id_: str = None,
+        metadata: Dict[str, any] = None,
+    ) -> Node:
         """
         Add a node to the graph
         :param name: name of the node
@@ -304,12 +351,18 @@ class Graph(BaseGraphInterface):
         if id_ in self.nodes:
             raise ValueError(f"Node with id {id_} already exists")
 
-        try:
-            tensor_values = torch.tensor(values, dtype=torch.float32)
-        except TypeError as e:
-            raise ValueError(f"Currently only numeric values are supported. {e}")
+        if isinstance(values, torch.Tensor):
+            tensor_values = values
+        else:
+            try:
+                tensor_values = torch.tensor(values, dtype=torch.float32)
+            except TypeError as e:
+                raise ValueError(f"Currently only numeric values are supported. {e}")
 
-        node = Node(name=name, id=id_, values=tensor_values)
+        if metadata is None:
+            metadata = {}
+
+        node = Node(name=name, id=id_, values=tensor_values, metadata=metadata)
 
         self.nodes[id_] = node
         return node
@@ -335,13 +388,23 @@ class Graph(BaseGraphInterface):
         :param v: node v
         :return: list of directed paths
         """
+        # TODO: try a better data structure for this
         if self.directed_edge_exists(u, v):
             return [[(u, v)]]
         paths = []
         for w in self.edges[u.id]:
-            for path in self.directed_paths(self.nodes[w], v):
-                paths.append([(u, w)] + path)
+            if self.directed_edge_exists(u, self.nodes[w]):
+                for path in self.directed_paths(self.nodes[w], v):
+                    paths.append([(u, self.nodes[w])] + path)
         return paths
+
+    def parents_of_node(self, u: Node):
+        """
+        Return all parents of a node u
+        :param u: node u
+        :return: list of nodes (parents)
+        """
+        return [self.nodes[n] for n in self._reverse_edges[u.id].keys()]
 
     def inducing_path_exists(self, u: Node, v: Node):
         """
