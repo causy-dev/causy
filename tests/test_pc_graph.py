@@ -66,7 +66,7 @@ class PCTestTestCase(unittest.TestCase):
         retrieve_edges(tst.graph)
 
     def test_with_minimal_toy_model(self):
-        a, b, c, d, sample_size = 1.2, 1.7, 2, 1.5, 10000
+        a, b, c, d, sample_size = 1.2, 1.7, 2, 1.5, 100000
         test_data = generate_data_minimal_example(a, b, c, d, sample_size)
         tst = PC()
         tst.create_graph_from_data(test_data)
