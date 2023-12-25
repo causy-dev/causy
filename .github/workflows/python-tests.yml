@@ -14,8 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11"]
-        platform: [macos-latest, windows-latest] # TODO: change add ubuntu-latest
+        python-version: ["3.11", "3.12"]
+        platform: [macos-latest, windows-latest, ubuntu-latest] # TODO: change add ubuntu-latest
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v3
