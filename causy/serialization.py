@@ -1,4 +1,4 @@
-from causy.utils import serialize_module_name, load_pipeline_artefact_by_definition
+from causy.graph_utils import serialize_module_name
 
 
 def serialize_model(model, algorithm_name: str = None):

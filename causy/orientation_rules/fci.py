@@ -3,14 +3,14 @@ from typing import Tuple, List, Optional
 from causy.generators import AllCombinationsGenerator
 from causy.interfaces import (
     TestResultAction,
-    IndependenceTestInterface,
+    PipelineStepInterface,
     ComparisonSettings,
     BaseGraphInterface,
     TestResult,
 )
 
 
-class ColliderRuleFCI(IndependenceTestInterface):
+class ColliderRuleFCI(PipelineStepInterface):
     generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )

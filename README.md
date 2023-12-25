@@ -56,7 +56,7 @@ Use a default algorithm
 
 ```python
 from causy.algorithms import PC
-from causy.utils import retrieve_edges
+from causy.graph_utils import retrieve_edges
 
 model = PC()
 model.create_graph_from_data(
@@ -79,58 +79,59 @@ for edge in edges:
 Use a custom algorithm
 
 ```python
-from causy.exit_conditions import ExitOnNoActions
-from causy.graph import graph_model_factory, Loop
-from causy.independence_tests import (
-    CalculateCorrelations,
-    CorrelationCoefficientTest,
-    PartialCorrelationTest,
-    ExtendedPartialCorrelationTestMatrix,
+from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
+from causy.graph_model import graph_model_factory
+from causy.common_pipeline_steps.logic import Loop
+from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
+from causy.independence_tests.common import (
+  CorrelationCoefficientTest,
+  PartialCorrelationTest,
+  ExtendedPartialCorrelationTestMatrix,
 )
-from causy.orientation_tests import (
-    ColliderTest,
-    NonColliderTest,
-    FurtherOrientTripleTest,
-    OrientQuadrupleTest,
-    FurtherOrientQuadrupleTest,
+from causy.orientation_rules.pc import (
+  ColliderTest,
+  NonColliderTest,
+  FurtherOrientTripleTest,
+  OrientQuadrupleTest,
+  FurtherOrientQuadrupleTest,
 )
-from causy.utils import retrieve_edges
+from causy.graph_utils import retrieve_edges
 
 CustomPC = graph_model_factory(
-    pipeline_steps=[
-        CalculateCorrelations(),
-        CorrelationCoefficientTest(threshold=0.1),
-        PartialCorrelationTest(threshold=0.01),
-        ExtendedPartialCorrelationTestMatrix(threshold=0.01),
-        ColliderTest(),
-        Loop(
-            pipeline_steps=[
-                NonColliderTest(),
-                FurtherOrientTripleTest(),
-                OrientQuadrupleTest(),
-                FurtherOrientQuadrupleTest(),
-            ],
-            exit_condition=ExitOnNoActions(),
-        ),
-    ]
+  pipeline_steps=[
+    CalculatePearsonCorrelations(),
+    CorrelationCoefficientTest(threshold=0.1),
+    PartialCorrelationTest(threshold=0.01),
+    ExtendedPartialCorrelationTestMatrix(threshold=0.01),
+    ColliderTest(),
+    Loop(
+      pipeline_steps=[
+        NonColliderTest(),
+        FurtherOrientTripleTest(),
+        OrientQuadrupleTest(),
+        FurtherOrientQuadrupleTest(),
+      ],
+      exit_condition=ExitOnNoActions(),
+    ),
+  ]
 )
 
 model = CustomPC()
 
 model.create_graph_from_data(
-    [
-        {"a": 1, "b": 0.3},
-        {"a": 0.5, "b": 0.2}
-    ]
+  [
+    {"a": 1, "b": 0.3},
+    {"a": 0.5, "b": 0.2}
+  ]
 )
 model.create_all_possible_edges()
 model.execute_pipeline_steps()
 edges = retrieve_edges(model.graph)
 
 for edge in edges:
-    print(
-        f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
-    )
+  print(
+    f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
+  )
 ```
 
 ### Supported algorithms

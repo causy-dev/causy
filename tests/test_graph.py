@@ -1,6 +1,6 @@
 import unittest
 
-from causy.graph import graph_model_factory, Graph, GraphError, Node
+from causy.graph import Graph, GraphError, Node
 import torch
 
 

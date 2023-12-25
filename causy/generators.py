@@ -10,7 +10,7 @@ from causy.interfaces import (
     GraphModelInterface,
     AS_MANY_AS_FIELDS,
 )
-from causy.utils import load_pipeline_artefact_by_definition
+from causy.graph_utils import load_pipeline_artefact_by_definition
 
 logger = logging.getLogger(__name__)
 

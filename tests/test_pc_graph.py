@@ -1,10 +1,9 @@
 import csv
-import json
 import unittest
 import numpy as np
 
 from causy.algorithms import PC
-from causy.utils import retrieve_edges
+from causy.graph_utils import retrieve_edges
 
 
 # TODO: generate larger toy model to test quadruple orientation rules.

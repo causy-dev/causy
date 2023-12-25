@@ -6,7 +6,7 @@ from causy.interfaces import (
     BaseGraphInterface,
     TestResult,
     TestResultAction,
-    IndependenceTestInterface,
+    PipelineStepInterface,
     ComparisonSettings,
 )
 
@@ -16,7 +16,7 @@ from causy.interfaces import (
 # TODO: refactor ColliderTest -> ColliderRule and move to folder orientation_rules (after checking for duplicates)
 
 
-class ColliderTest(IndependenceTestInterface):
+class ColliderTest(PipelineStepInterface):
     generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
@@ -82,7 +82,7 @@ class ColliderTest(IndependenceTestInterface):
         return results
 
 
-class NonColliderTest(IndependenceTestInterface):
+class NonColliderTest(PipelineStepInterface):
     generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
@@ -146,7 +146,7 @@ class NonColliderTest(IndependenceTestInterface):
                 )
 
 
-class FurtherOrientTripleTest(IndependenceTestInterface):
+class FurtherOrientTripleTest(PipelineStepInterface):
     generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
@@ -202,7 +202,7 @@ class FurtherOrientTripleTest(IndependenceTestInterface):
         return results
 
 
-class OrientQuadrupleTest(IndependenceTestInterface):
+class OrientQuadrupleTest(PipelineStepInterface):
     generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
@@ -268,7 +268,7 @@ class OrientQuadrupleTest(IndependenceTestInterface):
         return results
 
 
-class FurtherOrientQuadrupleTest(IndependenceTestInterface):
+class FurtherOrientQuadrupleTest(PipelineStepInterface):
     generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
