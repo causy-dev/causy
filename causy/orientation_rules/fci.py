@@ -9,6 +9,8 @@ from causy.interfaces import (
     TestResult,
 )
 
+import torch.multiprocessing as mp
+
 
 class ColliderRuleFCI(PipelineStepInterface):
     generator = AllCombinationsGenerator(
@@ -18,8 +20,8 @@ class ColliderRuleFCI(PipelineStepInterface):
     parallel = False
 
     def test(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> Optional[List[TestResult] | TestResult]:
+        self, nodes: Tuple[str], graph: BaseGraphInterface, result_queue: mp.Queue
+    ):
         """
         Some notes on how we implment FCI: After the independence tests, we have a graph with undirected edges which are
         implemented as two directed edges, one in each direction. We initialize the graph by adding values to all these edges,
@@ -39,7 +41,7 @@ class ColliderRuleFCI(PipelineStepInterface):
         applying further rules.
         :param nodes: list of nodes
         :param graph: the current graph
-        :returns: list of actions that will be executed on graph
+        :param result_queue: the result queue to put the result in
         """
 
         x = graph.nodes[nodes[0]]
@@ -69,18 +71,20 @@ class ColliderRuleFCI(PipelineStepInterface):
                     separators += [a.id for a in action.data["separatedBy"]]
 
             if z.id not in separators:
-                results += [
+                result_queue.put(
                     TestResult(
                         x=x,
                         y=z,
                         action=TestResultAction.UPDATE_EDGE_DIRECTED,
                         data={"edge_type": None},
-                    ),
+                    )
+                )
+                result_queue.put(
                     TestResult(
                         x=y,
                         y=z,
                         action=TestResultAction.UPDATE_EDGE_DIRECTED,
                         data={"edge_type": None},
-                    ),
-                ]
+                    )
+                )
         return results

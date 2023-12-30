@@ -19,11 +19,11 @@ class CalculatePearsonCorrelations(PipelineStepInterface):
     chunk_size_parallel_processing = 1
     parallel = False
 
-    def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
+    def test(self, nodes: Tuple[str], graph: BaseGraphInterface, result_queue):
         """
         Calculate the correlation between each pair of nodes and store it to the respective edge.
         :param nodes: list of nodes
-        :return: A TestResult with the action to take
+        :param result_queue: the result queue to put the result in
         """
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
@@ -39,9 +39,11 @@ class CalculatePearsonCorrelations(PipelineStepInterface):
 
         edge_value["correlation"] = pearson_correlation.item()
 
-        return TestResult(
-            x=x,
-            y=y,
-            action=TestResultAction.UPDATE_EDGE,
-            data=edge_value,
+        result_queue.put(
+            TestResult(
+                x=x,
+                y=y,
+                action=TestResultAction.UPDATE_EDGE,
+                data=edge_value,
+            )
         )

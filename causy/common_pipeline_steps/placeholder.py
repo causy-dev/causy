@@ -8,6 +8,8 @@ from causy.interfaces import (
     TestResultAction,
 )
 
+import torch.multiprocessing as mp
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,13 +19,16 @@ class PlaceholderTest(PipelineStepInterface):
     parallel = False
 
     def test(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[TestResult] | TestResult:
+        self, nodes: Tuple[str], graph: BaseGraphInterface, result_queue: mp.Queue
+    ):
         """
         Placeholder test for testing purposes
         :param nodes:
         :param graph:
+        :param result_queue:
         :return:
         """
         logger.debug(f"PlaceholderTest {nodes}")
-        return TestResult(x=None, y=None, action=TestResultAction.DO_NOTHING, data={})
+        result_queue.put(
+            TestResult(x=None, y=None, action=TestResultAction.DO_NOTHING, data={})
+        )

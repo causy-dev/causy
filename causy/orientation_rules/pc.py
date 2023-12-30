@@ -10,6 +10,8 @@ from causy.interfaces import (
     ComparisonSettings,
 )
 
+import torch.multiprocessing as mp
+
 # theory for all orientation rules with pictures:
 # https://hpi.de/fileadmin/user_upload/fachgebiete/plattner/teaching/CausalInference/2019/Introduction_to_Constraint-Based_Causal_Structure_Learning.pdf
 
@@ -24,8 +26,8 @@ class ColliderTest(PipelineStepInterface):
     parallel = False
 
     def test(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> Optional[List[TestResult] | TestResult]:
+        self, nodes: Tuple[str], graph: BaseGraphInterface, result_queue: mp.Queue
+    ):
         """
         We call triples x, y, z of nodes v structures if x and y that are NOT adjacent but share an adjacent node z.
         V structures looks like this in the undirected skeleton: (x - z - y).
@@ -34,7 +36,7 @@ class ColliderTest(PipelineStepInterface):
         So, the edges must be oriented from x to z and from y to z (x -> z <- y).
         :param nodes: list of nodes
         :param graph: the current graph
-        :returns: list of actions that will be executed on graph
+        :param result_queue: the result queue to put the result in
         """
         # https://github.com/pgmpy/pgmpy/blob/1fe10598df5430295a8fc5cdca85cf2d9e1c4330/pgmpy/estimators/PC.py#L416
 
@@ -55,7 +57,6 @@ class ColliderTest(PipelineStepInterface):
         )
 
         # if x and y are not independent given z, safe action: make z a collider
-        results = []
         for z in potential_zs:
             z = graph.nodes[z]
 
@@ -65,21 +66,22 @@ class ColliderTest(PipelineStepInterface):
                     separators += [a.id for a in action.data["separatedBy"]]
 
             if z.id not in separators:
-                results += [
+                result_queue.put(
                     TestResult(
                         x=z,
                         y=x,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
-                    ),
+                    )
+                )
+                result_queue.put(
                     TestResult(
                         x=z,
                         y=y,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
-                    ),
-                ]
-        return results
+                    )
+                )
 
 
 class NonColliderTest(PipelineStepInterface):
@@ -90,14 +92,14 @@ class NonColliderTest(PipelineStepInterface):
     parallel = False
 
     def test(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> Optional[List[TestResult] | TestResult]:
+        self, nodes: Tuple[str], graph: BaseGraphInterface, result_queue: mp.Queue
+    ):
         """
         Further orientation rule: all v structures that are colliders are already oriented.
         We now orient all v structures that have a single alternative to being a collider.
         :param nodes: list of nodes
         :param graph: the current graph
-        :returns: list of actions that will be executed on graph
+        :param result_queue: the result queue to put the result in
         """
 
         x = graph.nodes[nodes[0]]
@@ -125,12 +127,15 @@ class NonColliderTest(PipelineStepInterface):
                         break
                 if breakflag is True:
                     continue
-                return TestResult(
-                    x=y,
-                    y=z,
-                    action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                    data={},
+                result_queue.put(
+                    TestResult(
+                        x=y,
+                        y=z,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
                 )
+                return
 
             if graph.only_directed_edge_exists(y, z) and graph.undirected_edge_exists(
                 z, x
@@ -138,12 +143,15 @@ class NonColliderTest(PipelineStepInterface):
                 for node in graph.nodes:
                     if graph.only_directed_edge_exists(graph.nodes[node], x):
                         continue
-                return TestResult(
-                    x=x,
-                    y=z,
-                    action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                    data={},
+                result_queue.put(
+                    TestResult(
+                        x=x,
+                        y=z,
+                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                        data={},
+                    )
                 )
+                return
 
 
 class FurtherOrientTripleTest(PipelineStepInterface):
@@ -154,13 +162,13 @@ class FurtherOrientTripleTest(PipelineStepInterface):
     parallel = False
 
     def test(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> Optional[List[TestResult] | TestResult]:
+        self, nodes: Tuple[str], graph: BaseGraphInterface, result_queue: mp.Queue
+    ):
         """
         Further orientation rule.
         :param nodes: list of nodes
         :param graph: the current graph
-        :returns: list of actions that will be executed on graph
+        :param result_queue: the result queue to put the result in
         """
 
         x = graph.nodes[nodes[0]]
@@ -178,7 +186,7 @@ class FurtherOrientTripleTest(PipelineStepInterface):
                 and graph.only_directed_edge_exists(x, z)
                 and graph.only_directed_edge_exists(z, y)
             ):
-                results.append(
+                result_queue.put(
                     TestResult(
                         x=y,
                         y=x,
@@ -191,7 +199,7 @@ class FurtherOrientTripleTest(PipelineStepInterface):
                 and graph.only_directed_edge_exists(y, z)
                 and graph.only_directed_edge_exists(z, x)
             ):
-                results.append(
+                result_queue.put(
                     TestResult(
                         x=x,
                         y=y,
@@ -210,13 +218,13 @@ class OrientQuadrupleTest(PipelineStepInterface):
     parallel = False
 
     def test(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> Optional[List[TestResult] | TestResult]:
+        self, nodes: Tuple[str], graph: BaseGraphInterface, result_queue: mp.Queue
+    ):
         """
         Further orientation rule.
         :param nodes: list of nodes
         :param graph: the current graph
-        :returns: list of actions that will be executed on graph
+        :param result_queue: the result queue to put the result in
         """
 
         y = graph.nodes[nodes[0]]
@@ -230,7 +238,6 @@ class OrientQuadrupleTest(PipelineStepInterface):
             if graph.edge_exists(y, z) and graph.edge_exists(z, w):
                 potential_zs.add(z)
 
-        results = []
         for zs in itertools.combinations(potential_zs, 2):
             x, z = zs
             if (
@@ -241,7 +248,7 @@ class OrientQuadrupleTest(PipelineStepInterface):
                 and graph.undirected_edge_exists(x, w)
                 and graph.undirected_edge_exists(x, z)
             ):
-                results.append(
+                result_queue.put(
                     TestResult(
                         x=z,
                         y=x,
@@ -257,7 +264,7 @@ class OrientQuadrupleTest(PipelineStepInterface):
                 and graph.undirected_edge_exists(w, z)
                 and graph.undirected_edge_exists(x, z)
             ):
-                results.append(
+                result_queue.put(
                     TestResult(
                         x=x,
                         y=z,
@@ -265,7 +272,6 @@ class OrientQuadrupleTest(PipelineStepInterface):
                         data={},
                     )
                 )
-        return results
 
 
 class FurtherOrientQuadrupleTest(PipelineStepInterface):
@@ -276,13 +282,13 @@ class FurtherOrientQuadrupleTest(PipelineStepInterface):
     parallel = False
 
     def test(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> Optional[List[TestResult] | TestResult]:
+        self, nodes: Tuple[str], graph: BaseGraphInterface, result_queue: mp.Queue
+    ):
         """
         Further orientation rule.
         :param nodes: list of nodes
         :param graph: the current graph
-        :returns: list of actions that will be executed on graph
+        :param result_queue: the result queue to put the result in
         """
 
         x = graph.nodes[nodes[0]]
@@ -296,7 +302,6 @@ class FurtherOrientQuadrupleTest(PipelineStepInterface):
             if graph.edge_exists(x, z) and graph.edge_exists(z, w):
                 potential_zs.add(z)
 
-        results = []
         for zs in itertools.combinations(potential_zs, 2):
             y, z = zs
             if (
@@ -307,7 +312,7 @@ class FurtherOrientQuadrupleTest(PipelineStepInterface):
                 and graph.only_directed_edge_exists(y, w)
                 and graph.only_directed_edge_exists(w, z)
             ):
-                results.append(
+                result_queue.put(
                     TestResult(
                         x=z,
                         y=x,
@@ -323,7 +328,7 @@ class FurtherOrientQuadrupleTest(PipelineStepInterface):
                 and graph.only_directed_edge_exists(z, w)
                 and graph.only_directed_edge_exists(w, y)
             ):
-                results.append(
+                result_queue.put(
                     TestResult(
                         x=y,
                         y=x,
@@ -339,7 +344,7 @@ class FurtherOrientQuadrupleTest(PipelineStepInterface):
                 and graph.only_directed_edge_exists(y, x)
                 and graph.only_directed_edge_exists(x, z)
             ):
-                results.append(
+                result_queue.put(
                     TestResult(
                         x=z,
                         y=w,
@@ -355,7 +360,7 @@ class FurtherOrientQuadrupleTest(PipelineStepInterface):
                 and graph.only_directed_edge_exists(z, x)
                 and graph.only_directed_edge_exists(x, y)
             ):
-                results.append(
+                result_queue.put(
                     TestResult(
                         x=y,
                         y=w,
@@ -363,4 +368,3 @@ class FurtherOrientQuadrupleTest(PipelineStepInterface):
                         data={},
                     )
                 )
-        return results

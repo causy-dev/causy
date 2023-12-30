@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from abc import ABC
 from typing import Optional, List, Dict
@@ -5,7 +6,7 @@ from typing import Optional, List, Dict
 import torch.multiprocessing as mp
 
 from causy.graph import Graph
-from causy.graph_utils import unpack_run
+from causy.graph_utils import unpack_run, generate_to_queue, collect_and_execute_tests
 from causy.interfaces import (
     PipelineStepInterface,
     TestResultAction,
@@ -41,7 +42,6 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     ):
         self.graph = graph
         self.pipeline_steps = pipeline_steps or []
-        self.pool = mp.Pool(mp.cpu_count() * 2)
 
     def create_graph_from_data(self, data: List[Dict[str, float]]):
         """
@@ -87,6 +87,8 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         """
         action_history = []
 
+        self.pool = mp.Pool(mp.cpu_count() * 2)
+
         for filter in self.pipeline_steps:
             logger.info(f"Executing pipeline step {filter.__class__.__name__}")
             if isinstance(filter, LogicStepInterface):
@@ -98,18 +100,31 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 {"step": filter.__class__.__name__, "actions": result}
             )
 
+        self.pool.close()
+
         return action_history
 
-    def _format_yield(self, test_fn, graph, generator):
+    def _format_yield(self, test_fn, graph, generator, test_queue, result_queue):
         """
         Format the yield for the parallel processing
         :param test_fn: the pipeline_step test function
         :param graph: the graph
         :param generator: the generator object which generates the combinations
+        :param test_queue: the queue to which the tests should be written
+        :param result_queue: the queue to which the results should be written
         :return: yields the test function with its inputs
         """
-        for i in generator:
-            yield [test_fn, [*i], graph]
+
+        print("generator.ready()", generator.ready())
+        print("test_queue.qsize()", test_queue.qsize())
+        while generator.ready() is False or test_queue.qsize() > 0:
+            if test_queue.qsize() > 0:
+                try:
+                    yield [test_fn, [*test_queue.get()], graph, result_queue]
+                except Exception as e:
+                    print("Exception")
+                    print(e)
+                    continue
 
     def _take_action(self, results):
         """
@@ -185,38 +200,77 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         """
         actions_taken = []
 
+        m = mp.Manager()
+        result_queue = m.Queue()
+        test_queue = m.Queue()
+
         # initialize the worker pool (we currently use all available cores * 2)
 
-        # run all combinations in parallel except if the number of combinations is smaller then the chunk size
-        # because then we would create more overhead then we would definetly gain from parallel processing
-        if test_fn.parallel:
-            for result in self.pool.imap_unordered(
-                unpack_run,
-                self._format_yield(
-                    test_fn, self.graph, test_fn.generator.generate(self.graph, self)
-                ),
-                chunksize=test_fn.chunk_size_parallel_processing,
+        # run all combinations in parallel except if the number of combinations is smaller than the chunk size
+        # because then we would create more overhead than we would definitely gain from parallel processing
+
+        # print(generate_to_queue(test_fn.generator, self.graph, self, test_queue))
+
+        generator_process = self.pool.apply_async(
+            generate_to_queue,
+            (
+                test_fn.generator,
+                self.graph,
+                test_queue,
+            ),
+        )
+
+        tests_to_execute = []
+
+        while (
+            result_queue.qsize() > 0
+            or generator_process.ready() is False
+            or test_queue.qsize() > 0
+        ):
+            if result_queue.qsize() > 0:
+                try:
+                    result = result_queue.get(False)
+                except Exception as e:
+                    print("Exception")
+                    print(e)
+                    continue
+                self._take_action([result])
+                actions_taken.append(result)
+
+            if generator_process.ready() is False or test_queue.qsize() > 0:
+                tests_to_execute.append(test_queue.get())
+
+            if len(tests_to_execute) == test_fn.chunk_size_parallel_processing * 10:
+                progress = self.pool.map_async(
+                    unpack_run,
+                    [
+                        [test_fn, test, self.graph, result_queue]
+                        for test in tests_to_execute
+                    ],
+                    chunksize=test_fn.chunk_size_parallel_processing,
+                )
+                tests_to_execute = []
+
+            if (
+                generator_process.ready() is True
+                and test_queue.qsize() > 0
+                and len(tests_to_execute) == 0
             ):
-                if not isinstance(result, list):
-                    result = [result]
-                actions_taken.extend(self._take_action(result))
-        else:
-            if test_fn.generator.chunked:
-                for chunk in test_fn.generator.generate(self.graph, self):
-                    iterator = [
-                        unpack_run(i)
-                        for i in [[test_fn, [*c], self.graph] for c in chunk]
-                    ]
-                    actions_taken.extend(self._take_action(iterator))
-            else:
-                iterator = [
-                    unpack_run(i)
-                    for i in [
-                        [test_fn, [*i], self.graph]
-                        for i in test_fn.generator.generate(self.graph, self)
-                    ]
-                ]
-                actions_taken.extend(self._take_action(iterator))
+                progress = self.pool.map_async(
+                    unpack_run,
+                    [
+                        (test_fn, test, self.graph, result_queue)
+                        for test in tests_to_execute
+                    ],
+                    chunksize=test_fn.chunk_size_parallel_processing,
+                )
+                tests_to_execute = []
+
+        logger.debug(
+            f"Finished pipeline step {test_fn.__class__.__name__} with {len(actions_taken)} actions"
+        )
+
+        print("Ready: " + str(generator_process.ready()))
 
         self.graph.action_history.append(
             {"step": type(test_fn).__name__, "actions": actions_taken}

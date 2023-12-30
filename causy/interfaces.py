@@ -6,9 +6,11 @@ from typing import List, Dict, Optional
 import logging
 
 import torch
+import torch.multiprocessing as mp
 
 from causy.serialization import SerializeMixin
 from causy.graph_utils import load_pipeline_artefact_by_definition
+
 
 logger = logging.getLogger(__name__)
 
@@ -125,7 +127,7 @@ class GeneratorInterface(ABC, SerializeMixin):
     chunked: bool = False
 
     @abstractmethod
-    def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
+    def generate(self, graph: BaseGraphInterface):
         pass
 
     def __init__(self, comparison_settings: ComparisonSettings, chunked: bool = None):
@@ -179,19 +181,20 @@ class PipelineStepInterface(ABC, SerializeMixin):
         self.threshold = threshold
 
     @abstractmethod
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
+    def test(self, nodes: List[str], graph: BaseGraphInterface, result_queue: mp.Queue):
         """
         Test if x and y are independent
         :param x: x values
         :param y: y values
+        :param result_queue: the result queue to put the result in
         :return: True if independent, False otherwise
         """
         pass
 
     def __call__(
-        self, nodes: List[str], graph: BaseGraphInterface
+        self, nodes: List[str], graph: BaseGraphInterface, result_queue: mp.Queue
     ) -> Optional[TestResult]:
-        return self.test(nodes, graph)
+        return self.test(nodes, graph, result_queue)
 
 
 class LogicStepInterface(ABC, SerializeMixin):

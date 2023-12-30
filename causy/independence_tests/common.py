@@ -3,6 +3,7 @@ from typing import Tuple, List, Optional
 import logging
 
 import torch
+import torch.multiprocessing as mp
 
 from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
 from causy.math_utils import get_t_and_critical_t
@@ -26,11 +27,12 @@ class CorrelationCoefficientTest(PipelineStepInterface):
     chunk_size_parallel_processing = 1
     parallel = False
 
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
+    def test(self, nodes: List[str], graph: BaseGraphInterface, result_queue: mp.Queue):
         """
         Test if x and y are independent and delete edge in graph if they are.
         :param nodes: list of nodes
-        :return: A TestResult with the action to take
+        :param graph: the graph
+        :param result_queue: the result queue to put the result in
         """
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
@@ -44,11 +46,13 @@ class CorrelationCoefficientTest(PipelineStepInterface):
         )
         if abs(t) < critical_t:
             logger.debug(f"Nodes {x.name} and {y.name} are uncorrelated")
-            return TestResult(
-                x=x,
-                y=y,
-                action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                data={},
+            result_queue.put(
+                TestResult(
+                    x=x,
+                    y=y,
+                    action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                    data={},
+                )
             )
 
 
@@ -60,18 +64,18 @@ class PartialCorrelationTest(PipelineStepInterface):
     parallel = False
 
     def test(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> Optional[List[TestResult]]:
+        self, nodes: Tuple[str], graph: BaseGraphInterface, result_queue: mp.Queue
+    ):
         """
         Test if nodes x,y are independent given node z based on a partial correlation test.
         We use this test for all combinations of 3 nodes because it is faster than the extended test (which supports combinations of n nodes). We can
         use it to remove edges between nodes which are not independent given another node and so reduce the number of combinations for the extended test.
         :param nodes: the nodes to test
-        :return: A TestResult with the action to take
+        :param graph: the graph
+        :param result_queue: the result queue to put the result in
 
         TODO: we are testing (C and E given B) and (E and C given B), we just need one of these, remove redundant tests.
         """
-        results = []
         already_deleted_edges = set()
         for nodes in itertools.permutations(nodes):
             x: NodeInterface = graph.nodes[nodes[0]]
@@ -113,7 +117,7 @@ class PartialCorrelationTest(PipelineStepInterface):
                     f"Nodes {x.name} and {y.name} are uncorrelated given {z.name}"
                 )
 
-                results.append(
+                result_queue.put(
                     TestResult(
                         x=x,
                         y=y,
@@ -122,7 +126,6 @@ class PartialCorrelationTest(PipelineStepInterface):
                     )
                 )
                 already_deleted_edges.add((x, y))
-        return results
 
 
 class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
@@ -132,13 +135,13 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
     chunk_size_parallel_processing = 1000
     parallel = False
 
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
+    def test(self, nodes: List[str], graph: BaseGraphInterface, result_queue: mp.Queue):
         """
         Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using the inverted covariance matrix (precision matrix).
         https://en.wikipedia.org/wiki/Partial_correlation#Using_matrix_inversion
         We use this test for all combinations of more than 3 nodes because it is slower.
         :param nodes: the nodes to test
-        :return: A TestResult with the action to take
+        :param result_queue: the result queue to put the result in
         """
 
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
@@ -180,13 +183,15 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
                 f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([graph.nodes[on].name for on in other_neighbours])}"
             )
             nodes_set = set([graph.nodes[n] for n in nodes])
-            return TestResult(
-                x=graph.nodes[nodes[0]],
-                y=graph.nodes[nodes[1]],
-                action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                data={
-                    "separatedBy": list(
-                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
-                    )
-                },
+            result_queue.put(
+                TestResult(
+                    x=graph.nodes[nodes[0]],
+                    y=graph.nodes[nodes[1]],
+                    action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                    data={
+                        "separatedBy": list(
+                            nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
+                        )
+                    },
+                )
             )

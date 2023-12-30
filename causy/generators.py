@@ -20,9 +20,7 @@ class AllCombinationsGenerator(GeneratorInterface):
     Generates all combinations of nodes in the graph
     """
 
-    def generate(
-        self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
-    ):
+    def generate(self, graph: BaseGraphInterface):
         start = self.comparison_settings.min
         # if min is longer then our dataset, we can't create any combinations
         if start > len(graph.nodes):
@@ -69,9 +67,7 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
         if chunked is not None:
             self.chunked = chunked
 
-    def generate(
-        self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
-    ):
+    def generate(self, graph: BaseGraphInterface):
         start = self.comparison_settings.min
         # if min is longer then our dataset, we can't create any combinations
         if start > len(graph.nodes):
@@ -158,13 +154,13 @@ class RandomSampleGenerator(GeneratorInterface):
         else:
             raise ValueError("RandomSampleGenerator: generator must be set")
 
-    def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
+    def generate(self, graph: BaseGraphInterface):
         """
         Executes another generator and returns a random sample of the results
         :param graph:
         :param graph_model_instance_:
         :return: yields a random sample of the results
         """
-        for combination in self.generator.generate(graph, graph_model_instance_):
+        for combination in self.generator.generate(graph):
             if random.randint(0, self.every_nth) == 0:
                 yield combination
