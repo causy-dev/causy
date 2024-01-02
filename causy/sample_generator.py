@@ -1,5 +1,4 @@
 import abc
-import enum
 from types import SimpleNamespace
 import torch
 

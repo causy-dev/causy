@@ -5,9 +5,9 @@ import logging
 import torch
 
 from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
-from causy.utils import get_t_and_critical_t, pearson_correlation
+from causy.math_utils import get_t_and_critical_t
 from causy.interfaces import (
-    IndependenceTestInterface,
+    PipelineStepInterface,
     BaseGraphInterface,
     NodeInterface,
     TestResult,
@@ -19,35 +19,7 @@ from causy.interfaces import (
 logger = logging.getLogger(__name__)
 
 
-class CalculateCorrelations(IndependenceTestInterface):
-    generator = AllCombinationsGenerator(
-        comparison_settings=ComparisonSettings(min=2, max=2)
-    )
-    chunk_size_parallel_processing = 1
-    parallel = False
-
-    def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
-        """
-        Calculate the correlation between each pair of nodes and store it to the respective edge.
-        :param nodes: list of nodes
-        :return: A TestResult with the action to take
-        """
-        x = graph.nodes[nodes[0]]
-        y = graph.nodes[nodes[1]]
-        edge_value = graph.edge_value(graph.nodes[nodes[0]], graph.nodes[nodes[1]])
-        edge_value["correlation"] = pearson_correlation(
-            x.values,
-            y.values,
-        ).item()
-        return TestResult(
-            x=x,
-            y=y,
-            action=TestResultAction.UPDATE_EDGE,
-            data=edge_value,
-        )
-
-
-class CorrelationCoefficientTest(IndependenceTestInterface):
+class CorrelationCoefficientTest(PipelineStepInterface):
     generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
@@ -80,7 +52,7 @@ class CorrelationCoefficientTest(IndependenceTestInterface):
             )
 
 
-class PartialCorrelationTest(IndependenceTestInterface):
+class PartialCorrelationTest(PipelineStepInterface):
     generator = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=3, max=3)
     )
@@ -153,7 +125,7 @@ class PartialCorrelationTest(IndependenceTestInterface):
         return results
 
 
-class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
+class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
     generator = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
     )
@@ -218,21 +190,3 @@ class ExtendedPartialCorrelationTestMatrix(IndependenceTestInterface):
                     )
                 },
             )
-
-
-class PlaceholderTest(IndependenceTestInterface):
-    num_of_comparison_elements = 2
-    chunk_size_parallel_processing = 10
-    parallel = False
-
-    def test(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
-    ) -> List[TestResult] | TestResult:
-        """
-        Placeholder test for testing purposes
-        :param nodes:
-        :param graph:
-        :return:
-        """
-        logger.debug(f"PlaceholderTest {nodes}")
-        return TestResult(x=None, y=None, action=TestResultAction.DO_NOTHING, data={})

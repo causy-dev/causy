@@ -1,6 +1,7 @@
 import unittest
 
-from causy.graph import graph_model_factory, Graph
+from causy.graph import Graph
+from causy.graph_model import graph_model_factory
 from causy.interfaces import TestResult, TestResultAction
 from causy.orientation_rules.fci import ColliderRuleFCI
 

@@ -1,14 +1,17 @@
-from causy.exit_conditions import ExitOnNoActions
+from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
 from causy.generators import PairsWithNeighboursGenerator, RandomSampleGenerator
-from causy.graph import graph_model_factory, Loop
-from causy.independence_tests import (
-    CalculateCorrelations,
+from causy.graph_model import graph_model_factory
+from causy.common_pipeline_steps.logic import Loop
+from causy.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
     ExtendedPartialCorrelationTestMatrix,
 )
+from causy.common_pipeline_steps.calculation import (
+    CalculatePearsonCorrelations,
+)
 from causy.interfaces import AS_MANY_AS_FIELDS, ComparisonSettings
-from causy.orientation_tests import (
+from causy.orientation_rules.pc import (
     ColliderTest,
     NonColliderTest,
     FurtherOrientTripleTest,
@@ -18,7 +21,7 @@ from causy.orientation_tests import (
 
 PC = graph_model_factory(
     pipeline_steps=[
-        CalculateCorrelations(),
+        CalculatePearsonCorrelations(),
         CorrelationCoefficientTest(threshold=0.005),
         PartialCorrelationTest(threshold=0.005),
         ExtendedPartialCorrelationTestMatrix(threshold=0.005),
@@ -38,7 +41,7 @@ PC = graph_model_factory(
 
 ParallelPC = graph_model_factory(
     pipeline_steps=[
-        CalculateCorrelations(),
+        CalculatePearsonCorrelations(),
         CorrelationCoefficientTest(threshold=0.005),
         PartialCorrelationTest(
             threshold=0.005, parallel=True, chunk_size_parallel_processing=50000

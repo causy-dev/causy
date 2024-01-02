@@ -1,10 +1,10 @@
 import random
 import unittest
 
-from causy.graph import graph_model_factory
-from causy.utils import sum_lists
-from causy.independence_tests import (
-    CalculateCorrelations,
+from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
+from causy.graph_model import graph_model_factory
+from causy.math_utils import sum_lists
+from causy.independence_tests.common import (
     CorrelationCoefficientTest,
 )
 
@@ -25,7 +25,10 @@ class IndependenceTestTestCase(unittest.TestCase):
                 entry[key] = samples[key][i]
             test_data.append(entry)
 
-        pipeline = [CalculateCorrelations(), CorrelationCoefficientTest(threshold=0.1)]
+        pipeline = [
+            CalculatePearsonCorrelations(),
+            CorrelationCoefficientTest(threshold=0.1),
+        ]
         model = graph_model_factory(pipeline_steps=pipeline)()
         model.create_graph_from_data(test_data)
         model.create_all_possible_edges()

@@ -6,9 +6,9 @@ import logging
 
 import typer
 
-from causy.graph import graph_model_factory
+from causy.graph_model import graph_model_factory
 from causy.serialization import serialize_model
-from causy.utils import (
+from causy.graph_utils import (
     load_pipeline_steps_by_definition,
     retrieve_edges,
 )

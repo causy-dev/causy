@@ -8,7 +8,7 @@ import logging
 import torch
 
 from causy.serialization import SerializeMixin
-from causy.utils import load_pipeline_artefact_by_definition
+from causy.graph_utils import load_pipeline_artefact_by_definition
 
 logger = logging.getLogger(__name__)
 
@@ -140,8 +140,7 @@ class GeneratorInterface(ABC, SerializeMixin):
         self.comparison_settings = comparison_settings
 
 
-class IndependenceTestInterface(ABC, SerializeMixin):
-    # TODO: refactor IndependenceTestInterface -> PipelineStepInterface or so
+class PipelineStepInterface(ABC, SerializeMixin):
     num_of_comparison_elements: int = 0
     generator: Optional[GeneratorInterface] = None
 
