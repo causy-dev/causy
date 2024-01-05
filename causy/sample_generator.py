@@ -270,7 +270,7 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
                     graph.add_edge(
                         graph.nodes[f"{edge.source}-t{t - edge.lag}"],
                         graph.nodes[f"{edge.target}-t{t}"],
-                        value={},
+                        metadata={},
                     )
                     graph.remove_directed_edge(
                         graph.nodes[f"{edge.target}-t{t}"],
