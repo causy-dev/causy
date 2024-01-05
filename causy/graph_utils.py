@@ -1,6 +1,7 @@
 import importlib
 import logging
 from typing import List, Tuple
+import asyncio
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -13,50 +14,21 @@ def unpack_run(args):
 
 
 def generate_to_queue(generator, graph, test_queue):
-    print("generate_to_queue")
+    items = []
+    print(graph)
     for nodes in generator.generate(graph):
-        test_queue.put(nodes)
+        items.append(nodes)
+        if len(items) == 10000:
+            test_queue.put(items)
+            items = []
+
+        if len(items) % 5000 == 0:
+            logger.debug(f"Generated {len(items)} items")
+    test_queue.put(items)
 
 
 def serialize_module_name(cls):
     return f"{cls.__class__.__module__}.{cls.__class__.__name__}"
-
-
-def collect_and_execute_tests(
-    test_fn,
-    test_queue,
-    result_queue,
-    graph,
-    chunk_size_parallel_processing,
-    pool,
-    generator_process,
-):
-    """
-    Collects tests from the test_queue and executes them.
-    :param test_fn:
-    :param test_queue:
-    :param result_queue:
-    :param graph:
-    :param chunk_size_parallel_processing:
-    :return:
-    """
-
-    tests = []
-    print("collect_and_execute_tests")
-    while not generator_process.ready():
-        tests.append(test_queue.get())
-        if len(tests) == chunk_size_parallel_processing * 10:
-            pool.map_async(
-                unpack_run,
-                [(test_fn, test, graph, result_queue) for test in tests],
-                chunksize=chunk_size_parallel_processing,
-            )
-
-    pool.map_async(
-        unpack_run,
-        [(test_fn, test, graph, result_queue) for test in tests],
-        chunksize=chunk_size_parallel_processing,
-    )
 
 
 def load_pipeline_artefact_by_definition(step):

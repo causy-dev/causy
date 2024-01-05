@@ -144,6 +144,9 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
         :param result_queue: the result queue to put the result in
         """
 
+        if len(nodes) < 2:
+            return
+
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
             return
 

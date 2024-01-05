@@ -158,7 +158,6 @@ class RandomSampleGenerator(GeneratorInterface):
         """
         Executes another generator and returns a random sample of the results
         :param graph:
-        :param graph_model_instance_:
         :return: yields a random sample of the results
         """
         for combination in self.generator.generate(graph):

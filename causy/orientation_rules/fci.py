@@ -49,7 +49,9 @@ class ColliderRuleFCI(PipelineStepInterface):
 
         # if x and y are adjacent, do nothing
         if graph.undirected_edge_exists(x, y):
-            return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={})
+            result_queue.put(
+                TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={})
+            )
 
         # if x and y are NOT adjacent, store all shared adjacent nodes
         potential_zs = set(graph.edges[x.id].keys()).intersection(
@@ -61,7 +63,6 @@ class ColliderRuleFCI(PipelineStepInterface):
         )
 
         # if x and y are not independent given z, safe action: make z a collider
-        results = []
         for z in potential_zs:
             z = graph.nodes[z]
 
@@ -87,4 +88,3 @@ class ColliderRuleFCI(PipelineStepInterface):
                         data={"edge_type": None},
                     )
                 )
-        return results

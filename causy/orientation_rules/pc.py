@@ -45,7 +45,9 @@ class ColliderTest(PipelineStepInterface):
 
         # if x and y are adjacent, do nothing
         if graph.undirected_edge_exists(x, y):
-            return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={})
+            result_queue.put(
+                TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={})
+            )
 
         # if x and y are NOT adjacent, store all shared adjacent nodes
         potential_zs = set(graph.edges[x.id].keys()).intersection(

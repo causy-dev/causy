@@ -100,7 +100,7 @@ class PCTestTestCase(unittest.TestCase):
         )
 
     def test_with_larger_toy_model(self):
-        a, b, c, d, e, f, g, sample_size = 1.2, 1.7, 2, 1.5, 3, 4, 1.8, 10000
+        a, b, c, d, e, f, g, sample_size = 1.2, 1.7, 2, 1.5, 3, 4, 1.8, 100000
         test_data = generate_data_further_example(a, b, c, d, e, f, g, sample_size)
         tst = PC()
         node_mapping = {}
