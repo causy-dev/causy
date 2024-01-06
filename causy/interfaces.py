@@ -24,6 +24,10 @@ class ComparisonSettings(SerializeMixin):
 
 
 class NodeInterface(SerializeMixin):
+    """
+    Node interface for the graph. A node is defined by a name and a value.
+    """
+
     name: str
     id: str
     values: torch.Tensor
@@ -32,10 +36,35 @@ class NodeInterface(SerializeMixin):
         return {"id": self.id, "name": self.name}
 
 
+class EdgeTypeInterface(enum.StrEnum):
+    pass
+
+
+class EdgeInterface(SerializeMixin):
+    """
+    Edge interface for the graph
+    A graph edge is defined by two nodes and an edge type. It can also have metadata.
+    """
+
+    u: NodeInterface
+    v: NodeInterface
+    edge_type: EdgeTypeInterface
+    metadata: Dict[str, any] = None
+
+    def serialize(self):
+        return {"u": self.u.serialize(), "v": self.v.serialize()}
+
+
 class TestResultAction(enum.StrEnum):
+    """
+    Actions that can be taken on the graph. These actions are used to keep track of the history of the graph.
+    """
+
     REMOVE_EDGE_UNDIRECTED = "REMOVE_EDGE_UNDIRECTED"
     UPDATE_EDGE = "UPDATE_EDGE"
+    UPDATE_EDGE_TYPE = "UPDATE_EDGE_TYPE"
     UPDATE_EDGE_DIRECTED = "UPDATE_EDGE_DIRECTED"
+    UPDATE_EDGE_TYPE_DIRECTED = "UPDATE_EDGE_TYPE_DIRECTED"
     DO_NOTHING = "DO_NOTHING"
     REMOVE_EDGE_DIRECTED = "REMOVE_EDGE_DIRECTED"
 
@@ -68,7 +97,7 @@ class BaseGraphInterface(ABC):
         pass
 
     @abstractmethod
-    def add_edge(self, u, v, w):
+    def add_edge(self, u, v, metadata):
         pass
 
     @abstractmethod
@@ -80,7 +109,11 @@ class BaseGraphInterface(ABC):
         pass
 
     @abstractmethod
-    def update_edge(self, u, v, w):
+    def update_edge(self, u, v, metadata=None, edge_type=None):
+        pass
+
+    @abstractmethod
+    def update_directed_edge(self, u, v, metadata=None, edge_type=None):
         pass
 
     @abstractmethod

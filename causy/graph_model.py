@@ -1,10 +1,11 @@
 import logging
 from abc import ABC
+from copy import deepcopy
 from typing import Optional, List, Dict
 
 import torch.multiprocessing as mp
 
-from causy.graph import Graph
+from causy.graph import Graph, EdgeType
 from causy.graph_utils import unpack_run
 from causy.interfaces import (
     PipelineStepInterface,
@@ -149,7 +150,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                             f"Tried to update edge {i.x.name} -> {i.y.name}. But it does not exist."
                         )
                         continue
-                    self.graph.update_edge(i.x, i.y, i.data)
+                    self.graph.update_edge(i.x, i.y, metadata=i.data)
                     self.graph.add_edge_history(i.x, i.y, i)
                     self.graph.add_edge_history(i.y, i.x, i)
                 elif i.action == TestResultAction.UPDATE_EDGE_DIRECTED:
@@ -163,12 +164,42 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 elif i.action == TestResultAction.DO_NOTHING:
                     continue
                 elif i.action == TestResultAction.REMOVE_EDGE_DIRECTED:
-                    if not self.graph.directed_edge_exists(i.x, i.y):
+                    if not self.graph.directed_edge_exists(
+                        i.x, i.y
+                    ) and not self.graph.edge_exists(i.x, i.y):
                         logger.debug(
                             f"Tried to remove directed edge {i.x.name} -> {i.y.name}. But it does not exist."
                         )
                         continue
+
+                    # TODO: move this to pre/post update hooks
+                    if self.graph.edge_exists(
+                        i.y, i.y
+                    ) and not self.graph.directed_edge_exists(i.y, i.x):
+                        self.graph.update_directed_edge(
+                            i.y, i.x, edge_type=EdgeType.DIRECTED
+                        )
                     self.graph.remove_directed_edge(i.x, i.y)
+
+                    self.graph.add_edge_history(i.x, i.y, i)
+
+                elif i.action == TestResultAction.UPDATE_EDGE_TYPE:
+                    if not self.graph.edge_exists(i.x, i.y):
+                        logger.debug(
+                            f"Tried to update edge type {i.x.name} <-> {i.y.name}. But it does not exist."
+                        )
+                        continue
+                    self.graph.update_edge(i.x, i.y, edge_type=i.edge_type)
+                    self.graph.add_edge_history(i.x, i.y, i)
+                    self.graph.add_edge_history(i.y, i.x, i)
+
+                elif i.action == TestResultAction.UPDATE_EDGE_TYPE_DIRECTED:
+                    if not self.graph.directed_edge_exists(i.x, i.y):
+                        logger.debug(
+                            f"Tried to update edge type {i.x.name} -> {i.y.name}. But it does not exist."
+                        )
+                        continue
+                    self.graph.update_directed_edge(i.x, i.y, edge_type=i.edge_type)
                     self.graph.add_edge_history(i.x, i.y, i)
 
                 # add the action to the actions history
