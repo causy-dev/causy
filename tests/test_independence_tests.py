@@ -8,6 +8,8 @@ from causy.independence_tests.common import (
     CorrelationCoefficientTest,
 )
 
+from causy.algorithms.fci import FCIEdgeType
+
 
 class IndependenceTestTestCase(unittest.TestCase):
     def test_correlation_coefficient_standard_model(self):

@@ -1,4 +1,5 @@
 import enum
+from abc import ABC
 from dataclasses import dataclass
 from typing import List, Optional, Dict, Set, Tuple, Union
 from uuid import uuid4

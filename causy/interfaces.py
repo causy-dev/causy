@@ -36,7 +36,7 @@ class NodeInterface(SerializeMixin):
         return {"id": self.id, "name": self.name}
 
 
-class EdgeTypeInterface(enum.StrEnum):
+class EdgeTypeInterface:
     pass
 
 
@@ -52,7 +52,12 @@ class EdgeInterface(SerializeMixin):
     metadata: Dict[str, any] = None
 
     def serialize(self):
-        return {"u": self.u.serialize(), "v": self.v.serialize()}
+        return {
+            "u": self.u.serialize(),
+            "v": self.v.serialize(),
+            "edge_type": self.edge_type,
+            "metadata": self.metadata,
+        }
 
 
 class TestResultAction(enum.StrEnum):

@@ -66,3 +66,36 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
                 list_of_ground_truth_values[i],
                 delta=0.0005,
             )
+
+    def test_without_randomness(self):
+        MODEL = TimeseriesSampleGenerator(
+            initial_values={
+                "X": 1,
+                "Y": 1,
+            },
+            variables={
+                "alpha": 0.9,
+                "beta": 0.9,
+                "param_1": 5,
+            },
+            # generate the dependencies of variables on past values of themselves and other variables
+            generators={
+                "X": lambda t, i: i.X.t(-1) * i.alpha,
+                "Y": lambda t, i: i.Y.t(-1) * i.beta + i.param_1 * i.X.t(-1),
+            },
+            edges=[
+                SampleLaggedEdge("X", "X", 1),
+                SampleLaggedEdge("Y", "Y", 1),
+                SampleLaggedEdge("X", "Y", 1),
+            ],
+        )
+        result, graph = MODEL.generate(100)
+
+        self.assertEqual(len(result["X"]), 100)
+        self.assertEqual(len(result["Y"]), 100)
+        self.assertEqual(result["X"][0], 1)
+        self.assertEqual(result["Y"][0], 1)
+        self.assertAlmostEqual(result["X"][1].item(), 0.9, places=2)
+        self.assertAlmostEqual(result["Y"][1].item(), 5.9, places=2)
+        self.assertAlmostEqual(result["X"][2].item(), 0.81, places=2)
+        self.assertAlmostEqual(result["Y"][2].item(), 9.81, places=2)
