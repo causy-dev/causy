@@ -172,15 +172,14 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         )
                         continue
 
+                    self.graph.remove_directed_edge(i.x, i.y)
                     # TODO: move this to pre/post update hooks
                     if self.graph.edge_exists(
-                        i.y, i.y
-                    ) and not self.graph.directed_edge_exists(i.y, i.x):
+                        i.y, i.x
+                    ):  # if the edge is undirected, make it directed
                         self.graph.update_directed_edge(
                             i.y, i.x, edge_type=EdgeType.DIRECTED
                         )
-                    self.graph.remove_directed_edge(i.x, i.y)
-
                     self.graph.add_edge_history(i.x, i.y, i)
 
                 elif i.action == TestResultAction.UPDATE_EDGE_TYPE:
