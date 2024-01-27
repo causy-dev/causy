@@ -26,4 +26,4 @@ class PlaceholderTest(PipelineStepInterface):
         :return:
         """
         logger.debug(f"PlaceholderTest {nodes}")
-        return TestResult(x=None, y=None, action=TestResultAction.DO_NOTHING, data={})
+        return TestResult(u=None, v=None, action=TestResultAction.DO_NOTHING, data={})

@@ -28,14 +28,14 @@ class CorrelationCoefficientTest(PipelineStepInterface):
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
-        Test if x and y are independent and delete edge in graph if they are.
+        Test if u and v are independent and delete edge in graph if they are.
         :param nodes: list of nodes
         :return: A TestResult with the action to take
         """
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
-        # make t test for independency of x and y
+        # make t test for independency of u and v
         sample_size = len(x.values)
         nb_of_control_vars = 0
         corr = graph.edge_value(x, y)["correlation"]
@@ -45,8 +45,8 @@ class CorrelationCoefficientTest(PipelineStepInterface):
         if abs(t) < critical_t:
             logger.debug(f"Nodes {x.name} and {y.name} are uncorrelated")
             return TestResult(
-                x=x,
-                y=y,
+                u=x,
+                v=y,
                 action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
                 data={},
             )
@@ -63,7 +63,7 @@ class PartialCorrelationTest(PipelineStepInterface):
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> Optional[List[TestResult]]:
         """
-        Test if nodes x,y are independent given node z based on a partial correlation test.
+        Test if nodes u,v are independent given node z based on a partial correlation test.
         We use this test for all combinations of 3 nodes because it is faster than the extended test (which supports combinations of n nodes). We can
         use it to remove edges between nodes which are not independent given another node and so reduce the number of combinations for the extended test.
         :param nodes: the nodes to test
@@ -101,7 +101,7 @@ class PartialCorrelationTest(PipelineStepInterface):
 
             par_corr = numerator / denominator
 
-            # make t test for independency of x and y given z
+            # make t test for independency of u and v given z
             sample_size = len(x.values)
             nb_of_control_vars = len(nodes) - 2
             t, critical_t = get_t_and_critical_t(
@@ -115,8 +115,8 @@ class PartialCorrelationTest(PipelineStepInterface):
 
                 results.append(
                     TestResult(
-                        x=x,
-                        y=y,
+                        u=x,
+                        v=y,
                         action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
                         data={"separatedBy": [z]},
                     )
@@ -134,7 +134,7 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
-        Test if nodes x,y are independent given Z (set of nodes) based on partial correlation using the inverted covariance matrix (precision matrix).
+        Test if nodes u,v are independent given Z (set of nodes) based on partial correlation using the inverted covariance matrix (precision matrix).
         https://en.wikipedia.org/wiki/Partial_correlation#Using_matrix_inversion
         We use this test for all combinations of more than 3 nodes because it is slower.
         :param nodes: the nodes to test
@@ -181,8 +181,8 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
             )
             nodes_set = set([graph.nodes[n] for n in nodes])
             return TestResult(
-                x=graph.nodes[nodes[0]],
-                y=graph.nodes[nodes[1]],
+                u=graph.nodes[nodes[0]],
+                v=graph.nodes[nodes[1]],
                 action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
                 data={
                     "separatedBy": list(

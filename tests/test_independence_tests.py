@@ -19,8 +19,8 @@ class IndependenceTestTestCase(unittest.TestCase):
         x = [random.normalvariate(mu=0.0, sigma=1.0) for _ in range(n)]
         noise_y = [random.normalvariate(mu=0.0, sigma=1.0) for _ in range(n)]
         y = sum_lists([5 * x_val for x_val in x], noise_y)
-        samples["x"] = x
-        samples["y"] = y
+        samples["u"] = x
+        samples["v"] = y
         for i in range(n):
             entry = {}
             for key in samples.keys():

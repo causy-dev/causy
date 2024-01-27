@@ -53,8 +53,6 @@ class EdgeInterface(SerializeMixin):
 
     def serialize(self):
         return {
-            "u": self.u.serialize(),
-            "v": self.v.serialize(),
             "edge_type": self.edge_type,
             "metadata": self.metadata,
         }
@@ -76,15 +74,15 @@ class TestResultAction(enum.StrEnum):
 
 @dataclass
 class TestResult(SerializeMixin):
-    x: NodeInterface
-    y: NodeInterface
+    u: NodeInterface
+    v: NodeInterface
     action: TestResultAction
     data: Optional[Dict] = None
 
     def serialize(self):
         return {
-            "x": self.x.serialize(),
-            "y": self.y.serialize(),
+            "from": self.u.serialize(),
+            "to": self.v.serialize(),
             "action": self.action.name,
         }
 
@@ -219,9 +217,9 @@ class PipelineStepInterface(ABC, SerializeMixin):
     @abstractmethod
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
-        Test if x and y are independent
-        :param x: x values
-        :param y: y values
+        Test if u and v are independent
+        :param u: u values
+        :param v: v values
         :return: True if independent, False otherwise
         """
         pass

@@ -5,6 +5,7 @@ from json import JSONEncoder
 import logging
 
 import typer
+import uvicorn
 
 from causy.graph_model import graph_model_factory
 from causy.serialization import serialize_model
@@ -12,6 +13,7 @@ from causy.graph_utils import (
     load_pipeline_steps_by_definition,
     retrieve_edges,
 )
+from causy.ui import server
 
 app = typer.Typer()
 
@@ -47,6 +49,16 @@ def eject(algorithm: str, output_file: str):
     typer.echo(f"💾 Saving algorithm {algorithm} to {output_file}")
     with open(output_file, "w") as file:
         file.write(json.dumps(result, indent=4))
+
+
+@app.command()
+def ui(result_file: str):
+    result = load_json(result_file)
+
+    server_config, server_runner = server(result)
+    typer.launch(f"http://{server_config.host}:{server_config.port}")
+    typer.echo(f"🚀 Starting server at http://{server_config.host}:{server_config.port}")
+    server_runner.run()
 
 
 @app.command()
@@ -126,11 +138,6 @@ def execute(
         fig = plt.figure(figsize=(10, 10))
         nx.draw(n_graph, with_labels=True, ax=fig.add_subplot(111))
         fig.savefig(render_save_file)
-
-
-@app.command()
-def visualize(output: str):
-    raise NotImplementedError()
 
 
 if __name__ == "__main__":

@@ -20,8 +20,8 @@ class OrientationTestCase(unittest.TestCase):
             x,
             y,
             TestResult(
-                x=x,
-                y=z,
+                u=x,
+                v=z,
                 action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
                 data={"separatedBy": []},
             ),

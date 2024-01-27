@@ -131,75 +131,75 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 result_items = [result_items]
 
             for i in result_items:
-                if i.x is not None and i.y is not None:
-                    logger.info(f"Action: {i.action} on {i.x.name} and {i.y.name}")
+                if i.u is not None and i.v is not None:
+                    logger.info(f"Action: {i.action} on {i.u.name} and {i.v.name}")
 
                 # execute the action returned by the test
                 if i.action == TestResultAction.REMOVE_EDGE_UNDIRECTED:
-                    if not self.graph.undirected_edge_exists(i.x, i.y):
+                    if not self.graph.undirected_edge_exists(i.u, i.v):
                         logger.debug(
-                            f"Tried to remove undirected edge {i.x.name} <-> {i.y.name}. But it does not exist."
+                            f"Tried to remove undirected edge {i.u.name} <-> {i.v.name}. But it does not exist."
                         )
                         continue
-                    self.graph.remove_edge(i.x, i.y)
-                    self.graph.add_edge_history(i.x, i.y, i)
-                    self.graph.add_edge_history(i.y, i.x, i)
+                    self.graph.remove_edge(i.u, i.v)
+                    self.graph.add_edge_history(i.u, i.v, i)
+                    self.graph.add_edge_history(i.v, i.u, i)
                 elif i.action == TestResultAction.UPDATE_EDGE:
-                    if not self.graph.edge_exists(i.x, i.y):
+                    if not self.graph.edge_exists(i.u, i.v):
                         logger.debug(
-                            f"Tried to update edge {i.x.name} -> {i.y.name}. But it does not exist."
+                            f"Tried to update edge {i.u.name} -> {i.v.name}. But it does not exist."
                         )
                         continue
-                    self.graph.update_edge(i.x, i.y, metadata=i.data)
-                    self.graph.add_edge_history(i.x, i.y, i)
-                    self.graph.add_edge_history(i.y, i.x, i)
+                    self.graph.update_edge(i.u, i.v, metadata=i.data)
+                    self.graph.add_edge_history(i.u, i.v, i)
+                    self.graph.add_edge_history(i.v, i.u, i)
                 elif i.action == TestResultAction.UPDATE_EDGE_DIRECTED:
-                    if not self.graph.directed_edge_exists(i.x, i.y):
+                    if not self.graph.directed_edge_exists(i.u, i.v):
                         logger.debug(
-                            f"Tried to update directed edge {i.x.name} -> {i.y.name}. But it does not exist."
+                            f"Tried to update directed edge {i.u.name} -> {i.v.name}. But it does not exist."
                         )
                         continue
-                    self.graph.update_directed_edge(i.x, i.y, i.data)
-                    self.graph.add_edge_history(i.x, i.y, i)
+                    self.graph.update_directed_edge(i.u, i.v, i.data)
+                    self.graph.add_edge_history(i.u, i.v, i)
                 elif i.action == TestResultAction.DO_NOTHING:
                     continue
                 elif i.action == TestResultAction.REMOVE_EDGE_DIRECTED:
                     if not self.graph.directed_edge_exists(
-                        i.x, i.y
-                    ) and not self.graph.edge_exists(i.x, i.y):
+                        i.u, i.v
+                    ) and not self.graph.edge_exists(i.u, i.v):
                         logger.debug(
-                            f"Tried to remove directed edge {i.x.name} -> {i.y.name}. But it does not exist."
+                            f"Tried to remove directed edge {i.u.name} -> {i.v.name}. But it does not exist."
                         )
                         continue
 
-                    self.graph.remove_directed_edge(i.x, i.y)
+                    self.graph.remove_directed_edge(i.u, i.v)
                     # TODO: move this to pre/post update hooks
                     if self.graph.edge_exists(
-                        i.y, i.x
+                        i.v, i.u
                     ):  # if the edge is undirected, make it directed
                         self.graph.update_directed_edge(
-                            i.y, i.x, edge_type=EdgeType.DIRECTED
+                            i.v, i.u, edge_type=EdgeType.DIRECTED
                         )
-                    self.graph.add_edge_history(i.x, i.y, i)
+                    self.graph.add_edge_history(i.u, i.v, i)
 
                 elif i.action == TestResultAction.UPDATE_EDGE_TYPE:
-                    if not self.graph.edge_exists(i.x, i.y):
+                    if not self.graph.edge_exists(i.u, i.v):
                         logger.debug(
-                            f"Tried to update edge type {i.x.name} <-> {i.y.name}. But it does not exist."
+                            f"Tried to update edge type {i.u.name} <-> {i.v.name}. But it does not exist."
                         )
                         continue
-                    self.graph.update_edge(i.x, i.y, edge_type=i.edge_type)
-                    self.graph.add_edge_history(i.x, i.y, i)
-                    self.graph.add_edge_history(i.y, i.x, i)
+                    self.graph.update_edge(i.u, i.v, edge_type=i.edge_type)
+                    self.graph.add_edge_history(i.u, i.v, i)
+                    self.graph.add_edge_history(i.v, i.u, i)
 
                 elif i.action == TestResultAction.UPDATE_EDGE_TYPE_DIRECTED:
-                    if not self.graph.directed_edge_exists(i.x, i.y):
+                    if not self.graph.directed_edge_exists(i.u, i.v):
                         logger.debug(
-                            f"Tried to update edge type {i.x.name} -> {i.y.name}. But it does not exist."
+                            f"Tried to update edge type {i.u.name} -> {i.v.name}. But it does not exist."
                         )
                         continue
-                    self.graph.update_directed_edge(i.x, i.y, edge_type=i.edge_type)
-                    self.graph.add_edge_history(i.x, i.y, i)
+                    self.graph.update_directed_edge(i.u, i.v, edge_type=i.edge_type)
+                    self.graph.add_edge_history(i.u, i.v, i)
 
                 # add the action to the actions history
                 actions_taken.append(i)

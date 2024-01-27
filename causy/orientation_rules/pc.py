@@ -27,11 +27,11 @@ class ColliderTest(PipelineStepInterface):
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> Optional[List[TestResult] | TestResult]:
         """
-        We call triples x, y, z of nodes v structures if x and y that are NOT adjacent but share an adjacent node z.
-        V structures looks like this in the undirected skeleton: (x - z - y).
+        We call triples u, v, z of nodes v structures if u and v that are NOT adjacent but share an adjacent node z.
+        V structures looks like this in the undirected skeleton: (u - z - v).
         We now check if z is in the separating set.
-        If z is not in the separating set, we know that x and y are uncorrelated given z.
-        So, the edges must be oriented from x to z and from y to z (x -> z <- y).
+        If z is not in the separating set, we know that u and v are uncorrelated given z.
+        So, the edges must be oriented from u to z and from v to z (u -> z <- v).
         :param nodes: list of nodes
         :param graph: the current graph
         :returns: list of actions that will be executed on graph
@@ -41,11 +41,11 @@ class ColliderTest(PipelineStepInterface):
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
-        # if x and y are adjacent, do nothing
+        # if u and v are adjacent, do nothing
         if graph.undirected_edge_exists(x, y):
-            return TestResult(x=x, y=y, action=TestResultAction.DO_NOTHING, data={})
+            return TestResult(u=x, v=y, action=TestResultAction.DO_NOTHING, data={})
 
-        # if x and y are NOT adjacent, store all shared adjacent nodes
+        # if u and v are NOT adjacent, store all shared adjacent nodes
         potential_zs = set(graph.edges[x.id].keys()).intersection(
             set(graph.edges[y.id].keys())
         )
@@ -54,7 +54,7 @@ class ColliderTest(PipelineStepInterface):
             x, y, TestResultAction.REMOVE_EDGE_UNDIRECTED
         )
 
-        # if x and y are not independent given z, safe action: make z a collider
+        # if u and v are not independent given z, safe action: make z a collider
         results = []
         for z in potential_zs:
             z = graph.nodes[z]
@@ -67,14 +67,14 @@ class ColliderTest(PipelineStepInterface):
             if z.id not in separators:
                 results += [
                     TestResult(
-                        x=z,
-                        y=x,
+                        u=z,
+                        v=x,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     ),
                     TestResult(
-                        x=z,
-                        y=y,
+                        u=z,
+                        v=y,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     ),
@@ -103,11 +103,11 @@ class NonColliderTest(PipelineStepInterface):
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
-        # if x and y are adjacent, do nothing
+        # if u and v are adjacent, do nothing
         if graph.edge_exists(x, y):
             return
 
-        # if x and y are NOT adjacent, store all shared adjacent nodes
+        # if u and v are NOT adjacent, store all shared adjacent nodes
         potential_zs = set(graph.edges[x.id].keys()).intersection(
             set(graph.edges[y.id].keys())
         )
@@ -126,8 +126,8 @@ class NonColliderTest(PipelineStepInterface):
                 if breakflag is True:
                     continue
                 return TestResult(
-                    x=y,
-                    y=z,
+                    u=y,
+                    v=z,
                     action=TestResultAction.REMOVE_EDGE_DIRECTED,
                     data={},
                 )
@@ -139,8 +139,8 @@ class NonColliderTest(PipelineStepInterface):
                     if graph.only_directed_edge_exists(graph.nodes[node], x):
                         continue
                 return TestResult(
-                    x=x,
-                    y=z,
+                    u=x,
+                    v=z,
                     action=TestResultAction.REMOVE_EDGE_DIRECTED,
                     data={},
                 )
@@ -180,8 +180,8 @@ class FurtherOrientTripleTest(PipelineStepInterface):
             ):
                 results.append(
                     TestResult(
-                        x=y,
-                        y=x,
+                        u=y,
+                        v=x,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
@@ -193,8 +193,8 @@ class FurtherOrientTripleTest(PipelineStepInterface):
             ):
                 results.append(
                     TestResult(
-                        x=x,
-                        y=y,
+                        u=x,
+                        v=y,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
@@ -243,8 +243,8 @@ class OrientQuadrupleTest(PipelineStepInterface):
             ):
                 results.append(
                     TestResult(
-                        x=z,
-                        y=x,
+                        u=z,
+                        v=x,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
@@ -259,8 +259,8 @@ class OrientQuadrupleTest(PipelineStepInterface):
             ):
                 results.append(
                     TestResult(
-                        x=x,
-                        y=z,
+                        u=x,
+                        v=z,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
@@ -309,8 +309,8 @@ class FurtherOrientQuadrupleTest(PipelineStepInterface):
             ):
                 results.append(
                     TestResult(
-                        x=z,
-                        y=x,
+                        u=z,
+                        v=x,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
@@ -325,8 +325,8 @@ class FurtherOrientQuadrupleTest(PipelineStepInterface):
             ):
                 results.append(
                     TestResult(
-                        x=y,
-                        y=x,
+                        u=y,
+                        v=x,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
@@ -341,8 +341,8 @@ class FurtherOrientQuadrupleTest(PipelineStepInterface):
             ):
                 results.append(
                     TestResult(
-                        x=z,
-                        y=w,
+                        u=z,
+                        v=w,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
@@ -357,8 +357,8 @@ class FurtherOrientQuadrupleTest(PipelineStepInterface):
             ):
                 results.append(
                     TestResult(
-                        x=y,
-                        y=w,
+                        u=y,
+                        v=w,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
                         data={},
                     )
