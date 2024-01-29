@@ -3,7 +3,7 @@ from datetime import datetime
 
 import fastapi
 import uvicorn
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Json, UUID4, Field
@@ -23,9 +23,15 @@ class CausyAlgorithm(BaseModel):
     reference: str
 
 
+class CausyNodePosition(BaseModel):
+    x: float
+    y: float
+
+
 class CausyNode(BaseModel):
     id: UUID4
     name: str
+    position: Optional[CausyNodePosition] = None
 
 
 class CausyEdgeValue(BaseModel):
