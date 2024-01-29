@@ -12,6 +12,7 @@ from causy.graph_utils import (
     load_pipeline_steps_by_definition,
     retrieve_edges,
 )
+from causy.ui import server
 
 app = typer.Typer()
 
@@ -50,12 +51,21 @@ def eject(algorithm: str, output_file: str):
 
 
 @app.command()
+def ui(result_file: str):
+    result = load_json(result_file)
+
+    server_config, server_runner = server(result)
+    typer.launch(f"http://{server_config.host}:{server_config.port}")
+    typer.echo(f"🚀 Starting server at http://{server_config.host}:{server_config.port}")
+    server_runner.run()
+
+
+@app.command()
 def execute(
     data_file: str,
     pipeline: str = None,
     algorithm: str = None,
     output_file: str = None,
-    render_save_file: str = None,
     log_level: str = "ERROR",
 ):
     logging.basicConfig(level=log_level)
@@ -112,25 +122,6 @@ def execute(
                 "edges": edges,
             }
             file.write(json.dumps(export, cls=MyJSONEncoder, indent=4))
-
-    if render_save_file:
-        # I'm just a hacky rendering function, pls replace me with causy ui 🙄
-        typer.echo(f"💾 Saving graph to {render_save_file}")
-        import networkx as nx
-        import matplotlib.pyplot as plt
-
-        n_graph = nx.DiGraph()
-        for u in model.graph.edges:
-            for v in model.graph.edges[u]:
-                n_graph.add_edge(model.graph.nodes[u].name, model.graph.nodes[v].name)
-        fig = plt.figure(figsize=(10, 10))
-        nx.draw(n_graph, with_labels=True, ax=fig.add_subplot(111))
-        fig.savefig(render_save_file)
-
-
-@app.command()
-def visualize(output: str):
-    raise NotImplementedError()
 
 
 if __name__ == "__main__":

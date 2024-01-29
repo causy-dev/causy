@@ -40,8 +40,8 @@ class CalculatePearsonCorrelations(PipelineStepInterface):
         edge_value["correlation"] = pearson_correlation.item()
 
         return TestResult(
-            x=x,
-            y=y,
+            u=x,
+            v=y,
             action=TestResultAction.UPDATE_EDGE,
             data=edge_value,
         )
