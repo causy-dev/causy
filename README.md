@@ -157,3 +157,6 @@ Execute tests
 ```bash
 poetry run python -m unittest
 ```
+Funded by Prototype Fund from March 2024 until September 2024
+
+![pf_funding_logos](https://github.com/causy-dev/causy/assets/94297994/4d8e4b18-dbe0-4549-bf7e-71f8bd24fdac)
