@@ -77,7 +77,13 @@ def server(result: Dict[str, Any]):
     MODEL = CausyModel(**result)
 
     app.include_router(API_ROUTES, prefix="/api/v1", tags=["api"])
-    app.mount("", StaticFiles(directory="./causy/static", html=True), name="static")
+    app.mount(
+        "",
+        StaticFiles(
+            directory=os.path.join(os.path.dirname(__file__), "static"), html=True
+        ),
+        name="static",
+    )
 
     host = os.getenv("HOST", "localhost")
     port = int(os.getenv("PORT", "8000"))
