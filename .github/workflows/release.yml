@@ -39,6 +39,7 @@ jobs:
           repository: "causy-dev/causy-ui"
           fileName: "causy-ui-*.zip"
           out-file-path: "causy/static/"
+          latest: true
           extract: true
     - name: Build
       run: |
