@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "Causal discovery made easy."
 authors = ["Sofia Faltenbacher <faltenbacher.sofia@gmail.com>", "Lilith Wittmann <mail@lilithwittmann.de>"]
 readme = "README.md"
+license = "MIT"
+include = ["pyproject.toml", "README.md", "LICENSE", "causy", "causy/static/*", "causy/static/assets/*"]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12" # until torch is available for 3.12
