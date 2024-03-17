@@ -43,9 +43,9 @@ jobs:
           extract: true
     - name: unpack and move frontend release
       run: |
-        unzip causy/static/causy-ui-*.zip -d causy/static/
         mv causy/static/dist/* causy/static/
         rm -r causy/static/dist
+        rm -r causy/static/causy-ui-*.zip
     - name: Build
       run: |
           poetry build
