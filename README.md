@@ -44,10 +44,17 @@ You can customize your causy pipeline by ejecting and modifying the pipeline fil
 ```bash
 causy eject PC pc.json
 # edit pc.json
-causy execute your_data.json --pipeline pc.json
+causy execute your_data.json --pipeline pc.json  --output-file output.json
 ```
 
 This might be useful if you want to configure a custom algorithm or if you want to customize the pipeline of a default algorithm.
+
+#### Causy UI (experimental)
+To visualize the causal discovery process, we are currently working on a web-based UI. The UI is currently in a very early stage of development and is not yet ready for use. If you want to try it out, you can run the following command:
+```bash
+causy ui output.json
+```
+This runs a web server on port 8000 which allows you to visualize the causal discovery process. The UI is currently read-only and does not allow you to interact with the causal discovery process.
 
 
 ### Usage via Code
