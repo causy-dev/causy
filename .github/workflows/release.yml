@@ -37,9 +37,7 @@ jobs:
       uses: robinraju/release-downloader@v1.9
       with:
           repository: "causy-dev/causy-ui"
-          latest: true
           fileName: "causy-ui-*.zip"
-          zipBall: true
           out-file-path: "causy/static/"
           extract: true
     - name: Build
