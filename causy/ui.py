@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 
 import fastapi
+import typer
 import uvicorn
 from typing import Any, Dict, List, Optional
 
@@ -91,7 +92,7 @@ def server(result: Dict[str, Any]):
 
     # cors e.g. for development of separate frontend
     if cors_enabled:
-        logger.warning("🌐 CORS enabled")
+        logger.warning(typer.style("🌐 CORS enabled", fg=typer.colors.YELLOW))
         from fastapi.middleware.cors import CORSMiddleware
 
         app.add_middleware(

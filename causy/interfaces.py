@@ -177,7 +177,7 @@ class GeneratorInterface(ABC, SerializeMixin):
 
 
 class PipelineStepInterface(ABC, SerializeMixin):
-    num_of_comparison_elements: int = 0
+    number_of_comparison_elements: int = 0
     generator: Optional[GeneratorInterface] = None
 
     chunk_size_parallel_processing: int = 1
@@ -200,11 +200,11 @@ class PipelineStepInterface(ABC, SerializeMixin):
 
         if num_of_comparison_elements:
             if isinstance(num_of_comparison_elements, dict):
-                self.num_of_comparison_elements = load_pipeline_artefact_by_definition(
-                    num_of_comparison_elements
+                self.number_of_comparison_elements = (
+                    load_pipeline_artefact_by_definition(num_of_comparison_elements)
                 )
             else:
-                self.num_of_comparison_elements = num_of_comparison_elements
+                self.number_of_comparison_elements = num_of_comparison_elements
 
         if chunk_size_parallel_processing:
             self.chunk_size_parallel_processing = chunk_size_parallel_processing

@@ -13,8 +13,11 @@ from causy.graph_utils import (
     retrieve_edges,
 )
 from causy.ui import server
+from causy.workspaces.cli import app as workspaces_app
 
 app = typer.Typer()
+
+app.add_typer(workspaces_app, name="workspace")
 
 
 def load_json(pipeline_file: str):

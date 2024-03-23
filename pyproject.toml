@@ -10,10 +10,13 @@ include = ["pyproject.toml", "README.md", "LICENSE", "causy", "causy/static/*", 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12" # until torch is available for 3.12
 scipy = "^1.11.2"
-typer = "^0.9.0"
+typer = {extras = ["all"], version = "^0.9.0"}
 torch = "^2.1.0"
 fastapi = "^0.109.0"
 uvicorn = "^0.27.0"
+srsly = "^2.4.8"
+pydantic-yaml = "^1.2.1"
+click = "^8.1.7"
 
 
 [tool.poetry.group.dev.dependencies]

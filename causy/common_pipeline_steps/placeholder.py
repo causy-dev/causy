@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class PlaceholderTest(PipelineStepInterface):
-    num_of_comparison_elements = 2
+    number_of_comparison_elements = 2
     chunk_size_parallel_processing = 10
     parallel = False
 
