@@ -41,9 +41,9 @@ class PipelineStep(BaseModel):
     generator: Generator
 
 
-class Pipeline(BaseModel):
+class PipelineReference(BaseModel):
     """
-    Represents a pipeline
+    Represents a reference to a pipeline
     :param name: custom name for the pipeline
     :param reference: is a reference to an existing pipeline in causy core or an external pipeline definition (in python/yaml)
     :param steps: an inline pipeline definition
@@ -85,6 +85,6 @@ class Workspace(BaseModel):
     name: str
     author: Optional[str]
 
-    pipelines: Dict[str, Pipeline]
-    data_loaders: Dict[str, Pipeline]
-    experiments: Dict[str, Experiment]
+    pipelines: Optional[Dict[str, Pipeline]]
+    data_loaders: Optional[Dict[str, Pipeline]]
+    experiments: Optional[Dict[str, Experiment]]

@@ -112,6 +112,17 @@ files = [
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
+name = "clicker"
+version = "0.2.5"
+description = "clicker"
+optional = false
+python-versions = "*"
+files = [
+    {file = "clicker-0.2.5-py2.py3-none-any.whl", hash = "sha256:be35874497b74ca94ed84aa87d2662b7630893b081b8816aa2e48056d870f4c7"},
+    {file = "clicker-0.2.5.tar.gz", hash = "sha256:5b053a5529118656529e8bf9425379acfd9a5d3f65d9f97eef200c48e1d1fe8f"},
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 description = "Cross-platform colored terminal text."
@@ -1515,4 +1526,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "ebce9d5098ddaf98b748786f31f69391d363fab125b9a6a8c1b9be9eeca895e9"
+content-hash = "143373d5ab3d53aa78a302713827059439639ca21e3fcde8f85c10b6eb345bb9"
