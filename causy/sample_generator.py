@@ -1,5 +1,7 @@
 import abc
+from dataclasses import dataclass
 from types import SimpleNamespace
+
 import torch
 
 from causy.graph import Graph
@@ -173,113 +175,6 @@ class AbstractSampleGenerator(abc.ABC):
         pass
 
 
-class TimeseriesSampleGenerator(AbstractSampleGenerator):
-    """
-    A sample generator that generates data for a sample graph with a time dimension.
-
-    Generator functions are written as a lambda function that takes two arguments: the current timestep and the input.
-    The input is a SimpleNamespace object that contains the current values of all variables. Via the t(-n) method of the
-    TimeProxy class, the generator can access the values of the variables at previous time steps.
-
-    During generation, the generator functions are called in the order of the keys of the generators dictionary. This
-    means that the order of the keys determines the order in which the variables are generated. If a variable depends on
-    another variable, the generator function of the dependent variable should be defined after the generator function of
-    the variable it depends on.
-
-    A variable can depend on itself, but only on its past values (with a lag). This is useful for autoregressive models.
-
-    Example:
-    >>> sg = TimeseriesSampleGenerator(
-    >>>     initial_values={
-    >>>         "Z": random(),
-    >>>         "Y": random(),
-    >>>         "X": random(),
-    >>>     },
-    >>>     variables={
-    >>>         "alpha": 0.9,
-    >>>     },
-    >>>     # generate the dependencies of variables on past values of themselves and other variables
-    >>>     generators={
-    >>>         "Z": lambda t, i: i.Z.t(-1) * i.alpha + random(),
-    >>>         "Y": lambda t, i: i.Y.t(-1) * i.alpha + i.Z.t(-1) + random(),
-    >>>         "X": lambda t, i: i.X.t(-1) * i.alpha + i.Y.t(-1) + random()
-    >>>     },
-    >>>     edges=[
-    >>>         SampleLaggedEdge("X", "X", 1),
-    >>>         SampleLaggedEdge("Y", "Y", 1),
-    >>>         SampleLaggedEdge("Z", "Z", 1),
-    >>>         SampleLaggedEdge("Y", "Z", 1),
-    >>>         SampleLaggedEdge("Y", "X", 4),
-    >>>     ]
-    >>> )
-    """
-
-    def _generate_data(self, size):
-        """
-        Generate data for a sample graph with a time dimension
-        :param size:
-        :return:
-        """
-        internal_repr = {}
-
-        # Initialize the output dictionary
-        for i, v in self.initial_values.items():
-            internal_repr[i] = TimeProxy(v)
-
-        # Generate the data for each time step
-        for t in range(1, size):
-            for value in self.generators.keys():
-                internal_repr[value].set_current_time(t)
-                generator_input = internal_repr
-                generator_input.update(self.vars)
-                internal_repr[value].append(
-                    self.generators[value](t, SimpleNamespace(**generator_input))
-                )
-
-        output = {}
-        for i in self.generators.keys():
-            output[i] = internal_repr[i].to_list()
-
-        return output
-
-    def generate(self, size):
-        """
-        Generate data for a sample graph with a time dimension
-        :param size: the number of time steps to generate
-        :return: the generated data and the sample graph
-        """
-        output = self._generate_data(size)
-        graph = Graph()
-        for i in self.generators.keys():
-            for t in range(size):
-                graph.add_node(
-                    f"{i} - t{t}",
-                    [output[i][t]],
-                    id_=f"{i}-t{t}",
-                    metadata={"time": t, "variable": i},
-                )
-
-        for t in range(1, size):
-            for edge in self.edges:
-                if t - edge.lag < 0:
-                    logger.debug(
-                        f"Cannot generate data for {edge.source} at t={t}, "
-                        f"since it depends on {edge.lag}-steps-ago value"
-                    )
-                else:
-                    graph.add_edge(
-                        graph.nodes[f"{edge.source}-t{t - edge.lag}"],
-                        graph.nodes[f"{edge.target}-t{t}"],
-                        metadata={},
-                    )
-                    graph.remove_directed_edge(
-                        graph.nodes[f"{edge.target}-t{t}"],
-                        graph.nodes[f"{edge.source}-t{t - edge.lag}"],
-                    )
-
-        return output, graph
-
-
 class IIDSampleGenerator(AbstractSampleGenerator):
     """
     A sample generator that generates data for a sample graph without a time dimension.
@@ -351,10 +246,203 @@ class IIDSampleGenerator(AbstractSampleGenerator):
 
         for edge in self.edges:
             graph.add_edge(
-                graph.nodes[f"{edge.source}"], graph.nodes[f"{edge.target}"], value={}
+                graph.nodes[f"{edge.source}"],
+                graph.nodes[f"{edge.target}"],
+                metadata={},
             )
             graph.remove_directed_edge(
                 graph.nodes[f"{edge.target}"], graph.nodes[f"{edge.source}"]
             )
 
         return output, graph
+
+
+@dataclass
+class NodeReference:
+    """
+    A reference to a node in the sample generator
+    """
+
+    node: str
+    point_in_time: int = 0
+
+
+@dataclass
+class SampleLaggedEdge:
+    """
+    An edge in the sample generator that references a node and a lag
+    """
+
+    from_node: NodeReference
+    to_node: NodeReference
+    value: float = 0
+
+
+class TimeseriesSampleGenerator:
+    def __init__(
+        self,
+        edges: List[Union[SampleLaggedEdge, SampleLaggedEdge]],
+        random: Callable = random,  # for setting that to a fixed value for testing use random = lambda: 0
+    ):
+        self.__edges = edges
+        self.__variables = self.__find__variables_in_edges()
+        self.__longest_lag = max(
+            [abs(edge.to_node.point_in_time) for edge in self.__edges]
+        )
+        self.random_fn = random
+
+    def __find__variables_in_edges(self):
+        variables = set()
+        for edge in self.__edges:
+            variables.add(edge.from_node.node)
+            variables.add(edge.to_node.node)
+        return variables
+
+    random_fn: Callable = random
+    _initial_distribution_fn: Callable = lambda self, x: torch.normal(0, x)
+
+    def get_edges_for_node_to(self, node: str):
+        return [edge for edge in self.__edges if edge.to_node.node == node]
+
+    def _generate_data(self, size):
+        """
+        Generate data for a sample graph with a time dimension
+        :param size:
+        :return:
+        """
+        internal_repr = {}
+
+        initial_values = self._calculate_initial_values()
+
+        # Initialize the output dictionary
+        for k in self.__variables:
+            internal_repr[k] = [initial_values[k]]
+
+        for t in range(1, size):
+            for node_name in self.__variables:
+                # Get the edges that point to this node
+                edges = self.get_edges_for_node_to(node_name)
+                result = torch.tensor(0.0, dtype=torch.float32)
+                for edge in edges:
+                    if abs(edge.to_node.point_in_time) > t:
+                        result += (
+                            edge.value * initial_values[edge.from_node.node]
+                        )  # TODO(sofia): map here to the proper point in time
+                    else:
+                        result += (
+                            edge.value
+                            * internal_repr[edge.from_node.node][
+                                t + edge.from_node.point_in_time
+                            ]
+                        )
+
+                result += self.random_fn()
+                internal_repr[node_name].append(result)
+
+        for k, v in internal_repr.items():
+            internal_repr[k] = torch.stack(v)
+
+        return internal_repr
+
+    def generate(self, size):
+        """
+        Generate data for a sample graph with a time dimension
+        :param size: the number of time steps to generate
+        :return: the generated data and the sample graph
+        """
+        output = self._generate_data(size)
+        graph = Graph()
+        for i in self.__variables:
+            for t in range(size):
+                graph.add_node(
+                    f"{i} - t{t}",
+                    [output[i][t]],
+                    id_=f"{i}-t{t}",
+                    metadata={"time": t, "variable": i},
+                )
+
+        for t in range(1, size):
+            for edge in self.__edges:
+                if t - abs(edge.to_node.point_in_time) < 0:
+                    logger.debug(
+                        f"Cannot generate data for {edge.from_node.node} at t={t}, "
+                        f"since it depends on {abs(edge.to_node.point_in_time)}-steps-ago value"
+                    )
+                else:
+                    graph.add_directed_edge(
+                        graph.nodes[
+                            f"{edge.from_node.node}-t{t - abs(edge.from_node.point_in_time)}"
+                        ],
+                        graph.nodes[f"{edge.to_node.node}-t{t}"],
+                        metadata={},
+                    )
+
+        return output, graph
+
+    def __generate_coefficient_matrix(self):
+        """
+        generate the coefficient matrix for the sample generator graph
+        :return:
+        """
+
+        matrix: List[List[float]] = [
+            [0 for _ in self.__variables] for _ in self.__variables
+        ]
+
+        # map the initial values to numbers from 0 to n
+        values_map = self.__matrix_position_mapping()
+        for i, k in enumerate(self.__variables):
+            values_map[k] = i
+
+        for edge in self.__edges:
+            matrix[values_map[edge.to_node.node]][
+                values_map[edge.from_node.node]
+            ] = edge.value
+        # return me as torch tensor
+        return matrix
+
+    def _calculate_initial_values(self):
+        """
+        Calculate the initial values for the sample generator graph using the covariance matrix of the noise terms.
+
+        coefficient_matrix=[[a,0],[b,a]], i.e.
+        coefficient_matrix[0][0] is the coefficient of X_t-1 in the equation for X_t, here a
+        coefficient_matrix[0][1] is the coefficient of Y_t-1 in the equation for X_t (here: no edge, that means zero)
+        coefficient_matrix[1][1] is the coefficient of Y_t-1 in the equation for Y_t, here a
+        coefficient_matrix[1][0] is the coefficient of X_t-1 in the equation for Y_t, here b
+
+        If the top left entry ([0][0]) in our coefficient matrix corresponds to X_{t-1} -> X_t, then the the top left
+        entry in the covariance matrix is the variance of X_t, i.e. V(X_t).
+
+        If the top right entry ([0][1]) in our coefficient matrix corresponds to X_{t-1} -> Y_t, then the the top left
+        entry in the covariance matrix is the variance of X_t, i.e. V(X_t).
+        """
+        coefficient_matrix = torch.tensor(
+            self.__generate_coefficient_matrix(), dtype=torch.float32
+        )
+
+        kronecker_product = torch.kron(coefficient_matrix, coefficient_matrix)
+        n, _ = coefficient_matrix.shape
+        identity_matrix = torch.eye(n**2)
+        cov_matrix_noise_terms_vectorized = torch.eye(n).flatten()
+        inv_identity_minus_kronecker_product = torch.linalg.pinv(
+            identity_matrix - kronecker_product
+        )
+        vectorized_covariance_matrix = torch.matmul(
+            inv_identity_minus_kronecker_product,
+            cov_matrix_noise_terms_vectorized,
+        )
+        vectorized_covariance_matrix = vectorized_covariance_matrix.reshape(n, n)
+
+        initial_values: Dict[str, torch.Tensor] = {}
+        values = torch.diagonal(vectorized_covariance_matrix, offset=0)
+        for i, k in enumerate(self.__variables):
+            initial_values[k] = self._initial_distribution_fn(torch.sqrt(values[i]))
+
+        return initial_values
+
+    def __matrix_position_mapping(self):
+        values_map = {}
+        for i, k in enumerate(self.__variables):
+            values_map[k] = i
+        return values_map
