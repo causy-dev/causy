@@ -41,7 +41,11 @@ class PipelineStep(BaseModel):
     generator: Generator
 
 
-class PipelineReference(BaseModel):
+class BasePipeline(BaseModel):
+    name: str
+
+
+class PipelineReference(BasePipeline):
     """
     Represents a reference to a pipeline
     :param name: custom name for the pipeline
@@ -49,9 +53,13 @@ class PipelineReference(BaseModel):
     :param steps: an inline pipeline definition
     """
 
-    name: str
     reference: Optional[str] = None
-    steps: Optional[List[PipelineStep]] = None
+
+
+class Pipeline(BasePipeline):
+    """ """
+
+    steps: List[PipelineStep]
 
 
 class DataLoaderType(enum.StrEnum):
@@ -85,6 +93,6 @@ class Workspace(BaseModel):
     name: str
     author: Optional[str]
 
-    pipelines: Optional[Dict[str, Pipeline]]
-    data_loaders: Optional[Dict[str, Pipeline]]
+    pipelines: Optional[Dict[str, PipelineReference | Pipeline]]
+    data_loaders: Optional[Dict[str, DataLoader]]
     experiments: Optional[Dict[str, Experiment]]

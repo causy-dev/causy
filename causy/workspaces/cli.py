@@ -5,7 +5,7 @@ import os
 
 from pydantic_yaml import parse_yaml_raw_as, to_yaml_str
 
-from causy.workspaces.serializer_models import Workspace, Pipeline
+from causy.workspaces.serializer_models import Workspace, Pipeline, PipelineReference
 
 app = typer.Typer()
 
@@ -90,7 +90,9 @@ def init():
             )
             pipeline_reference = AVAILABLE_ALGORITHMS[pipeline_name]
             # make pipeline reference as string
-            pipeline = Pipeline(name=pipeline_name, reference=str(pipeline_reference))
+            pipeline = PipelineReference(
+                name=pipeline_name, reference=str(pipeline_reference)
+            )
             workspace.pipelines[pipeline_name] = pipeline
 
     workspace.data_loaders = None
@@ -100,3 +102,8 @@ def init():
         f.write(pydantic_yaml.to_yaml_str(workspace))
 
     print(f"Workspace created in {workspace_path}")
+
+
+@app.commanda()
+def execute(experiment_name=""):
+    pass

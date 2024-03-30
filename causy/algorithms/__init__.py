@@ -1,6 +1,6 @@
 from .pc import PC, ParallelPC
 
-AVAILABLE_ALGORITHMS = {
+0 = {
     "PC": PC,
     "ParallelPC": ParallelPC,
 }
