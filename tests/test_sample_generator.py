@@ -104,7 +104,7 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
             1, dtype=torch.float32
         )
 
-        result = model_multi_autocorr._generate_data(100)
+        result, graph = model_multi_autocorr.generate(100)
         self.assertEqual(len(result["X"]), 100)
         self.assertAlmostEqual(result["X"][0].item(), 1, places=2)
         self.assertAlmostEqual(result["X"][1].item(), 0.8, places=2)

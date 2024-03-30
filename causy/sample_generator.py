@@ -279,6 +279,26 @@ class SampleLaggedEdge:
 
 
 class TimeseriesSampleGenerator:
+    """
+    A sample generator that generates data for a sample graph with a time dimension.
+
+    Edges are defined as SampleLaggedEdges, which define a directed edge from a source node to a target node with a
+    ag. The lag is the number of time steps between the source and the target.
+
+    A variable can depend on itself, but only on its past values (with a lag). This is useful for autoregressive models.
+
+    Example:
+    >>> sg = TimeseriesSampleGenerator(
+    >>>     edges=[
+    >>>      SampleLaggedEdge(NodeReference("X", -1), NodeReference("X"), 0.9),
+    >>>      SampleLaggedEdge(NodeReference("Y", -1), NodeReference("Y"), 0.9),
+    >>>      SampleLaggedEdge(NodeReference("Z", -1), NodeReference("Z"), 0.9),
+    >>>      SampleLaggedEdge(NodeReference("Z", -1), NodeReference("Y"), 5),
+    >>>      SampleLaggedEdge(NodeReference("Y", -1), NodeReference("X"), 7),
+    >>>      ],
+    >>> )
+    """
+
     def __init__(
         self,
         edges: List[Union[SampleLaggedEdge, SampleLaggedEdge]],
@@ -291,24 +311,33 @@ class TimeseriesSampleGenerator:
         )
         self.random_fn = random
 
+    random_fn: Callable = random
+    _initial_distribution_fn: Callable = lambda self, x: torch.normal(0, x)
+
     def __find__variables_in_edges(self):
+        """
+        Find all variables in the edges of the sample generator. We need this to calculate the initial values for all existing variables.
+        :return: a set of all variables submitted via the edges
+        """
         variables = set()
         for edge in self.__edges:
             variables.add(edge.from_node.node)
             variables.add(edge.to_node.node)
         return variables
 
-    random_fn: Callable = random
-    _initial_distribution_fn: Callable = lambda self, x: torch.normal(0, x)
-
     def get_edges_for_node_to(self, node: str):
+        """
+        Get all edges that point to a specific node
+        :param node: the node to get the edges for
+        :return: a list of edges
+        """
         return [edge for edge in self.__edges if edge.to_node.node == node]
 
     def _generate_data(self, size):
         """
         Generate data for a sample graph with a time dimension
-        :param size:
-        :return:
+        :param size: the number of time steps to generate
+        :return: the generated data
         """
         internal_repr = {}
 
@@ -363,7 +392,7 @@ class TimeseriesSampleGenerator:
 
         for t in range(1, size):
             for edge in self.__edges:
-                if t - abs(edge.to_node.point_in_time) < 0:
+                if t - abs(edge.from_node.point_in_time) < 0:
                     logger.debug(
                         f"Cannot generate data for {edge.from_node.node} at t={t}, "
                         f"since it depends on {abs(edge.to_node.point_in_time)}-steps-ago value"
@@ -382,7 +411,7 @@ class TimeseriesSampleGenerator:
     def __generate_coefficient_matrix(self):
         """
         generate the coefficient matrix for the sample generator graph
-        :return:
+        :return: the coefficient matrix
         """
 
         matrix: List[List[float]] = [
@@ -416,6 +445,7 @@ class TimeseriesSampleGenerator:
 
         If the top right entry ([0][1]) in our coefficient matrix corresponds to X_{t-1} -> Y_t, then the the top left
         entry in the covariance matrix is the variance of X_t, i.e. V(X_t).
+        :return: the initial values for the sample generator graph as a dictionary
         """
         coefficient_matrix = torch.tensor(
             self.__generate_coefficient_matrix(), dtype=torch.float32
@@ -436,12 +466,16 @@ class TimeseriesSampleGenerator:
 
         initial_values: Dict[str, torch.Tensor] = {}
         values = torch.diagonal(vectorized_covariance_matrix, offset=0)
-        for i, k in enumerate(self.__variables):
+        for k, i in self.__matrix_position_mapping().items():
             initial_values[k] = self._initial_distribution_fn(torch.sqrt(values[i]))
 
         return initial_values
 
     def __matrix_position_mapping(self):
+        """
+        Map the variables to numbers from 0 to n. This is needed to calculate the initial values for the sample generator graph.
+        :return:
+        """
         values_map = {}
         for i, k in enumerate(self.__variables):
             values_map[k] = i
