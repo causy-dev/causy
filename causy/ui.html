@@ -133,10 +133,7 @@
                                 <a class="class" href="#CausyEdge.Config">CausyEdge.Config</a>
                                         <ul class="memberlist">
                                     <li>
-                                            <a class="variable" href="#CausyEdge.Config.allow_population_by_field_name">allow_population_by_field_name</a>
-                                    </li>
-                                    <li>
-                                            <a class="variable" href="#CausyEdge.Config.fields">fields</a>
+                                            <a class="variable" href="#CausyEdge.Config.populate_by_name">populate_by_name</a>
                                     </li>
                             </ul>
 
@@ -268,74 +265,73 @@
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="k">class</span> <span class="nc">CausyEdge</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>        <span class="n">allow_population_by_field_name</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>        <span class="n">fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;from_field&quot;</span><span class="p">:</span> <span class="s2">&quot;from&quot;</span><span class="p">}</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">from_field</span><span class="p">:</span> <span class="n">CausyNode</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;from&quot;</span><span class="p">)</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="n">to</span><span class="p">:</span> <span class="n">CausyNode</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="n">value</span><span class="p">:</span> <span class="n">CausyEdgeValue</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>        <span class="n">populate_by_name</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="n">from_field</span><span class="p">:</span> <span class="n">CausyNode</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;from&quot;</span><span class="p">)</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">to</span><span class="p">:</span> <span class="n">CausyNode</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="n">value</span><span class="p">:</span> <span class="n">CausyEdgeValue</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="k">class</span> <span class="nc">CausyModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="n">algorithm</span><span class="p">:</span> <span class="n">CausyAlgorithm</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>    <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="n">nodes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">UUID4</span><span class="p">,</span> <span class="n">CausyNode</span><span class="p">]</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CausyEdge</span><span class="p">]</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="k">class</span> <span class="nc">CausyModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="n">algorithm</span><span class="p">:</span> <span class="n">CausyAlgorithm</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>    <span class="n">nodes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">UUID4</span><span class="p">,</span> <span class="n">CausyNode</span><span class="p">]</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CausyEdge</span><span class="p">]</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="nd">@API_ROUTES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/status&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="k">async</span> <span class="k">def</span> <span class="nf">get_status</span><span class="p">():</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the current status of the API.&quot;&quot;&quot;</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">}</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="nd">@API_ROUTES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/status&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="k">async</span> <span class="k">def</span> <span class="nf">get_status</span><span class="p">():</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the current status of the API.&quot;&quot;&quot;</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">}</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="nd">@API_ROUTES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/model&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">CausyModel</span><span class="p">)</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="k">async</span> <span class="k">def</span> <span class="nf">get_model</span><span class="p">():</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the current model.&quot;&quot;&quot;</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="k">return</span> <span class="n">MODEL</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="nd">@API_ROUTES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/model&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">CausyModel</span><span class="p">)</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="k">async</span> <span class="k">def</span> <span class="nf">get_model</span><span class="p">():</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the current model.&quot;&quot;&quot;</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>    <span class="k">return</span> <span class="n">MODEL</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the FastAPI server.&quot;&quot;&quot;</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">FastAPI</span><span class="p">(</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;causy-api&quot;</span><span class="p">,</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="n">version</span><span class="o">=</span><span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;causys internal api to serve data from the result files&quot;</span><span class="p">,</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="p">)</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="k">global</span> <span class="n">MODEL</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="n">MODEL</span> <span class="o">=</span> <span class="n">CausyModel</span><span class="p">(</span><span class="o">**</span><span class="n">result</span><span class="p">)</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">API_ROUTES</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/api/v1&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;api&quot;</span><span class="p">])</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="n">app</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="s2">&quot;&quot;</span><span class="p">,</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="n">StaticFiles</span><span class="p">(</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>            <span class="n">directory</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;static&quot;</span><span class="p">),</span> <span class="n">html</span><span class="o">=</span><span class="kc">True</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="p">),</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;static&quot;</span><span class="p">,</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="p">)</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="n">host</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;HOST&quot;</span><span class="p">,</span> <span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;PORT&quot;</span><span class="p">,</span> <span class="s2">&quot;8000&quot;</span><span class="p">))</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    <span class="n">cors_enabled</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CORS_ENABLED&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="c1"># cors e.g. for development of separate frontend</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="k">if</span> <span class="n">cors_enabled</span><span class="p">:</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;🌐 CORS enabled&quot;</span><span class="p">)</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="kn">from</span> <span class="nn">fastapi.middleware.cors</span> <span class="kn">import</span> <span class="n">CORSMiddleware</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>            <span class="n">CORSMiddleware</span><span class="p">,</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>            <span class="n">allow_origins</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>            <span class="n">allow_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>            <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>            <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="p">)</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="n">server_config</span> <span class="o">=</span> <span class="n">uvicorn</span><span class="o">.</span><span class="n">Config</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="n">server</span> <span class="o">=</span> <span class="n">uvicorn</span><span class="o">.</span><span class="n">Server</span><span class="p">(</span><span class="n">server_config</span><span class="p">)</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="k">return</span> <span class="n">server_config</span><span class="p">,</span> <span class="n">server</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the FastAPI server.&quot;&quot;&quot;</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">FastAPI</span><span class="p">(</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;causy-api&quot;</span><span class="p">,</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>        <span class="n">version</span><span class="o">=</span><span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;causys internal api to serve data from the result files&quot;</span><span class="p">,</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="p">)</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="k">global</span> <span class="n">MODEL</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="n">MODEL</span> <span class="o">=</span> <span class="n">CausyModel</span><span class="p">(</span><span class="o">**</span><span class="n">result</span><span class="p">)</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>    <span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">API_ROUTES</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/api/v1&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;api&quot;</span><span class="p">])</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="n">app</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="n">StaticFiles</span><span class="p">(</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>            <span class="n">directory</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;static&quot;</span><span class="p">),</span> <span class="n">html</span><span class="o">=</span><span class="kc">True</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="p">),</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;static&quot;</span><span class="p">,</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="p">)</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="n">host</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;HOST&quot;</span><span class="p">,</span> <span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;PORT&quot;</span><span class="p">,</span> <span class="s2">&quot;8000&quot;</span><span class="p">))</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="n">cors_enabled</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CORS_ENABLED&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="c1"># cors e.g. for development of separate frontend</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="k">if</span> <span class="n">cors_enabled</span><span class="p">:</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;🌐 CORS enabled&quot;</span><span class="p">)</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="kn">from</span> <span class="nn">fastapi.middleware.cors</span> <span class="kn">import</span> <span class="n">CORSMiddleware</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>            <span class="n">CORSMiddleware</span><span class="p">,</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>            <span class="n">allow_origins</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>            <span class="n">allow_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>            <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>            <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="p">)</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    <span class="n">server_config</span> <span class="o">=</span> <span class="n">uvicorn</span><span class="o">.</span><span class="n">Config</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="n">server</span> <span class="o">=</span> <span class="n">uvicorn</span><span class="o">.</span><span class="n">Server</span><span class="p">(</span><span class="n">server_config</span><span class="p">)</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="k">return</span> <span class="n">server_config</span><span class="p">,</span> <span class="n">server</span>
 </span></pre></div>
 
 
@@ -965,12 +961,11 @@ __pydantic_private__: Instance attribute with the values of private attributes s
     <a class="headerlink" href="#CausyEdge"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="CausyEdge-43"><a href="#CausyEdge-43"><span class="linenos">43</span></a><span class="k">class</span> <span class="nc">CausyEdge</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 </span><span id="CausyEdge-44"><a href="#CausyEdge-44"><span class="linenos">44</span></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-</span><span id="CausyEdge-45"><a href="#CausyEdge-45"><span class="linenos">45</span></a>        <span class="n">allow_population_by_field_name</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="CausyEdge-46"><a href="#CausyEdge-46"><span class="linenos">46</span></a>        <span class="n">fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;from_field&quot;</span><span class="p">:</span> <span class="s2">&quot;from&quot;</span><span class="p">}</span>
-</span><span id="CausyEdge-47"><a href="#CausyEdge-47"><span class="linenos">47</span></a>
-</span><span id="CausyEdge-48"><a href="#CausyEdge-48"><span class="linenos">48</span></a>    <span class="n">from_field</span><span class="p">:</span> <span class="n">CausyNode</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;from&quot;</span><span class="p">)</span>
-</span><span id="CausyEdge-49"><a href="#CausyEdge-49"><span class="linenos">49</span></a>    <span class="n">to</span><span class="p">:</span> <span class="n">CausyNode</span>
-</span><span id="CausyEdge-50"><a href="#CausyEdge-50"><span class="linenos">50</span></a>    <span class="n">value</span><span class="p">:</span> <span class="n">CausyEdgeValue</span>
+</span><span id="CausyEdge-45"><a href="#CausyEdge-45"><span class="linenos">45</span></a>        <span class="n">populate_by_name</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="CausyEdge-46"><a href="#CausyEdge-46"><span class="linenos">46</span></a>
+</span><span id="CausyEdge-47"><a href="#CausyEdge-47"><span class="linenos">47</span></a>    <span class="n">from_field</span><span class="p">:</span> <span class="n">CausyNode</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;from&quot;</span><span class="p">)</span>
+</span><span id="CausyEdge-48"><a href="#CausyEdge-48"><span class="linenos">48</span></a>    <span class="n">to</span><span class="p">:</span> <span class="n">CausyNode</span>
+</span><span id="CausyEdge-49"><a href="#CausyEdge-49"><span class="linenos">49</span></a>    <span class="n">value</span><span class="p">:</span> <span class="n">CausyEdgeValue</span>
 </span></pre></div>
 
 
@@ -1040,7 +1035,7 @@ __pydantic_private__: Instance attribute with the values of private attributes s
                             <div id="CausyEdge.model_config" class="classattr">
                                 <div class="attr variable">
             <span class="name">model_config</span>        =
-<span class="default_value">{&#39;allow_population_by_field_name&#39;: True, &#39;fields&#39;: {&#39;from_field&#39;: &#39;from&#39;}}</span>
+<span class="default_value">{&#39;populate_by_name&#39;: True}</span>
 
         
     </div>
@@ -1121,33 +1116,20 @@ __pydantic_private__: Instance attribute with the values of private attributes s
     </div>
     <a class="headerlink" href="#CausyEdge.Config"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="CausyEdge.Config-44"><a href="#CausyEdge.Config-44"><span class="linenos">44</span></a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-</span><span id="CausyEdge.Config-45"><a href="#CausyEdge.Config-45"><span class="linenos">45</span></a>        <span class="n">allow_population_by_field_name</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="CausyEdge.Config-46"><a href="#CausyEdge.Config-46"><span class="linenos">46</span></a>        <span class="n">fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;from_field&quot;</span><span class="p">:</span> <span class="s2">&quot;from&quot;</span><span class="p">}</span>
+</span><span id="CausyEdge.Config-45"><a href="#CausyEdge.Config-45"><span class="linenos">45</span></a>        <span class="n">populate_by_name</span> <span class="o">=</span> <span class="kc">True</span>
 </span></pre></div>
 
 
     
 
-                            <div id="CausyEdge.Config.allow_population_by_field_name" class="classattr">
+                            <div id="CausyEdge.Config.populate_by_name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">allow_population_by_field_name</span>        =
+            <span class="name">populate_by_name</span>        =
 <span class="default_value">True</span>
 
         
     </div>
-    <a class="headerlink" href="#CausyEdge.Config.allow_population_by_field_name"></a>
-    
-    
-
-                            </div>
-                            <div id="CausyEdge.Config.fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">fields</span>        =
-<span class="default_value">{&#39;from_field&#39;: &#39;from&#39;}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#CausyEdge.Config.fields"></a>
+    <a class="headerlink" href="#CausyEdge.Config.populate_by_name"></a>
     
     
 
@@ -1164,13 +1146,13 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
     </div>
     <a class="headerlink" href="#CausyModel"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CausyModel-53"><a href="#CausyModel-53"><span class="linenos">53</span></a><span class="k">class</span> <span class="nc">CausyModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="CausyModel-54"><a href="#CausyModel-54"><span class="linenos">54</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="CausyModel-55"><a href="#CausyModel-55"><span class="linenos">55</span></a>    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span>
-</span><span id="CausyModel-56"><a href="#CausyModel-56"><span class="linenos">56</span></a>    <span class="n">algorithm</span><span class="p">:</span> <span class="n">CausyAlgorithm</span>
-</span><span id="CausyModel-57"><a href="#CausyModel-57"><span class="linenos">57</span></a>    <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
-</span><span id="CausyModel-58"><a href="#CausyModel-58"><span class="linenos">58</span></a>    <span class="n">nodes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">UUID4</span><span class="p">,</span> <span class="n">CausyNode</span><span class="p">]</span>
-</span><span id="CausyModel-59"><a href="#CausyModel-59"><span class="linenos">59</span></a>    <span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CausyEdge</span><span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CausyModel-52"><a href="#CausyModel-52"><span class="linenos">52</span></a><span class="k">class</span> <span class="nc">CausyModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="CausyModel-53"><a href="#CausyModel-53"><span class="linenos">53</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="CausyModel-54"><a href="#CausyModel-54"><span class="linenos">54</span></a>    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span>
+</span><span id="CausyModel-55"><a href="#CausyModel-55"><span class="linenos">55</span></a>    <span class="n">algorithm</span><span class="p">:</span> <span class="n">CausyAlgorithm</span>
+</span><span id="CausyModel-56"><a href="#CausyModel-56"><span class="linenos">56</span></a>    <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</span><span id="CausyModel-57"><a href="#CausyModel-57"><span class="linenos">57</span></a>    <span class="n">nodes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">UUID4</span><span class="p">,</span> <span class="n">CausyNode</span><span class="p">]</span>
+</span><span id="CausyModel-58"><a href="#CausyModel-58"><span class="linenos">58</span></a>    <span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CausyEdge</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -1354,10 +1336,10 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
     </div>
     <a class="headerlink" href="#get_status"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_status-62"><a href="#get_status-62"><span class="linenos">62</span></a><span class="nd">@API_ROUTES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/status&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
-</span><span id="get_status-63"><a href="#get_status-63"><span class="linenos">63</span></a><span class="k">async</span> <span class="k">def</span> <span class="nf">get_status</span><span class="p">():</span>
-</span><span id="get_status-64"><a href="#get_status-64"><span class="linenos">64</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the current status of the API.&quot;&quot;&quot;</span>
-</span><span id="get_status-65"><a href="#get_status-65"><span class="linenos">65</span></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">}</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_status-61"><a href="#get_status-61"><span class="linenos">61</span></a><span class="nd">@API_ROUTES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/status&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
+</span><span id="get_status-62"><a href="#get_status-62"><span class="linenos">62</span></a><span class="k">async</span> <span class="k">def</span> <span class="nf">get_status</span><span class="p">():</span>
+</span><span id="get_status-63"><a href="#get_status-63"><span class="linenos">63</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the current status of the API.&quot;&quot;&quot;</span>
+</span><span id="get_status-64"><a href="#get_status-64"><span class="linenos">64</span></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">}</span>
 </span></pre></div>
 
 
@@ -1378,10 +1360,10 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
     </div>
     <a class="headerlink" href="#get_model"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_model-68"><a href="#get_model-68"><span class="linenos">68</span></a><span class="nd">@API_ROUTES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/model&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">CausyModel</span><span class="p">)</span>
-</span><span id="get_model-69"><a href="#get_model-69"><span class="linenos">69</span></a><span class="k">async</span> <span class="k">def</span> <span class="nf">get_model</span><span class="p">():</span>
-</span><span id="get_model-70"><a href="#get_model-70"><span class="linenos">70</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the current model.&quot;&quot;&quot;</span>
-</span><span id="get_model-71"><a href="#get_model-71"><span class="linenos">71</span></a>    <span class="k">return</span> <span class="n">MODEL</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_model-67"><a href="#get_model-67"><span class="linenos">67</span></a><span class="nd">@API_ROUTES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/model&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">CausyModel</span><span class="p">)</span>
+</span><span id="get_model-68"><a href="#get_model-68"><span class="linenos">68</span></a><span class="k">async</span> <span class="k">def</span> <span class="nf">get_model</span><span class="p">():</span>
+</span><span id="get_model-69"><a href="#get_model-69"><span class="linenos">69</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the current model.&quot;&quot;&quot;</span>
+</span><span id="get_model-70"><a href="#get_model-70"><span class="linenos">70</span></a>    <span class="k">return</span> <span class="n">MODEL</span>
 </span></pre></div>
 
 
@@ -1401,45 +1383,45 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
     </div>
     <a class="headerlink" href="#server"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="server-74"><a href="#server-74"><span class="linenos"> 74</span></a><span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-</span><span id="server-75"><a href="#server-75"><span class="linenos"> 75</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the FastAPI server.&quot;&quot;&quot;</span>
-</span><span id="server-76"><a href="#server-76"><span class="linenos"> 76</span></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">FastAPI</span><span class="p">(</span>
-</span><span id="server-77"><a href="#server-77"><span class="linenos"> 77</span></a>        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;causy-api&quot;</span><span class="p">,</span>
-</span><span id="server-78"><a href="#server-78"><span class="linenos"> 78</span></a>        <span class="n">version</span><span class="o">=</span><span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
-</span><span id="server-79"><a href="#server-79"><span class="linenos"> 79</span></a>        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;causys internal api to serve data from the result files&quot;</span><span class="p">,</span>
-</span><span id="server-80"><a href="#server-80"><span class="linenos"> 80</span></a>    <span class="p">)</span>
-</span><span id="server-81"><a href="#server-81"><span class="linenos"> 81</span></a>    <span class="k">global</span> <span class="n">MODEL</span>
-</span><span id="server-82"><a href="#server-82"><span class="linenos"> 82</span></a>    <span class="n">MODEL</span> <span class="o">=</span> <span class="n">CausyModel</span><span class="p">(</span><span class="o">**</span><span class="n">result</span><span class="p">)</span>
-</span><span id="server-83"><a href="#server-83"><span class="linenos"> 83</span></a>
-</span><span id="server-84"><a href="#server-84"><span class="linenos"> 84</span></a>    <span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">API_ROUTES</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/api/v1&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;api&quot;</span><span class="p">])</span>
-</span><span id="server-85"><a href="#server-85"><span class="linenos"> 85</span></a>    <span class="n">app</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span>
-</span><span id="server-86"><a href="#server-86"><span class="linenos"> 86</span></a>        <span class="s2">&quot;&quot;</span><span class="p">,</span>
-</span><span id="server-87"><a href="#server-87"><span class="linenos"> 87</span></a>        <span class="n">StaticFiles</span><span class="p">(</span>
-</span><span id="server-88"><a href="#server-88"><span class="linenos"> 88</span></a>            <span class="n">directory</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;static&quot;</span><span class="p">),</span> <span class="n">html</span><span class="o">=</span><span class="kc">True</span>
-</span><span id="server-89"><a href="#server-89"><span class="linenos"> 89</span></a>        <span class="p">),</span>
-</span><span id="server-90"><a href="#server-90"><span class="linenos"> 90</span></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;static&quot;</span><span class="p">,</span>
-</span><span id="server-91"><a href="#server-91"><span class="linenos"> 91</span></a>    <span class="p">)</span>
-</span><span id="server-92"><a href="#server-92"><span class="linenos"> 92</span></a>
-</span><span id="server-93"><a href="#server-93"><span class="linenos"> 93</span></a>    <span class="n">host</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;HOST&quot;</span><span class="p">,</span> <span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
-</span><span id="server-94"><a href="#server-94"><span class="linenos"> 94</span></a>    <span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;PORT&quot;</span><span class="p">,</span> <span class="s2">&quot;8000&quot;</span><span class="p">))</span>
-</span><span id="server-95"><a href="#server-95"><span class="linenos"> 95</span></a>    <span class="n">cors_enabled</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CORS_ENABLED&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span>
-</span><span id="server-96"><a href="#server-96"><span class="linenos"> 96</span></a>
-</span><span id="server-97"><a href="#server-97"><span class="linenos"> 97</span></a>    <span class="c1"># cors e.g. for development of separate frontend</span>
-</span><span id="server-98"><a href="#server-98"><span class="linenos"> 98</span></a>    <span class="k">if</span> <span class="n">cors_enabled</span><span class="p">:</span>
-</span><span id="server-99"><a href="#server-99"><span class="linenos"> 99</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;🌐 CORS enabled&quot;</span><span class="p">)</span>
-</span><span id="server-100"><a href="#server-100"><span class="linenos">100</span></a>        <span class="kn">from</span> <span class="nn">fastapi.middleware.cors</span> <span class="kn">import</span> <span class="n">CORSMiddleware</span>
-</span><span id="server-101"><a href="#server-101"><span class="linenos">101</span></a>
-</span><span id="server-102"><a href="#server-102"><span class="linenos">102</span></a>        <span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span>
-</span><span id="server-103"><a href="#server-103"><span class="linenos">103</span></a>            <span class="n">CORSMiddleware</span><span class="p">,</span>
-</span><span id="server-104"><a href="#server-104"><span class="linenos">104</span></a>            <span class="n">allow_origins</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
-</span><span id="server-105"><a href="#server-105"><span class="linenos">105</span></a>            <span class="n">allow_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="server-106"><a href="#server-106"><span class="linenos">106</span></a>            <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
-</span><span id="server-107"><a href="#server-107"><span class="linenos">107</span></a>            <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
-</span><span id="server-108"><a href="#server-108"><span class="linenos">108</span></a>        <span class="p">)</span>
-</span><span id="server-109"><a href="#server-109"><span class="linenos">109</span></a>
-</span><span id="server-110"><a href="#server-110"><span class="linenos">110</span></a>    <span class="n">server_config</span> <span class="o">=</span> <span class="n">uvicorn</span><span class="o">.</span><span class="n">Config</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
-</span><span id="server-111"><a href="#server-111"><span class="linenos">111</span></a>    <span class="n">server</span> <span class="o">=</span> <span class="n">uvicorn</span><span class="o">.</span><span class="n">Server</span><span class="p">(</span><span class="n">server_config</span><span class="p">)</span>
-</span><span id="server-112"><a href="#server-112"><span class="linenos">112</span></a>    <span class="k">return</span> <span class="n">server_config</span><span class="p">,</span> <span class="n">server</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="server-73"><a href="#server-73"><span class="linenos"> 73</span></a><span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+</span><span id="server-74"><a href="#server-74"><span class="linenos"> 74</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the FastAPI server.&quot;&quot;&quot;</span>
+</span><span id="server-75"><a href="#server-75"><span class="linenos"> 75</span></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">fastapi</span><span class="o">.</span><span class="n">FastAPI</span><span class="p">(</span>
+</span><span id="server-76"><a href="#server-76"><span class="linenos"> 76</span></a>        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;causy-api&quot;</span><span class="p">,</span>
+</span><span id="server-77"><a href="#server-77"><span class="linenos"> 77</span></a>        <span class="n">version</span><span class="o">=</span><span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
+</span><span id="server-78"><a href="#server-78"><span class="linenos"> 78</span></a>        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;causys internal api to serve data from the result files&quot;</span><span class="p">,</span>
+</span><span id="server-79"><a href="#server-79"><span class="linenos"> 79</span></a>    <span class="p">)</span>
+</span><span id="server-80"><a href="#server-80"><span class="linenos"> 80</span></a>    <span class="k">global</span> <span class="n">MODEL</span>
+</span><span id="server-81"><a href="#server-81"><span class="linenos"> 81</span></a>    <span class="n">MODEL</span> <span class="o">=</span> <span class="n">CausyModel</span><span class="p">(</span><span class="o">**</span><span class="n">result</span><span class="p">)</span>
+</span><span id="server-82"><a href="#server-82"><span class="linenos"> 82</span></a>
+</span><span id="server-83"><a href="#server-83"><span class="linenos"> 83</span></a>    <span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">API_ROUTES</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/api/v1&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;api&quot;</span><span class="p">])</span>
+</span><span id="server-84"><a href="#server-84"><span class="linenos"> 84</span></a>    <span class="n">app</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span>
+</span><span id="server-85"><a href="#server-85"><span class="linenos"> 85</span></a>        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="server-86"><a href="#server-86"><span class="linenos"> 86</span></a>        <span class="n">StaticFiles</span><span class="p">(</span>
+</span><span id="server-87"><a href="#server-87"><span class="linenos"> 87</span></a>            <span class="n">directory</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;static&quot;</span><span class="p">),</span> <span class="n">html</span><span class="o">=</span><span class="kc">True</span>
+</span><span id="server-88"><a href="#server-88"><span class="linenos"> 88</span></a>        <span class="p">),</span>
+</span><span id="server-89"><a href="#server-89"><span class="linenos"> 89</span></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;static&quot;</span><span class="p">,</span>
+</span><span id="server-90"><a href="#server-90"><span class="linenos"> 90</span></a>    <span class="p">)</span>
+</span><span id="server-91"><a href="#server-91"><span class="linenos"> 91</span></a>
+</span><span id="server-92"><a href="#server-92"><span class="linenos"> 92</span></a>    <span class="n">host</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;HOST&quot;</span><span class="p">,</span> <span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
+</span><span id="server-93"><a href="#server-93"><span class="linenos"> 93</span></a>    <span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;PORT&quot;</span><span class="p">,</span> <span class="s2">&quot;8000&quot;</span><span class="p">))</span>
+</span><span id="server-94"><a href="#server-94"><span class="linenos"> 94</span></a>    <span class="n">cors_enabled</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CORS_ENABLED&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span>
+</span><span id="server-95"><a href="#server-95"><span class="linenos"> 95</span></a>
+</span><span id="server-96"><a href="#server-96"><span class="linenos"> 96</span></a>    <span class="c1"># cors e.g. for development of separate frontend</span>
+</span><span id="server-97"><a href="#server-97"><span class="linenos"> 97</span></a>    <span class="k">if</span> <span class="n">cors_enabled</span><span class="p">:</span>
+</span><span id="server-98"><a href="#server-98"><span class="linenos"> 98</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;🌐 CORS enabled&quot;</span><span class="p">)</span>
+</span><span id="server-99"><a href="#server-99"><span class="linenos"> 99</span></a>        <span class="kn">from</span> <span class="nn">fastapi.middleware.cors</span> <span class="kn">import</span> <span class="n">CORSMiddleware</span>
+</span><span id="server-100"><a href="#server-100"><span class="linenos">100</span></a>
+</span><span id="server-101"><a href="#server-101"><span class="linenos">101</span></a>        <span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span>
+</span><span id="server-102"><a href="#server-102"><span class="linenos">102</span></a>            <span class="n">CORSMiddleware</span><span class="p">,</span>
+</span><span id="server-103"><a href="#server-103"><span class="linenos">103</span></a>            <span class="n">allow_origins</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
+</span><span id="server-104"><a href="#server-104"><span class="linenos">104</span></a>            <span class="n">allow_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="server-105"><a href="#server-105"><span class="linenos">105</span></a>            <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
+</span><span id="server-106"><a href="#server-106"><span class="linenos">106</span></a>            <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
+</span><span id="server-107"><a href="#server-107"><span class="linenos">107</span></a>        <span class="p">)</span>
+</span><span id="server-108"><a href="#server-108"><span class="linenos">108</span></a>
+</span><span id="server-109"><a href="#server-109"><span class="linenos">109</span></a>    <span class="n">server_config</span> <span class="o">=</span> <span class="n">uvicorn</span><span class="o">.</span><span class="n">Config</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+</span><span id="server-110"><a href="#server-110"><span class="linenos">110</span></a>    <span class="n">server</span> <span class="o">=</span> <span class="n">uvicorn</span><span class="o">.</span><span class="n">Server</span><span class="p">(</span><span class="n">server_config</span><span class="p">)</span>
+</span><span id="server-111"><a href="#server-111"><span class="linenos">111</span></a>    <span class="k">return</span> <span class="n">server_config</span><span class="p">,</span> <span class="n">server</span>
 </span></pre></div>
 
 
