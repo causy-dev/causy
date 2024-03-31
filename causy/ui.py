@@ -41,8 +41,7 @@ class CausyEdgeValue(BaseModel):
 
 class CausyEdge(BaseModel):
     class Config:
-        allow_population_by_field_name = True
-        fields = {"from_field": "from"}
+        populate_by_name = True
 
     from_field: CausyNode = Field(alias="from")
     to: CausyNode
