@@ -307,8 +307,9 @@ class TimeseriesSampleGenerator:
         self.__edges = edges
         self.__variables = self.__find__variables_in_edges()
         self.__longest_lag = max(
-            [abs(edge.to_node.point_in_time) for edge in self.__edges]
+            [abs(edge.from_node.point_in_time) for edge in self.__edges]
         )
+        print(f"longest lag={self.__longest_lag}")
         self.random_fn = random
 
     random_fn: Callable = random
@@ -342,6 +343,7 @@ class TimeseriesSampleGenerator:
         internal_repr = {}
 
         initial_values = self._calculate_initial_values()
+        print(f"initial values={initial_values}")
 
         # Initialize the output dictionary
         for k in self.__variables:
@@ -353,7 +355,8 @@ class TimeseriesSampleGenerator:
                 edges = self.get_edges_for_node_to(node_name)
                 result = torch.tensor(0.0, dtype=torch.float32)
                 for edge in edges:
-                    if abs(edge.to_node.point_in_time) > t:
+                    if abs(edge.from_node.point_in_time) > t:
+                        print(f"initial values={initial_values[edge.from_node.node]}")
                         result += (
                             edge.value * initial_values[edge.from_node.node]
                         )  # TODO(sofia): map here to the proper point in time
@@ -408,27 +411,71 @@ class TimeseriesSampleGenerator:
 
         return output, graph
 
+    def custom_block_diagonal(self, matrices):
+        # Get dimensions
+        num_matrices = len(matrices)
+        n = len(matrices[0])  # Assuming all matrices are of the same size
+
+        # Compute total size of the block diagonal matrix
+        total_rows = num_matrices * n
+        total_cols = num_matrices * n
+
+        # Create an empty tensor to hold the block diagonal matrix
+        block_diag = torch.zeros(total_rows, total_cols)
+
+        # Fill in the first rows with the input matrices
+        for i, matrix in enumerate(matrices):
+            block_diag[:n, i * n : (i + 1) * n] = torch.tensor(matrix)
+
+        # Fill in the lower left off-diagonal with identity matrices
+        row_start = n
+        col_start = 0
+        for i in range(1, num_matrices):
+            block_diag[
+                row_start : row_start + n, col_start : col_start + n
+            ] = torch.eye(n)
+            row_start += n
+            col_start += n
+
+        return block_diag
+
     def __generate_coefficient_matrix(self):
         """
         generate the coefficient matrix for the sample generator graph
         :return: the coefficient matrix
         """
 
-        matrix: List[List[float]] = [
-            [0 for _ in self.__variables] for _ in self.__variables
+        matrix: List[List[List[float]]] = [
+            [[0 for _ in self.__variables] for _ in self.__variables]
+            for _ in range(self.__longest_lag)
         ]
 
         # map the initial values to numbers from 0 to n
         values_map = self.__matrix_position_mapping()
-        for i, k in enumerate(self.__variables):
-            values_map[k] = i
 
         for edge in self.__edges:
-            matrix[values_map[edge.to_node.node]][
-                values_map[edge.from_node.node]
-            ] = edge.value
+            matrix[(edge.from_node.point_in_time * -1) - 1][
+                values_map[edge.to_node.node]
+            ][values_map[edge.from_node.node]] = edge.value
+
+        print(f"matrix={matrix}")
+
         # return me as torch tensor
-        return matrix
+        return self.custom_block_diagonal(matrix)
+
+    def vectorize_identity_block(self, n):
+        # Create an empty tensor
+        matrix = torch.zeros(n, n)
+
+        # Fill the upper left block with an identity matrix
+        matrix[: n // self.__longest_lag, : n // self.__longest_lag] = torch.eye(
+            n // self.__longest_lag
+        )
+
+        # Flatten the matrix
+        vectorized_matrix = matrix.view(-1)
+
+        return vectorized_matrix
 
     def _calculate_initial_values(self):
         """
@@ -447,14 +494,14 @@ class TimeseriesSampleGenerator:
         entry in the covariance matrix is the variance of X_t, i.e. V(X_t).
         :return: the initial values for the sample generator graph as a dictionary
         """
-        coefficient_matrix = torch.tensor(
-            self.__generate_coefficient_matrix(), dtype=torch.float32
-        )
+        coefficient_matrix = self.__generate_coefficient_matrix()
+        print(f"coefficient_matrix={coefficient_matrix}")
 
         kronecker_product = torch.kron(coefficient_matrix, coefficient_matrix)
+        print(f"kronecker_product_size={kronecker_product.size()}")
         n, _ = coefficient_matrix.shape
         identity_matrix = torch.eye(n**2)
-        cov_matrix_noise_terms_vectorized = torch.eye(n).flatten()
+        cov_matrix_noise_terms_vectorized = self.vectorize_identity_block(n)
         inv_identity_minus_kronecker_product = torch.linalg.pinv(
             identity_matrix - kronecker_product
         )
@@ -463,12 +510,15 @@ class TimeseriesSampleGenerator:
             cov_matrix_noise_terms_vectorized,
         )
         vectorized_covariance_matrix = vectorized_covariance_matrix.reshape(n, n)
+        print("vectorized_covariance_matrix")
+        print(vectorized_covariance_matrix)
 
         initial_values: Dict[str, torch.Tensor] = {}
         values = torch.diagonal(vectorized_covariance_matrix, offset=0)
         for k, i in self.__matrix_position_mapping().items():
             initial_values[k] = self._initial_distribution_fn(torch.sqrt(values[i]))
-
+        print("initial values")
+        print(initial_values)
         return initial_values
 
     def __matrix_position_mapping(self):

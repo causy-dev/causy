@@ -17,7 +17,7 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
         self.assertTrue(True)
         # TODO: fix bug in iid sample generator and write test
 
-    def test_timeseries_sample_generator(self):
+    def test_timeseries_sample_generator_fixed_initial_distribution(self):
         model_one = TimeseriesSampleGenerator(
             edges=[
                 SampleLaggedEdge(NodeReference("X", -1), NodeReference("X"), 0.9),
@@ -77,21 +77,7 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
         self.assertAlmostEqual(result["X"][2].item(), 0.81, places=2)
         self.assertAlmostEqual(result["Y"][2].item(), 9.81, places=2)
 
-    def test_generating_initial_values(self):
-        model = TimeseriesSampleGenerator(
-            edges=[
-                SampleLaggedEdge(NodeReference("X", -1), NodeReference("X"), 0.9),
-                SampleLaggedEdge(NodeReference("Y", -1), NodeReference("Y"), 0.9),
-                SampleLaggedEdge(NodeReference("X", -1), NodeReference("Y"), 5),
-            ],
-        )
-        model._initial_distribution_fn = lambda x: x
-        initial_values = model._calculate_initial_values()
-
-        self.assertAlmostEqual(float(initial_values["X"] ** 2), 5.2630, places=0)
-        self.assertAlmostEqual(float(initial_values["Y"] ** 2), 6602.2842, places=0)
-
-    def test_multiple_autocorrelations(self):
+    def test_data_generator_multiple_autocorrelations(self):
         model_multi_autocorr = TimeseriesSampleGenerator(
             edges=[
                 SampleLaggedEdge(NodeReference("X", -1), NodeReference("X"), 0.4),
@@ -110,3 +96,78 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
         self.assertAlmostEqual(result["X"][1].item(), 0.8, places=2)
         self.assertAlmostEqual(result["X"][2].item(), 0.72, places=2)
         self.assertAlmostEqual(result["X"][3].item(), 0.608, places=2)
+
+    def test_generating_initial_values(self):
+        model = TimeseriesSampleGenerator(
+            edges=[
+                SampleLaggedEdge(NodeReference("X", -1), NodeReference("X"), 0.9),
+                SampleLaggedEdge(NodeReference("Y", -1), NodeReference("Y"), 0.9),
+                SampleLaggedEdge(NodeReference("X", -1), NodeReference("Y"), 5),
+            ],
+        )
+        model._initial_distribution_fn = lambda x: x
+        initial_values = model._calculate_initial_values()
+
+        self.assertAlmostEqual(float(initial_values["X"] ** 2), 5.2630, places=0)
+        self.assertAlmostEqual(float(initial_values["Y"] ** 2), 6602.2842, places=0)
+
+    def test_generating_initial_values_additional_variable(self):
+        model = TimeseriesSampleGenerator(
+            edges=[
+                SampleLaggedEdge(NodeReference("X", -1), NodeReference("X"), 0.9),
+                SampleLaggedEdge(NodeReference("Y", -1), NodeReference("Y"), 0.9),
+                SampleLaggedEdge(NodeReference("Z", -1), NodeReference("Z"), 0.9),
+                SampleLaggedEdge(NodeReference("X", -1), NodeReference("Y"), 5),
+                SampleLaggedEdge(NodeReference("X", -1), NodeReference("Z"), 5),
+            ],
+        )
+        model._initial_distribution_fn = lambda x: x
+        initial_values = model._calculate_initial_values()
+
+        self.assertAlmostEqual(float(initial_values["X"] ** 2), 5.2630, places=0)
+        self.assertAlmostEqual(float(initial_values["Y"] ** 2), 6602.2842, places=0)
+
+    def test_generating_inital_values_three_variables(self):
+        model_one = TimeseriesSampleGenerator(
+            edges=[
+                SampleLaggedEdge(NodeReference("X", -1), NodeReference("X"), 0.9),
+                SampleLaggedEdge(NodeReference("Y", -1), NodeReference("Y"), 0.9),
+                SampleLaggedEdge(NodeReference("Z", -1), NodeReference("Z"), 0.9),
+                SampleLaggedEdge(NodeReference("Z", -1), NodeReference("Y"), 5),
+                SampleLaggedEdge(NodeReference("Y", -1), NodeReference("X"), 7),
+            ],
+            random=lambda: 0,
+        )
+
+        model_one._initial_distribution_fn = lambda x: torch.tensor(
+            x, dtype=torch.float32
+        )
+
+        model_one._initial_distribution_fn = lambda x: x
+        initial_values = model_one._calculate_initial_values()
+
+        self.assertAlmostEqual(float(initial_values["Z"] ** 2), 2.77777, places=0)
+
+    def test_inital_values_multiple_lags(self):
+        model_multiple_lags = TimeseriesSampleGenerator(
+            edges=[
+                SampleLaggedEdge(NodeReference("X", -1), NodeReference("X"), 0.8),
+                SampleLaggedEdge(NodeReference("Y", -1), NodeReference("Y"), 0.8),
+                SampleLaggedEdge(NodeReference("Z", -1), NodeReference("Z"), 0.8),
+                SampleLaggedEdge(NodeReference("Z", -1), NodeReference("Y"), 1),
+                SampleLaggedEdge(NodeReference("Z", -2), NodeReference("Y"), 2),
+                SampleLaggedEdge(NodeReference("Y", -1), NodeReference("X"), 1),
+                SampleLaggedEdge(NodeReference("Y", -3), NodeReference("X"), 2),
+            ],
+            random=lambda: 0,
+        )
+
+        model_multiple_lags._initial_distribution_fn = lambda x: torch.tensor(
+            x, dtype=torch.float32
+        )
+
+        initial_values = model_multiple_lags._calculate_initial_values()
+
+        result, graph = model_multiple_lags.generate(100)
+
+        self.assertAlmostEqual(float(initial_values["Z"] ** 2), 2.77777, places=0)
