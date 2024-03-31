@@ -24,8 +24,8 @@ class CausyAlgorithm(BaseModel):
 
 
 class CausyNodePosition(BaseModel):
-    x: float
-    y: float
+    x: Optional[float]
+    y: Optional[float]
 
 
 class CausyNode(BaseModel):
@@ -40,6 +40,10 @@ class CausyEdgeValue(BaseModel):
 
 
 class CausyEdge(BaseModel):
+    class Config:
+        allow_population_by_field_name = True
+        fields = {"from_field": "from"}
+
     from_field: CausyNode = Field(alias="from")
     to: CausyNode
     value: CausyEdgeValue
