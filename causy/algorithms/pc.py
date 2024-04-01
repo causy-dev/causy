@@ -1,3 +1,6 @@
+from causy.causal_effect_estimation.multivariate_regression import (
+    ComputeDirectEffectsMultivariateRegression,
+)
 from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
 from causy.generators import PairsWithNeighboursGenerator, RandomSampleGenerator
 from causy.graph_model import graph_model_factory
@@ -35,6 +38,7 @@ PC = graph_model_factory(
             ],
             exit_condition=ExitOnNoActions(),
         ),
+        ComputeDirectEffectsMultivariateRegression(),
     ]
 )
 
@@ -83,5 +87,6 @@ ParallelPC = graph_model_factory(
             ],
             exit_condition=ExitOnNoActions(),
         ),
+        ComputeDirectEffectsMultivariateRegression(),
     ]
 )

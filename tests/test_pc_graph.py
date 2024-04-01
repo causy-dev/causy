@@ -66,7 +66,7 @@ class PCTestTestCase(unittest.TestCase):
         retrieve_edges(tst.graph)
 
     def test_with_minimal_toy_model(self):
-        a, b, c, d, sample_size = 1.2, 1.7, 2, 1.5, 100000
+        a, b, c, d, sample_size = 5, 6, 7, 8, 100000
         test_data = generate_data_minimal_example(a, b, c, d, sample_size)
         tst = PC()
         tst.create_graph_from_data(test_data)
@@ -74,6 +74,10 @@ class PCTestTestCase(unittest.TestCase):
         tst.execute_pipeline_steps()
         retrieve_edges(tst.graph)
         node_mapping = {}
+
+        for e in retrieve_edges(tst.graph):
+            print(tst.graph.nodes[e[0]].name + " => " + tst.graph.nodes[e[1]].name)
+            print(tst.graph.edges[e[0]][e[1]].metadata)
 
         for key, node in tst.graph.nodes.items():
             node_mapping[node.name] = key
@@ -108,7 +112,10 @@ class PCTestTestCase(unittest.TestCase):
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
-        retrieve_edges(tst.graph)
+
+        for e in retrieve_edges(tst.graph):
+            print(tst.graph.nodes[e[0]].name + " => " + tst.graph.nodes[e[1]].name)
+            print(tst.graph.edges[e[0]][e[1]].metadata)
 
         for key, node in tst.graph.nodes.items():
             node_mapping[node.name] = key
