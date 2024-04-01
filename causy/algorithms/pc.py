@@ -25,9 +25,9 @@ from causy.orientation_rules.pc import (
 PC = graph_model_factory(
     pipeline_steps=[
         CalculatePearsonCorrelations(),
-        CorrelationCoefficientTest(threshold=0.005),
-        PartialCorrelationTest(threshold=0.005),
-        ExtendedPartialCorrelationTestMatrix(threshold=0.005),
+        CorrelationCoefficientTest(threshold=0.05),
+        PartialCorrelationTest(threshold=0.05),
+        ExtendedPartialCorrelationTestMatrix(threshold=0.05),
         ColliderTest(),
         Loop(
             pipeline_steps=[
