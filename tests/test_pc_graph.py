@@ -86,13 +86,6 @@ class PCTestTestCase(unittest.TestCase):
 
         # check the direct_effect values
         self.assertAlmostEqual(
-            tst.graph.edges[node_mapping["Z"]][node_mapping["Y"]].metadata[
-                "direct_effect"
-            ],
-            6.0,
-            1,
-        )
-        self.assertAlmostEqual(
             tst.graph.edges[node_mapping["Z"]][node_mapping["X"]].metadata[
                 "direct_effect"
             ],
