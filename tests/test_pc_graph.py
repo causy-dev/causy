@@ -8,6 +8,7 @@ from causy.graph_utils import retrieve_edges
 
 # TODO: generate larger toy model to test quadruple orientation rules.
 def generate_data_minimal_example(a, b, c, d, sample_size):
+    np.random.seed(0)
     V = d * np.random.normal(0, 1, sample_size)
     W = c * np.random.normal(0, 1, sample_size)
     Z = W + V + np.random.normal(0, 1, sample_size)
@@ -27,6 +28,7 @@ def generate_data_minimal_example(a, b, c, d, sample_size):
 
 
 def generate_data_further_example(c, d, e, f, g, sample_size):
+    np.random.seed(0)
     A = np.random.normal(0, 1, sample_size)
     B = np.random.normal(0, 1, sample_size)
     C = A + c * B + np.random.normal(0, 1, sample_size)
