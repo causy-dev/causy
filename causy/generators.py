@@ -68,8 +68,6 @@ class PairsWithEdgesInBetweenGenerator(GeneratorInterface):
             for t_node in graph.edges[f_node]:
                 edges.append((f_node, t_node))
 
-        print(edges)
-
         if self.chunked:
             for i in range(0, len(edges), self.CHUNK_SIZE):
                 yield edges[i : i + self.CHUNK_SIZE]

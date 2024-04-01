@@ -26,9 +26,9 @@ def generate_data_minimal_example(a, b, c, d, sample_size):
     return test_data
 
 
-def generate_data_further_example(a, b, c, d, e, f, g, sample_size):
-    A = a * np.random.normal(0, 1, sample_size)
-    B = b * np.random.normal(0, 1, sample_size)
+def generate_data_further_example(c, d, e, f, g, sample_size):
+    A = np.random.normal(0, 1, sample_size)
+    B = np.random.normal(0, 1, sample_size)
     C = A + c * B + np.random.normal(0, 1, sample_size)
     D = d * A + B + C + np.random.normal(0, 1, sample_size)
     E = e * B + np.random.normal(0, 1, sample_size)
@@ -75,12 +75,44 @@ class PCTestTestCase(unittest.TestCase):
         retrieve_edges(tst.graph)
         node_mapping = {}
 
+        """
         for e in retrieve_edges(tst.graph):
             print(tst.graph.nodes[e[0]].name + " => " + tst.graph.nodes[e[1]].name)
             print(tst.graph.edges[e[0]][e[1]].metadata)
+        """
 
         for key, node in tst.graph.nodes.items():
             node_mapping[node.name] = key
+
+        # check the direct_effect values
+        self.assertAlmostEqual(
+            tst.graph.edges[node_mapping["Z"]][node_mapping["Y"]].metadata[
+                "direct_effect"
+            ],
+            6.0,
+            1,
+        )
+        self.assertAlmostEqual(
+            tst.graph.edges[node_mapping["Z"]][node_mapping["X"]].metadata[
+                "direct_effect"
+            ],
+            5.0,
+            1,
+        )
+        self.assertAlmostEqual(
+            tst.graph.edges[node_mapping["V"]][node_mapping["Z"]].metadata[
+                "direct_effect"
+            ],
+            1.0,
+            1,
+        )
+        self.assertAlmostEqual(
+            tst.graph.edges[node_mapping["W"]][node_mapping["Z"]].metadata[
+                "direct_effect"
+            ],
+            1.0,
+            1,
+        )
 
         self.assertTrue(
             tst.graph.only_directed_edge_exists(
@@ -104,8 +136,8 @@ class PCTestTestCase(unittest.TestCase):
         )
 
     def test_with_larger_toy_model(self):
-        a, b, c, d, e, f, g, sample_size = 1.2, 1.7, 2, 1.5, 3, 4, 1.8, 10000
-        test_data = generate_data_further_example(a, b, c, d, e, f, g, sample_size)
+        c, d, e, f, g, sample_size = 2, 3, 4, 5, 6, 10000
+        test_data = generate_data_further_example(c, d, e, f, g, sample_size)
         tst = PC()
         node_mapping = {}
 
@@ -113,9 +145,11 @@ class PCTestTestCase(unittest.TestCase):
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
 
+        """
         for e in retrieve_edges(tst.graph):
             print(tst.graph.nodes[e[0]].name + " => " + tst.graph.nodes[e[1]].name)
             print(tst.graph.edges[e[0]][e[1]].metadata)
+        """
 
         for key, node in tst.graph.nodes.items():
             node_mapping[node.name] = key
@@ -125,6 +159,13 @@ class PCTestTestCase(unittest.TestCase):
                 tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["B"]]
             )
         )
+
+        self.assertFalse(
+            tst.graph.edge_exists(
+                tst.graph.nodes[node_mapping["B"]], tst.graph.nodes[node_mapping["A"]]
+            )
+        )
+
         self.assertTrue(
             tst.graph.directed_edge_exists(
                 tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["C"]]
@@ -183,6 +224,18 @@ class PCTestTestCase(unittest.TestCase):
         self.assertFalse(
             tst.graph.edge_exists(
                 tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["F"]]
+            )
+        )
+
+        self.assertFalse(
+            tst.graph.edge_exists(
+                tst.graph.nodes[node_mapping["E"]], tst.graph.nodes[node_mapping["D"]]
+            )
+        )
+
+        self.assertFalse(
+            tst.graph.edge_exists(
+                tst.graph.nodes[node_mapping["E"]], tst.graph.nodes[node_mapping["C"]]
             )
         )
 
