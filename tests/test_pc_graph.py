@@ -8,6 +8,7 @@ from causy.graph_utils import retrieve_edges
 
 # TODO: generate larger toy model to test quadruple orientation rules.
 def generate_data_minimal_example(a, b, c, d, sample_size):
+    np.random.seed(0)
     V = d * np.random.normal(0, 1, sample_size)
     W = c * np.random.normal(0, 1, sample_size)
     Z = W + V + np.random.normal(0, 1, sample_size)
@@ -26,9 +27,10 @@ def generate_data_minimal_example(a, b, c, d, sample_size):
     return test_data
 
 
-def generate_data_further_example(a, b, c, d, e, f, g, sample_size):
-    A = a * np.random.normal(0, 1, sample_size)
-    B = b * np.random.normal(0, 1, sample_size)
+def generate_data_further_example(c, d, e, f, g, sample_size):
+    np.random.seed(0)
+    A = np.random.normal(0, 1, sample_size)
+    B = np.random.normal(0, 1, sample_size)
     C = A + c * B + np.random.normal(0, 1, sample_size)
     D = d * A + B + C + np.random.normal(0, 1, sample_size)
     E = e * B + np.random.normal(0, 1, sample_size)
@@ -66,7 +68,7 @@ class PCTestTestCase(unittest.TestCase):
         retrieve_edges(tst.graph)
 
     def test_with_minimal_toy_model(self):
-        a, b, c, d, sample_size = 1.2, 1.7, 2, 1.5, 100000
+        a, b, c, d, sample_size = 5, 6, 7, 8, 100000
         test_data = generate_data_minimal_example(a, b, c, d, sample_size)
         tst = PC()
         tst.create_graph_from_data(test_data)
@@ -75,8 +77,37 @@ class PCTestTestCase(unittest.TestCase):
         retrieve_edges(tst.graph)
         node_mapping = {}
 
+        """
+        for e in retrieve_edges(tst.graph):
+            print(tst.graph.nodes[e[0]].name + " => " + tst.graph.nodes[e[1]].name)
+            print(tst.graph.edges[e[0]][e[1]].metadata)
+        """
+
         for key, node in tst.graph.nodes.items():
             node_mapping[node.name] = key
+
+        # check the direct_effect values
+        self.assertAlmostEqual(
+            tst.graph.edges[node_mapping["Z"]][node_mapping["X"]].metadata[
+                "direct_effect"
+            ],
+            5.0,
+            1,
+        )
+        self.assertAlmostEqual(
+            tst.graph.edges[node_mapping["V"]][node_mapping["Z"]].metadata[
+                "direct_effect"
+            ],
+            1.0,
+            1,
+        )
+        self.assertAlmostEqual(
+            tst.graph.edges[node_mapping["W"]][node_mapping["Z"]].metadata[
+                "direct_effect"
+            ],
+            1.0,
+            1,
+        )
 
         self.assertTrue(
             tst.graph.only_directed_edge_exists(
@@ -100,15 +131,20 @@ class PCTestTestCase(unittest.TestCase):
         )
 
     def test_with_larger_toy_model(self):
-        a, b, c, d, e, f, g, sample_size = 1.2, 1.7, 2, 1.5, 3, 4, 1.8, 10000
-        test_data = generate_data_further_example(a, b, c, d, e, f, g, sample_size)
+        c, d, e, f, g, sample_size = 2, 3, 4, 5, 6, 10000
+        test_data = generate_data_further_example(c, d, e, f, g, sample_size)
         tst = PC()
         node_mapping = {}
 
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
-        retrieve_edges(tst.graph)
+
+        """
+        for e in retrieve_edges(tst.graph):
+            print(tst.graph.nodes[e[0]].name + " => " + tst.graph.nodes[e[1]].name)
+            print(tst.graph.edges[e[0]][e[1]].metadata)
+        """
 
         for key, node in tst.graph.nodes.items():
             node_mapping[node.name] = key
@@ -118,6 +154,13 @@ class PCTestTestCase(unittest.TestCase):
                 tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["B"]]
             )
         )
+
+        self.assertFalse(
+            tst.graph.edge_exists(
+                tst.graph.nodes[node_mapping["B"]], tst.graph.nodes[node_mapping["A"]]
+            )
+        )
+
         self.assertTrue(
             tst.graph.directed_edge_exists(
                 tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["C"]]
@@ -176,6 +219,18 @@ class PCTestTestCase(unittest.TestCase):
         self.assertFalse(
             tst.graph.edge_exists(
                 tst.graph.nodes[node_mapping["A"]], tst.graph.nodes[node_mapping["F"]]
+            )
+        )
+
+        self.assertFalse(
+            tst.graph.edge_exists(
+                tst.graph.nodes[node_mapping["E"]], tst.graph.nodes[node_mapping["D"]]
+            )
+        )
+
+        self.assertFalse(
+            tst.graph.edge_exists(
+                tst.graph.nodes[node_mapping["E"]], tst.graph.nodes[node_mapping["C"]]
             )
         )
 

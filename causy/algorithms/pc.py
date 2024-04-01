@@ -1,3 +1,6 @@
+from causy.causal_effect_estimation.multivariate_regression import (
+    ComputeDirectEffectsMultivariateRegression,
+)
 from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
 from causy.generators import PairsWithNeighboursGenerator, RandomSampleGenerator
 from causy.graph_model import graph_model_factory
@@ -22,9 +25,9 @@ from causy.orientation_rules.pc import (
 PC = graph_model_factory(
     pipeline_steps=[
         CalculatePearsonCorrelations(),
-        CorrelationCoefficientTest(threshold=0.005),
-        PartialCorrelationTest(threshold=0.005),
-        ExtendedPartialCorrelationTestMatrix(threshold=0.005),
+        CorrelationCoefficientTest(threshold=0.05),
+        PartialCorrelationTest(threshold=0.05),
+        ExtendedPartialCorrelationTestMatrix(threshold=0.05),
         ColliderTest(),
         Loop(
             pipeline_steps=[
@@ -35,6 +38,7 @@ PC = graph_model_factory(
             ],
             exit_condition=ExitOnNoActions(),
         ),
+        ComputeDirectEffectsMultivariateRegression(),
     ]
 )
 
@@ -83,5 +87,6 @@ ParallelPC = graph_model_factory(
             ],
             exit_condition=ExitOnNoActions(),
         ),
+        ComputeDirectEffectsMultivariateRegression(),
     ]
 )
