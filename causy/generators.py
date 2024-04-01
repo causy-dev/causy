@@ -48,6 +48,29 @@ class AllCombinationsGenerator(GeneratorInterface):
                 yield i
 
 
+class PairsWithEdgesInBetweenGenerator(GeneratorInterface):
+    def __init__(self, comparison_settings: ComparisonSettings, chunked: bool = None):
+        self.chunked = chunked
+        super().__init__(comparison_settings, chunked)
+
+    CHUNK_SIZE = 100
+
+    def generate(
+        self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
+    ):
+        edges = [(edge.u, edge.v) for edge in graph.edges]
+
+        if self.chunked:
+            for i in range(0, len(edges), self.CHUNK_SIZE):
+                chunk = []
+                for edge in edges[i : i + self.CHUNK_SIZE]:
+                    chunk.append(edge)
+                yield chunk
+
+        for edge in edges:
+            yield (edge.u, edge.v)
+
+
 class PairsWithNeighboursGenerator(GeneratorInterface):
     """
     Generates all combinations of pairs of nodes with their neighbours
