@@ -14,6 +14,9 @@ from causy.interfaces import (
 class ComputeDirectEffectsMultivariateRegression(PipelineStepInterface):
     generator = PairsWithEdgesInBetweenGenerator()
 
+    chunk_size_parallel_processing = 1
+    parallel = False
+
     def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
         """
         Calculate the direct effect of each edge in the graph using multivariate regression.

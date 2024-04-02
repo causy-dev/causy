@@ -1,4 +1,5 @@
 import logging
+import platform
 from abc import ABC
 from copy import deepcopy
 from typing import Optional, List, Dict, Callable
@@ -52,13 +53,15 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         Initialize the multiprocessing pool
         :return: the multiprocessing pool
         """
-        # we need to set the start method to spawn because the default fork method does not work well with torch
-        try:
-            mp.set_start_method("spawn")
-        except RuntimeError:
-            logger.warning(
-                "Could not set multiprocessing start method to spawn. Using default method."
-            )
+        # we need to set the start method to spawn because the default fork method does not work well with torch on linux
+        # see https://pytorch.org/docs/stable/notes/multiprocessing.html
+        if platform.system() == "Linux":
+            try:
+                mp.set_start_method("spawn")
+            except RuntimeError:
+                logger.warning(
+                    "Could not set multiprocessing start method to spawn. Using default method. This might cause issues on Linux."
+                )
         return mp.Pool(mp.cpu_count() * 2)
 
     def __multiprocessing_required(self, pipeline_steps):
