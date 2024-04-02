@@ -1,7 +1,7 @@
 import logging
 from abc import ABC
 from copy import deepcopy
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Callable
 
 import torch.multiprocessing as mp
 
@@ -34,6 +34,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     pipeline_steps: List[PipelineStepInterface]
     graph: BaseGraphInterface
     pool: mp.Pool
+    initialize_pool_fn: Callable = lambda self: mp.Pool(mp.cpu_count() * 2)
 
     def __init__(
         self,
@@ -42,11 +43,26 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     ):
         self.graph = graph
         self.pipeline_steps = pipeline_steps or []
-        self.pool = mp.Pool(mp.cpu_count() * 2)
+        if self.__multiprocessing_required(self.pipeline_steps):
+            self.pool = self.initialize_pool_fn()
+        else:
+            self.pool = None
+
+    def __multiprocessing_required(self, pipeline_steps):
+        """
+        Check if multiprocessing is required
+        :param pipeline_steps: the pipeline steps
+        :return: True if multiprocessing is required
+        """
+        for step in pipeline_steps:
+            if hasattr(step, "parallel") and step.parallel:
+                return True
+        return False
 
     def __del__(self):
-        self.pool.close()
-        self.pool.join()
+        if self.pool is not None:
+            self.pool.close()
+            self.pool.join()
 
     def create_graph_from_data(self, data: List[Dict[str, float]]):
         """
@@ -224,6 +240,12 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         # run all combinations in parallel except if the number of combinations is smaller then the chunk size
         # because then we would create more overhead then we would definetly gain from parallel processing
         if test_fn.parallel:
+            if self.pool is None:
+                logger.warning(
+                    "Parallel processing is enabled but no pool is initialized. Initializing pool."
+                )
+                self.pool = self.initialize_pool_fn()
+
             for result in self.pool.imap_unordered(
                 unpack_run,
                 self._format_yield(
