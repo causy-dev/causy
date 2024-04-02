@@ -153,6 +153,7 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
         inverse_cov_matrix = torch.inverse(
             torch.cov(torch.stack([graph.nodes[node].values for node in nodes]))
         )
+
         n = inverse_cov_matrix.size(0)
         diagonal = torch.diag(inverse_cov_matrix)
         diagonal_matrix = torch.zeros((n, n), dtype=torch.float32)

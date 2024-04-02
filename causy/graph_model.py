@@ -44,6 +44,10 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         self.pipeline_steps = pipeline_steps or []
         self.pool = mp.Pool(mp.cpu_count() * 2)
 
+    def __del__(self):
+        self.pool.close()
+        self.pool.join()
+
     def create_graph_from_data(self, data: List[Dict[str, float]]):
         """
         Create a graph from data
@@ -132,7 +136,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
             for i in result_items:
                 if i.u is not None and i.v is not None:
-                    logger.info(f"Action: {i.action} on {i.u.name} and {i.v.name}")
+                    logger.debug(f"Action: {i.action} on {i.u.name} and {i.v.name}")
 
                 # execute the action returned by the test
                 if i.action == TestResultAction.REMOVE_EDGE_UNDIRECTED:
