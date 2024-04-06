@@ -166,12 +166,9 @@ class IIDSampleGenerator(AbstractSampleGenerator):
         for node_name in self._variables:
             # Get the edges that point to this node
             ingoing_edges[node_name] = self._get_edges_for_node_to(node_name)
-        print(f"ingoing_edges={ingoing_edges}")
 
         # Sort the node such that all nodes that appear in edges must have occured as keys before
         sorted_nodes = self.topologic_sort(self._variables)
-
-        print(f"sorted_nodes={sorted_nodes}")
 
         # Generate the data
         for to_node in sorted_nodes:
@@ -197,9 +194,6 @@ class IIDSampleGenerator(AbstractSampleGenerator):
             )
 
         for edge in self._edges:
-            print(type(edge.from_node.node))
-            print(edge.from_node.node)
-            print(f"{edge.to_node.node}")
             graph.add_directed_edge(
                 graph.nodes[edge.from_node.node],
                 graph.nodes[edge.to_node.node],
@@ -252,8 +246,6 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
         internal_repr = {}
 
         initial_values = self._calculate_initial_values()
-        print(f"initial values={initial_values}")
-
         # Initialize the output dictionary
         for k in self._variables:
             internal_repr[k] = [initial_values[k]]
@@ -265,7 +257,6 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
                 result = torch.tensor(0.0, dtype=torch.float32)
                 for edge in edges:
                     if abs(edge.from_node.point_in_time) > t:
-                        print(f"initial values={initial_values[edge.from_node.node]}")
                         result += (
                             edge.value * initial_values[edge.from_node.node]
                         )  # TODO(sofia): map here to the proper point in time
@@ -367,8 +358,6 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
                 values_map[edge.to_node.node]
             ][values_map[edge.from_node.node]] = edge.value
 
-        print(f"matrix={matrix}")
-
         # return me as torch tensor
         return self.custom_block_diagonal(matrix)
 
@@ -405,10 +394,8 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
         """
         coefficient_matrix = self.__generate_coefficient_matrix()
         n, _ = coefficient_matrix.shape
-        print(f"coefficient_matrix={coefficient_matrix}")
 
         kronecker_product = torch.kron(coefficient_matrix, coefficient_matrix)
-        print(f"kronecker_product_size={kronecker_product.size()}")
         identity_matrix = torch.eye(n**2)
         cov_matrix_noise_terms_vectorized = self.vectorize_identity_block(n)
         inv_identity_minus_kronecker_product = torch.linalg.pinv(
@@ -419,15 +406,11 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
             cov_matrix_noise_terms_vectorized,
         )
         vectorized_covariance_matrix = vectorized_covariance_matrix.reshape(n, n)
-        print("vectorized_covariance_matrix")
-        print(vectorized_covariance_matrix)
 
         initial_values: Dict[str, torch.Tensor] = {}
         values = torch.diagonal(vectorized_covariance_matrix, offset=0)
         for k, i in self.__matrix_position_mapping().items():
             initial_values[k] = self._initial_distribution_fn(torch.sqrt(values[i]))
-        print("initial values")
-        print(initial_values)
         return initial_values
 
     def __matrix_position_mapping(self):
