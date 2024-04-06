@@ -63,7 +63,55 @@ class TimeTravelingError(Exception):
     pass
 
 
-class IIDSampleGenerator:
+class AbstractSampleGenerator(abc.ABC):
+    def __init__(
+        self,
+        edges: List[Union[SampleEdge, SampleEdge]],
+        random: Callable = random,  # for setting that to a fixed value for testing use random = lambda: 0
+    ):
+        self._edges = edges
+        self._variables = self._find_variables_in_edges()
+        self.random_fn = random
+
+    @abc.abstractmethod
+    def generate(self, size: int) -> SimpleNamespace:
+        """
+        Generate data for a sample graph with a time dimension
+        :param size: the number of time steps to generate
+        :return: the generated data and the sample graph
+        """
+        pass
+
+    @abc.abstractmethod
+    def _generate_data(self, size: int) -> Dict[str, torch.Tensor]:
+        """
+        Generate data for a sample graph with a time dimension
+        :param size: the number of time steps to generate
+        :return: the generated data
+        """
+        pass
+
+    def _find_variables_in_edges(self):
+        """
+        Find all variables in the edges of the sample generator. We need this to calculate the initial values for all existing variables.
+        :return: a set of all variables submitted via the edges
+        """
+        variables = set()
+        for edge in self._edges:
+            variables.add(edge.from_node.node)
+            variables.add(edge.to_node.node)
+        return variables
+
+    def _get_edges_for_node_to(self, node: str):
+        """
+        Get all edges that point to a specific node
+        :param node: the node to get the edges for
+        :return: a list of edges
+        """
+        return [edge for edge in self._edges if edge.to_node.node == node]
+
+
+class IIDSampleGenerator(AbstractSampleGenerator):
     """
     A sample generator that generates data from i.i.d multivariate Gaussians.
 
@@ -79,35 +127,23 @@ class IIDSampleGenerator:
 
     """
 
-    def __init__(
-        self,
-        edges: List[Union[SampleEdge, SampleEdge]],
-        random: Callable = random,  # for setting that to a fixed value for testing use random = lambda: 0
-    ):
-        self.__edges = edges
-        self.__variables = self.__find__variables_in_edges()
-        self.random_fn = random
-
-    random_fn: Callable = random
-
-    def __find__variables_in_edges(self):
+    def topologic_sort(self, nodes: List[str]):
         """
-        Find all variables in the edges of the sample generator. We need this to calculate the initial values for all existing variables.
-        :return: a set of all variables submitted via the edges
+        Sorts the nodes topologically
+        :param nodes: list of nodes
+        :param edges: list of edges
+        :return: a list of sorted nodes
         """
-        variables = set()
-        for edge in self.__edges:
-            variables.add(edge.from_node.node)
-            variables.add(edge.to_node.node)
-        return variables
-
-    def get_edges_for_node_to(self, node: str):
-        """
-        Get all edges that point to a specific node
-        :param node: the node to get the edges for
-        :return: a list of edges
-        """
-        return [edge for edge in self.__edges if edge.to_node.node == node]
+        sorted_nodes = []
+        while nodes:
+            for node in nodes:
+                if set(
+                    [edge.from_node.node for edge in self._get_edges_for_node_to(node)]
+                ).issubset(set(sorted_nodes)):
+                    sorted_nodes.append(node)
+                    nodes.remove(node)
+                    break
+        return sorted_nodes
 
     def _generate_data(self, size):
         """
@@ -118,7 +154,7 @@ class IIDSampleGenerator:
         internal_repr = {}
 
         # Initialize the output dictionary by adding noise
-        for k in self.__variables:
+        for k in self._variables:
             internal_repr[k] = torch.tensor(
                 [self.random_fn() for _ in range(size)], dtype=torch.float32
             )
@@ -126,15 +162,16 @@ class IIDSampleGenerator:
         # Iterate over the nodes and sort them by the number of ingoing edges
         ingoing_edges = {}
 
-        for node_name in self.__variables:
+        # topological sort: sort the nodes in an order that the nodes that depend on other nodes come after the nodes they depend on
+        for node_name in self._variables:
             # Get the edges that point to this node
-            ingoing_edges[node_name] = self.get_edges_for_node_to(node_name)
+            ingoing_edges[node_name] = self._get_edges_for_node_to(node_name)
         print(f"ingoing_edges={ingoing_edges}")
 
-        # Sort the nodes by the number of ingoing edges
-        sorted_nodes = sorted(
-            ingoing_edges, key=lambda x: len(ingoing_edges[x]), reverse=True
-        )
+        # Sort the node such that all nodes that appear in edges must have occured as keys before
+        sorted_nodes = self.topologic_sort(self._variables)
+
+        print(f"sorted_nodes={sorted_nodes}")
 
         # Generate the data
         for to_node in sorted_nodes:
@@ -151,7 +188,7 @@ class IIDSampleGenerator:
         """
         output = self._generate_data(size)
         graph = Graph()
-        for i in self.__variables:
+        for i in self._variables:
             graph.add_node(
                 i,
                 output[i],
@@ -159,7 +196,7 @@ class IIDSampleGenerator:
                 metadata={"variable": i},
             )
 
-        for edge in self.__edges:
+        for edge in self._edges:
             print(type(edge.from_node.node))
             print(edge.from_node.node)
             print(f"{edge.to_node.node}")
@@ -173,7 +210,7 @@ class IIDSampleGenerator:
 
 
 # TODO: Does not work for multiple lags properly yet and is numerically unstable for several cases (check why, fix it)
-class TimeseriesSampleGenerator:
+class TimeseriesSampleGenerator(AbstractSampleGenerator):
     """
     A sample generator that generates data for a sample graph with a time dimension.
 
@@ -199,35 +236,12 @@ class TimeseriesSampleGenerator:
         edges: List[Union[SampleEdge, SampleEdge]],
         random: Callable = random,  # for setting that to a fixed value for testing use random = lambda: 0
     ):
-        self.__edges = edges
-        self.__variables = self.__find__variables_in_edges()
-        self.__longest_lag = max(
-            [abs(edge.from_node.point_in_time) for edge in self.__edges]
+        super().__init__(edges, random)
+        self._longest_lag = max(
+            [abs(edge.from_node.point_in_time) for edge in self._edges]
         )
-        print(f"longest lag={self.__longest_lag}")
-        self.random_fn = random
 
-    random_fn: Callable = random
     _initial_distribution_fn: Callable = lambda self, x: torch.normal(0, x)
-
-    def __find__variables_in_edges(self):
-        """
-        Find all variables in the edges of the sample generator. We need this to calculate the initial values for all existing variables.
-        :return: a set of all variables submitted via the edges
-        """
-        variables = set()
-        for edge in self.__edges:
-            variables.add(edge.from_node.node)
-            variables.add(edge.to_node.node)
-        return variables
-
-    def get_edges_for_node_to(self, node: str):
-        """
-        Get all edges that point to a specific node
-        :param node: the node to get the edges for
-        :return: a list of edges
-        """
-        return [edge for edge in self.__edges if edge.to_node.node == node]
 
     def _generate_data(self, size):
         """
@@ -241,13 +255,13 @@ class TimeseriesSampleGenerator:
         print(f"initial values={initial_values}")
 
         # Initialize the output dictionary
-        for k in self.__variables:
+        for k in self._variables:
             internal_repr[k] = [initial_values[k]]
 
         for t in range(1, size):
-            for node_name in self.__variables:
+            for node_name in self._variables:
                 # Get the edges that point to this node
-                edges = self.get_edges_for_node_to(node_name)
+                edges = self._get_edges_for_node_to(node_name)
                 result = torch.tensor(0.0, dtype=torch.float32)
                 for edge in edges:
                     if abs(edge.from_node.point_in_time) > t:
@@ -279,7 +293,7 @@ class TimeseriesSampleGenerator:
         """
         output = self._generate_data(size)
         graph = Graph()
-        for i in self.__variables:
+        for i in self._variables:
             for t in range(size):
                 graph.add_node(
                     f"{i} - t{t}",
@@ -289,7 +303,7 @@ class TimeseriesSampleGenerator:
                 )
 
         for t in range(1, size):
-            for edge in self.__edges:
+            for edge in self._edges:
                 if t - abs(edge.from_node.point_in_time) < 0:
                     logger.debug(
                         f"Cannot generate data for {edge.from_node.node} at t={t}, "
@@ -341,14 +355,14 @@ class TimeseriesSampleGenerator:
         """
 
         matrix: List[List[List[float]]] = [
-            [[0 for _ in self.__variables] for _ in self.__variables]
-            for _ in range(self.__longest_lag)
+            [[0 for _ in self._variables] for _ in self._variables]
+            for _ in range(self._longest_lag)
         ]
 
         # map the initial values to numbers from 0 to n
         values_map = self.__matrix_position_mapping()
 
-        for edge in self.__edges:
+        for edge in self._edges:
             matrix[(edge.from_node.point_in_time * -1) - 1][
                 values_map[edge.to_node.node]
             ][values_map[edge.from_node.node]] = edge.value
@@ -363,8 +377,8 @@ class TimeseriesSampleGenerator:
         matrix = torch.zeros(n, n)
 
         # Fill the upper left block with an identity matrix
-        matrix[: n // self.__longest_lag, : n // self.__longest_lag] = torch.eye(
-            n // self.__longest_lag
+        matrix[: n // self._longest_lag, : n // self._longest_lag] = torch.eye(
+            n // self._longest_lag
         )
 
         # Flatten the matrix
@@ -422,6 +436,6 @@ class TimeseriesSampleGenerator:
         :return:
         """
         values_map = {}
-        for i, k in enumerate(self.__variables):
+        for i, k in enumerate(self._variables):
             values_map[k] = i
         return values_map
