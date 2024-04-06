@@ -20,35 +20,39 @@ def random() -> torch.Tensor:
     return torch.randn(1, dtype=torch.float32).item()
 
 
+@dataclass
+class NodeReference:
+    """
+    A reference to a node in the sample generator
+    """
+
+    node: str
+
+    def __str__(self):
+        return self.node
+
+
+@dataclass
+class TimeAwareNodeReference(NodeReference):
+    """
+    A reference to a node in the sample generator
+    """
+
+    point_in_time: int = 0
+
+    def __str__(self):
+        return f"{self.node} - t{self.point_in_time}"
+
+
+@dataclass
 class SampleEdge:
     """
-    Represents an edge in a sample graph
-    defines a directed edge from source to target
-
-    Example:
-    SampleEdge("X", "Y") defines an edge from X to Y
-
+    An edge in the sample generator that references a node and a lag
     """
 
-    def __init__(self, source, target):
-        self.source = source
-        self.target = target
-
-
-class SampleLaggedEdge(SampleEdge):
-    """
-    Represents a lagged edge in a time series sample graph.
-    Defines a directed edge from source to target with a lag of lag. The lag is the number of time steps between the
-    source and the target.
-
-    Example:
-    SampleLaggedEdge("X", "Y", 1) defines an edge from X to Y with a lag of 1
-
-    """
-
-    def __init__(self, source, target, lag):
-        super().__init__(source, target)
-        self.lag = lag
+    from_node: NodeReference
+    to_node: NodeReference
+    value: float = 0
 
 
 class TimeTravelingError(Exception):
@@ -59,225 +63,116 @@ class TimeTravelingError(Exception):
     pass
 
 
-class TimeProxy:
+class IIDSampleGenerator:
     """
-    A proxy object that allows to access past values of a variable by using the t() method.
+    A sample generator that generates data from i.i.d multivariate Gaussians.
+
+    A variable can not depend on itself.
 
     Example:
-    >>> tp = TimeProxy(5)
-    >>> tp.set_current_time(1)
-    >>> tp.t(-1)
-    5
-    """
-
-    def __init__(self, initial_value: torch.Tensor):
-        """
-        :param initial_value: the initial value of the variable
-        """
-        if not isinstance(initial_value, torch.Tensor):
-            initial_value = torch.tensor(initial_value, dtype=torch.float32)
-        self._lst = [initial_value]
-        self._t = 0
-
-    def set_current_time(self, t):
-        """
-        Set the current time step which t will be relative to
-        :param t: time step as an integer
-        :return:
-        """
-        self._t = t
-
-    def t(self, t):
-        """
-        Return the value of the variable at time step t
-        :param t: the relative time step as a negative integer
-        :return: the value of the variable at time step t or a random number if t is too large
-        :raises TimeTravelingError: if t is positive
-        """
-        if t > 0:
-            raise TimeTravelingError(
-                f"Cannot travel into the future ({self._t + t} steps ahead)."
-            )
-        elif t + self._t < 0:
-            # TODO this might be a bad idea
-            return random()
-        return self._lst[self._t + t]
-
-    def append(self, value):
-        """
-        Append a value to the list of values
-        :param value: the value to append
-        :return:
-        """
-        if not isinstance(value, torch.Tensor):
-            value = torch.tensor(value, dtype=torch.float32)
-        self._lst.append(value)
-
-    def to_list(self):
-        """
-        Return the list of values
-        :return: the list
-        """
-        return torch.stack(self._lst)
-
-    def __repr__(self):
-        return f"{self._lst} at {self._t}"
-
-
-class CurrentElementProxy(float):
-    """
-    A proxy object that allows to access the current value of a variable. It is a subclass of float, so it can be used
-    as a float.
-    """
-
-    # TODO: fix this class. Bug: IIDSampleGenerator only depends on the initial value, it should depend on the step
-
-    def __init__(self, initial_value: torch.Tensor):
-        if not isinstance(initial_value, torch.Tensor):
-            initial_value = torch.tensor(initial_value, dtype=torch.float32)
-        self.lst = [initial_value]
-        self.value = initial_value
-
-    def append(self, value):
-        if not isinstance(value, torch.Tensor):
-            value = torch.tensor(value, dtype=torch.float32)
-
-        self.lst.append(value)
-        self.value = value
-
-    def to_list(self):
-        return torch.stack(self.lst)
-
-
-class AbstractSampleGenerator(abc.ABC):
-    """
-    An abstract class for sample generators that generate data for a sample graph.
-    It is implemented by TimeseriesSampleGenerator and IIDSampleGenerator.
+    >>> sg = IIDSampleGenerator(
+    >>>     edges=[
+    >>>      SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+    >>>      SampleEdge(NodeReference("Y"), NodeReference("Z"), 7),
+    >>>      ],
+    >>> )
 
     """
 
     def __init__(
         self,
-        initial_values: Dict[str, any],
-        generators: Dict[str, Callable],
-        edges: List[Union[SampleLaggedEdge, SampleEdge]],
-        variables: Optional[Dict[str, any]] = None,
+        edges: List[Union[SampleEdge, SampleEdge]],
+        random: Callable = random,  # for setting that to a fixed value for testing use random = lambda: 0
     ):
-        self.initial_values = initial_values
-        self.generators = generators
-        self.edges = edges
-        if variables is None:
-            variables = {}
-        self.vars = variables
+        self.__edges = edges
+        self.__variables = self.__find__variables_in_edges()
+        self.random_fn = random
 
-    @abc.abstractmethod
-    def generate(self, size: int):
-        pass
+    random_fn: Callable = random
 
+    def __find__variables_in_edges(self):
+        """
+        Find all variables in the edges of the sample generator. We need this to calculate the initial values for all existing variables.
+        :return: a set of all variables submitted via the edges
+        """
+        variables = set()
+        for edge in self.__edges:
+            variables.add(edge.from_node.node)
+            variables.add(edge.to_node.node)
+        return variables
 
-class IIDSampleGenerator(AbstractSampleGenerator):
-    """
-    A sample generator that generates data for a sample graph without a time dimension.
+    def get_edges_for_node_to(self, node: str):
+        """
+        Get all edges that point to a specific node
+        :param node: the node to get the edges for
+        :return: a list of edges
+        """
+        return [edge for edge in self.__edges if edge.to_node.node == node]
 
-    Generators are written as a lambda function that takes two arguments: the current step and the input.
-    The input is a SimpleNamespace object that contains the current values of all variables.
-
-    A variable can not depend on itself.
-
-
-    Example:
-    >>> sg = IIDSampleGenerator(
-    >>>     initial_values={
-    >>>         "Z": random(),
-    >>>         "Y": random(),
-    >>>         "X": random(),
-    >>>     },
-    >>>     variables={
-    >>>         "param1": 2,
-    >>>         "param2": 3,
-    >>>     },
-    >>>     # generate the dependencies of variables on values of themselves and other variables
-    >>>     generators={
-    >>>         "Z": lambda s, i: random(),
-    >>>         "Y": lambda s, i: i.param1 * i.Z + random(),
-    >>>         "X": lambda s, i: i.param2 * i.Y + random()
-    >>>     },
-    >>>     edges=[
-    >>>         SampleEdge("Z", "Y"),
-    >>>         SampleEdge("Y", "X"),
-    >>>     ]
-    >>> )
-
-    """
-
-    # TODO: fix this class. Bug: IIDSampleGenerator only depends on the initial value, it should depend on the step
     def _generate_data(self, size):
+        """
+        Generate data for a sample graph with a time dimension
+        :param size: the number of time steps to generate
+        :return: the generated data
+        """
         internal_repr = {}
 
-        # Initialize the output dictionary
-        for i, v in self.initial_values.items():
-            internal_repr[i] = CurrentElementProxy(v)
+        # Initialize the output dictionary by adding noise
+        for k in self.__variables:
+            internal_repr[k] = torch.tensor(
+                [self.random_fn() for _ in range(size)], dtype=torch.float32
+            )
 
-        # Generate the data for each time step
-        for step in range(1, size):
-            for value in self.generators.keys():
-                generator_input = internal_repr
-                generator_input.update(self.vars)
-                internal_repr[value].append(
-                    self.generators[value](step, SimpleNamespace(**generator_input))
-                )
-        output = {}
-        for i in self.generators.keys():
-            output[i] = internal_repr[i].to_list()
+        # Iterate over the nodes and sort them by the number of ingoing edges
+        ingoing_edges = {}
 
-        return output
+        for node_name in self.__variables:
+            # Get the edges that point to this node
+            ingoing_edges[node_name] = self.get_edges_for_node_to(node_name)
+        print(f"ingoing_edges={ingoing_edges}")
+
+        # Sort the nodes by the number of ingoing edges
+        sorted_nodes = sorted(
+            ingoing_edges, key=lambda x: len(ingoing_edges[x]), reverse=True
+        )
+
+        # Generate the data
+        for to_node in sorted_nodes:
+            for edge in ingoing_edges[to_node]:
+                from_node = edge.from_node.node
+                internal_repr[to_node] += edge.value * internal_repr[from_node]
+        return internal_repr
 
     def generate(self, size):
         """
-        Generate data for a sample graph without a time dimension
-        :param size: the number of data points to generate
+        Generate data for a sample graph with a time dimension
+        :param size: the number of time steps to generate
         :return: the generated data and the sample graph
         """
         output = self._generate_data(size)
         graph = Graph()
-
-        for i in self.generators.keys():
-            graph.add_node(f"{i}", output[i], id_=f"{i}")
-
-        for edge in self.edges:
-            graph.add_edge(
-                graph.nodes[f"{edge.source}"],
-                graph.nodes[f"{edge.target}"],
-                metadata={},
+        for i in self.__variables:
+            graph.add_node(
+                i,
+                output[i],
+                id_=i,
+                metadata={"variable": i},
             )
-            graph.remove_directed_edge(
-                graph.nodes[f"{edge.target}"], graph.nodes[f"{edge.source}"]
+
+        for edge in self.__edges:
+            print(type(edge.from_node.node))
+            print(edge.from_node.node)
+            print(f"{edge.to_node.node}")
+            graph.add_directed_edge(
+                graph.nodes[edge.from_node.node],
+                graph.nodes[edge.to_node.node],
+                metadata={},
             )
 
         return output, graph
 
 
-@dataclass
-class NodeReference:
-    """
-    A reference to a node in the sample generator
-    """
-
-    node: str
-    point_in_time: int = 0
-
-
-@dataclass
-class SampleLaggedEdge:
-    """
-    An edge in the sample generator that references a node and a lag
-    """
-
-    from_node: NodeReference
-    to_node: NodeReference
-    value: float = 0
-
-
+# TODO: Does not work for multiple lags properly yet and is numerically unstable for several cases (check why, fix it)
 class TimeseriesSampleGenerator:
     """
     A sample generator that generates data for a sample graph with a time dimension.
@@ -285,23 +180,23 @@ class TimeseriesSampleGenerator:
     Edges are defined as SampleLaggedEdges, which define a directed edge from a source node to a target node with a
     ag. The lag is the number of time steps between the source and the target.
 
-    A variable can depend on itself, but only on its past values (with a lag). This is useful for autoregressive models.
+    A variable can depend on itself, but only on its past values (with a lag). This corresponds to autoregressive models.
 
     Example:
     >>> sg = TimeseriesSampleGenerator(
     >>>     edges=[
-    >>>      SampleLaggedEdge(NodeReference("X", -1), NodeReference("X"), 0.9),
-    >>>      SampleLaggedEdge(NodeReference("Y", -1), NodeReference("Y"), 0.9),
-    >>>      SampleLaggedEdge(NodeReference("Z", -1), NodeReference("Z"), 0.9),
-    >>>      SampleLaggedEdge(NodeReference("Z", -1), NodeReference("Y"), 5),
-    >>>      SampleLaggedEdge(NodeReference("Y", -1), NodeReference("X"), 7),
+    >>>      SampleEdge(TimeAwareNodeReference("X", -1), TimeAwareNodeReference("X"), 0.9),
+    >>>      SampleEdge(TimeAwareNodeReference("Y", -1), TimeAwareNodeReference("Y"), 0.9),
+    >>>      SampleEdge(TimeAwareNodeReference("Z", -1), TimeAwareNodeReference("Z"), 0.9),
+    >>>      SampleEdge(TimeAwareNodeReference("Z", -1), TimeAwareNodeReference("Y"), 5),
+    >>>      SampleEdge(TimeAwareNodeReference("Y", -1), TimeAwareNodeReference("X"), 7),
     >>>      ],
     >>> )
     """
 
     def __init__(
         self,
-        edges: List[Union[SampleLaggedEdge, SampleLaggedEdge]],
+        edges: List[Union[SampleEdge, SampleEdge]],
         random: Callable = random,  # for setting that to a fixed value for testing use random = lambda: 0
     ):
         self.__edges = edges
@@ -495,11 +390,11 @@ class TimeseriesSampleGenerator:
         :return: the initial values for the sample generator graph as a dictionary
         """
         coefficient_matrix = self.__generate_coefficient_matrix()
+        n, _ = coefficient_matrix.shape
         print(f"coefficient_matrix={coefficient_matrix}")
 
         kronecker_product = torch.kron(coefficient_matrix, coefficient_matrix)
         print(f"kronecker_product_size={kronecker_product.size()}")
-        n, _ = coefficient_matrix.shape
         identity_matrix = torch.eye(n**2)
         cov_matrix_noise_terms_vectorized = self.vectorize_identity_block(n)
         inv_identity_minus_kronecker_product = torch.linalg.pinv(
