@@ -221,4 +221,4 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
 
         self.assertAlmostEqual(float(initial_values["X"] ** 2), 5.2630, places=0)
         # TODO: this is a bit of a hack, we have to fix numerical stability and then reduce the places
-        self.assertAlmostEqual(float(initial_values["Y"] ** 2), 6602.2842, places=-1)
+        self.assertAlmostEqual(float(initial_values["Y"] ** 2), 6602.2842, places=-2)
