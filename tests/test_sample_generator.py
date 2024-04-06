@@ -140,6 +140,7 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
         self.assertAlmostEqual(result["Y"][2].item(), 9.81, places=2)
 
     def test_data_generator_multiple_autocorrelations(self):
+        torch.manual_seed(0)
         model_multi_autocorr = TimeseriesSampleGenerator(
             edges=[
                 SampleEdge(
@@ -163,7 +164,8 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
         self.assertAlmostEqual(result["X"][2].item(), 0.72, places=2)
         self.assertAlmostEqual(result["X"][3].item(), 0.608, places=2)
 
-    def test_generating_initial_values(self):
+    def test_generating_initial_values(self):  #
+        torch.manual_seed(0)
         model = TimeseriesSampleGenerator(
             edges=[
                 SampleEdge(
@@ -184,6 +186,7 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
         self.assertAlmostEqual(float(initial_values["Y"] ** 2), 6602.2842, places=0)
 
     def test_generating_initial_values_additional_variable(self):
+        torch.manual_seed(0)
         model = TimeseriesSampleGenerator(
             edges=[
                 SampleEdge(
