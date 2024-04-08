@@ -23,7 +23,7 @@ def set_random_seed(seed):
 
 class PCTestTestCase(unittest.TestCase):
     def test_with_rki_data(self):
-        with open("./fixtures/rki-data.csv") as f:
+        with open("./tests/fixtures/rki-data.csv") as f:
             data = csv.DictReader(f)
             test_data = []
             for row in data:
