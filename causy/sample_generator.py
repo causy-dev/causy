@@ -1,4 +1,5 @@
 import abc
+import copy
 from dataclasses import dataclass
 from types import SimpleNamespace
 
@@ -168,7 +169,7 @@ class IIDSampleGenerator(AbstractSampleGenerator):
             ingoing_edges[node_name] = self._get_edges_for_node_to(node_name)
 
         # Sort the node such that all nodes that appear in edges must have occured as keys before
-        sorted_nodes = self.topologic_sort(self._variables)
+        sorted_nodes = self.topologic_sort(copy.deepcopy(list(self._variables)))
 
         # Generate the data
         for to_node in sorted_nodes:
