@@ -2,7 +2,7 @@ import logging
 import platform
 from abc import ABC
 from copy import deepcopy
-from typing import Optional, List, Dict, Callable
+from typing import Optional, List, Dict, Callable, Union
 
 import torch.multiprocessing as mp
 
@@ -80,10 +80,21 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             self.pool.close()
             self.pool.join()
 
-    def create_graph_from_data(self, data: List[Dict[str, float]]):
+    def __create_graph_from_dict(self, data: Dict[str, List[float]]):
         """
-        Create a graph from data
-        :param data: is a list of dictionaries
+        Create a graph from a dictionary
+        :param data: the dictionary
+        :return: the graph
+        """
+        graph = Graph()
+        for key, values in data.items():
+            graph.add_node(key, values, id_=key)
+        return graph
+
+    def __create_graph_from_list(self, data: List[Dict[str, float]]):
+        """
+        Create a graph from a list of dictionaries
+        :param data:
         :return:
         """
         # initialize nodes
@@ -100,7 +111,23 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         graph = Graph()
         for key in keys:
-            graph.add_node(key, nodes[key])
+            graph.add_node(key, nodes[key], id_=key)
+
+        return graph
+
+    def create_graph_from_data(
+        self, data: Union[List[Dict[str, float]], Dict[str, List[float]]]
+    ):
+        """
+        Create a graph from data
+        :param data: is a list of dictionaries or a dictionary with lists
+        :return:
+        """
+
+        if isinstance(data, dict):
+            graph = self.__create_graph_from_dict(data)
+        else:
+            graph = self.__create_graph_from_list(data)
 
         self.graph = graph
         return graph
