@@ -177,6 +177,21 @@ class IIDSampleGenerator(AbstractSampleGenerator):
                 internal_repr[to_node] += edge.value * internal_repr[from_node]
         return internal_repr
 
+    # TODO: adjust sample generator tests to this data shape
+    def _generate_shaped_data(self, size):
+        test_data = self._generate_data(size)
+        data = {}
+        for variable in test_data.keys():
+            data[variable] = test_data[variable]
+
+        test_data_shaped = []
+        for i in range(size):
+            entry = {}
+            for key in data.keys():
+                entry[key] = data[key][i]
+            test_data_shaped.append(entry)
+        return test_data_shaped
+
     def generate(self, size):
         """
         Generate data for a sample graph with a time dimension
