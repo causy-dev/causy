@@ -35,6 +35,12 @@ class PCTestTestCase(unittest.TestCase):
         self.assertEqual(len(test_data), 401)
         self.assertEqual(len(test_data[0]), 7)
 
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+        retrieve_edges(tst.graph)
+
     def test_toy_model_minimal_example(self):
         set_random_seed(1)
         model = IIDSampleGenerator(
