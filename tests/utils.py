@@ -42,5 +42,18 @@ class CausyTestCase(TestCase):
                     )
                     raise self.failureException(msg)
 
+    def assertGraphStructureIsIn(self, graph1, graph2, msg=None):
+        for node_from in graph2.edges:
+            for node_to in graph2.edges[node_from]:
+                if (
+                    node_from not in graph1.edges
+                    or node_to not in graph1.edges[node_from].keys()
+                ):
+                    msg = self._formatMessage(
+                        msg,
+                        f"{safe_repr(graph1)} is not equal to the structure of {safe_repr(graph1)}. Edge {node_from} -> {node_to} is missing in {safe_repr(graph1)} (graph1).",
+                    )
+                    raise self.failureException(msg)
+
     def tearDown(self):
         pass

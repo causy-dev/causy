@@ -127,7 +127,8 @@ class PartialCorrelationTest(PipelineStepInterface):
 
 class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
     generator = PairsWithNeighboursGenerator(
-        comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
+        comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
+        shuffle_combinations=False,
     )
     chunk_size_parallel_processing = 1000
     parallel = False
