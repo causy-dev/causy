@@ -10,10 +10,11 @@ class CausyTestCase(TestCase):
     SEED = 42
 
     def setUp(self):
-        torch.manual_seed(self.SEED)
-        torch.cuda.manual_seed(self.SEED)
-        torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = False
+        self.torch = torch
+        self.torch.manual_seed(self.SEED)
+        self.torch.cuda.manual_seed(self.SEED)
+        self.torch.backends.cudnn.deterministic = True
+        self.torch.backends.cudnn.benchmark = False
         np.random.seed(self.SEED)
         random.seed(0)
 
