@@ -1,5 +1,4 @@
 import random
-import unittest
 
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_model import graph_model_factory
@@ -7,11 +6,12 @@ from causy.math_utils import sum_lists
 from causy.independence_tests.common import (
     CorrelationCoefficientTest,
 )
-
 from causy.algorithms.fci import FCIEdgeType
 
+from tests.utils import CausyTestCase
 
-class IndependenceTestTestCase(unittest.TestCase):
+
+class IndependenceTestTestCase(CausyTestCase):
     def test_correlation_coefficient_standard_model(self):
         samples = {}
         test_data = []
@@ -36,7 +36,3 @@ class IndependenceTestTestCase(unittest.TestCase):
         model.create_all_possible_edges()
         model.execute_pipeline_steps()
         self.assertEqual(len(model.graph.action_history[-1]["actions"]), 0)
-
-
-if __name__ == "__main__":
-    unittest.main()
