@@ -1,6 +1,4 @@
-import unittest
 import torch
-import numpy as np
 
 from causy.sample_generator import (
     TimeseriesSampleGenerator,
@@ -11,19 +9,10 @@ from causy.sample_generator import (
     NodeReference,
 )
 
-from causy.sample_generator import SampleEdge
+from tests.utils import CausyTestCase
 
 
-def set_random_seed(seed):
-    # Ensure reproducability across operating systems
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-    np.random.seed(seed)
-
-
-class TimeSeriesSampleGeneratorTest(unittest.TestCase):
+class TimeSeriesSampleGeneratorTest(CausyTestCase):
     def test_iid_sample_generator(self):
         model = IIDSampleGenerator(
             edges=[
@@ -150,7 +139,6 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
         self.assertAlmostEqual(result["Y"][2].item(), 9.81, places=2)
 
     def test_data_generator_multiple_autocorrelations(self):
-        set_random_seed(1)
         model_multi_autocorr = TimeseriesSampleGenerator(
             edges=[
                 SampleEdge(
@@ -175,7 +163,6 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
         self.assertAlmostEqual(result["X"][3].item(), 0.608, places=2)
 
     def test_generating_initial_values(self):  #
-        set_random_seed(1)
         model = TimeseriesSampleGenerator(
             edges=[
                 SampleEdge(
@@ -196,7 +183,6 @@ class TimeSeriesSampleGeneratorTest(unittest.TestCase):
         self.assertAlmostEqual(float(initial_values["Y"] ** 2), 6602.2842, places=0)
 
     def test_generating_initial_values_additional_variable(self):
-        set_random_seed(1)
         model = TimeseriesSampleGenerator(
             edges=[
                 SampleEdge(

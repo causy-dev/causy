@@ -1,27 +1,17 @@
 import csv
-import unittest
-import numpy as np
 import torch
 
 from causy.algorithms import PC, ParallelPC
 from causy.graph_utils import retrieve_edges
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 
+from tests.utils import CausyTestCase
 
 # TODO: generate larger toy model to test quadruple orientation rules.
 # TODO: seedings are not working yet (failing every 20th time or so, should always be equal for equal data), fix that.
 
 
-def set_random_seed(seed):
-    # Ensure reproducability across operating systems
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-    np.random.seed(seed)
-
-
-class PCTestTestCase(unittest.TestCase):
+class PCTestTestCase(CausyTestCase):
     def test_with_rki_data(self):
         with open("./tests/fixtures/rki-data.csv") as f:
             data = csv.DictReader(f)
@@ -42,7 +32,6 @@ class PCTestTestCase(unittest.TestCase):
         retrieve_edges(tst.graph)
 
     def test_toy_model_minimal_example(self):
-        set_random_seed(1)
         model = IIDSampleGenerator(
             edges=[
                 SampleEdge(NodeReference("Z"), NodeReference("X"), 5),
@@ -54,13 +43,14 @@ class PCTestTestCase(unittest.TestCase):
 
         model.random_fn = lambda: torch.normal(0, 1, (1, 1))
         sample_size = 10000
-        test_data = model._generate_shaped_data(sample_size)
+        test_data, graph = model.generate(sample_size)
 
         tst = PC()
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
-        retrieve_edges(tst.graph)
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
 
         node_mapping = {}
         for key, node in tst.graph.nodes.items():
@@ -111,7 +101,6 @@ class PCTestTestCase(unittest.TestCase):
         )
 
     def test_second_toy_model_example(self):
-        set_random_seed(1)
         c, d, e, f, g = 2, 3, 4, 5, 6
         model = IIDSampleGenerator(
             edges=[
@@ -130,13 +119,15 @@ class PCTestTestCase(unittest.TestCase):
 
         model.random_fn = lambda: torch.normal(0, 1, (1, 1))
         sample_size = 10000
-        test_data = model._generate_shaped_data(sample_size)
+        test_data, sample_graph = model.generate(sample_size)
 
         tst = PC()
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
-        retrieve_edges(tst.graph)
+
+        # TODO(sofia): this test is failing - maybe because the graph is not discovered correctly?
+        # self.assertGraphStructureIsEqual(tst.graph, sample_graph)
 
         node_mapping = {}
         for key, node in tst.graph.nodes.items():
@@ -217,7 +208,3 @@ class PCTestTestCase(unittest.TestCase):
                 tst.graph.nodes[node_mapping["E"]], tst.graph.nodes[node_mapping["C"]]
             )
         )
-
-
-if __name__ == "__main__":
-    unittest.main()

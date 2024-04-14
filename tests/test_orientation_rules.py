@@ -1,12 +1,12 @@
-import unittest
-
 from causy.graph import Graph
 from causy.graph_model import graph_model_factory
 from causy.interfaces import TestResult, TestResultAction
 from causy.orientation_rules.fci import ColliderRuleFCI
 
+from tests.utils import CausyTestCase
 
-class OrientationTestCase(unittest.TestCase):
+
+class OrientationTestCase(CausyTestCase):
     def test_collider_rule_fci(self):
         pipeline = [ColliderRuleFCI()]
         model = graph_model_factory(pipeline_steps=pipeline)()

@@ -1,13 +1,12 @@
-import unittest
-
-from causy.algorithms import PC
-from causy.graph import Graph, GraphError, Node
 import torch
 
+from causy.algorithms import PC
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 
+from tests.utils import CausyTestCase
 
-class GraphModelTestCase(unittest.TestCase):
+
+class GraphModelTestCase(CausyTestCase):
     def test_initialize_graph_model_with_list(self):
         model = IIDSampleGenerator(
             edges=[
