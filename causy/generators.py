@@ -44,7 +44,8 @@ class AllCombinationsGenerator(GeneratorInterface):
 
         # create all combinations
         for r in range(start, stop):
-            for i in itertools.combinations(graph.nodes, r):
+            # we need to sort the nodes to make sure we always get the same order of nodes - this is important for testing
+            for i in itertools.combinations(sorted(graph.nodes), r):
                 yield i
 
 
@@ -143,7 +144,8 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                         continue
                     if len(other_neighbours) + 2 < i:
                         continue
-                    combinations = itertools.combinations(other_neighbours, i)
+                    # we need to sort the nodes to make sure we always get the same order of nodes - this is important for testing
+                    combinations = itertools.combinations(sorted(other_neighbours), i)
                     if self.shuffle_combinations:
                         combinations = list(combinations)
                         import random

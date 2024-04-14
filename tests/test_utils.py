@@ -61,3 +61,5 @@ class UtilsTestCase(CausyTestCase):
         _, g2 = model_two.generate(10000)
         with self.assertRaises(AssertionError):
             self.assertGraphStructureIsEqual(g1, g2)
+
+        self.assertGraphStructureIsEqual(g1, g1)
