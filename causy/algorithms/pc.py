@@ -22,22 +22,26 @@ from causy.orientation_rules.pc import (
     FurtherOrientQuadrupleTest,
 )
 
+PC_ORIENTATION_RULES = [
+    ColliderTest(),
+    Loop(
+        pipeline_steps=[
+            NonColliderTest(),
+            FurtherOrientTripleTest(),
+            OrientQuadrupleTest(),
+            FurtherOrientQuadrupleTest(),
+        ],
+        exit_condition=ExitOnNoActions(),
+    ),
+]
+
 PC = graph_model_factory(
     pipeline_steps=[
         CalculatePearsonCorrelations(),
         CorrelationCoefficientTest(threshold=0.05),
         PartialCorrelationTest(threshold=0.05),
         ExtendedPartialCorrelationTestMatrix(threshold=0.05),
-        ColliderTest(),
-        Loop(
-            pipeline_steps=[
-                NonColliderTest(),
-                FurtherOrientTripleTest(),
-                OrientQuadrupleTest(),
-                FurtherOrientQuadrupleTest(),
-            ],
-            exit_condition=ExitOnNoActions(),
-        ),
+        *PC_ORIENTATION_RULES,
         ComputeDirectEffectsMultivariateRegression(),
     ]
 )
@@ -52,16 +56,7 @@ PCStable = graph_model_factory(
                 ExtendedPartialCorrelationTestMatrix(threshold=0.05),
             ]
         ),
-        ColliderTest(),
-        Loop(
-            pipeline_steps=[
-                NonColliderTest(),
-                FurtherOrientTripleTest(),
-                OrientQuadrupleTest(),
-                FurtherOrientQuadrupleTest(),
-            ],
-            exit_condition=ExitOnNoActions(),
-        ),
+        *PC_ORIENTATION_RULES,
         ComputeDirectEffectsMultivariateRegression(),
     ]
 )
@@ -101,16 +96,7 @@ ParallelPC = graph_model_factory(
                 comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
             ),
         ),
-        ColliderTest(),
-        Loop(
-            pipeline_steps=[
-                NonColliderTest(),
-                FurtherOrientTripleTest(),
-                OrientQuadrupleTest(),
-                FurtherOrientQuadrupleTest(),
-            ],
-            exit_condition=ExitOnNoActions(),
-        ),
+        *PC_ORIENTATION_RULES,
         ComputeDirectEffectsMultivariateRegression(),
     ]
 )
