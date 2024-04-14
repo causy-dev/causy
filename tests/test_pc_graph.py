@@ -42,10 +42,10 @@ class PCTestTestCase(CausyTestCase):
             ],
             random=lambda: torch.normal(0, 1, (1, 1)),
         )
-        sample_size = 50000
+        sample_size = 10000
         test_data, graph = model.generate(sample_size)
 
-        tst = PCStable()
+        tst = PC()
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
@@ -114,9 +114,6 @@ class PCTestTestCase(CausyTestCase):
                 SampleEdge(NodeReference("B"), NodeReference("F"), g),
                 SampleEdge(NodeReference("C"), NodeReference("F"), 1),
                 SampleEdge(NodeReference("D"), NodeReference("F"), 1),
-                SampleEdge(
-                    NodeReference("A"), NodeReference("F"), 1
-                ),  # @sofia: added this edge - otherwise the test always fails
             ],
             random=lambda: torch.normal(0, 1, (1, 1)),
         )
