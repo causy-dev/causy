@@ -2,6 +2,7 @@ import csv
 import torch
 
 from causy.algorithms import PC, ParallelPC
+from causy.algorithms.pc import PCStable
 from causy.graph_utils import retrieve_edges
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 
@@ -45,7 +46,7 @@ class PCTestTestCase(CausyTestCase):
         sample_size = 10000
         test_data, graph = model.generate(sample_size)
 
-        tst = PC()
+        tst = PCStable()
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
@@ -121,7 +122,7 @@ class PCTestTestCase(CausyTestCase):
         sample_size = 10000
         test_data, sample_graph = model.generate(sample_size)
 
-        tst = PC()
+        tst = PCStable()
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()

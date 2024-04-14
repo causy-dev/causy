@@ -175,7 +175,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         for i in generator:
             yield [test_fn, [*i], graph]
 
-    def _take_action(self, results):
+    def _take_action(self, results, dry_run=False):
         """
         Take the actions returned by the test
 
@@ -196,6 +196,10 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             for i in result_items:
                 if i.u is not None and i.v is not None:
                     logger.debug(f"Action: {i.action} on {i.u.name} and {i.v.name}")
+
+                if dry_run:
+                    actions_taken.append(i)
+                    continue
 
                 # execute the action returned by the test
                 if i.action == TestResultAction.REMOVE_EDGE_UNDIRECTED:
@@ -269,7 +273,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         return actions_taken
 
-    def execute_pipeline_step(self, test_fn: PipelineStepInterface):
+    def execute_pipeline_step(
+        self, test_fn: PipelineStepInterface, apply_to_graph=True
+    ):
         """
         Execute a single pipeline_step on the graph. either in parallel or in a single process depending on the test_fn.parallel flag
         :param test_fn: the test function
@@ -298,7 +304,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             ):
                 if not isinstance(result, list):
                     result = [result]
-                actions_taken.extend(self._take_action(result))
+                actions_taken.extend(
+                    self._take_action(result, dry_run=not apply_to_graph)
+                )
         else:
             if test_fn.generator.chunked:
                 for chunk in test_fn.generator.generate(self.graph, self):
@@ -306,7 +314,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         unpack_run(i)
                         for i in [[test_fn, [*c], self.graph] for c in chunk]
                     ]
-                    actions_taken.extend(self._take_action(iterator))
+                    actions_taken.extend(
+                        self._take_action(iterator, dry_run=not apply_to_graph)
+                    )
             else:
                 iterator = [
                     unpack_run(i)
@@ -315,7 +325,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         for i in test_fn.generator.generate(self.graph, self)
                     ]
                 ]
-                actions_taken.extend(self._take_action(iterator))
+                actions_taken.extend(
+                    self._take_action(iterator, dry_run=not apply_to_graph)
+                )
 
         self.graph.action_history.append(
             {"step": type(test_fn).__name__, "actions": actions_taken}
