@@ -32,7 +32,6 @@ class CorrelationCoefficientTest(PipelineStepInterface):
         :param nodes: list of nodes
         :return: A TestResult with the action to take
         """
-        nodes = sorted(nodes)
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
@@ -72,7 +71,7 @@ class PartialCorrelationTest(PipelineStepInterface):
 
         TODO: we are testing (C and E given B) and (E and C given B), we just need one of these, remove redundant tests.
         """
-        nodes = sorted(nodes)
+        print(nodes)
         results = []
         already_deleted_edges = set()
         for nodes in itertools.permutations(nodes):
@@ -124,6 +123,7 @@ class PartialCorrelationTest(PipelineStepInterface):
                     )
                 )
                 already_deleted_edges.add((x, y))
+
         return results
 
 
@@ -143,8 +143,8 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
         """
-        nodes = sorted(nodes)
-
+        print("EPCT")
+        print(nodes)
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
             return
 

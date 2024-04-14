@@ -270,7 +270,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
                 # add the action to the actions history
                 actions_taken.append(i)
-
+        print(actions_taken)
         return actions_taken
 
     def execute_pipeline_step(
