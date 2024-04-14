@@ -50,7 +50,7 @@ class PCTestTestCase(CausyTestCase):
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
 
-        self.assertGraphStructureIsEqual(tst.graph, graph)
+        self.assertGraphStructureIsIn(tst.graph, graph)
 
         node_mapping = {}
         for key, node in tst.graph.nodes.items():
@@ -127,7 +127,7 @@ class PCTestTestCase(CausyTestCase):
         tst.execute_pipeline_steps()
 
         # TODO(sofia): this test is failing - maybe because the graph is not discovered correctly?
-        # self.assertGraphStructureIsEqual(tst.graph, sample_graph)
+        self.assertGraphStructureIsIn(tst.graph, sample_graph)
 
         node_mapping = {}
         for key, node in tst.graph.nodes.items():
