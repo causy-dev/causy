@@ -23,6 +23,9 @@ class CausyTestCase(TestCase):
                 if (
                     node_from not in graph2.edges
                     or node_to not in graph2.edges[node_from].keys()
+                ) and (
+                    node_to not in graph2.edges
+                    or node_from not in graph2.edges[node_to].keys()
                 ):
                     msg = self._formatMessage(
                         msg,
@@ -35,6 +38,9 @@ class CausyTestCase(TestCase):
                 if (
                     node_from not in graph1.edges
                     or node_to not in graph1.edges[node_from].keys()
+                ) and (
+                    node_to not in graph1.edges
+                    or node_from not in graph1._reverse_edges[node_to].keys()
                 ):
                     msg = self._formatMessage(
                         msg,

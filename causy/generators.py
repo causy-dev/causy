@@ -43,12 +43,12 @@ class AllCombinationsGenerator(GeneratorInterface):
         if stop < start:
             return
 
+        graph_nodes_sorted = sorted(collections.OrderedDict(graph.nodes.items()))
+
         # create all combinations
         for r in range(start, stop):
             # we need to sort the nodes to make sure we always get the same order of nodes - this is important for testing
-            for i in itertools.combinations(
-                sorted(collections.OrderedDict(graph.nodes.items())), r
-            ):
+            for i in itertools.combinations(graph_nodes_sorted, r):
                 yield i
 
 

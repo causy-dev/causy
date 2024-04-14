@@ -87,7 +87,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :return: the graph
         """
         graph = Graph()
-        for key, values in data.items():
+        for key, values in sorted(data.items()):
             graph.add_node(key, values, id_=key)
         return graph
 
@@ -101,7 +101,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         keys = data[0].keys()
         nodes: Dict[str, List[float]] = {}
 
-        for key in keys:
+        for key in sorted(keys):
             nodes[key] = []
 
         # load nodes into node dict

@@ -51,9 +51,9 @@ PCStable = graph_model_factory(
         CalculatePearsonCorrelations(),
         ApplyActionsTogether(
             pipeline_steps=[
-                CorrelationCoefficientTest(threshold=0.05),
-                PartialCorrelationTest(threshold=0.05),
-                ExtendedPartialCorrelationTestMatrix(threshold=0.05),
+                CorrelationCoefficientTest(threshold=0.005),
+                PartialCorrelationTest(threshold=0.005),
+                ExtendedPartialCorrelationTestMatrix(threshold=0.005),
             ]
         ),
         *PC_ORIENTATION_RULES,
