@@ -38,10 +38,10 @@ class PCTestTestCase(CausyTestCase):
                 SampleEdge(NodeReference("Z"), NodeReference("Y"), 6),
                 SampleEdge(NodeReference("W"), NodeReference("Z"), 1),
                 SampleEdge(NodeReference("V"), NodeReference("Z"), 1),
-            ]
+            ],
+            random=lambda: self.torch.normal(0, 1, (1, 1)),
         )
 
-        model.random_fn = lambda: torch.normal(0, 1, (1, 1))
         sample_size = 10000
         test_data, graph = model.generate(sample_size)
 
@@ -115,9 +115,9 @@ class PCTestTestCase(CausyTestCase):
                 SampleEdge(NodeReference("C"), NodeReference("F"), 1),
                 SampleEdge(NodeReference("D"), NodeReference("F"), 1),
             ],
+            random=lambda: self.torch.normal(0, 1, (1, 1)),
         )
 
-        model.random_fn = lambda: torch.normal(0, 1, (1, 1))
         sample_size = 10000
         test_data, sample_graph = model.generate(sample_size)
 
