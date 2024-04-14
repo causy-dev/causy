@@ -334,3 +334,127 @@ class PCTestTestCase(CausyTestCase):
         tst.execute_pipeline_steps()
 
         self.assertGraphStructureIsEqual(tst.graph, graph)
+
+    # test causal orientation rules
+
+    def test_toy_model_orientation_unshielded_triple_collider(self):
+        """
+        Test if orientation of edges work: Minimal example with empty separation set (collider case, unshielded triples).
+        """
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 2),
+            ],
+            random=lambda: torch.normal(0, 1, (1, 1)),
+        )
+        sample_size = 10000
+        test_data, graph = model.generate(sample_size)
+
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+        self.assertTrue(
+            tst.graph.directed_edge_exists(tst.graph.nodes["X"], tst.graph.nodes["Z"])
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Y"], tst.graph.nodes["Z"])
+        )
+        self.assertFalse(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["Y"])
+        )
+        self.assertFalse(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["X"])
+        )
+
+    def test_toy_model_orientation_unshielded_triple_non_collider(self):
+        """
+        Test if orientation of edges work: unshielded triple, further non-collider test.
+        """
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 2),
+                SampleEdge(NodeReference("Z"), NodeReference("D"), 4),
+            ],
+            random=lambda: torch.normal(0, 1, (1, 1)),
+        )
+        sample_size = 10000
+        test_data, graph = model.generate(sample_size)
+
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+        self.assertTrue(
+            tst.graph.directed_edge_exists(tst.graph.nodes["X"], tst.graph.nodes["Z"])
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Y"], tst.graph.nodes["Z"])
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["D"])
+        )
+        self.assertFalse(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["Y"])
+        )
+        self.assertFalse(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["X"])
+        )
+        self.assertFalse(
+            tst.graph.directed_edge_exists(tst.graph.nodes["D"], tst.graph.nodes["Z"])
+        )
+
+    def test_toy_model_orientation_unshielded_triple_non_collider2(self):
+        """
+        Test if orientation of edges work: unshielded triple, further non-collider tests.
+        """
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 2),
+                SampleEdge(NodeReference("Z"), NodeReference("D"), 4),
+                SampleEdge(NodeReference("Z"), NodeReference("Q"), 4),
+            ],
+            random=lambda: torch.normal(0, 1, (1, 1)),
+        )
+        sample_size = 10000
+        test_data, graph = model.generate(sample_size)
+
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+        self.assertTrue(
+            tst.graph.directed_edge_exists(tst.graph.nodes["X"], tst.graph.nodes["Z"])
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Y"], tst.graph.nodes["Z"])
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["D"])
+        )
+        self.assertTrue(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["Q"])
+        )
+        self.assertFalse(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["Y"])
+        )
+        self.assertFalse(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["X"])
+        )
+        self.assertFalse(
+            tst.graph.directed_edge_exists(tst.graph.nodes["D"], tst.graph.nodes["Z"])
+        )
+        self.assertFalse(
+            tst.graph.directed_edge_exists(tst.graph.nodes["Q"], tst.graph.nodes["Z"])
+        )
