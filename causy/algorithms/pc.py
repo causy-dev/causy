@@ -4,7 +4,7 @@ from causy.causal_effect_estimation.multivariate_regression import (
 from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
 from causy.generators import PairsWithNeighboursGenerator, RandomSampleGenerator
 from causy.graph_model import graph_model_factory
-from causy.common_pipeline_steps.logic import Loop
+from causy.common_pipeline_steps.logic import Loop, ApplyActionsTogether
 from causy.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
@@ -28,6 +28,30 @@ PC = graph_model_factory(
         CorrelationCoefficientTest(threshold=0.05),
         PartialCorrelationTest(threshold=0.05),
         ExtendedPartialCorrelationTestMatrix(threshold=0.05),
+        ColliderTest(),
+        Loop(
+            pipeline_steps=[
+                NonColliderTest(),
+                FurtherOrientTripleTest(),
+                OrientQuadrupleTest(),
+                FurtherOrientQuadrupleTest(),
+            ],
+            exit_condition=ExitOnNoActions(),
+        ),
+        ComputeDirectEffectsMultivariateRegression(),
+    ]
+)
+
+PCStable = graph_model_factory(
+    pipeline_steps=[
+        CalculatePearsonCorrelations(),
+        ApplyActionsTogether(
+            pipeline_steps=[
+                CorrelationCoefficientTest(threshold=0.05),
+                PartialCorrelationTest(threshold=0.05),
+                ExtendedPartialCorrelationTestMatrix(threshold=0.05),
+            ]
+        ),
         ColliderTest(),
         Loop(
             pipeline_steps=[
