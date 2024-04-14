@@ -208,3 +208,129 @@ class PCTestTestCase(CausyTestCase):
                 tst.graph.nodes[node_mapping["E"]], tst.graph.nodes[node_mapping["C"]]
             )
         )
+
+    # test structure learning
+    def test_toy_model_structure(self):
+        """
+        Test conditional independence of pairs given one variable works.
+        """
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Z"), NodeReference("Y"), 6),
+                SampleEdge(NodeReference("W"), NodeReference("Y"), 2),
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 3),
+                SampleEdge(NodeReference("X"), NodeReference("W"), 4),
+            ],
+            random=lambda: torch.normal(0, 1, (1, 1)),
+        )
+        sample_size = 10000
+        test_data, graph = model.generate(sample_size)
+
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+    def test_toy_model_structure_2(self):
+        """
+        Another test if conditional independence of pairs given one variable works.
+        """
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 6),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 2),
+                SampleEdge(NodeReference("Z"), NodeReference("W"), 3),
+            ],
+            random=lambda: torch.normal(0, 1, (1, 1)),
+        )
+        sample_size = 10000
+        test_data, graph = model.generate(sample_size)
+
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+    def test_toy_model_structure_3(self):
+        """
+        Test conditional independence of ordered pairs given pairs of other variables works.
+        """
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 2),
+                SampleEdge(NodeReference("Z"), NodeReference("W"), 3),
+                SampleEdge(NodeReference("X"), NodeReference("F"), 4),
+                SampleEdge(NodeReference("F"), NodeReference("W"), 7),
+            ],
+            random=lambda: torch.normal(0, 1, (1, 1)),
+        )
+        sample_size = 10000
+        test_data, graph = model.generate(sample_size)
+
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+    def test_toy_model_structure_4(self):
+        """
+        Test conditional independence of ordered pairs given triples of other variables works.
+        """
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 2),
+                SampleEdge(NodeReference("Z"), NodeReference("W"), 3),
+                SampleEdge(NodeReference("X"), NodeReference("F"), 4),
+                SampleEdge(NodeReference("F"), NodeReference("W"), 7),
+                SampleEdge(NodeReference("X"), NodeReference("D"), 4),
+                SampleEdge(NodeReference("D"), NodeReference("W"), 7),
+            ],
+            random=lambda: torch.normal(0, 1, (1, 1)),
+        )
+        sample_size = 10000
+        test_data, graph = model.generate(sample_size)
+
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+    def test_toy_model_structure_4(self):
+        """
+        Test conditional independence of ordered pairs given quadruples of other variables works.
+        """
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 2),
+                SampleEdge(NodeReference("Z"), NodeReference("W"), 3),
+                SampleEdge(NodeReference("X"), NodeReference("F"), 4),
+                SampleEdge(NodeReference("F"), NodeReference("W"), 7),
+                SampleEdge(NodeReference("X"), NodeReference("D"), 4),
+                SampleEdge(NodeReference("D"), NodeReference("W"), 7),
+                SampleEdge(NodeReference("X"), NodeReference("Q"), 4),
+                SampleEdge(NodeReference("Q"), NodeReference("W"), 7),
+            ],
+            random=lambda: torch.normal(0, 1, (1, 1)),
+        )
+        sample_size = 10000
+        test_data, graph = model.generate(sample_size)
+
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
