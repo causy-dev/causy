@@ -47,7 +47,7 @@ class AllCombinationsGenerator(GeneratorInterface):
         for r in range(start, stop):
             # we need to sort the nodes to make sure we always get the same order of nodes - this is important for testing
             for i in itertools.combinations(
-                sorted(collections.OrderedDict(sorted(graph.nodes.items()))), r
+                sorted(collections.OrderedDict(graph.nodes.items())), r
             ):
                 yield i
 
