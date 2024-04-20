@@ -5,34 +5,119 @@ from causy.graph_model import graph_model_factory
 from causy.math_utils import sum_lists
 from causy.independence_tests.common import (
     CorrelationCoefficientTest,
+    PartialCorrelationTest,
+    ExtendedPartialCorrelationTestMatrix,
 )
 from causy.algorithms.fci import FCIEdgeType
+from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 
 from tests.utils import CausyTestCase
 
 
 class IndependenceTestTestCase(CausyTestCase):
-    def test_correlation_coefficient_standard_model(self):
-        samples = {}
-        test_data = []
-        n = 1000
-        x = [random.normalvariate(mu=0.0, sigma=1.0) for _ in range(n)]
-        noise_y = [random.normalvariate(mu=0.0, sigma=1.0) for _ in range(n)]
-        y = sum_lists([5 * x_val for x_val in x], noise_y)
-        samples["u"] = x
-        samples["v"] = y
-        for i in range(n):
-            entry = {}
-            for key in samples.keys():
-                entry[key] = samples[key][i]
-            test_data.append(entry)
+    SEED = 42
+
+    def test_correlation_coefficient_test(self):
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+            ]
+        )
+
+        data, _ = model.generate(1000)
 
         pipeline = [
             CalculatePearsonCorrelations(),
             CorrelationCoefficientTest(threshold=0.1),
         ]
-        model = graph_model_factory(pipeline_steps=pipeline)()
-        model.create_graph_from_data(test_data)
-        model.create_all_possible_edges()
-        model.execute_pipeline_steps()
-        self.assertEqual(len(model.graph.action_history[-1]["actions"]), 0)
+        tst = graph_model_factory(pipeline_steps=pipeline)()
+        tst.create_graph_from_data(data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+        # X and Y are dependent
+        self.assertEqual(len(tst.graph.action_history[-1]["actions"]), 0)
+
+    def test_correlation_coefficient_test_collider(self):
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 3),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 3),
+            ]
+        )
+
+        data, _ = model.generate(1000)
+
+        pipeline = [
+            CalculatePearsonCorrelations(),
+            CorrelationCoefficientTest(threshold=0.1),
+        ]
+        tst = graph_model_factory(pipeline_steps=pipeline)()
+        tst.create_graph_from_data(data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+        # X and Y are independent
+        self.assertEqual(len(tst.graph.action_history[-1]["actions"]), 1)
+
+    def test_partial_correlation_test(self):
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 7),
+            ]
+        )
+        data, _ = model.generate(1000)
+        pipeline = [
+            CalculatePearsonCorrelations(),
+            PartialCorrelationTest(threshold=0.01),
+        ]
+        tst = graph_model_factory(pipeline_steps=pipeline)()
+        tst.create_graph_from_data(data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+        print(tst.graph.action_history[-1]["actions"])
+        # X and Z are independent given Y, no other pair of nodes is independent given one other node
+        self.assertEqual(len(tst.graph.action_history[-1]["actions"]), 1)
+
+    def test_extended_partial_correlation_test_matrix(self):
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 7),
+                SampleEdge(NodeReference("X"), NodeReference("W"), 6),
+                SampleEdge(NodeReference("W"), NodeReference("Z"), 8),
+            ]
+        )
+        data, _ = model.generate(10000)
+        pipeline = [
+            CalculatePearsonCorrelations(),
+            ExtendedPartialCorrelationTestMatrix(threshold=0.01),
+        ]
+        tst = graph_model_factory(pipeline_steps=pipeline)()
+        tst.create_graph_from_data(data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+        # X and Z are independent given Y and W, no other pair of nodes is independent given two other nodes
+        self.assertEqual(len(tst.graph.action_history[-1]["actions"]), 1)
+
+    def test_combinations_1(self):
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 7),
+                SampleEdge(NodeReference("X"), NodeReference("W"), 6),
+                SampleEdge(NodeReference("W"), NodeReference("Z"), 8),
+            ]
+        )
+        data, _ = model.generate(10000)
+        pipeline = [
+            CalculatePearsonCorrelations(),
+            CorrelationCoefficientTest(threshold=0.01),
+            PartialCorrelationTest(threshold=0.01),
+            ExtendedPartialCorrelationTestMatrix(threshold=0.01),
+        ]
+        tst = graph_model_factory(pipeline_steps=pipeline)()
+        tst.create_graph_from_data(data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+        # Y and W are independent given X, X and Z are independent given Y and W
+        self.assertEqual(len(tst.graph.action_history[-1]["actions"]), 1)
