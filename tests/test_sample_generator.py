@@ -1,4 +1,5 @@
 import torch
+import random
 
 from causy.sample_generator import (
     TimeseriesSampleGenerator,
@@ -12,7 +13,7 @@ from causy.sample_generator import (
 from tests.utils import CausyTestCase
 
 
-class TimeSeriesSampleGeneratorTest(CausyTestCase):
+class SampleGeneratorTest(CausyTestCase):
     def test_iid_sample_generator(self):
         model = IIDSampleGenerator(
             edges=[

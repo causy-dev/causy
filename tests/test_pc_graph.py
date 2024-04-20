@@ -118,7 +118,7 @@ class PCTestTestCase(CausyTestCase):
             random=lambda: torch.normal(0, 1, (1, 1)),
         )
 
-        sample_size = 10000
+        sample_size = 100000
         test_data, sample_graph = model.generate(sample_size)
 
         tst = PCStable()
@@ -297,7 +297,7 @@ class PCTestTestCase(CausyTestCase):
             ],
             random=lambda: torch.normal(0, 1, (1, 1)),
         )
-        sample_size = 10000
+        sample_size = 100000
         test_data, graph = model.generate(sample_size)
 
         tst = PC()
@@ -382,7 +382,7 @@ class PCTestTestCase(CausyTestCase):
             ],
             random=lambda: torch.normal(0, 1, (1, 1)),
         )
-        sample_size = 10000
+        sample_size = 100000
         test_data, graph = model.generate(sample_size)
 
         tst = PC()
@@ -424,7 +424,7 @@ class PCTestTestCase(CausyTestCase):
             ],
             random=lambda: torch.normal(0, 1, (1, 1)),
         )
-        sample_size = 10000
+        sample_size = 100000
         test_data, graph = model.generate(sample_size)
 
         tst = PC()
