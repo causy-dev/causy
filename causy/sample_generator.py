@@ -71,7 +71,7 @@ class AbstractSampleGenerator(abc.ABC):
         random: Callable = random,  # for setting that to a fixed value for testing use random = lambda: 0
     ):
         self._edges = edges
-        self._variables = self._find_variables_in_edges()
+        self._variables = sorted(self._find_variables_in_edges())
         self.random_fn = random
 
     @abc.abstractmethod
@@ -128,6 +128,13 @@ class IIDSampleGenerator(AbstractSampleGenerator):
 
     """
 
+    def __init__(
+        self, edges: List[Union[SampleEdge, SampleEdge]], random: Callable = random
+    ):
+        super().__init__(edges, random)
+        # Sort the variables topologically which is only required in the IID case
+        self._variables = self.topologic_sort(copy.deepcopy(list(self._variables)))
+
     def topologic_sort(self, nodes: List[str]):
         """
         Sorts the nodes topologically
@@ -169,7 +176,7 @@ class IIDSampleGenerator(AbstractSampleGenerator):
             ingoing_edges[node_name] = self._get_edges_for_node_to(node_name)
 
         # Sort the node such that all nodes that appear in edges must have occured as keys before
-        sorted_nodes = self.topologic_sort(copy.deepcopy(list(self._variables)))
+        sorted_nodes = copy.deepcopy(self._variables)
 
         # Generate the data
         for to_node in sorted_nodes:
@@ -222,12 +229,13 @@ class IIDSampleGenerator(AbstractSampleGenerator):
 # TODO: Does not work for multiple lags properly yet and is numerically unstable for several cases (check why, fix it)
 class TimeseriesSampleGenerator(AbstractSampleGenerator):
     """
-    A sample generator that generates data for a sample graph with a time dimension.
+    A sample generator that generates data for a sample graph with a time dimension and autoregressive dependencies.
 
     Edges are defined as SampleLaggedEdges, which define a directed edge from a source node to a target node with a
     ag. The lag is the number of time steps between the source and the target.
 
-    A variable can depend on itself, but only on its past values (with a lag). This corresponds to autoregressive models.
+    A variable can depend on itself, but only on its past values (at the moment only with lag one). This corresponds to
+    VAR(1) processes.
 
     Example:
     >>> sg = TimeseriesSampleGenerator(
@@ -355,7 +363,7 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
 
         return block_diag
 
-    def __generate_coefficient_matrix(self):
+    def _generate_coefficient_matrix(self):
         """
         generate the coefficient matrix for the sample generator graph
         :return: the coefficient matrix
@@ -377,7 +385,7 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
         # return me as torch tensor
         return self.custom_block_diagonal(matrix)
 
-    def vectorize_identity_block(self, n):
+    def _vectorize_identity_block(self, n):
         # Create an empty tensor
         matrix = torch.zeros(n, n)
 
@@ -408,26 +416,36 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
         entry in the covariance matrix is the variance of X_t, i.e. V(X_t).
         :return: the initial values for the sample generator graph as a dictionary
         """
-        coefficient_matrix = self.__generate_coefficient_matrix()
-        n, _ = coefficient_matrix.shape
+        coefficient_matrix = self._generate_coefficient_matrix()
+        coefficient_matrix_shape, _ = coefficient_matrix.shape
 
+        covariance_matrix = self._generate_covariance_matrix(
+            coefficient_matrix, coefficient_matrix_shape
+        )
+
+        initial_values: Dict[str, torch.Tensor] = {}
+        values = torch.diagonal(covariance_matrix, offset=0)
+        for k, i in self.__matrix_position_mapping().items():
+            initial_values[k] = self._initial_distribution_fn(torch.sqrt(values[i]))
+        return initial_values
+
+    def _generate_covariance_matrix(
+        self, coefficient_matrix: torch.Tensor, coefficient_matrix_shape: int
+    ):
         kronecker_product = torch.kron(coefficient_matrix, coefficient_matrix)
-        identity_matrix = torch.eye(n**2)
-        cov_matrix_noise_terms_vectorized = self.vectorize_identity_block(n)
+        identity_matrix = torch.eye(coefficient_matrix_shape**2)
+        cov_matrix_noise_terms_vectorized = self._vectorize_identity_block(
+            coefficient_matrix_shape
+        )
         inv_identity_minus_kronecker_product = torch.linalg.pinv(
             identity_matrix - kronecker_product
         )
         vectorized_covariance_matrix = torch.matmul(
-            inv_identity_minus_kronecker_product,
-            cov_matrix_noise_terms_vectorized,
+            inv_identity_minus_kronecker_product, cov_matrix_noise_terms_vectorized
         )
-        vectorized_covariance_matrix = vectorized_covariance_matrix.reshape(n, n)
-
-        initial_values: Dict[str, torch.Tensor] = {}
-        values = torch.diagonal(vectorized_covariance_matrix, offset=0)
-        for k, i in self.__matrix_position_mapping().items():
-            initial_values[k] = self._initial_distribution_fn(torch.sqrt(values[i]))
-        return initial_values
+        return vectorized_covariance_matrix.reshape(
+            coefficient_matrix_shape, coefficient_matrix_shape
+        )
 
     def __matrix_position_mapping(self):
         """
