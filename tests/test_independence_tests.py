@@ -31,8 +31,6 @@ class IndependenceTestTestCase(CausyTestCase):
         )
 
         data, graph = model.generate(1000)
-        # print first data point in data of X
-        print(data["X"][0])
 
         pipeline = [
             CalculatePearsonCorrelations(),
@@ -55,7 +53,6 @@ class IndependenceTestTestCase(CausyTestCase):
         )
 
         data, graph = model.generate(1000000)
-        print(data["Y"][0])
 
         pipeline = [
             CalculatePearsonCorrelations(),
@@ -80,7 +77,6 @@ class IndependenceTestTestCase(CausyTestCase):
         )
 
         data, graph = model.generate(1000)
-        print(data["X"][0])
 
         pipeline = [
             CalculatePearsonCorrelations(),
@@ -104,7 +100,6 @@ class IndependenceTestTestCase(CausyTestCase):
             random=lambda: rdnv(0, 1),
         )
         data, _ = model.generate(1000)
-        print(data["X"][0])
 
         pipeline = [
             CalculatePearsonCorrelations(),
@@ -114,7 +109,6 @@ class IndependenceTestTestCase(CausyTestCase):
         tst.create_graph_from_data(data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
-        print(tst.graph.action_history[-1]["actions"])
         # X and Z are independent given Y, no other pair of nodes is independent given one other node
         self.assertEqual(len(tst.graph.action_history[-1]["actions"]), 1)
 
@@ -130,7 +124,6 @@ class IndependenceTestTestCase(CausyTestCase):
             random=lambda: rdnv(0, 1),
         )
         data, graph = model.generate(1000)
-        print(data["X"][0])
 
         pipeline = [
             CalculatePearsonCorrelations(),
@@ -156,7 +149,6 @@ class IndependenceTestTestCase(CausyTestCase):
         )
 
         data, graph = model.generate(1000)
-        print(data["X"][0])
 
         pipeline = [
             CalculatePearsonCorrelations(),
@@ -183,7 +175,6 @@ class IndependenceTestTestCase(CausyTestCase):
             random=lambda: rdnv(0, 1),
         )
         data, graph = model.generate(1000000)
-        print(data["X"][0])
 
         pipeline = [
             CalculatePearsonCorrelations(),
@@ -212,7 +203,6 @@ class IndependenceTestTestCase(CausyTestCase):
             random=lambda: rdnv(0, 1),
         )
         data, graph = model.generate(1000000)
-        print(data["X"][0])
 
         pipeline = [
             CalculatePearsonCorrelations(),
@@ -244,7 +234,6 @@ class IndependenceTestTestCase(CausyTestCase):
             random=lambda: rdnv(0, 1),
         )
         data, graph = model.generate(1000000)
-        print(data["X"][0])
 
         pipeline = [
             CalculatePearsonCorrelations(),
@@ -280,7 +269,6 @@ class IndependenceTestTestCase(CausyTestCase):
             ExtendedPartialCorrelationTestLinearRegression(threshold=0.01),
         ]
         data, graph = model.generate(1000000)
-        print(data["X"][0])
 
         tst = graph_model_factory(pipeline_steps=pipeline)()
         tst.create_graph_from_data(data)
@@ -312,14 +300,12 @@ class IndependenceTestTestCase(CausyTestCase):
             ExtendedPartialCorrelationTestLinearRegression(threshold=0.1),
         ]
         data, graph = model.generate(1000000)
-        print(data["X"][0])
 
         tst = graph_model_factory(pipeline_steps=pipeline)()
         tst.create_graph_from_data(data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
         # Y and W are independent given X, X and Z are independent given Y and W
-        print(model._variables)
         self.assertGraphStructureIsEqual(tst.graph, graph)
 
     def test_extended_partial_correlation_test_linear_regression(self):
@@ -335,7 +321,6 @@ class IndependenceTestTestCase(CausyTestCase):
             random=lambda: rdnv(0, 1),
         )
         data, graph = model.generate(1000000)
-        print(data["X"][0])
 
         pipeline = [
             CalculatePearsonCorrelations(),

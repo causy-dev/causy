@@ -73,7 +73,6 @@ class PartialCorrelationTest(PipelineStepInterface):
 
         TODO: we are testing (C and E given B) and (E and C given B), we just need one of these, remove redundant tests.
         """
-        print(nodes)
         results = []
         already_deleted_edges = set()
         for nodes in itertools.permutations(nodes):
@@ -147,8 +146,7 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
         """
-        print("EPCT")
-        print(nodes)
+
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
             return
 
@@ -157,12 +155,6 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
 
         if not set(nodes[2:]).issubset(set([on for on in list(other_neighbours)])):
             return
-        print(
-            f"determinant of covariance matrix={torch.det(torch.cov(torch.stack([graph.nodes[node].values for node in nodes])))}"
-        )
-        print(
-            f"condition number of covariance matrix={torch.linalg.cond(torch.cov(torch.stack([graph.nodes[node].values for node in nodes])))}"
-        )
         inverse_cov_matrix = torch.inverse(
             torch.cov(torch.stack([graph.nodes[node].values for node in nodes]))
         )
@@ -219,9 +211,7 @@ def partial_correlation_regression(x, y, z):
     """
     # Define linear regression model
     model_x = torch.linalg.lstsq(z.T, x).solution
-    print(f"model_x={model_x}")
     model_y = torch.linalg.lstsq(z.T, y).solution
-    print(f"model_y={model_y}")
 
     residual_x = x - torch.matmul(model_x, z)
     residual_y = y - torch.matmul(model_y, z)
@@ -241,8 +231,6 @@ class ExtendedPartialCorrelationTestLinearRegression(PipelineStepInterface):
     parallel = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
-        print("EPCT")
-        print(nodes)
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
             return
 

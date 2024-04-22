@@ -180,8 +180,6 @@ class SampleGeneratorTest(CausyTestCase):
         model._initial_distribution_fn = lambda x: x
         initial_values = model._calculate_initial_values()
 
-        print(model.generate(10)[0])
-
         self.assertAlmostEqual(float(initial_values["X"] ** 2), 5.2630, places=0)
         self.assertAlmostEqual(float(initial_values["Y"] ** 2), 6602.2842, places=0)
 

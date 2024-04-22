@@ -123,14 +123,12 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
 
         if start < 2:
             raise ValueError("PairsWithNeighboursGenerator: start must be at least 2")
-        print(start, stop)
         for i in range(start, stop):
             logger.debug(f"PairsWithNeighboursGenerator: i={i}")
             checked_combinations = set()
             local_edges = copy.deepcopy(graph.edges)
             for node in local_edges:
                 for neighbour in local_edges[node]:
-                    print(node, neighbour)
                     if (node, neighbour) in checked_combinations:
                         continue
 
@@ -143,7 +141,6 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
 
                     if neighbour in other_neighbours:
                         other_neighbours.remove(neighbour)
-                    print(other_neighbours)
 
                     combinations = list(itertools.combinations(other_neighbours, i - 2))
                     if self.shuffle_combinations:
@@ -158,7 +155,6 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                             chunk.append([node, neighbour] + [ks for ks in k])
                         yield chunk
                     else:
-                        print(combinations)
                         for k in combinations:
                             yield [node, neighbour] + [ks for ks in k]
 
