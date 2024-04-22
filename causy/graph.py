@@ -430,7 +430,7 @@ class Graph(BaseGraphInterface):
             tensor_values = values
         else:
             try:
-                tensor_values = torch.tensor(values, dtype=torch.float32)
+                tensor_values = torch.tensor(values, dtype=torch.float64)
             except TypeError as e:
                 raise ValueError(f"Currently only numeric values are supported. {e}")
 

@@ -15,7 +15,7 @@ class CausyTestCase(TestCase):
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
         np.random.seed(self.SEED)
-        random.seed(0)
+        self.seeded_random = random.Random(self.SEED)
 
     def assertGraphStructureIsEqual(self, graph1, graph2, msg=None):
         for node_from in graph1.edges:
@@ -29,7 +29,7 @@ class CausyTestCase(TestCase):
                 ):
                     msg = self._formatMessage(
                         msg,
-                        f"{safe_repr(graph1)} is not equal to the structure of {safe_repr(graph1)}. Edge {node_from} -> {node_to} is missing in {safe_repr(graph2)} (graph2).",
+                        f"{safe_repr(graph1)} is not equal to the structure of {safe_repr(graph1)}. Edge {node_from} - {node_to} is missing in {safe_repr(graph2)} (graph2).",
                     )
                     raise self.failureException(msg)
 
@@ -44,7 +44,7 @@ class CausyTestCase(TestCase):
                 ):
                     msg = self._formatMessage(
                         msg,
-                        f"{safe_repr(graph1)} is not equal to the structure of {safe_repr(graph1)}. Edge {node_from} -> {node_to} is missing in {safe_repr(graph1)} (graph1).",
+                        f"{safe_repr(graph1)} is not equal to the structure of {safe_repr(graph1)}. Edge {node_from} - {node_to} is missing in {safe_repr(graph1)} (graph1).",
                     )
                     raise self.failureException(msg)
 
