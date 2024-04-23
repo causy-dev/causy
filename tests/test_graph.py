@@ -1,10 +1,11 @@
-import unittest
-
-from causy.graph import Graph, GraphError, Node
 import torch
 
+from causy.graph import Graph, GraphError, Node
 
-class GraphTestCase(unittest.TestCase):
+from tests.utils import CausyTestCase
+
+
+class GraphTestCase(CausyTestCase):
     def test_add_node(self):
         graph = Graph()
         node = graph.add_node("test", [1, 2, 3])

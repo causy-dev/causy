@@ -57,3 +57,36 @@ class Loop(LogicStepInterface):
 
         self.pipeline_steps = pipeline_steps or []
         self.exit_condition = exit_condition
+
+
+class ApplyActionsTogether(LogicStepInterface):
+    """
+    A logic step which collects all actions and only takes them at the end of the pipeline
+    """
+
+    def execute(
+        self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
+    ):
+        """
+        Executes the loop til self.exit_condition is met
+        :param graph:
+        :param graph_model_instance_:
+        :return:
+        """
+        actions = []
+        for pipeline_step in self.pipeline_steps:
+            result = graph_model_instance_.execute_pipeline_step(pipeline_step)
+            actions.extend(result)
+
+        graph_model_instance_._take_action(actions)
+
+    def __init__(
+        self,
+        pipeline_steps: Optional[List[PipelineStepInterface]] = None,
+    ):
+        super().__init__()
+        # TODO: check if this is a good idea
+        if len(pipeline_steps) > 0 and isinstance(pipeline_steps[0], dict):
+            pipeline_steps = load_pipeline_steps_by_definition(pipeline_steps)
+
+        self.pipeline_steps = pipeline_steps or []

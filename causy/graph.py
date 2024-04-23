@@ -1,7 +1,8 @@
+import collections
 import enum
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Optional, Dict, Set, Tuple, Union
+from typing import List, Optional, Dict, Set, Tuple, Union, OrderedDict
 from uuid import uuid4
 import logging
 
@@ -75,14 +76,14 @@ class Graph(BaseGraphInterface):
     It also stores the history of the actions taken on the graph.
     """
 
-    nodes: Dict[str, Node]
+    nodes: OrderedDict[str, Node]
     edges: Dict[str, Dict[str, Edge]]
     _reverse_edges: Dict[str, Dict[str, Edge]]
     edge_history: Dict[Tuple[str, str], List[TestResult]]
     action_history: List[Dict[str, List[TestResult]]]
 
     def __init__(self):
-        self.nodes = {}
+        self.nodes = collections.OrderedDict({})
         self.edges = {}
         self._reverse_edges = {}
         self.edge_history = {}
@@ -429,7 +430,7 @@ class Graph(BaseGraphInterface):
             tensor_values = values
         else:
             try:
-                tensor_values = torch.tensor(values, dtype=torch.float32)
+                tensor_values = torch.tensor(values, dtype=torch.float64)
             except TypeError as e:
                 raise ValueError(f"Currently only numeric values are supported. {e}")
 

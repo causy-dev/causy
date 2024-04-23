@@ -146,7 +146,7 @@ Currently causy supports the following algorithms:
 - PC (Peter-Clark)
   - PC - the original PC algorithm without any modifications ```causy.algorithms.PC```
   - ParallelPC - a parallelized version of the PC algorithm ```causy.algorithms.ParallelPC```
-
+  - PCStable - a stable version of the PC algorithm ```causy.algorithms.PCStable```
 ### Supported pipeline steps
 Detailed information about the pipeline steps can be found in the [API Documentation](https://causy-dev.github.io/causy/causy.html).
 

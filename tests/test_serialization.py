@@ -1,13 +1,13 @@
-import unittest
-
 from causy.cli import create_pipeline
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_model import graph_model_factory
 from causy.independence_tests.common import CorrelationCoefficientTest
 from causy.serialization import serialize_model
 
+from tests.utils import CausyTestCase
 
-class SerializationTestCase(unittest.TestCase):
+
+class SerializationTestCase(CausyTestCase):
     def test_serialize(self):
         pipeline = [
             CalculatePearsonCorrelations(),

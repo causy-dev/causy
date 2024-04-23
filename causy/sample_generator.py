@@ -129,6 +129,14 @@ class IIDSampleGenerator(AbstractSampleGenerator):
 
     """
 
+    def __init__(
+        self,
+        edges: List[Union[SampleEdge, SampleEdge]],
+        random: Callable = random_normal,
+    ):
+        super().__init__(edges, random)
+        self._variables = self.topologic_sort(copy.deepcopy(list(self._variables)))
+
     def topologic_sort(self, nodes: List[str]):
         """
         Sorts the nodes topologically
@@ -158,7 +166,7 @@ class IIDSampleGenerator(AbstractSampleGenerator):
         # Initialize the output dictionary by adding noise
         for k in self._variables:
             internal_repr[k] = torch.tensor(
-                [self.random_fn() for _ in range(size)], dtype=torch.float32
+                [self.random_fn() for _ in range(size)], dtype=torch.float64
             )
 
         # Iterate over the nodes and sort them by the number of ingoing edges
@@ -170,7 +178,7 @@ class IIDSampleGenerator(AbstractSampleGenerator):
             ingoing_edges[node_name] = self._get_edges_for_node_to(node_name)
 
         # Sort the node such that all nodes that appear in edges must have occured as keys before
-        sorted_nodes = self.topologic_sort(copy.deepcopy(list(self._variables)))
+        sorted_nodes = self._variables
 
         # Generate the data
         for to_node in sorted_nodes:
@@ -271,7 +279,7 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
             for node_name in self._variables:
                 # Get the edges that point to this node
                 edges = self._get_edges_for_node_to(node_name)
-                result = torch.tensor(0.0, dtype=torch.float32)
+                result = torch.tensor(0.0, dtype=torch.float64)
                 for edge in edges:
                     if abs(edge.from_node.point_in_time) > t:
                         result += (

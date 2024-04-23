@@ -1,5 +1,3 @@
-import unittest
-
 from causy.graph import Graph
 from causy.interfaces import TestResult, TestResultAction
 from causy.orientation_rules.pc import (
@@ -11,8 +9,10 @@ from causy.orientation_rules.pc import (
 )
 from causy.graph_model import graph_model_factory
 
+from tests.utils import CausyTestCase
 
-class OrientationRuleTestCase(unittest.TestCase):
+
+class OrientationRuleTestCase(CausyTestCase):
     def test_collider_test(self):
         pipeline = [ColliderTest()]
         model = graph_model_factory(pipeline_steps=pipeline)()
@@ -134,7 +134,3 @@ class OrientationRuleTestCase(unittest.TestCase):
         self.assertFalse(model.graph.undirected_edge_exists(x, z))
         self.assertFalse(model.graph.only_directed_edge_exists(z, x))
         self.assertTrue(model.graph.only_directed_edge_exists(x, z))
-
-
-if __name__ == "__main__":
-    unittest.main()
