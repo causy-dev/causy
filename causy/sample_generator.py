@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from types import SimpleNamespace
 
 import torch
+import random as python_random
 
 from causy.graph import Graph
 from typing import Dict, Callable, List, Optional, Union
@@ -13,12 +14,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def random() -> torch.Tensor:
+def random_normal() -> float:
     """
     Returns a random number from a normal distribution
     :return: the random number as a float
     """
-    return torch.randn(1, dtype=torch.float32).item()
+    return python_random.normalvariate(0, 1)
 
 
 @dataclass
@@ -68,7 +69,7 @@ class AbstractSampleGenerator(abc.ABC):
     def __init__(
         self,
         edges: List[Union[SampleEdge, SampleEdge]],
-        random: Callable = random,  # for setting that to a fixed value for testing use random = lambda: 0
+        random: Callable = random_normal,  # for setting that to a fixed value for testing use random = lambda: 0
     ):
         self._edges = edges
         self._variables = self._find_variables_in_edges()
@@ -244,7 +245,7 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
     def __init__(
         self,
         edges: List[Union[SampleEdge, SampleEdge]],
-        random: Callable = random,  # for setting that to a fixed value for testing use random = lambda: 0
+        random: Callable = random_normal,  # for setting that to a fixed value for testing use random = lambda: 0
     ):
         super().__init__(edges, random)
         self._longest_lag = max(

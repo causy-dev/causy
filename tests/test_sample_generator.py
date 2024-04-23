@@ -4,7 +4,7 @@ import numpy as np
 
 from causy.sample_generator import (
     TimeseriesSampleGenerator,
-    random,
+    random_normal,
     SampleEdge,
     IIDSampleGenerator,
     TimeAwareNodeReference,
