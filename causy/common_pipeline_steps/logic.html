@@ -48,6 +48,21 @@
                 </ul>
 
             </li>
+            <li>
+                    <a class="class" href="#ApplyActionsTogether">ApplyActionsTogether</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#ApplyActionsTogether.__init__">ApplyActionsTogether</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ApplyActionsTogether.execute">execute</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#ApplyActionsTogether.pipeline_steps">pipeline_steps</a>
+                        </li>
+                </ul>
+
+            </li>
     </ul>
 
 
@@ -128,6 +143,39 @@
 </span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">pipeline_steps</span> <span class="ow">or</span> <span class="p">[]</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit_condition</span> <span class="o">=</span> <span class="n">exit_condition</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="k">class</span> <span class="nc">ApplyActionsTogether</span><span class="p">(</span><span class="n">LogicStepInterface</span><span class="p">):</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">    A logic step which collects all actions and only takes them at the end of the pipeline</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="p">):</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="sd">        Executes the loop til self.exit_condition is met</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="sd">        :param graph:</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">        :param graph_model_instance_:</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">        :return:</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>        <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>        <span class="k">for</span> <span class="n">pipeline_step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span><span class="p">:</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>            <span class="n">result</span> <span class="o">=</span> <span class="n">graph_model_instance_</span><span class="o">.</span><span class="n">execute_pipeline_step</span><span class="p">(</span><span class="n">pipeline_step</span><span class="p">)</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>            <span class="n">actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>        <span class="n">graph_model_instance_</span><span class="o">.</span><span class="n">_take_action</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>        <span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">PipelineStepInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>    <span class="p">):</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>        <span class="c1"># TODO: check if this is a good idea</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>            <span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">load_pipeline_steps_by_definition</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>
+</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">pipeline_steps</span> <span class="ow">or</span> <span class="p">[]</span>
 </span></pre></div>
 
 
@@ -303,6 +351,145 @@
                                 <dl>
                                     <div><dt><a href="../serialization.html#SerializeMixin">causy.serialization.SerializeMixin</a></dt>
                                 <dd id="Loop.serialize" class="function"><a href="../serialization.html#SerializeMixin.serialize">serialize</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="ApplyActionsTogether">
+                            <input id="ApplyActionsTogether-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">ApplyActionsTogether</span><wbr>(<span class="base"><a href="../interfaces.html#LogicStepInterface">causy.interfaces.LogicStepInterface</a></span>):
+
+                <label class="view-source-button" for="ApplyActionsTogether-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#ApplyActionsTogether"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ApplyActionsTogether-63"><a href="#ApplyActionsTogether-63"><span class="linenos">63</span></a><span class="k">class</span> <span class="nc">ApplyActionsTogether</span><span class="p">(</span><span class="n">LogicStepInterface</span><span class="p">):</span>
+</span><span id="ApplyActionsTogether-64"><a href="#ApplyActionsTogether-64"><span class="linenos">64</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ApplyActionsTogether-65"><a href="#ApplyActionsTogether-65"><span class="linenos">65</span></a><span class="sd">    A logic step which collects all actions and only takes them at the end of the pipeline</span>
+</span><span id="ApplyActionsTogether-66"><a href="#ApplyActionsTogether-66"><span class="linenos">66</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="ApplyActionsTogether-67"><a href="#ApplyActionsTogether-67"><span class="linenos">67</span></a>
+</span><span id="ApplyActionsTogether-68"><a href="#ApplyActionsTogether-68"><span class="linenos">68</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
+</span><span id="ApplyActionsTogether-69"><a href="#ApplyActionsTogether-69"><span class="linenos">69</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span>
+</span><span id="ApplyActionsTogether-70"><a href="#ApplyActionsTogether-70"><span class="linenos">70</span></a>    <span class="p">):</span>
+</span><span id="ApplyActionsTogether-71"><a href="#ApplyActionsTogether-71"><span class="linenos">71</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ApplyActionsTogether-72"><a href="#ApplyActionsTogether-72"><span class="linenos">72</span></a><span class="sd">        Executes the loop til self.exit_condition is met</span>
+</span><span id="ApplyActionsTogether-73"><a href="#ApplyActionsTogether-73"><span class="linenos">73</span></a><span class="sd">        :param graph:</span>
+</span><span id="ApplyActionsTogether-74"><a href="#ApplyActionsTogether-74"><span class="linenos">74</span></a><span class="sd">        :param graph_model_instance_:</span>
+</span><span id="ApplyActionsTogether-75"><a href="#ApplyActionsTogether-75"><span class="linenos">75</span></a><span class="sd">        :return:</span>
+</span><span id="ApplyActionsTogether-76"><a href="#ApplyActionsTogether-76"><span class="linenos">76</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ApplyActionsTogether-77"><a href="#ApplyActionsTogether-77"><span class="linenos">77</span></a>        <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="ApplyActionsTogether-78"><a href="#ApplyActionsTogether-78"><span class="linenos">78</span></a>        <span class="k">for</span> <span class="n">pipeline_step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span><span class="p">:</span>
+</span><span id="ApplyActionsTogether-79"><a href="#ApplyActionsTogether-79"><span class="linenos">79</span></a>            <span class="n">result</span> <span class="o">=</span> <span class="n">graph_model_instance_</span><span class="o">.</span><span class="n">execute_pipeline_step</span><span class="p">(</span><span class="n">pipeline_step</span><span class="p">)</span>
+</span><span id="ApplyActionsTogether-80"><a href="#ApplyActionsTogether-80"><span class="linenos">80</span></a>            <span class="n">actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span><span id="ApplyActionsTogether-81"><a href="#ApplyActionsTogether-81"><span class="linenos">81</span></a>
+</span><span id="ApplyActionsTogether-82"><a href="#ApplyActionsTogether-82"><span class="linenos">82</span></a>        <span class="n">graph_model_instance_</span><span class="o">.</span><span class="n">_take_action</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+</span><span id="ApplyActionsTogether-83"><a href="#ApplyActionsTogether-83"><span class="linenos">83</span></a>
+</span><span id="ApplyActionsTogether-84"><a href="#ApplyActionsTogether-84"><span class="linenos">84</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="ApplyActionsTogether-85"><a href="#ApplyActionsTogether-85"><span class="linenos">85</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="ApplyActionsTogether-86"><a href="#ApplyActionsTogether-86"><span class="linenos">86</span></a>        <span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">PipelineStepInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="ApplyActionsTogether-87"><a href="#ApplyActionsTogether-87"><span class="linenos">87</span></a>    <span class="p">):</span>
+</span><span id="ApplyActionsTogether-88"><a href="#ApplyActionsTogether-88"><span class="linenos">88</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="ApplyActionsTogether-89"><a href="#ApplyActionsTogether-89"><span class="linenos">89</span></a>        <span class="c1"># TODO: check if this is a good idea</span>
+</span><span id="ApplyActionsTogether-90"><a href="#ApplyActionsTogether-90"><span class="linenos">90</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="ApplyActionsTogether-91"><a href="#ApplyActionsTogether-91"><span class="linenos">91</span></a>            <span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">load_pipeline_steps_by_definition</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span>
+</span><span id="ApplyActionsTogether-92"><a href="#ApplyActionsTogether-92"><span class="linenos">92</span></a>
+</span><span id="ApplyActionsTogether-93"><a href="#ApplyActionsTogether-93"><span class="linenos">93</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">pipeline_steps</span> <span class="ow">or</span> <span class="p">[]</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>A logic step which collects all actions and only takes them at the end of the pipeline</p>
+</div>
+
+
+                            <div id="ApplyActionsTogether.__init__" class="classattr">
+                                        <input id="ApplyActionsTogether.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">ApplyActionsTogether</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="../interfaces.html#PipelineStepInterface">causy.interfaces.PipelineStepInterface</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+                <label class="view-source-button" for="ApplyActionsTogether.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#ApplyActionsTogether.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ApplyActionsTogether.__init__-84"><a href="#ApplyActionsTogether.__init__-84"><span class="linenos">84</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="ApplyActionsTogether.__init__-85"><a href="#ApplyActionsTogether.__init__-85"><span class="linenos">85</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="ApplyActionsTogether.__init__-86"><a href="#ApplyActionsTogether.__init__-86"><span class="linenos">86</span></a>        <span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">PipelineStepInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="ApplyActionsTogether.__init__-87"><a href="#ApplyActionsTogether.__init__-87"><span class="linenos">87</span></a>    <span class="p">):</span>
+</span><span id="ApplyActionsTogether.__init__-88"><a href="#ApplyActionsTogether.__init__-88"><span class="linenos">88</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="ApplyActionsTogether.__init__-89"><a href="#ApplyActionsTogether.__init__-89"><span class="linenos">89</span></a>        <span class="c1"># TODO: check if this is a good idea</span>
+</span><span id="ApplyActionsTogether.__init__-90"><a href="#ApplyActionsTogether.__init__-90"><span class="linenos">90</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="ApplyActionsTogether.__init__-91"><a href="#ApplyActionsTogether.__init__-91"><span class="linenos">91</span></a>            <span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">load_pipeline_steps_by_definition</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span>
+</span><span id="ApplyActionsTogether.__init__-92"><a href="#ApplyActionsTogether.__init__-92"><span class="linenos">92</span></a>
+</span><span id="ApplyActionsTogether.__init__-93"><a href="#ApplyActionsTogether.__init__-93"><span class="linenos">93</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">pipeline_steps</span> <span class="ow">or</span> <span class="p">[]</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="ApplyActionsTogether.execute" class="classattr">
+                                        <input id="ApplyActionsTogether.execute-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">execute</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">graph</span><span class="p">:</span> <span class="n"><a href="../interfaces.html#BaseGraphInterface">causy.interfaces.BaseGraphInterface</a></span>,</span><span class="param">	<span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n"><a href="../interfaces.html#GraphModelInterface">causy.interfaces.GraphModelInterface</a></span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="ApplyActionsTogether.execute-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#ApplyActionsTogether.execute"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ApplyActionsTogether.execute-68"><a href="#ApplyActionsTogether.execute-68"><span class="linenos">68</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
+</span><span id="ApplyActionsTogether.execute-69"><a href="#ApplyActionsTogether.execute-69"><span class="linenos">69</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span>
+</span><span id="ApplyActionsTogether.execute-70"><a href="#ApplyActionsTogether.execute-70"><span class="linenos">70</span></a>    <span class="p">):</span>
+</span><span id="ApplyActionsTogether.execute-71"><a href="#ApplyActionsTogether.execute-71"><span class="linenos">71</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ApplyActionsTogether.execute-72"><a href="#ApplyActionsTogether.execute-72"><span class="linenos">72</span></a><span class="sd">        Executes the loop til self.exit_condition is met</span>
+</span><span id="ApplyActionsTogether.execute-73"><a href="#ApplyActionsTogether.execute-73"><span class="linenos">73</span></a><span class="sd">        :param graph:</span>
+</span><span id="ApplyActionsTogether.execute-74"><a href="#ApplyActionsTogether.execute-74"><span class="linenos">74</span></a><span class="sd">        :param graph_model_instance_:</span>
+</span><span id="ApplyActionsTogether.execute-75"><a href="#ApplyActionsTogether.execute-75"><span class="linenos">75</span></a><span class="sd">        :return:</span>
+</span><span id="ApplyActionsTogether.execute-76"><a href="#ApplyActionsTogether.execute-76"><span class="linenos">76</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ApplyActionsTogether.execute-77"><a href="#ApplyActionsTogether.execute-77"><span class="linenos">77</span></a>        <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="ApplyActionsTogether.execute-78"><a href="#ApplyActionsTogether.execute-78"><span class="linenos">78</span></a>        <span class="k">for</span> <span class="n">pipeline_step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span><span class="p">:</span>
+</span><span id="ApplyActionsTogether.execute-79"><a href="#ApplyActionsTogether.execute-79"><span class="linenos">79</span></a>            <span class="n">result</span> <span class="o">=</span> <span class="n">graph_model_instance_</span><span class="o">.</span><span class="n">execute_pipeline_step</span><span class="p">(</span><span class="n">pipeline_step</span><span class="p">)</span>
+</span><span id="ApplyActionsTogether.execute-80"><a href="#ApplyActionsTogether.execute-80"><span class="linenos">80</span></a>            <span class="n">actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span><span id="ApplyActionsTogether.execute-81"><a href="#ApplyActionsTogether.execute-81"><span class="linenos">81</span></a>
+</span><span id="ApplyActionsTogether.execute-82"><a href="#ApplyActionsTogether.execute-82"><span class="linenos">82</span></a>        <span class="n">graph_model_instance_</span><span class="o">.</span><span class="n">_take_action</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Executes the loop til self.exit_condition is met</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>graph</strong>: </li>
+<li><strong>graph_model_instance_</strong>: </li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+</div>
+
+
+                            </div>
+                            <div id="ApplyActionsTogether.pipeline_steps" class="classattr">
+                                <div class="attr variable">
+            <span class="name">pipeline_steps</span>
+
+        
+    </div>
+    <a class="headerlink" href="#ApplyActionsTogether.pipeline_steps"></a>
+    
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="../serialization.html#SerializeMixin">causy.serialization.SerializeMixin</a></dt>
+                                <dd id="ApplyActionsTogether.serialize" class="function"><a href="../serialization.html#SerializeMixin.serialize">serialize</a></dd>
 
             </div>
                                 </dl>
