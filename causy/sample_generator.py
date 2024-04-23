@@ -130,7 +130,9 @@ class IIDSampleGenerator(AbstractSampleGenerator):
     """
 
     def __init__(
-        self, edges: List[Union[SampleEdge, SampleEdge]], random: Callable = random
+        self,
+        edges: List[Union[SampleEdge, SampleEdge]],
+        random: Callable = random_normal,
     ):
         super().__init__(edges, random)
         self._variables = self.topologic_sort(copy.deepcopy(list(self._variables)))

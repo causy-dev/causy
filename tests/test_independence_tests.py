@@ -228,8 +228,6 @@ class IndependenceTestTestCase(CausyTestCase):
                 SampleEdge(NodeReference("W"), NodeReference("Z"), 8),
                 SampleEdge(NodeReference("X"), NodeReference("Q"), 3),
                 SampleEdge(NodeReference("Q"), NodeReference("Z"), 4),
-                SampleEdge(NodeReference("X"), NodeReference("L"), 3),
-                SampleEdge(NodeReference("L"), NodeReference("Z"), 4),
             ],
             random=lambda: rdnv(0, 1),
         )
