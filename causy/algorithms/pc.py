@@ -51,9 +51,9 @@ PCStable = graph_model_factory(
         CalculatePearsonCorrelations(),
         ApplyActionsTogether(
             pipeline_steps=[
-                CorrelationCoefficientTest(threshold=0.005),
-                PartialCorrelationTest(threshold=0.005),
-                ExtendedPartialCorrelationTestMatrix(threshold=0.005),
+                CorrelationCoefficientTest(threshold=0.01),
+                PartialCorrelationTest(threshold=0.01),
+                ExtendedPartialCorrelationTestMatrix(threshold=0.01),
             ]
         ),
         *PC_ORIENTATION_RULES,
@@ -65,13 +65,13 @@ PCStable = graph_model_factory(
 ParallelPC = graph_model_factory(
     pipeline_steps=[
         CalculatePearsonCorrelations(),
-        CorrelationCoefficientTest(threshold=0.005),
+        CorrelationCoefficientTest(threshold=0.001),
         PartialCorrelationTest(
-            threshold=0.005, parallel=True, chunk_size_parallel_processing=50000
+            threshold=0.001, parallel=True, chunk_size_parallel_processing=50000
         ),
         ExtendedPartialCorrelationTestMatrix(
             # run first a sampled version of the test so we can minimize the number of tests in the full version
-            threshold=0.005,
+            threshold=0.001,
             chunk_size_parallel_processing=5000,
             parallel=True,
             generator=RandomSampleGenerator(
@@ -87,7 +87,7 @@ ParallelPC = graph_model_factory(
             ),
         ),
         ExtendedPartialCorrelationTestMatrix(
-            threshold=0.005,
+            threshold=0.001,
             chunk_size_parallel_processing=20000,
             parallel=True,
             generator=PairsWithNeighboursGenerator(
