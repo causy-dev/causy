@@ -11,7 +11,7 @@ class GraphTestCase(CausyTestCase):
         node = graph.add_node("test", [1, 2, 3])
         self.assertEqual(node.name, "test")
         self.assertTrue(
-            torch.equal(node.values, torch.tensor([1.0, 2.0, 3.0], dtype=torch.float64))
+            torch.equal(node.values, torch.tensor([1.0, 2.0, 3.0], dtype=torch.float32))
         )
         self.assertEqual(len(graph.nodes), 1)
         self.assertEqual(len(graph.edges), 0)
@@ -21,7 +21,7 @@ class GraphTestCase(CausyTestCase):
         node = graph.add_node("test", [1, 2, 3], id_="custom")
         self.assertEqual(node.name, "test")
         self.assertTrue(
-            torch.equal(node.values, torch.tensor([1.0, 2.0, 3.0], dtype=torch.float64))
+            torch.equal(node.values, torch.tensor([1.0, 2.0, 3.0], dtype=torch.float32))
         )
         self.assertEqual(len(graph.nodes), 1)
         self.assertEqual(len(graph.edges), 0)
