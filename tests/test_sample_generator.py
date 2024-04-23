@@ -31,7 +31,7 @@ class SampleGeneratorTest(CausyTestCase):
                 SampleEdge(NodeReference("Y"), NodeReference("Z"), 7),
             ]
         )
-        model.random_fn = lambda: torch.tensor(1, dtype=torch.float32)
+        model.random_fn = lambda: torch.tensor(1, dtype=torch.float64)
 
         result = model._generate_data(100)
         self.assertEqual(list(result["X"].shape), [100])
@@ -50,7 +50,7 @@ class SampleGeneratorTest(CausyTestCase):
                 SampleEdge(NodeReference("W"), NodeReference("Y"), 5),
             ]
         )
-        model.random_fn = lambda: torch.tensor(1, dtype=torch.float32)
+        model.random_fn = lambda: torch.tensor(1, dtype=torch.float64)
 
         result = model._generate_data(100)
         self.assertEqual(list(result["X"].shape), [100])
@@ -86,7 +86,7 @@ class SampleGeneratorTest(CausyTestCase):
         )
 
         model_one._initial_distribution_fn = lambda x: torch.tensor(
-            1, dtype=torch.float32
+            1, dtype=torch.float64
         )
 
         result, graph = model_one.generate(100)
@@ -126,7 +126,7 @@ class SampleGeneratorTest(CausyTestCase):
             ],
             random=lambda: 0,
         )
-        model._initial_distribution_fn = lambda x: torch.tensor(1, dtype=torch.float32)
+        model._initial_distribution_fn = lambda x: torch.tensor(1, dtype=torch.float64)
 
         result, graph = model.generate(100)
 
@@ -149,11 +149,11 @@ class SampleGeneratorTest(CausyTestCase):
                     TimeAwareNodeReference("X", -2), TimeAwareNodeReference("X"), 0.4
                 ),
             ],
-            random=lambda: torch.tensor(0, dtype=torch.float32),
+            random=lambda: torch.tensor(0, dtype=torch.float64),
         )
 
         model_multi_autocorr._initial_distribution_fn = lambda x: torch.tensor(
-            1, dtype=torch.float32
+            1, dtype=torch.float64
         )
 
         result, graph = model_multi_autocorr.generate(100)

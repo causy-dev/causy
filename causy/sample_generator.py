@@ -166,7 +166,7 @@ class IIDSampleGenerator(AbstractSampleGenerator):
         # Initialize the output dictionary by adding noise
         for k in self._variables:
             internal_repr[k] = torch.tensor(
-                [self.random_fn() for _ in range(size)], dtype=torch.float32
+                [self.random_fn() for _ in range(size)], dtype=torch.float64
             )
 
         # Iterate over the nodes and sort them by the number of ingoing edges
@@ -279,7 +279,7 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
             for node_name in self._variables:
                 # Get the edges that point to this node
                 edges = self._get_edges_for_node_to(node_name)
-                result = torch.tensor(0.0, dtype=torch.float32)
+                result = torch.tensor(0.0, dtype=torch.float64)
                 for edge in edges:
                     if abs(edge.from_node.point_in_time) > t:
                         result += (

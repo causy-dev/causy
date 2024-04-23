@@ -178,7 +178,7 @@ class IndependenceTestTestCase(CausyTestCase):
 
         pipeline = [
             CalculatePearsonCorrelations(),
-            CorrelationCoefficientTest(threshold=0.1),
+            CorrelationCoefficientTest(threshold=0.01),
             PartialCorrelationTest(threshold=0.01),
             ExtendedPartialCorrelationTestMatrix(threshold=0.01),
         ]
