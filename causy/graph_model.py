@@ -1,7 +1,8 @@
 import logging
+import platform
 from abc import ABC
 from copy import deepcopy
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Callable, Union
 
 import torch.multiprocessing as mp
 
@@ -42,19 +43,65 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     ):
         self.graph = graph
         self.pipeline_steps = pipeline_steps or []
-        self.pool = mp.Pool(mp.cpu_count() * 2)
+        if self.__multiprocessing_required(self.pipeline_steps):
+            self.pool = self.__initialize_pool()
+        else:
+            self.pool = None
 
-    def create_graph_from_data(self, data: List[Dict[str, float]]):
+    def __initialize_pool(self) -> mp.Pool:
         """
-        Create a graph from data
-        :param data: is a list of dictionaries
+        Initialize the multiprocessing pool
+        :return: the multiprocessing pool
+        """
+        # we need to set the start method to spawn because the default fork method does not work well with torch on linux
+        # see https://pytorch.org/docs/stable/notes/multiprocessing.html
+        if platform.system() == "Linux":
+            try:
+                mp.set_start_method("spawn")
+            except RuntimeError:
+                logger.warning(
+                    "Could not set multiprocessing start method to spawn. Using default method. This might cause issues on Linux."
+                )
+        return mp.Pool(mp.cpu_count() * 2)
+
+    def __multiprocessing_required(self, pipeline_steps):
+        """
+        Check if multiprocessing is required
+        :param pipeline_steps: the pipeline steps
+        :return: True if multiprocessing is required
+        """
+        for step in pipeline_steps:
+            if hasattr(step, "parallel") and step.parallel:
+                return True
+        return False
+
+    def __del__(self):
+        if self.pool is not None:
+            self.pool.close()
+            self.pool.join()
+
+    def __create_graph_from_dict(self, data: Dict[str, List[float]]):
+        """
+        Create a graph from a dictionary
+        :param data: the dictionary
+        :return: the graph
+        """
+        graph = Graph()
+        for key, values in sorted(data.items()):
+            graph.add_node(key, values, id_=key)
+        return graph
+
+    def __create_graph_from_list(self, data: List[Dict[str, float]]):
+        """
+        Create a graph from a list of dictionaries
+        :param data:
         :return:
         """
         # initialize nodes
         keys = data[0].keys()
         nodes: Dict[str, List[float]] = {}
 
-        for key in keys:
+        for key in sorted(keys):
             nodes[key] = []
 
         # load nodes into node dict
@@ -64,7 +111,23 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         graph = Graph()
         for key in keys:
-            graph.add_node(key, nodes[key])
+            graph.add_node(key, nodes[key], id_=key)
+
+        return graph
+
+    def create_graph_from_data(
+        self, data: Union[List[Dict[str, float]], Dict[str, List[float]]]
+    ):
+        """
+        Create a graph from data
+        :param data: is a list of dictionaries or a dictionary with lists
+        :return:
+        """
+
+        if isinstance(data, dict):
+            graph = self.__create_graph_from_dict(data)
+        else:
+            graph = self.__create_graph_from_list(data)
 
         self.graph = graph
         return graph
@@ -112,7 +175,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         for i in generator:
             yield [test_fn, [*i], graph]
 
-    def _take_action(self, results):
+    def _take_action(self, results, dry_run=False):
         """
         Take the actions returned by the test
 
@@ -132,7 +195,11 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
             for i in result_items:
                 if i.u is not None and i.v is not None:
-                    logger.info(f"Action: {i.action} on {i.u.name} and {i.v.name}")
+                    logger.debug(f"Action: {i.action} on {i.u.name} and {i.v.name}")
+
+                if dry_run:
+                    actions_taken.append(i)
+                    continue
 
                 # execute the action returned by the test
                 if i.action == TestResultAction.REMOVE_EDGE_UNDIRECTED:
@@ -203,10 +270,11 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
                 # add the action to the actions history
                 actions_taken.append(i)
-
         return actions_taken
 
-    def execute_pipeline_step(self, test_fn: PipelineStepInterface):
+    def execute_pipeline_step(
+        self, test_fn: PipelineStepInterface, apply_to_graph=True
+    ):
         """
         Execute a single pipeline_step on the graph. either in parallel or in a single process depending on the test_fn.parallel flag
         :param test_fn: the test function
@@ -220,6 +288,12 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         # run all combinations in parallel except if the number of combinations is smaller then the chunk size
         # because then we would create more overhead then we would definetly gain from parallel processing
         if test_fn.parallel:
+            if self.pool is None:
+                logger.warning(
+                    "Parallel processing is enabled but no pool is initialized. Initializing pool."
+                )
+                self.pool = self.__initialize_pool()
+
             for result in self.pool.imap_unordered(
                 unpack_run,
                 self._format_yield(
@@ -229,7 +303,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             ):
                 if not isinstance(result, list):
                     result = [result]
-                actions_taken.extend(self._take_action(result))
+                actions_taken.extend(
+                    self._take_action(result, dry_run=not apply_to_graph)
+                )
         else:
             if test_fn.generator.chunked:
                 for chunk in test_fn.generator.generate(self.graph, self):
@@ -237,7 +313,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         unpack_run(i)
                         for i in [[test_fn, [*c], self.graph] for c in chunk]
                     ]
-                    actions_taken.extend(self._take_action(iterator))
+                    actions_taken.extend(
+                        self._take_action(iterator, dry_run=not apply_to_graph)
+                    )
             else:
                 iterator = [
                     unpack_run(i)
@@ -246,7 +324,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         for i in test_fn.generator.generate(self.graph, self)
                     ]
                 ]
-                actions_taken.extend(self._take_action(iterator))
+                actions_taken.extend(
+                    self._take_action(iterator, dry_run=not apply_to_graph)
+                )
 
         self.graph.action_history.append(
             {"step": type(test_fn).__name__, "actions": actions_taken}

@@ -1,7 +1,10 @@
+from causy.causal_effect_estimation.multivariate_regression import (
+    ComputeDirectEffectsMultivariateRegression,
+)
 from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
 from causy.generators import PairsWithNeighboursGenerator, RandomSampleGenerator
 from causy.graph_model import graph_model_factory
-from causy.common_pipeline_steps.logic import Loop
+from causy.common_pipeline_steps.logic import Loop, ApplyActionsTogether
 from causy.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
@@ -19,22 +22,42 @@ from causy.orientation_rules.pc import (
     FurtherOrientQuadrupleTest,
 )
 
+PC_ORIENTATION_RULES = [
+    ColliderTest(),
+    Loop(
+        pipeline_steps=[
+            NonColliderTest(),
+            FurtherOrientTripleTest(),
+            OrientQuadrupleTest(),
+            FurtherOrientQuadrupleTest(),
+        ],
+        exit_condition=ExitOnNoActions(),
+    ),
+]
+
 PC = graph_model_factory(
     pipeline_steps=[
         CalculatePearsonCorrelations(),
-        CorrelationCoefficientTest(threshold=0.005),
-        PartialCorrelationTest(threshold=0.005),
-        ExtendedPartialCorrelationTestMatrix(threshold=0.005),
-        ColliderTest(),
-        Loop(
+        CorrelationCoefficientTest(threshold=0.05),
+        PartialCorrelationTest(threshold=0.05),
+        ExtendedPartialCorrelationTestMatrix(threshold=0.05),
+        *PC_ORIENTATION_RULES,
+        ComputeDirectEffectsMultivariateRegression(),
+    ]
+)
+
+PCStable = graph_model_factory(
+    pipeline_steps=[
+        CalculatePearsonCorrelations(),
+        ApplyActionsTogether(
             pipeline_steps=[
-                NonColliderTest(),
-                FurtherOrientTripleTest(),
-                OrientQuadrupleTest(),
-                FurtherOrientQuadrupleTest(),
-            ],
-            exit_condition=ExitOnNoActions(),
+                CorrelationCoefficientTest(threshold=0.01),
+                PartialCorrelationTest(threshold=0.01),
+                ExtendedPartialCorrelationTestMatrix(threshold=0.01),
+            ]
         ),
+        *PC_ORIENTATION_RULES,
+        ComputeDirectEffectsMultivariateRegression(),
     ]
 )
 
@@ -42,13 +65,13 @@ PC = graph_model_factory(
 ParallelPC = graph_model_factory(
     pipeline_steps=[
         CalculatePearsonCorrelations(),
-        CorrelationCoefficientTest(threshold=0.005),
+        CorrelationCoefficientTest(threshold=0.001),
         PartialCorrelationTest(
-            threshold=0.005, parallel=True, chunk_size_parallel_processing=50000
+            threshold=0.001, parallel=True, chunk_size_parallel_processing=50000
         ),
         ExtendedPartialCorrelationTestMatrix(
             # run first a sampled version of the test so we can minimize the number of tests in the full version
-            threshold=0.005,
+            threshold=0.001,
             chunk_size_parallel_processing=5000,
             parallel=True,
             generator=RandomSampleGenerator(
@@ -64,7 +87,7 @@ ParallelPC = graph_model_factory(
             ),
         ),
         ExtendedPartialCorrelationTestMatrix(
-            threshold=0.005,
+            threshold=0.001,
             chunk_size_parallel_processing=20000,
             parallel=True,
             generator=PairsWithNeighboursGenerator(
@@ -73,15 +96,7 @@ ParallelPC = graph_model_factory(
                 comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
             ),
         ),
-        ColliderTest(),
-        Loop(
-            pipeline_steps=[
-                NonColliderTest(),
-                FurtherOrientTripleTest(),
-                OrientQuadrupleTest(),
-                FurtherOrientQuadrupleTest(),
-            ],
-            exit_condition=ExitOnNoActions(),
-        ),
+        *PC_ORIENTATION_RULES,
+        ComputeDirectEffectsMultivariateRegression(),
     ]
 )

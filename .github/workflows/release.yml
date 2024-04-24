@@ -19,8 +19,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.11" ]
-        platform: [ macos-latest ] # TODO: change add ubuntu-latest
+        python-version: [ "3.12" ]
+        platform: [ ubuntu-latest ]
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v3
@@ -33,6 +33,19 @@ jobs:
         python -m pip install --upgrade pip poetry
         poetry self add poetry-version-plugin
         poetry install
+    - name: Download latest frontend release
+      uses: robinraju/release-downloader@v1.9
+      with:
+          repository: "causy-dev/causy-ui"
+          fileName: "causy-ui-*.zip"
+          out-file-path: "causy/static/"
+          latest: true
+    - name: unpack and move frontend release
+      run: |
+        unzip causy/static/causy-ui-*.zip -d causy/static/
+        mv causy/static/dist/* causy/static/
+        rm -r causy/static/dist
+        rm -r causy/static/causy-ui-*.zip
     - name: Build
       run: |
           poetry build

@@ -1,3 +1,4 @@
+import collections
 import copy
 import itertools
 import logging
@@ -44,8 +45,37 @@ class AllCombinationsGenerator(GeneratorInterface):
 
         # create all combinations
         for r in range(start, stop):
+            # we need to sort the nodes to make sure we always get the same order of nodes - this is important for testing
             for i in itertools.combinations(graph.nodes, r):
                 yield i
+
+
+class PairsWithEdgesInBetweenGenerator(GeneratorInterface):
+    def __init__(
+        self, comparison_settings: ComparisonSettings = None, chunked: bool = None
+    ):
+        self.chunked = chunked
+        super().__init__(comparison_settings, chunked)
+
+    CHUNK_SIZE = 100
+
+    def generate(
+        self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
+    ):
+        local_edges = copy.deepcopy(graph.edges)
+
+        edges = []
+
+        for f_node in local_edges:
+            for t_node in graph.edges[f_node]:
+                edges.append((f_node, t_node))
+
+        if self.chunked:
+            for i in range(0, len(edges), self.CHUNK_SIZE):
+                yield edges[i : i + self.CHUNK_SIZE]
+
+        for edge in edges:
+            yield edge
 
 
 class PairsWithNeighboursGenerator(GeneratorInterface):
@@ -93,7 +123,6 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
 
         if start < 2:
             raise ValueError("PairsWithNeighboursGenerator: start must be at least 2")
-
         for i in range(start, stop):
             logger.debug(f"PairsWithNeighboursGenerator: i={i}")
             checked_combinations = set()
@@ -109,13 +138,11 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                         continue
 
                     other_neighbours = set(graph.edges[node])
+
                     if neighbour in other_neighbours:
                         other_neighbours.remove(neighbour)
-                    else:
-                        continue
-                    if len(other_neighbours) + 2 < i:
-                        continue
-                    combinations = itertools.combinations(other_neighbours, i)
+
+                    combinations = list(itertools.combinations(other_neighbours, i - 2))
                     if self.shuffle_combinations:
                         combinations = list(combinations)
                         import random

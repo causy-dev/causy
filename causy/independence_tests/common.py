@@ -3,6 +3,8 @@ from typing import Tuple, List, Optional
 import logging
 
 import torch
+import torch.nn as nn
+import torch.optim as optim
 
 from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
 from causy.math_utils import get_t_and_critical_t
@@ -122,12 +124,14 @@ class PartialCorrelationTest(PipelineStepInterface):
                     )
                 )
                 already_deleted_edges.add((x, y))
+
         return results
 
 
 class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
     generator = PairsWithNeighboursGenerator(
-        comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS)
+        comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
+        shuffle_combinations=False,
     )
     chunk_size_parallel_processing = 1000
     parallel = False
@@ -137,6 +141,8 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
         Test if nodes u,v are independent given Z (set of nodes) based on partial correlation using the inverted covariance matrix (precision matrix).
         https://en.wikipedia.org/wiki/Partial_correlation#Using_matrix_inversion
         We use this test for all combinations of more than 3 nodes because it is slower.
+        If the covariance matrix is ill-conditioned, i.e., its condition number is high, the precision matrix is not reliable.
+        In that case, we throw a warning.
         :param nodes: the nodes to test
         :return: A TestResult with the action to take
         """
@@ -149,13 +155,13 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
 
         if not set(nodes[2:]).issubset(set([on for on in list(other_neighbours)])):
             return
-
         inverse_cov_matrix = torch.inverse(
             torch.cov(torch.stack([graph.nodes[node].values for node in nodes]))
         )
+
         n = inverse_cov_matrix.size(0)
         diagonal = torch.diag(inverse_cov_matrix)
-        diagonal_matrix = torch.zeros((n, n), dtype=torch.float32)
+        diagonal_matrix = torch.zeros((n, n), dtype=torch.float64)
         for i in range(n):
             diagonal_matrix[i, i] = diagonal[i]
 
@@ -172,6 +178,78 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
                 (-1 * precision_matrix[0][1])
                 / torch.sqrt(precision_matrix[0][0] * precision_matrix[1][1])
             ).item(),
+            self.threshold,
+        )
+
+        if abs(t) < critical_t:
+            logger.debug(
+                f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([graph.nodes[on].name for on in other_neighbours])}"
+            )
+            nodes_set = set([graph.nodes[n] for n in nodes])
+            return TestResult(
+                u=graph.nodes[nodes[0]],
+                v=graph.nodes[nodes[1]],
+                action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                data={
+                    "separatedBy": list(
+                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
+                    )
+                },
+            )
+
+
+def partial_correlation_regression(x, y, z):
+    """
+    Compute the partial correlation coefficient between x and y controlling for other variables in z using linear regression.
+
+    Arguments:
+    x, y : torch.Tensor : Variables for which the partial correlation is computed.
+    z : torch.Tensor : Other variables used to control for in the partial correlation.
+
+    Returns:
+    partial_corr : torch.Tensor : Partial correlation coefficient between x and y.
+    """
+    # Define linear regression model
+    model_x = torch.linalg.lstsq(z.T, x).solution
+    model_y = torch.linalg.lstsq(z.T, y).solution
+
+    residual_x = x - torch.matmul(model_x, z)
+    residual_y = y - torch.matmul(model_y, z)
+
+    # Compute correlation of residuals
+    return torch.dot(residual_x, residual_y) / (
+        torch.norm(residual_x) * torch.norm(residual_y)
+    )
+
+
+class ExtendedPartialCorrelationTestLinearRegression(PipelineStepInterface):
+    generator = PairsWithNeighboursGenerator(
+        comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
+        shuffle_combinations=False,
+    )
+    chunk_size_parallel_processing = 1000
+    parallel = False
+
+    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
+        if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
+            return
+
+        other_neighbours = set(graph.edges[nodes[0]])
+        other_neighbours.remove(graph.nodes[nodes[1]].id)
+
+        partial_correlation = partial_correlation_regression(
+            graph.nodes[nodes[0]].values,
+            graph.nodes[nodes[1]].values,
+            torch.stack([graph.nodes[node].values for node in nodes[2:]]),
+        )
+
+        sample_size = len(graph.nodes[nodes[0]].values)
+        nb_of_control_vars = len(nodes) - 2
+
+        t, critical_t = get_t_and_critical_t(
+            sample_size,
+            nb_of_control_vars,
+            partial_correlation.item(),
             self.threshold,
         )
 
