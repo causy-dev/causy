@@ -1,14 +1,19 @@
 import enum
 import multiprocessing
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import List, Dict, Optional
+from pydantic.dataclasses import dataclass
+from typing import List, Dict, Optional, Union, TypeVar, Generic
 import logging
 
 import torch
 
 from causy.serialization import SerializeMixin
-from causy.graph_utils import load_pipeline_artefact_by_definition
+from causy.graph_utils import (
+    load_pipeline_artefact_by_definition,
+    serialize_module_name,
+)
+
+from pydantic import BaseModel, computed_field
 
 logger = logging.getLogger(__name__)
 
@@ -17,30 +22,84 @@ DEFAULT_THRESHOLD = 0.01
 AS_MANY_AS_FIELDS = 0
 
 
-@dataclass
-class ComparisonSettings(SerializeMixin):
+class ComparisonSettings(SerializeMixin, BaseModel):
     min: int = 2
     max: int = AS_MANY_AS_FIELDS
 
+    @computed_field
+    @property
+    def name(self) -> str:
+        return serialize_module_name(self)
 
-class NodeInterface(SerializeMixin):
+
+class NodeInterface(SerializeMixin, BaseModel):
     """
     Node interface for the graph. A node is defined by a name and a value.
     """
 
     name: str
     id: str
-    values: torch.Tensor
+    values: Optional[torch.DoubleTensor] = None
 
     def serialize(self):
         return {"id": self.id, "name": self.name}
 
+    class Config:
+        arbitrary_types_allowed = True
 
-class EdgeTypeInterface:
-    pass
+
+class EdgeUIConfig(SerializeMixin, BaseModel):
+    color: Optional[str] = None
+    width: Optional[int] = None
+    style: Optional[str] = None
+    marker_start: Optional[str] = None
+    marker_end: Optional[str] = None
+    label_field: Optional[str] = None
+    animated: Optional[bool] = False
 
 
-class EdgeInterface(SerializeMixin):
+class ConditionalEdgeUIConfigComparison(enum.StrEnum):
+    EQUAL = "EQUAL"
+    GREATER = "GREATER"
+    LESS = "LESS"
+    GREATER_EQUAL = "GREATER_EQUAL"
+    LESS_EQUAL = "LESS_EQUAL"
+    NOT_EQUAL = "NOT_EQUAL"
+
+
+class ConditionalEdgeUIConfig(SerializeMixin, BaseModel):
+    ui_config: Optional[EdgeUIConfig] = None
+    condition_field: str = "coefficient"
+    condition_value: float = 0.5
+    condition_comparison: ConditionalEdgeUIConfigComparison = (
+        ConditionalEdgeUIConfigComparison.GREATER_EQUAL
+    )
+
+
+class EdgeTypeInterface(SerializeMixin, BaseModel):
+    """
+    Edge type interface for the graph
+    An edge type is defined by a name
+    """
+
+    name: str
+    default_ui_config: Optional[EdgeUIConfig] = None
+    conditional_ui_configs: Optional[List[ConditionalEdgeUIConfig]] = None
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __eq__(self, other):
+        return self.name == other.name
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+
+class EdgeInterface(SerializeMixin, BaseModel):
     """
     Edge interface for the graph
     A graph edge is defined by two nodes and an edge type. It can also have metadata.
@@ -50,6 +109,9 @@ class EdgeInterface(SerializeMixin):
     v: NodeInterface
     edge_type: EdgeTypeInterface
     metadata: Dict[str, any] = None
+
+    class Config:
+        arbitrary_types_allowed = True
 
     def serialize(self):
         return {
@@ -72,8 +134,7 @@ class TestResultAction(enum.StrEnum):
     REMOVE_EDGE_DIRECTED = "REMOVE_EDGE_DIRECTED"
 
 
-@dataclass
-class TestResult(SerializeMixin):
+class TestResult(SerializeMixin, BaseModel):
     u: NodeInterface
     v: NodeInterface
     action: TestResultAction
@@ -156,15 +217,26 @@ class GraphModelInterface(ABC):
         pass
 
 
-class GeneratorInterface(ABC, SerializeMixin):
-    comparison_settings: ComparisonSettings
-    chunked: bool = False
+class GeneratorInterface(ABC, SerializeMixin, BaseModel):
+    comparison_settings: Optional[ComparisonSettings] = None
+    chunked: Optional[bool] = False
+    every_nth: Optional[int] = None
+    generator: Optional["GeneratorInterface"] = None
+    shuffle_combinations: Optional[bool] = None
 
     @abstractmethod
     def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
         pass
 
-    def __init__(self, comparison_settings: ComparisonSettings, chunked: bool = None):
+    def __init__(
+        self,
+        comparison_settings: Optional[ComparisonSettings] = None,
+        chunked: bool = None,
+        every_nth: int = None,
+        generator: "GeneratorInterface" = None,
+        shuffle_combinations: bool = None,
+    ):
+        super().__init__(comparison_settings=comparison_settings)
         if isinstance(comparison_settings, dict):
             comparison_settings = load_pipeline_artefact_by_definition(
                 comparison_settings
@@ -173,38 +245,64 @@ class GeneratorInterface(ABC, SerializeMixin):
         if chunked is not None:
             self.chunked = chunked
 
+        if every_nth is not None:
+            self.every_nth = every_nth
+
+        if generator is not None:
+            self.generator = generator
+
+        if shuffle_combinations is not None:
+            self.shuffle_combinations = shuffle_combinations
+
         self.comparison_settings = comparison_settings
 
+    @computed_field
+    @property
+    def name(self) -> str:
+        return serialize_module_name(self)
 
-class PipelineStepInterface(ABC, SerializeMixin):
+
+TypePipelineStepInterface = TypeVar("PipelineStepInterface")
+
+
+class PipelineStepInterface(
+    ABC, SerializeMixin, BaseModel, Generic[TypePipelineStepInterface]
+):
     number_of_comparison_elements: int = 0
     generator: Optional[GeneratorInterface] = None
+    threshold: Optional[float] = DEFAULT_THRESHOLD
 
     chunk_size_parallel_processing: int = 1
 
     parallel: bool = True
 
+    @computed_field
+    @property
+    def name(self) -> str:
+        return serialize_module_name(self)
+
     def __init__(
         self,
         threshold: float = DEFAULT_THRESHOLD,
         generator: Optional[GeneratorInterface] = None,
-        num_of_comparison_elements: int = None,
+        number_of_comparison_elements: int = None,
         chunk_size_parallel_processing: int = None,
         parallel: bool = None,
     ):
+        super().__init__()
         if generator:
             if isinstance(generator, dict):
                 self.generator = load_pipeline_artefact_by_definition(generator)
             else:
                 self.generator = generator
 
-        if num_of_comparison_elements:
-            if isinstance(num_of_comparison_elements, dict):
+        if number_of_comparison_elements:
+            if isinstance(number_of_comparison_elements, dict):
                 self.number_of_comparison_elements = (
-                    load_pipeline_artefact_by_definition(num_of_comparison_elements)
+                    load_pipeline_artefact_by_definition(number_of_comparison_elements)
                 )
             else:
-                self.number_of_comparison_elements = num_of_comparison_elements
+                self.number_of_comparison_elements = number_of_comparison_elements
 
         if chunk_size_parallel_processing:
             self.chunk_size_parallel_processing = chunk_size_parallel_processing
@@ -230,13 +328,7 @@ class PipelineStepInterface(ABC, SerializeMixin):
         return self.test(nodes, graph)
 
 
-class LogicStepInterface(ABC, SerializeMixin):
-    @abstractmethod
-    def execute(self, graph: BaseGraphInterface, graph_model_instance_: dict):
-        pass
-
-
-class ExitConditionInterface(ABC, SerializeMixin):
+class ExitConditionInterface(ABC, SerializeMixin, BaseModel):
     @abstractmethod
     def check(
         self,
@@ -262,3 +354,31 @@ class ExitConditionInterface(ABC, SerializeMixin):
         iteration: int,
     ) -> bool:
         return self.check(graph, graph_model_instance_, actions_taken, iteration)
+
+    @computed_field
+    @property
+    def name(self) -> str:
+        return serialize_module_name(self)
+
+
+class LogicStepInterface(ABC, SerializeMixin, BaseModel):
+    pipeline_steps: Optional[List[Union[PipelineStepInterface]]] = None
+    exit_condition: Optional[ExitConditionInterface] = None
+
+    @abstractmethod
+    def execute(self, graph: BaseGraphInterface, graph_model_instance_: dict):
+        pass
+
+    @computed_field
+    @property
+    def name(self) -> str:
+        return serialize_module_name(self)
+
+
+class CausyAlgorithm(SerializeMixin, BaseModel):
+    name: str
+    pipeline_steps: List[Union[PipelineStepInterface, LogicStepInterface]]
+    edge_types: List[EdgeTypeInterface]
+
+    def serialize(self):
+        return super().serialize()["params"]

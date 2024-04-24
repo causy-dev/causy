@@ -102,25 +102,31 @@ from causy.orientation_rules.pc import (
   OrientQuadrupleTest,
   FurtherOrientQuadrupleTest,
 )
+from causy.interfaces import CausyAlgorithm
+from causy.algorithms.pc import PC_EDGE_TYPES
 from causy.graph_utils import retrieve_edges
 
 CustomPC = graph_model_factory(
-  pipeline_steps=[
-    CalculatePearsonCorrelations(),
-    CorrelationCoefficientTest(threshold=0.1),
-    PartialCorrelationTest(threshold=0.01),
-    ExtendedPartialCorrelationTestMatrix(threshold=0.01),
-    ColliderTest(),
-    Loop(
-      pipeline_steps=[
-        NonColliderTest(),
-        FurtherOrientTripleTest(),
-        OrientQuadrupleTest(),
-        FurtherOrientQuadrupleTest(),
-      ],
-      exit_condition=ExitOnNoActions(),
-    ),
-  ]
+  CausyAlgorithm(
+    pipeline_steps=[
+      CalculatePearsonCorrelations(),
+      CorrelationCoefficientTest(threshold=0.1),
+      PartialCorrelationTest(threshold=0.01),
+      ExtendedPartialCorrelationTestMatrix(threshold=0.01),
+      ColliderTest(),
+      Loop(
+        pipeline_steps=[
+          NonColliderTest(),
+          FurtherOrientTripleTest(),
+          OrientQuadrupleTest(),
+          FurtherOrientQuadrupleTest(),
+        ],
+        exit_condition=ExitOnNoActions(),
+      ),
+    ],
+    name="CustomPC",
+    edge_types=PC_EDGE_TYPES,
+  )
 )
 
 model = CustomPC()

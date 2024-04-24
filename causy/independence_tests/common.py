@@ -16,17 +16,18 @@ from causy.interfaces import (
     TestResultAction,
     AS_MANY_AS_FIELDS,
     ComparisonSettings,
+    GeneratorInterface,
 )
 
 logger = logging.getLogger(__name__)
 
 
 class CorrelationCoefficientTest(PipelineStepInterface):
-    generator = AllCombinationsGenerator(
+    generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
@@ -55,11 +56,11 @@ class CorrelationCoefficientTest(PipelineStepInterface):
 
 
 class PartialCorrelationTest(PipelineStepInterface):
-    generator = AllCombinationsGenerator(
+    generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=3, max=3)
     )
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -129,12 +130,12 @@ class PartialCorrelationTest(PipelineStepInterface):
 
 
 class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
-    generator = PairsWithNeighboursGenerator(
+    generator: Optional[GeneratorInterface] = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
         shuffle_combinations=False,
     )
-    chunk_size_parallel_processing = 1000
-    parallel = False
+    chunk_size_parallel_processing: int = 1000
+    parallel: bool = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
@@ -223,12 +224,12 @@ def partial_correlation_regression(x, y, z):
 
 
 class ExtendedPartialCorrelationTestLinearRegression(PipelineStepInterface):
-    generator = PairsWithNeighboursGenerator(
+    generator: Optional[GeneratorInterface] = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
         shuffle_combinations=False,
     )
-    chunk_size_parallel_processing = 1000
-    parallel = False
+    chunk_size_parallel_processing: int = 1000
+    parallel: bool = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):

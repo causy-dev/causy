@@ -1,6 +1,7 @@
-from typing import Tuple
+from typing import Tuple, Optional, Generic
 
 import torch
+from pydantic import BaseModel
 
 from causy.generators import AllCombinationsGenerator
 from causy.interfaces import (
@@ -9,15 +10,19 @@ from causy.interfaces import (
     BaseGraphInterface,
     TestResult,
     TestResultAction,
+    GeneratorInterface,
+    TypePipelineStepInterface,
 )
 
 
-class CalculatePearsonCorrelations(PipelineStepInterface):
-    generator = AllCombinationsGenerator(
+class CalculatePearsonCorrelations(
+    PipelineStepInterface, Generic[TypePipelineStepInterface]
+):
+    generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
         """

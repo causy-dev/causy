@@ -7,15 +7,16 @@ from causy.interfaces import (
     ComparisonSettings,
     BaseGraphInterface,
     TestResult,
+    GeneratorInterface,
 )
 
 
 class ColliderRuleFCI(PipelineStepInterface):
-    generator = AllCombinationsGenerator(
+    generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface

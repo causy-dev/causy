@@ -2,12 +2,13 @@ import collections
 import enum
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Optional, Dict, Set, Tuple, Union, OrderedDict
+from typing import List, Optional, Dict, Set, Tuple, Union, OrderedDict, Any
 from uuid import uuid4
 import logging
 
 import torch
 
+from causy.edge_types import UndirectedEdge, DirectedEdge
 from causy.interfaces import (
     BaseGraphInterface,
     NodeInterface,
@@ -20,7 +21,6 @@ from causy.interfaces import (
 logger = logging.getLogger(__name__)
 
 
-@dataclass
 class Node(NodeInterface):
     """
     A node is a variable in the graph. It has a name, an id and values. The values are stored as a torch.Tensor.
@@ -30,21 +30,10 @@ class Node(NodeInterface):
     name: str
     id: str
     values: torch.Tensor
-    metadata: Dict[str, any] = None
+    metadata: Optional[Dict[str, Any]] = None
 
     def __hash__(self):
         return hash(self.id)
-
-
-class EdgeType(EdgeTypeInterface):
-    """
-    Edge types are used to define the type of an edge. Currently, there are by default two different edge types:
-    - DIRECTED: a directed edge from u to v
-    - UNDIRECTED: an undirected edge between u and v
-    """
-
-    DIRECTED = "DIRECTED"
-    UNDIRECTED = "UNDIRECTED"
 
 
 @dataclass
@@ -58,8 +47,11 @@ class Edge(EdgeInterface):
 
     u: NodeInterface
     v: NodeInterface
-    edge_type: EdgeType
-    metadata: Dict[str, any] = None
+    edge_type: EdgeTypeInterface
+    metadata: Optional[Dict[str, Any]] = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def __hash__(self):
         return hash((self.u.id, self.v.id))
@@ -113,11 +105,11 @@ class Graph(BaseGraphInterface):
             self.edges[v.id] = {}
             self._reverse_edges[v.id] = {}
 
-        a_edge = Edge(u=u, v=v, edge_type=EdgeType.UNDIRECTED, metadata=metadata)
+        a_edge = Edge(u=u, v=v, edge_type=UndirectedEdge(), metadata=metadata)
         self.edges[u.id][v.id] = a_edge
         self._reverse_edges[v.id][u.id] = a_edge
 
-        b_edge = Edge(u=u, v=v, edge_type=EdgeType.UNDIRECTED, metadata=metadata)
+        b_edge = Edge(u=u, v=v, edge_type=UndirectedEdge(), metadata=metadata)
         self.edges[v.id][u.id] = b_edge
         self._reverse_edges[u.id][v.id] = b_edge
 
@@ -146,7 +138,7 @@ class Graph(BaseGraphInterface):
         if v.id not in self._reverse_edges:
             self._reverse_edges[v.id] = {}
 
-        edge = Edge(u=u, v=v, edge_type=EdgeType.DIRECTED, metadata=metadata)
+        edge = Edge(u=u, v=v, edge_type=DirectedEdge(), metadata=metadata)
 
         self.edges[u.id][v.id] = edge
         self._reverse_edges[v.id][u.id] = edge
@@ -224,7 +216,11 @@ class Graph(BaseGraphInterface):
         del self._reverse_edges[v.id][u.id]
 
     def update_edge(
-        self, u: Node, v: Node, metadata: Dict = None, edge_type: EdgeType = None
+        self,
+        u: Node,
+        v: Node,
+        metadata: Dict = None,
+        edge_type: EdgeTypeInterface = None,
     ):
         """
         Update an undirected edge in the graph
@@ -265,7 +261,11 @@ class Graph(BaseGraphInterface):
             self._reverse_edges[v.id][u.id].edge_type = edge_type
 
     def update_directed_edge(
-        self, u: Node, v: Node, metadata: Dict = None, edge_type: EdgeType = None
+        self,
+        u: Node,
+        v: Node,
+        metadata: Dict = None,
+        edge_type: EdgeTypeInterface = None,
     ):
         """
         Update an edge in the graph
@@ -352,7 +352,7 @@ class Graph(BaseGraphInterface):
         return False
 
     def edge_of_type_exists(
-        self, u: Node, v: Node, edge_type: EdgeType = EdgeType.DIRECTED
+        self, u: Node, v: Node, edge_type: EdgeTypeInterface = DirectedEdge()
     ):
         """
         Check if an edge of a specific type exists between u and v.
@@ -390,7 +390,7 @@ class Graph(BaseGraphInterface):
             return None
         return self.edges[u.id][v.id].metadata
 
-    def edge_type(self, u: Node, v: Node) -> Optional[EdgeType]:
+    def edge_type(self, u: Node, v: Node) -> Optional[EdgeTypeInterface]:
         """
         retrieve the value of an edge
         :param u:
@@ -409,7 +409,7 @@ class Graph(BaseGraphInterface):
         name: str,
         values: Union[List[float], torch.Tensor],
         id_: str = None,
-        metadata: Dict[str, any] = None,
+        metadata: Dict[str, Any] = None,
     ) -> Node:
         """
         Add a node to the graph

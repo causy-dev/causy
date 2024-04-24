@@ -104,6 +104,6 @@ def init():
     print(f"Workspace created in {workspace_path}")
 
 
-@app.commanda()
+@app.command()
 def execute(experiment_name=""):
     pass

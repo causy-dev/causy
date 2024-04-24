@@ -1,13 +1,26 @@
-from causy.graph_utils import serialize_module_name
+from typing import Dict, Any
+
+from pydantic import parse_obj_as
+
+from causy.graph_utils import serialize_module_name, load_pipeline_steps_by_definition
 
 
-def serialize_model(model, algorithm_name: str = None):
+def serialize_algorithm(model, algorithm_name: str = None):
     """Serialize the model into a dictionary."""
-    output = []
-    for step in model.pipeline_steps:
-        output.append(step.serialize())
 
-    return {"name": algorithm_name, "steps": output}
+    if algorithm_name:
+        model.algorithm.name = algorithm_name
+    return model.algorithm.model_dump()
+
+
+def load_algorithm_from_specification(algorithm_dict: Dict[str, Any]):
+    """Load the model from a dictionary."""
+    algorithm_dict["pipeline_steps"] = load_pipeline_steps_by_definition(
+        algorithm_dict["pipeline_steps"]
+    )
+    from causy.interfaces import CausyAlgorithm
+
+    return parse_obj_as(CausyAlgorithm, algorithm_dict)
 
 
 class SerializeMixin:

@@ -65,7 +65,7 @@ class GraphTestCase(CausyTestCase):
     def test_add_edge_with_non_existing_node(self):
         graph = Graph()
         node1 = graph.add_node("test1", [1, 2, 3])
-        node2 = Node(name="test2", values=[1, 2, 3], id="custom")
+        node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
         with self.assertRaises(GraphError):
             graph.add_edge(node1, node2, {"test": "test"})
 
@@ -96,7 +96,7 @@ class GraphTestCase(CausyTestCase):
     def test_remove_edge_with_non_existing_node(self):
         graph = Graph()
         node1 = graph.add_node("test1", [1, 2, 3])
-        node2 = Node(name="test2", values=[1, 2, 3], id="custom")
+        node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
         with self.assertRaises(GraphError):
             graph.remove_edge(node1, node2)
 
@@ -125,7 +125,7 @@ class GraphTestCase(CausyTestCase):
     def test_remove_directed_edge_with_non_existing_node(self):
         graph = Graph()
         node1 = graph.add_node("test1", [1, 2, 3])
-        node2 = Node(name="test2", values=[1, 2, 3], id="custom")
+        node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
         with self.assertRaises(GraphError):
             graph.remove_directed_edge(node1, node2)
 
@@ -151,7 +151,7 @@ class GraphTestCase(CausyTestCase):
     def test_update_edge_with_non_existing_node(self):
         graph = Graph()
         node1 = graph.add_node("test1", [1, 2, 3])
-        node2 = Node(name="test2", values=[1, 2, 3], id="custom")
+        node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
         with self.assertRaises(GraphError):
             graph.update_edge(node1, node2, {"test": "test"})
 
@@ -184,7 +184,7 @@ class GraphTestCase(CausyTestCase):
     def test_update_directed_edge_with_non_existing_node(self):
         graph = Graph()
         node1 = graph.add_node("test1", [1, 2, 3])
-        node2 = Node(name="test2", values=[1, 2, 3], id="custom")
+        node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
 
         with self.assertRaises(GraphError):
             graph.update_directed_edge(node1, node2, {"test": "test"})
@@ -195,7 +195,7 @@ class GraphTestCase(CausyTestCase):
     def test_edge_value_with_non_existing_edge(self):
         graph = Graph()
         node1 = graph.add_node("test1", [1, 2, 3])
-        node2 = Node(name="test2", values=[1, 2, 3], id="custom")
+        node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
 
         self.assertIsNone(graph.edge_value(node1, node2))
         self.assertIsNone(graph.edge_value(node2, node1))

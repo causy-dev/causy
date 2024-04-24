@@ -7,9 +7,8 @@ import logging
 import typer
 
 from causy.graph_model import graph_model_factory
-from causy.serialization import serialize_model
+from causy.serialization import serialize_algorithm, load_algorithm_from_specification
 from causy.graph_utils import (
-    load_pipeline_steps_by_definition,
     retrieve_edges,
 )
 from causy.ui import server
@@ -26,7 +25,7 @@ def load_json(pipeline_file: str):
     return pipeline
 
 
-def load_algorithm(algorithm: str):
+def load_algorithm_from_reference(algorithm: str):
     st_function = importlib.import_module("causy.algorithms")
     st_function = getattr(st_function, algorithm)
     if not st_function:
@@ -34,20 +33,20 @@ def load_algorithm(algorithm: str):
     return st_function
 
 
-def create_pipeline(pipeline_config: dict):
-    return load_pipeline_steps_by_definition(pipeline_config["steps"])
-
-
 class MyJSONEncoder(JSONEncoder):
     def default(self, obj):
-        return obj.serialize()
+        if hasattr(obj, "serialize"):
+            return obj.serialize()
+        if hasattr(obj, "model_dump"):
+            return obj.model_dump()
+        return None
 
 
 @app.command()
 def eject(algorithm: str, output_file: str):
     typer.echo(f"💾 Loading algorithm {algorithm}")
-    model = load_algorithm(algorithm)()
-    result = serialize_model(model, algorithm_name=algorithm)
+    model = load_algorithm_from_reference(algorithm)()
+    result = serialize_algorithm(model, algorithm_name=algorithm)
     typer.echo(f"💾 Saving algorithm {algorithm} to {output_file}")
     with open(output_file, "w") as file:
         file.write(json.dumps(result, indent=4))
@@ -74,16 +73,16 @@ def execute(
     logging.basicConfig(level=log_level)
     if pipeline:
         typer.echo(f"💾 Loading pipeline from {pipeline}")
-        pipeline_config = load_json(pipeline)
-        pipeline = create_pipeline(pipeline_config)
-        model = graph_model_factory(pipeline_steps=pipeline)()
+        model_dict = load_json(pipeline)
+        algorithm = load_algorithm_from_specification(model_dict)
+        model = graph_model_factory(algorithm=algorithm)()
         algorithm_reference = {
             "type": "pipeline",
             "reference": pipeline,  # TODO: how to reference pipeline in a way that it can be loaded?
         }
     elif algorithm:
         typer.echo(f"💾 Creating pipeline from algorithm {algorithm}")
-        model = load_algorithm(algorithm)()
+        model = load_algorithm_from_reference(algorithm)()
         algorithm_reference = {
             "type": "default",
             "reference": algorithm,
@@ -105,11 +104,21 @@ def execute(
         print(
             f"{model.graph.nodes[edge[0]].name} -> {model.graph.nodes[edge[1]].name}: {model.graph.edges[edge[0]][edge[1]]}"
         )
+
+        edge_value = model.graph.edges[edge[0]][edge[1]].model_dump()
+
+        if "edge_type" in edge_value:
+            edge_value["edge_type"] = edge_value["edge_type"]["name"]
+
+        if "u" in edge_value:
+            del edge_value["u"]
+            del edge_value["v"]
+
         edges.append(
             {
                 "from": model.graph.nodes[edge[0]].serialize(),
                 "to": model.graph.nodes[edge[1]].serialize(),
-                "value": model.graph.edges[edge[0]][edge[1]],
+                "value": edge_value,
             }
         )
 

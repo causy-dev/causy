@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 import torch
 
@@ -8,14 +8,15 @@ from causy.interfaces import (
     TestResult,
     PipelineStepInterface,
     TestResultAction,
+    GeneratorInterface,
 )
 
 
 class ComputeDirectEffectsMultivariateRegression(PipelineStepInterface):
-    generator = PairsWithEdgesInBetweenGenerator()
+    generator: Optional[GeneratorInterface] = PairsWithEdgesInBetweenGenerator()
 
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
         """

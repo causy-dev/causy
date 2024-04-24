@@ -3,6 +3,10 @@ import copy
 import itertools
 import logging
 import random
+from dataclasses import dataclass
+from typing import Optional, Union, Dict
+
+from pydantic import BaseModel
 
 from causy.interfaces import (
     ComparisonSettings,
@@ -16,10 +20,14 @@ from causy.graph_utils import load_pipeline_artefact_by_definition
 logger = logging.getLogger(__name__)
 
 
+@dataclass
 class AllCombinationsGenerator(GeneratorInterface):
     """
     Generates all combinations of nodes in the graph
     """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def generate(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
@@ -51,13 +59,20 @@ class AllCombinationsGenerator(GeneratorInterface):
 
 
 class PairsWithEdgesInBetweenGenerator(GeneratorInterface):
-    def __init__(
-        self, comparison_settings: ComparisonSettings = None, chunked: bool = None
-    ):
-        self.chunked = chunked
-        super().__init__(comparison_settings, chunked)
+    chunk_size: int = 100
+    chunked: Optional[bool] = None
 
-    CHUNK_SIZE = 100
+    def __init__(
+        self,
+        *args,
+        chunk_size: Optional[int] = None,
+        chunked: Optional[bool] = None,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self.chunked = chunked
+        if chunk_size is not None:
+            self.chunk_size = chunk_size
 
     def generate(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
@@ -71,8 +86,8 @@ class PairsWithEdgesInBetweenGenerator(GeneratorInterface):
                 edges.append((f_node, t_node))
 
         if self.chunked:
-            for i in range(0, len(edges), self.CHUNK_SIZE):
-                yield edges[i : i + self.CHUNK_SIZE]
+            for i in range(0, len(edges), self.chunk_size):
+                yield edges[i : i + self.chunk_size]
 
         for edge in edges:
             yield edge
@@ -83,21 +98,15 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
     Generates all combinations of pairs of nodes with their neighbours
     """
 
-    shuffle_combinations = True
-    chunked = True
+    shuffle_combinations: bool = True
+    chunked: bool = True
 
     def __init__(
         self,
-        comparison_settings: ComparisonSettings,
-        chunked: bool = None,
-        shuffle_combinations: bool = None,
+        *args,
+        **kwargs,
     ):
-        super().__init__(comparison_settings, chunked)
-        if shuffle_combinations is not None:
-            self.shuffle_combinations = shuffle_combinations
-
-        if chunked is not None:
-            self.chunked = chunked
+        super().__init__(*args, **kwargs)
 
     def generate(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
@@ -159,23 +168,21 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                             yield [node, neighbour] + [ks for ks in k]
 
 
-class RandomSampleGenerator(GeneratorInterface):
+class RandomSampleGenerator(GeneratorInterface, BaseModel):
     """
     Executes another generator and returns a random sample of the results
     """
 
-    every_nth = 100
+    every_nth: int = 100
+    generator: Optional[GeneratorInterface] = None
 
     def __init__(
         self,
-        comparison_settings: ComparisonSettings = None,
-        chunked: bool = None,
-        every_nth: int = None,
-        generator: GeneratorInterface = None,
+        *args,
+        generator: Optional[Union[GeneratorInterface, Dict[any, any]]] = None,
+        **kwargs,
     ):
-        super().__init__(comparison_settings, chunked)
-        if every_nth is not None:
-            self.every_nth = every_nth
+        super().__init__(*args, **kwargs)
 
         if generator is not None:
             if isinstance(generator, GeneratorInterface):

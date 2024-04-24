@@ -8,6 +8,7 @@ from causy.interfaces import (
     TestResultAction,
     PipelineStepInterface,
     ComparisonSettings,
+    GeneratorInterface,
 )
 
 # theory for all orientation rules with pictures:
@@ -17,11 +18,11 @@ from causy.interfaces import (
 
 
 class ColliderTest(PipelineStepInterface):
-    generator = AllCombinationsGenerator(
+    generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -83,11 +84,11 @@ class ColliderTest(PipelineStepInterface):
 
 
 class NonColliderTest(PipelineStepInterface):
-    generator = AllCombinationsGenerator(
+    generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -147,11 +148,11 @@ class NonColliderTest(PipelineStepInterface):
 
 
 class FurtherOrientTripleTest(PipelineStepInterface):
-    generator = AllCombinationsGenerator(
+    generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -203,11 +204,11 @@ class FurtherOrientTripleTest(PipelineStepInterface):
 
 
 class OrientQuadrupleTest(PipelineStepInterface):
-    generator = AllCombinationsGenerator(
+    generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -269,11 +270,11 @@ class OrientQuadrupleTest(PipelineStepInterface):
 
 
 class FurtherOrientQuadrupleTest(PipelineStepInterface):
-    generator = AllCombinationsGenerator(
+    generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface

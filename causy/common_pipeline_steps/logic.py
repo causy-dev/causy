@@ -1,4 +1,6 @@
-from typing import Optional, List
+from typing import Optional, List, Union, Dict, Any
+
+from pydantic import BaseModel
 
 from causy.interfaces import (
     LogicStepInterface,
@@ -17,6 +19,11 @@ class Loop(LogicStepInterface):
     """
     A loop which executes a list of pipeline_steps until the exit_condition is met.
     """
+
+    pipeline_steps: Optional[
+        List[Union[LogicStepInterface, PipelineStepInterface]]
+    ] = None
+    exit_condition: Optional[ExitConditionInterface] = None
 
     def execute(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
@@ -43,8 +50,10 @@ class Loop(LogicStepInterface):
 
     def __init__(
         self,
-        pipeline_steps: Optional[List[PipelineStepInterface]] = None,
-        exit_condition: ExitConditionInterface = None,
+        pipeline_steps: Optional[
+            Union[List[PipelineStepInterface], Dict[Any, Any]]
+        ] = None,
+        exit_condition: Union[ExitConditionInterface, Dict[Any, Any]] = None,
     ):
         super().__init__()
         # TODO check if this is a good idea
@@ -64,6 +73,10 @@ class ApplyActionsTogether(LogicStepInterface):
     A logic step which collects all actions and only takes them at the end of the pipeline
     """
 
+    pipeline_steps: Optional[
+        List[Union[LogicStepInterface, PipelineStepInterface]]
+    ] = None
+
     def execute(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
     ):
@@ -82,7 +95,9 @@ class ApplyActionsTogether(LogicStepInterface):
 
     def __init__(
         self,
-        pipeline_steps: Optional[List[PipelineStepInterface]] = None,
+        pipeline_steps: Optional[
+            Union[List[PipelineStepInterface], Dict[Any, Any]]
+        ] = None,
     ):
         super().__init__()
         # TODO: check if this is a good idea

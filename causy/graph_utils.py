@@ -21,10 +21,9 @@ def load_pipeline_artefact_by_definition(step):
     if not st_function:
         raise ValueError(f"{name} not found")
 
-    if "params" not in step.keys():
-        return st_function()
-    else:
-        return st_function(**step["params"])
+    del step["name"]
+
+    return st_function(**step)
 
 
 def load_pipeline_steps_by_definition(steps):
