@@ -56,6 +56,9 @@ async def get_model():
 )
 async def get_algorithm(reference_type: str, reference: str):
     """Get the current algorithm."""
+    if reference.startswith("/") or ".." in reference:
+        raise ValueError("Invalid reference")
+
     return load_algorithm_by_reference(reference_type, reference)
 
 
