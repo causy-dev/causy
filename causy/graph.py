@@ -409,10 +409,11 @@ class Graph(BaseGraphInterface):
         name: str,
         values: Union[List[float], torch.Tensor],
         id_: str = None,
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> Node:
         """
         Add a node to the graph
+        :param metadata: add metadata to the node
         :param name: name of the node
         :param values: values of the node
         :param id_: id_ of the node
@@ -498,3 +499,14 @@ class Graph(BaseGraphInterface):
                     # TODO: check if this is correct (@sof)
                     return True
         return False
+
+    def retrieve_edges(self) -> List[Edge]:
+        """
+        Retrieve all edges
+        :return: all edges
+        """
+        edges = []
+        for u in self.edges:
+            for v in self.edges[u]:
+                edges.append(self.edges[u][v])
+        return edges

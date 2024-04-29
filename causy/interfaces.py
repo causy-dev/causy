@@ -1,19 +1,20 @@
 import enum
 import multiprocessing
 from abc import ABC, abstractmethod
+from datetime import datetime
+
 from pydantic.dataclasses import dataclass
 from typing import List, Dict, Optional, Union, TypeVar, Generic
 import logging
 
 import torch
 
-from causy.serialization import SerializeMixin
 from causy.graph_utils import (
     load_pipeline_artefact_by_definition,
     serialize_module_name,
 )
 
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, computed_field, AwareDatetime, Field
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ DEFAULT_THRESHOLD = 0.01
 AS_MANY_AS_FIELDS = 0
 
 
-class ComparisonSettings(SerializeMixin, BaseModel):
+class ComparisonSettings(BaseModel):
     min: int = 2
     max: int = AS_MANY_AS_FIELDS
 
@@ -32,7 +33,7 @@ class ComparisonSettings(SerializeMixin, BaseModel):
         return serialize_module_name(self)
 
 
-class NodeInterface(SerializeMixin, BaseModel):
+class NodeInterface(BaseModel):
     """
     Node interface for the graph. A node is defined by a name and a value.
     """
@@ -48,7 +49,7 @@ class NodeInterface(SerializeMixin, BaseModel):
         arbitrary_types_allowed = True
 
 
-class EdgeUIConfig(SerializeMixin, BaseModel):
+class EdgeUIConfig(BaseModel):
     color: Optional[str] = None
     width: Optional[int] = None
     style: Optional[str] = None
@@ -67,7 +68,7 @@ class ConditionalEdgeUIConfigComparison(enum.StrEnum):
     NOT_EQUAL = "NOT_EQUAL"
 
 
-class ConditionalEdgeUIConfig(SerializeMixin, BaseModel):
+class ConditionalEdgeUIConfig(BaseModel):
     ui_config: Optional[EdgeUIConfig] = None
     condition_field: str = "coefficient"
     condition_value: float = 0.5
@@ -76,7 +77,7 @@ class ConditionalEdgeUIConfig(SerializeMixin, BaseModel):
     )
 
 
-class EdgeTypeInterface(SerializeMixin, BaseModel):
+class EdgeTypeInterface(BaseModel):
     """
     Edge type interface for the graph
     An edge type is defined by a name
@@ -99,7 +100,7 @@ class EdgeTypeInterface(SerializeMixin, BaseModel):
         return self.name
 
 
-class EdgeInterface(SerializeMixin, BaseModel):
+class EdgeInterface(BaseModel):
     """
     Edge interface for the graph
     A graph edge is defined by two nodes and an edge type. It can also have metadata.
@@ -134,7 +135,7 @@ class TestResultAction(enum.StrEnum):
     REMOVE_EDGE_DIRECTED = "REMOVE_EDGE_DIRECTED"
 
 
-class TestResult(SerializeMixin, BaseModel):
+class TestResult(BaseModel):
     u: NodeInterface
     v: NodeInterface
     action: TestResultAction
@@ -217,7 +218,7 @@ class GraphModelInterface(ABC):
         pass
 
 
-class GeneratorInterface(ABC, SerializeMixin, BaseModel):
+class GeneratorInterface(ABC, BaseModel):
     comparison_settings: Optional[ComparisonSettings] = None
     chunked: Optional[bool] = False
     every_nth: Optional[int] = None
@@ -265,9 +266,7 @@ class GeneratorInterface(ABC, SerializeMixin, BaseModel):
 TypePipelineStepInterface = TypeVar("PipelineStepInterface")
 
 
-class PipelineStepInterface(
-    ABC, SerializeMixin, BaseModel, Generic[TypePipelineStepInterface]
-):
+class PipelineStepInterface(ABC, BaseModel, Generic[TypePipelineStepInterface]):
     number_of_comparison_elements: int = 0
     generator: Optional[GeneratorInterface] = None
     threshold: Optional[float] = DEFAULT_THRESHOLD
@@ -328,7 +327,7 @@ class PipelineStepInterface(
         return self.test(nodes, graph)
 
 
-class ExitConditionInterface(ABC, SerializeMixin, BaseModel):
+class ExitConditionInterface(ABC, BaseModel):
     @abstractmethod
     def check(
         self,
@@ -361,7 +360,7 @@ class ExitConditionInterface(ABC, SerializeMixin, BaseModel):
         return serialize_module_name(self)
 
 
-class LogicStepInterface(ABC, SerializeMixin, BaseModel):
+class LogicStepInterface(ABC, BaseModel):
     pipeline_steps: Optional[List[Union[PipelineStepInterface]]] = None
     exit_condition: Optional[ExitConditionInterface] = None
 
@@ -375,10 +374,31 @@ class LogicStepInterface(ABC, SerializeMixin, BaseModel):
         return serialize_module_name(self)
 
 
-class CausyAlgorithm(SerializeMixin, BaseModel):
+class CausyAlgorithm(BaseModel):
     name: str
     pipeline_steps: List[Union[PipelineStepInterface, LogicStepInterface]]
     edge_types: List[EdgeTypeInterface]
 
-    def serialize(self):
-        return super().serialize()["params"]
+
+class CausyAlgorithmReferenceType(enum.StrEnum):
+    FILE = "file"
+    NAME = "name"
+    PYTHON_MODULE = "python_module"
+
+
+class CausyAlgorithmReference(BaseModel):
+    reference: CausyAlgorithmReferenceType
+    type: str
+
+
+class ActionHistoryStep(BaseModel):
+    name: str
+    actions: Optional[List[TestResult]] = []
+
+
+class CausyResult(BaseModel):
+    algorithm: CausyAlgorithmReference
+    created_at: datetime = Field(default_factory=datetime.now)
+    nodes: Dict[str, NodeInterface]
+    edges: List[EdgeInterface]
+    action_history: List[ActionHistoryStep]
