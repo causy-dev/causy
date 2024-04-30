@@ -2,7 +2,13 @@ from causy.causal_effect_estimation.multivariate_regression import (
     ComputeDirectEffectsMultivariateRegression,
 )
 from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
-from causy.edge_types import DirectedEdge, UndirectedEdge
+from causy.contrib.graph_ui import GraphUIExtension
+from causy.edge_types import (
+    DirectedEdge,
+    UndirectedEdge,
+    DirectedEdgeUIConfig,
+    UndirectedEdgeUIConfig,
+)
 from causy.generators import PairsWithNeighboursGenerator, RandomSampleGenerator
 from causy.graph_model import graph_model_factory
 from causy.common_pipeline_steps.logic import Loop, ApplyActionsTogether
@@ -36,6 +42,13 @@ PC_ORIENTATION_RULES = [
     ),
 ]
 
+PC_GRAPH_UI_EXTENSION = GraphUIExtension(
+    edges=[
+        DirectedEdgeUIConfig(),
+        UndirectedEdgeUIConfig(),
+    ]
+)
+
 PC_EDGE_TYPES = [DirectedEdge(), UndirectedEdge()]
 
 PC = graph_model_factory(
@@ -49,6 +62,7 @@ PC = graph_model_factory(
             ComputeDirectEffectsMultivariateRegression(),
         ],
         edge_types=PC_EDGE_TYPES,
+        extensions=[PC_GRAPH_UI_EXTENSION],
         name="PC",
     )
 )
@@ -68,6 +82,7 @@ PCStable = graph_model_factory(
             ComputeDirectEffectsMultivariateRegression(),
         ],
         edge_types=PC_EDGE_TYPES,
+        extensions=[PC_GRAPH_UI_EXTENSION],
         name="PCStable",
     )
 )
@@ -114,6 +129,7 @@ ParallelPC = graph_model_factory(
             ComputeDirectEffectsMultivariateRegression(),
         ],
         edge_types=PC_EDGE_TYPES,
+        extensions=[PC_GRAPH_UI_EXTENSION],
         name="ParallelPC",
     )
 )

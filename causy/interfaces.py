@@ -42,39 +42,8 @@ class NodeInterface(BaseModel):
     id: str
     values: Optional[torch.DoubleTensor] = None
 
-    def serialize(self):
-        return {"id": self.id, "name": self.name}
-
     class Config:
         arbitrary_types_allowed = True
-
-
-class EdgeUIConfig(BaseModel):
-    color: Optional[str] = None
-    width: Optional[int] = None
-    style: Optional[str] = None
-    marker_start: Optional[str] = None
-    marker_end: Optional[str] = None
-    label_field: Optional[str] = None
-    animated: Optional[bool] = False
-
-
-class ConditionalEdgeUIConfigComparison(enum.StrEnum):
-    EQUAL = "EQUAL"
-    GREATER = "GREATER"
-    LESS = "LESS"
-    GREATER_EQUAL = "GREATER_EQUAL"
-    LESS_EQUAL = "LESS_EQUAL"
-    NOT_EQUAL = "NOT_EQUAL"
-
-
-class ConditionalEdgeUIConfig(BaseModel):
-    ui_config: Optional[EdgeUIConfig] = None
-    condition_field: str = "coefficient"
-    condition_value: float = 0.5
-    condition_comparison: ConditionalEdgeUIConfigComparison = (
-        ConditionalEdgeUIConfigComparison.GREATER_EQUAL
-    )
 
 
 class EdgeTypeInterface(BaseModel):
@@ -84,8 +53,6 @@ class EdgeTypeInterface(BaseModel):
     """
 
     name: str
-    default_ui_config: Optional[EdgeUIConfig] = None
-    conditional_ui_configs: Optional[List[ConditionalEdgeUIConfig]] = None
 
     def __hash__(self):
         return hash(self.name)
@@ -114,12 +81,6 @@ class EdgeInterface(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    def serialize(self):
-        return {
-            "edge_type": self.edge_type,
-            "metadata": self.metadata,
-        }
-
 
 class TestResultAction(enum.StrEnum):
     """
@@ -140,13 +101,6 @@ class TestResult(BaseModel):
     v: NodeInterface
     action: TestResultAction
     data: Optional[Dict] = None
-
-    def serialize(self):
-        return {
-            "from": self.u.serialize(),
-            "to": self.v.serialize(),
-            "action": self.action.name,
-        }
 
 
 class BaseGraphInterface(ABC):
@@ -374,10 +328,18 @@ class LogicStepInterface(ABC, BaseModel):
         return serialize_module_name(self)
 
 
+class CausyExtension(BaseModel):
+    @computed_field
+    @property
+    def name(self) -> str:
+        return serialize_module_name(self)
+
+
 class CausyAlgorithm(BaseModel):
     name: str
     pipeline_steps: List[Union[PipelineStepInterface, LogicStepInterface]]
     edge_types: List[EdgeTypeInterface]
+    extensions: Optional[List[CausyExtension]] = None
 
 
 class CausyAlgorithmReferenceType(enum.StrEnum):
