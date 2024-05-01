@@ -14,6 +14,8 @@ from tests.utils import CausyTestCase
 
 
 class SampleGeneratorTest(CausyTestCase):
+    SEED = 23
+
     def test_iid_sample_generator(self):
         model = IIDSampleGenerator(
             edges=[
@@ -51,7 +53,6 @@ class SampleGeneratorTest(CausyTestCase):
             ]
         )
         model.random_fn = lambda: torch.tensor(1, dtype=torch.float64)
-
         result = model._generate_data(100)
         self.assertEqual(list(result["X"].shape), [100])
         self.assertEqual(result["X"][0], 1)
@@ -62,6 +63,33 @@ class SampleGeneratorTest(CausyTestCase):
         self.assertEqual(result["Y"][20], 11)
         self.assertEqual(result["Z"][0], 12)
         self.assertEqual(result["Z"][20], 12)
+
+    def test_iid_sample_generator_admg_case(self):
+        rdnv = self.seeded_random.normalvariate
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("L"), NodeReference("Y"), 7),
+                SampleEdge(NodeReference("L"), NodeReference("W"), 3),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        result = model._generate_data(10000)
+        # regress Y on X and compute the variance of the estimator
+        coefficients_ols = torch.linalg.lstsq(
+            torch.stack([result["X"]]).T,
+            result["Y"],
+            driver="gelsd",
+        ).solution
+        self.assertAlmostEqual(coefficients_ols[0], 5, delta=0.1)
+
+        # regress Y on X and L and compute the variance of the estimator
+        coefficients_ols = torch.linalg.lstsq(
+            torch.stack([result["X"], result["L"]]).T,
+            result["Y"],
+            driver="gelsd",
+        ).solution
+        self.assertAlmostEqual(coefficients_ols[0], 5, delta=0.1)
 
     def test_timeseries_sample_generator_fixed_initial_distribution(self):
         model_one = TimeseriesSampleGenerator(

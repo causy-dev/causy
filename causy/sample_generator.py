@@ -135,7 +135,9 @@ class IIDSampleGenerator(AbstractSampleGenerator):
         random: Callable = random_normal,
     ):
         super().__init__(edges, random)
-        self._variables = self.topologic_sort(copy.deepcopy(list(self._variables)))
+        self._variables = self.topologic_sort(
+            sorted(copy.deepcopy(list(self._variables)))
+        )
 
     def topologic_sort(self, nodes: List[str]):
         """
