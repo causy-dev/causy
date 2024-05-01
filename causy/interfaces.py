@@ -40,7 +40,7 @@ class NodeInterface(BaseModel):
 
     name: str
     id: str
-    values: Optional[torch.DoubleTensor] = None
+    values: Optional[torch.DoubleTensor] = Field(exclude=True)
 
     class Config:
         arbitrary_types_allowed = True
@@ -349,12 +349,13 @@ class CausyAlgorithmReferenceType(enum.StrEnum):
 
 
 class CausyAlgorithmReference(BaseModel):
-    reference: CausyAlgorithmReferenceType
-    type: str
+    reference: str
+    type: CausyAlgorithmReferenceType
 
 
 class ActionHistoryStep(BaseModel):
     name: str
+    duration: Optional[float] = None  # seconds
     actions: Optional[List[TestResult]] = []
 
 

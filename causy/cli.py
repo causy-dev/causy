@@ -1,7 +1,4 @@
-import importlib
 import json
-from datetime import datetime
-from json import JSONEncoder
 import logging
 
 import typer
@@ -9,7 +6,6 @@ import typer
 from causy.graph_model import graph_model_factory
 from causy.interfaces import (
     CausyResult,
-    CausyAlgorithmReference,
     ActionHistoryStep,
     CausyAlgorithmReferenceType,
 )
@@ -18,6 +14,7 @@ from causy.serialization import (
     load_algorithm_from_specification,
     CausyJSONEncoder,
     load_algorithm_from_reference,
+    load_json,
 )
 from causy.graph_utils import (
     retrieve_edges,
@@ -28,12 +25,6 @@ from causy.workspaces.cli import app as workspaces_app
 app = typer.Typer()
 
 app.add_typer(workspaces_app, name="workspace")
-
-
-def load_json(pipeline_file: str):
-    with open(pipeline_file, "r") as file:
-        pipeline = json.loads(file.read())
-    return pipeline
 
 
 @app.command()
@@ -100,11 +91,8 @@ def execute(
         )
 
     result = CausyResult(
-        algorithm=CausyAlgorithmReference(**algorithm_reference),
-        action_history=[
-            ActionHistoryStep(name=ah["step"], actions=ah["actions"])
-            for ah in model.graph.action_history
-        ],
+        algorithm=algorithm_reference,
+        action_history=[ActionHistoryStep(**ah) for ah in model.graph.action_history],
         edges=model.graph.retrieve_edges(),
         nodes=model.graph.nodes,
     )

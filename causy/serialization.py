@@ -69,3 +69,9 @@ class CausyJSONEncoder(JSONEncoder):
         elif type(obj) is datetime.datetime:
             return obj.isoformat()
         return super().default(obj)
+
+
+def load_json(pipeline_file: str):
+    with open(pipeline_file, "r") as file:
+        pipeline = json.loads(file.read())
+    return pipeline

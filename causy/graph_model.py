@@ -2,6 +2,7 @@ import logging
 import platform
 from abc import ABC
 from copy import deepcopy
+import time
 from typing import Optional, List, Dict, Callable, Union
 
 import torch.multiprocessing as mp
@@ -164,9 +165,15 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 filter.execute(self.graph, self)
                 continue
 
+            # collect the time it takes to execute the pipeline step
+            started = time.time()
             result = self.execute_pipeline_step(filter)
             action_history.append(
-                {"step": filter.__class__.__name__, "actions": result}
+                {
+                    "name": filter.__class__.__name__,
+                    "actions": result,
+                    "duration": time.time() - started,
+                }
             )
 
         return action_history
@@ -289,6 +296,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :return:
         """
         actions_taken = []
+        started = time.time()
 
         # initialize the worker pool (we currently use all available cores * 2)
 
@@ -336,7 +344,11 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 )
 
         self.graph.action_history.append(
-            {"step": type(test_fn).__name__, "actions": actions_taken}
+            {
+                "name": type(test_fn).__name__,
+                "actions": actions_taken,
+                "duration": time.time() - started,
+            }
         )
 
         return actions_taken
