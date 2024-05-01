@@ -1,4 +1,4 @@
-from typing import Optional, List, Union, Dict, Any
+from typing import Optional, List, Union, Dict, Any, Generic
 
 from pydantic import BaseModel
 
@@ -8,6 +8,8 @@ from causy.interfaces import (
     GraphModelInterface,
     PipelineStepInterface,
     ExitConditionInterface,
+    PipelineStepInterfaceType,
+    LogicStepInterfaceType,
 )
 from causy.graph_utils import (
     load_pipeline_artefact_by_definition,
@@ -15,14 +17,11 @@ from causy.graph_utils import (
 )
 
 
-class Loop(LogicStepInterface):
+class Loop(LogicStepInterface[LogicStepInterfaceType], Generic[LogicStepInterfaceType]):
     """
     A loop which executes a list of pipeline_steps until the exit_condition is met.
     """
 
-    pipeline_steps: Optional[
-        List[Union[LogicStepInterface, PipelineStepInterface]]
-    ] = None
     exit_condition: Optional[ExitConditionInterface] = None
 
     def execute(
@@ -48,34 +47,13 @@ class Loop(LogicStepInterface):
                 steps.extend(result)
             n += 1
 
-    def __init__(
-        self,
-        pipeline_steps: Optional[
-            Union[List[PipelineStepInterface], Dict[Any, Any]]
-        ] = None,
-        exit_condition: Union[ExitConditionInterface, Dict[Any, Any]] = None,
-    ):
-        super().__init__()
-        # TODO check if this is a good idea
-        if isinstance(exit_condition, dict):
-            exit_condition = load_pipeline_artefact_by_definition(exit_condition)
 
-        # TODO: check if this is a good idea
-        if len(pipeline_steps) > 0 and isinstance(pipeline_steps[0], dict):
-            pipeline_steps = load_pipeline_steps_by_definition(pipeline_steps)
-
-        self.pipeline_steps = pipeline_steps or []
-        self.exit_condition = exit_condition
-
-
-class ApplyActionsTogether(LogicStepInterface):
+class ApplyActionsTogether(
+    LogicStepInterface[LogicStepInterfaceType], Generic[LogicStepInterfaceType]
+):
     """
     A logic step which collects all actions and only takes them at the end of the pipeline
     """
-
-    pipeline_steps: Optional[
-        List[Union[LogicStepInterface, PipelineStepInterface]]
-    ] = None
 
     def execute(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
@@ -92,16 +70,3 @@ class ApplyActionsTogether(LogicStepInterface):
             actions.extend(result)
 
         graph_model_instance_._take_action(actions)
-
-    def __init__(
-        self,
-        pipeline_steps: Optional[
-            Union[List[PipelineStepInterface], Dict[Any, Any]]
-        ] = None,
-    ):
-        super().__init__()
-        # TODO: check if this is a good idea
-        if len(pipeline_steps) > 0 and isinstance(pipeline_steps[0], dict):
-            pipeline_steps = load_pipeline_steps_by_definition(pipeline_steps)
-
-        self.pipeline_steps = pipeline_steps or []

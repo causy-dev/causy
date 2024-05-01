@@ -1,4 +1,4 @@
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Generic
 
 from causy.generators import AllCombinationsGenerator
 from causy.interfaces import (
@@ -8,10 +8,13 @@ from causy.interfaces import (
     BaseGraphInterface,
     TestResult,
     GeneratorInterface,
+    PipelineStepInterfaceType,
 )
 
 
-class ColliderRuleFCI(PipelineStepInterface):
+class ColliderRuleFCI(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )

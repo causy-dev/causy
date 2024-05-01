@@ -53,7 +53,7 @@ def load_algorithm_by_reference(reference_type: str, algorithm: str):
             algorithm = json.loads(file.read())
         return load_algorithm_from_specification(algorithm)
     elif reference_type == CausyAlgorithmReferenceType.NAME:
-        return load_algorithm_from_reference(algorithm)
+        return load_algorithm_from_reference(algorithm)().algorithm
     elif reference_type == CausyAlgorithmReferenceType.PYTHON_MODULE:
         st_function = importlib.import_module(algorithm)
         st_function = getattr(st_function, algorithm)

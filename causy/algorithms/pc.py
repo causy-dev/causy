@@ -91,14 +91,20 @@ PCStable = graph_model_factory(
 ParallelPC = graph_model_factory(
     CausyAlgorithm(
         pipeline_steps=[
-            CalculatePearsonCorrelations(),
-            CorrelationCoefficientTest(threshold=0.001),
+            CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
+            CorrelationCoefficientTest(
+                threshold=0.001, display_name="Correlation Coefficient Test"
+            ),
             PartialCorrelationTest(
-                threshold=0.001, parallel=True, chunk_size_parallel_processing=50000
+                threshold=0.001,
+                parallel=True,
+                chunk_size_parallel_processing=50000,
+                display_name="Partial Correlation Test",
             ),
             ExtendedPartialCorrelationTestMatrix(
                 # run first a sampled version of the test so we can minimize the number of tests in the full version
                 threshold=0.001,
+                display_name="Sampled Extended Partial Correlation Test Matrix",
                 chunk_size_parallel_processing=5000,
                 parallel=True,
                 generator=RandomSampleGenerator(
@@ -115,6 +121,7 @@ ParallelPC = graph_model_factory(
             ),
             ExtendedPartialCorrelationTestMatrix(
                 threshold=0.001,
+                display_name="Extended Partial Correlation Test Matrix",
                 chunk_size_parallel_processing=20000,
                 parallel=True,
                 generator=PairsWithNeighboursGenerator(

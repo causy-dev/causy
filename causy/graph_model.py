@@ -170,7 +170,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             result = self.execute_pipeline_step(filter)
             action_history.append(
                 {
-                    "name": filter.__class__.__name__,
+                    "name": filter.name,
                     "actions": result,
                     "duration": time.time() - started,
                 }
@@ -345,7 +345,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         self.graph.action_history.append(
             {
-                "name": type(test_fn).__name__,
+                "name": test_fn.name,
                 "actions": actions_taken,
                 "duration": time.time() - started,
             }

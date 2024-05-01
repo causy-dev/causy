@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 from pydantic.dataclasses import dataclass
-from typing import List, Dict, Optional, Union, TypeVar, Generic
+from typing import List, Dict, Optional, Union, TypeVar, Generic, Any
 import logging
 
 import torch
@@ -12,6 +12,7 @@ import torch
 from causy.graph_utils import (
     load_pipeline_artefact_by_definition,
     serialize_module_name,
+    load_pipeline_steps_by_definition,
 )
 
 from pydantic import BaseModel, computed_field, AwareDatetime, Field
@@ -40,7 +41,7 @@ class NodeInterface(BaseModel):
 
     name: str
     id: str
-    values: Optional[torch.DoubleTensor] = Field(exclude=True)
+    values: Optional[torch.DoubleTensor] = Field(exclude=True, default=None)
 
     class Config:
         arbitrary_types_allowed = True
@@ -217,53 +218,21 @@ class GeneratorInterface(ABC, BaseModel):
         return serialize_module_name(self)
 
 
-TypePipelineStepInterface = TypeVar("PipelineStepInterface")
+PipelineStepInterfaceType = TypeVar("PipelineStepInterfaceType")
 
 
-class PipelineStepInterface(ABC, BaseModel, Generic[TypePipelineStepInterface]):
-    number_of_comparison_elements: int = 0
+class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
     generator: Optional[GeneratorInterface] = None
     threshold: Optional[float] = DEFAULT_THRESHOLD
-
     chunk_size_parallel_processing: int = 1
-
     parallel: bool = True
+
+    display_name: Optional[str] = None
 
     @computed_field
     @property
     def name(self) -> str:
         return serialize_module_name(self)
-
-    def __init__(
-        self,
-        threshold: float = DEFAULT_THRESHOLD,
-        generator: Optional[GeneratorInterface] = None,
-        number_of_comparison_elements: int = None,
-        chunk_size_parallel_processing: int = None,
-        parallel: bool = None,
-    ):
-        super().__init__()
-        if generator:
-            if isinstance(generator, dict):
-                self.generator = load_pipeline_artefact_by_definition(generator)
-            else:
-                self.generator = generator
-
-        if number_of_comparison_elements:
-            if isinstance(number_of_comparison_elements, dict):
-                self.number_of_comparison_elements = (
-                    load_pipeline_artefact_by_definition(number_of_comparison_elements)
-                )
-            else:
-                self.number_of_comparison_elements = number_of_comparison_elements
-
-        if chunk_size_parallel_processing:
-            self.chunk_size_parallel_processing = chunk_size_parallel_processing
-
-        if parallel:
-            self.parallel = parallel
-
-        self.threshold = threshold
 
     @abstractmethod
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
@@ -314,9 +283,14 @@ class ExitConditionInterface(ABC, BaseModel):
         return serialize_module_name(self)
 
 
-class LogicStepInterface(ABC, BaseModel):
-    pipeline_steps: Optional[List[Union[PipelineStepInterface]]] = None
+LogicStepInterfaceType = TypeVar("LogicStepInterfaceType")
+
+
+class LogicStepInterface(ABC, BaseModel, Generic[LogicStepInterfaceType]):
+    pipeline_steps: Optional[List[Union[PipelineStepInterfaceType]]] = None
     exit_condition: Optional[ExitConditionInterface] = None
+
+    display_name: Optional[str] = None
 
     @abstractmethod
     def execute(self, graph: BaseGraphInterface, graph_model_instance_: dict):
@@ -327,8 +301,30 @@ class LogicStepInterface(ABC, BaseModel):
     def name(self) -> str:
         return serialize_module_name(self)
 
+    def __init__(
+        self,
+        pipeline_steps: Optional[
+            Union[List[PipelineStepInterfaceType], Dict[Any, Any]]
+        ] = None,
+        exit_condition: Union[ExitConditionInterface, Dict[Any, Any]] = None,
+    ):
+        super().__init__()
+        # TODO check if this is a good idea
+        if isinstance(exit_condition, dict):
+            exit_condition = load_pipeline_artefact_by_definition(exit_condition)
 
-class CausyExtension(BaseModel):
+        # TODO: check if this is a good idea
+        if len(pipeline_steps) > 0 and isinstance(pipeline_steps[0], dict):
+            pipeline_steps = load_pipeline_steps_by_definition(pipeline_steps)
+
+        self.pipeline_steps = pipeline_steps or []
+        self.exit_condition = exit_condition
+
+
+CausyExtensionType = TypeVar("CausyExtensionType", bound="CausyExtension")
+
+
+class CausyExtension(BaseModel, Generic[CausyExtensionType]):
     @computed_field
     @property
     def name(self) -> str:
@@ -337,9 +333,10 @@ class CausyExtension(BaseModel):
 
 class CausyAlgorithm(BaseModel):
     name: str
-    pipeline_steps: List[Union[PipelineStepInterface, LogicStepInterface]]
+    pipeline_steps: List[Union[PipelineStepInterfaceType, LogicStepInterface]]
+    pipeline_steps: List[Union[PipelineStepInterfaceType, LogicStepInterface]]
     edge_types: List[EdgeTypeInterface]
-    extensions: Optional[List[CausyExtension]] = None
+    extensions: Optional[List[CausyExtensionType]] = None
 
 
 class CausyAlgorithmReferenceType(enum.StrEnum):

@@ -1,10 +1,8 @@
 import itertools
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Generic
 import logging
 
 import torch
-import torch.nn as nn
-import torch.optim as optim
 
 from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
 from causy.math_utils import get_t_and_critical_t
@@ -17,12 +15,15 @@ from causy.interfaces import (
     AS_MANY_AS_FIELDS,
     ComparisonSettings,
     GeneratorInterface,
+    PipelineStepInterfaceType,
 )
 
 logger = logging.getLogger(__name__)
 
 
-class CorrelationCoefficientTest(PipelineStepInterface):
+class CorrelationCoefficientTest(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
@@ -55,7 +56,9 @@ class CorrelationCoefficientTest(PipelineStepInterface):
             )
 
 
-class PartialCorrelationTest(PipelineStepInterface):
+class PartialCorrelationTest(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=3, max=3)
     )
@@ -129,7 +132,9 @@ class PartialCorrelationTest(PipelineStepInterface):
         return results
 
 
-class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
+class ExtendedPartialCorrelationTestMatrix(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
     generator: Optional[GeneratorInterface] = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
         shuffle_combinations=False,
@@ -223,7 +228,9 @@ def partial_correlation_regression(x, y, z):
     )
 
 
-class ExtendedPartialCorrelationTestLinearRegression(PipelineStepInterface):
+class ExtendedPartialCorrelationTestLinearRegression(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
     generator: Optional[GeneratorInterface] = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
         shuffle_combinations=False,

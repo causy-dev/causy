@@ -5,7 +5,7 @@ import typer
 import uvicorn
 from typing import Any, Dict, Optional, Union
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, UUID4
 from starlette.staticfiles import StaticFiles
 
@@ -16,6 +16,7 @@ from causy.interfaces import (
     CausyAlgorithm,
     CausyAlgorithmReference,
     CausyResult,
+    CausyAlgorithmReferenceType,
 )
 from causy.serialization import load_algorithm_by_reference
 
@@ -57,9 +58,16 @@ async def get_model():
 async def get_algorithm(reference_type: str, reference: str):
     """Get the current algorithm."""
     if reference.startswith("/") or ".." in reference:
-        raise ValueError("Invalid reference")
+        raise HTTPException(400, "Invalid reference")
 
-    return load_algorithm_by_reference(reference_type, reference)
+    if reference_type not in CausyAlgorithmReferenceType.__members__.values():
+        raise HTTPException(400, "Invalid reference type")
+
+    try:
+        algorithm = load_algorithm_by_reference(reference_type, reference)
+        return algorithm
+    except Exception as e:
+        raise HTTPException(400, str(e))
 
 
 def server(result: Dict[str, Any]):

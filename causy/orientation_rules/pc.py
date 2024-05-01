@@ -1,4 +1,4 @@
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Generic
 import itertools
 
 from causy.generators import AllCombinationsGenerator
@@ -9,6 +9,7 @@ from causy.interfaces import (
     PipelineStepInterface,
     ComparisonSettings,
     GeneratorInterface,
+    PipelineStepInterfaceType,
 )
 
 # theory for all orientation rules with pictures:
@@ -17,7 +18,9 @@ from causy.interfaces import (
 # TODO: refactor ColliderTest -> ColliderRule and move to folder orientation_rules (after checking for duplicates)
 
 
-class ColliderTest(PipelineStepInterface):
+class ColliderTest(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
@@ -83,7 +86,9 @@ class ColliderTest(PipelineStepInterface):
         return results
 
 
-class NonColliderTest(PipelineStepInterface):
+class NonColliderTest(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
@@ -147,7 +152,9 @@ class NonColliderTest(PipelineStepInterface):
                 )
 
 
-class FurtherOrientTripleTest(PipelineStepInterface):
+class FurtherOrientTripleTest(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
@@ -203,7 +210,9 @@ class FurtherOrientTripleTest(PipelineStepInterface):
         return results
 
 
-class OrientQuadrupleTest(PipelineStepInterface):
+class OrientQuadrupleTest(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
@@ -269,7 +278,9 @@ class OrientQuadrupleTest(PipelineStepInterface):
         return results
 
 
-class FurtherOrientQuadrupleTest(PipelineStepInterface):
+class FurtherOrientQuadrupleTest(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )

@@ -11,12 +11,12 @@ from causy.interfaces import (
     TestResult,
     TestResultAction,
     GeneratorInterface,
-    TypePipelineStepInterface,
+    PipelineStepInterfaceType,
 )
 
 
 class CalculatePearsonCorrelations(
-    PipelineStepInterface, Generic[TypePipelineStepInterface]
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
 ):
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
