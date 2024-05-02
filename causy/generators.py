@@ -77,12 +77,12 @@ class PairsWithEdgesInBetweenGenerator(GeneratorInterface):
     def generate(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
     ):
-        local_edges = copy.deepcopy(graph.edges)
+        local_edges = graph.edges
 
         edges = []
 
-        for f_node in local_edges:
-            for t_node in graph.edges[f_node]:
+        for f_node in local_edges.keys():
+            for t_node in graph.edges[f_node].keys():
                 edges.append((f_node, t_node))
 
         if self.chunked:
@@ -135,9 +135,9 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
         for i in range(start, stop):
             logger.debug(f"PairsWithNeighboursGenerator: i={i}")
             checked_combinations = set()
-            local_edges = copy.deepcopy(graph.edges)
-            for node in local_edges:
-                for neighbour in local_edges[node]:
+            local_edges = graph.edges
+            for node in local_edges.keys():
+                for neighbour in local_edges[node].keys():
                     if (node, neighbour) in checked_combinations:
                         continue
 
@@ -146,7 +146,7 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                         yield (node, neighbour)
                         continue
 
-                    other_neighbours = set(graph.edges[node])
+                    other_neighbours = set(local_edges[node].keys())
 
                     if neighbour in other_neighbours:
                         other_neighbours.remove(neighbour)
@@ -162,9 +162,11 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                         chunk = []
                         for k in combinations:
                             chunk.append([node, neighbour] + [ks for ks in k])
+                        print(chunk)
                         yield chunk
                     else:
                         for k in combinations:
+                            print([node, neighbour] + [ks for ks in k])
                             yield [node, neighbour] + [ks for ks in k]
 
 

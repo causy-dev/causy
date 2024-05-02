@@ -2,11 +2,13 @@ import collections
 import enum
 from abc import ABC
 from dataclasses import dataclass
+from multiprocessing import Manager
 from typing import List, Optional, Dict, Set, Tuple, Union, OrderedDict, Any
 from uuid import uuid4
 import logging
 
 import torch
+from pydantic import BaseModel
 
 from causy.edge_types import UndirectedEdge, DirectedEdge
 from causy.interfaces import (
@@ -61,25 +63,167 @@ class GraphError(Exception):
     pass
 
 
-class Graph(BaseGraphInterface):
+class Graph(BaseModel):
+    nodes: OrderedDict[str, Node] = collections.OrderedDict({})
+    edges: Dict[str, Dict[str, Edge]] = {}
+    _reverse_edges: Dict[str, Dict[str, Edge]] = {}
+    edge_history: Dict[Tuple[str, str], List[TestResult]] = {}
+    action_history: List[Dict[str, List[TestResult]]] = []
+
+    def parents_of_node(self, u: Node):
+        """
+        Return all parents of a node u
+        :param u: node u
+        :return: list of nodes (parents)
+        """
+        return [self.nodes[n] for n in self._reverse_edges[u.id].keys()]
+
+    def only_directed_edge_exists(self, u: Node, v: Node):
+        """
+        Check if a directed edge exists between u and v, but no directed edge exists between v and u. Case: u -> v
+        :param u: node u
+        :param v: node v
+        :return: True if only directed edge exists, False otherwise
+        """
+        if self.directed_edge_exists(u, v) and not self.directed_edge_exists(v, u):
+            return True
+        return False
+
+    def edge_exists(self, u: Node, v: Node):
+        """
+        Check if any edge exists between u and v. Cases: u -> v, u <-> v, u <- v
+        :param u: node u
+        :param v: node v
+        :return: True if any edge exists, False otherwise
+        """
+        if u.id not in self.nodes:
+            return False
+        if v.id not in self.nodes:
+            return False
+        if u.id in self.edges and v.id in self.edges[u.id]:
+            return True
+        if v.id in self.edges and u.id in self.edges[v.id]:
+            return True
+        return False
+
+    def directed_edge_exists(self, u: Node, v: Node):
+        """
+        Check if a directed edge exists between u and v. Cases: u -> v, u <-> v
+        :param u: node u
+        :param v: node v
+        :return: True if a directed edge exists, False otherwise
+        """
+        if u.id not in self.nodes:
+            return False
+        if v.id not in self.nodes:
+            return False
+        if u.id not in self.edges:
+            return False
+        if v.id not in self.edges[u.id]:
+            return False
+
+        return True
+
+    def edge_value(self, u: Node, v: Node) -> Optional[Dict]:
+        """
+        retrieve the value of an edge
+        :param u:
+        :param v:
+        :return:
+        """
+
+        if u.id not in self.edges:
+            return None
+        if v.id not in self.edges[u.id]:
+            return None
+        return self.edges[u.id][v.id].metadata
+
+    def edge_type(self, u: Node, v: Node) -> Optional[EdgeTypeInterface]:
+        """
+        retrieve the value of an edge
+        :param u:
+        :param v:
+        :return:
+        """
+
+        if u.id not in self.edges:
+            return None
+        if v.id not in self.edges[u.id]:
+            return None
+        return self.edges[u.id][v.id].edge_type
+
+    def undirected_edge_exists(self, u: Node, v: Node):
+        """
+        Check if an undirected edge exists between u and v. Note: currently, an undirected edges is implemented just as
+        a directed edge. However, they are two functions as they mean different things in different algorithms.
+        Currently, this function is used in the PC algorithm, where an undirected edge is an edge which could not be
+        oriented in any direction by orientation rules.
+        Later, a cohersive naming scheme should be implemented.
+        :param u: node u
+        :param v: node v
+        :return: True if an undirected edge exists, False otherwise
+        """
+        if self.directed_edge_exists(u, v) and self.directed_edge_exists(v, u):
+            return True
+        return False
+
+    def retrieve_edge_history(
+        self, u, v, action: TestResultAction = None
+    ) -> List[TestResult]:
+        """
+        Retrieve the edge history
+        :param u:
+        :param v:
+        :param action:
+        :return:
+        """
+        if action is None:
+            return self.edge_history[(u.id, v.id)]
+
+        if (u.id, v.id) not in self.edge_history:
+            return []
+
+        return [i for i in self.edge_history[(u.id, v.id)] if i.action == action]
+
+
+class GraphManager(BaseGraphInterface):
     """
     The graph represents the internal data structure of causy. It is a simple graph with nodes and edges.
     But it supports to be handled as a directed graph, undirected graph and bidirected graph, which is important to implement different algorithms in different stages.
     It also stores the history of the actions taken on the graph.
     """
 
-    nodes: OrderedDict[str, Node]
-    edges: Dict[str, Dict[str, Edge]]
-    _reverse_edges: Dict[str, Dict[str, Edge]]
-    edge_history: Dict[Tuple[str, str], List[TestResult]]
-    action_history: List[Dict[str, List[TestResult]]]
+    @property
+    def nodes(self) -> OrderedDict[str, Node]:
+        return self.graph.nodes
+
+    @property
+    def edges(self) -> Dict[str, Dict[str, Edge]]:
+        return self.graph.edges
+
+    @property
+    def _reverse_edges(self) -> Dict[str, Dict[str, Edge]]:
+        return self.graph._reverse_edges
+
+    @property
+    def edge_history(self) -> Dict[Tuple[str, str], List[TestResult]]:
+        return self.graph.edge_history
+
+    @property
+    def action_history(self) -> List[Dict[str, List[TestResult]]]:
+        return self.graph.action_history
+
+    graph: Graph = Graph()
+
+    _manager: Optional[Manager] = None
 
     def __init__(self):
-        self.nodes = collections.OrderedDict({})
-        self.edges = {}
-        self._reverse_edges = {}
-        self.edge_history = {}
-        self.action_history = []
+        self._manager = Manager()
+        self.graph.nodes = collections.OrderedDict({})
+        self.graph.edges = self._manager.dict()
+        self.graph._reverse_edges = self._manager.dict()
+        self.graph.edge_history = self._manager.dict()
+        self.graph.action_history = []
 
     def add_edge(self, u: Node, v: Node, metadata: Dict):
         """
@@ -99,11 +243,11 @@ class Graph(BaseGraphInterface):
             raise GraphError("Self loops are currently not allowed")
 
         if u.id not in self.edges:
-            self.edges[u.id] = {}
-            self._reverse_edges[u.id] = {}
+            self.edges[u.id] = self._manager.dict()
+            self._reverse_edges[u.id] = self._manager.dict()
         if v.id not in self.edges:
-            self.edges[v.id] = {}
-            self._reverse_edges[v.id] = {}
+            self.edges[v.id] = self._manager.dict()
+            self._reverse_edges[v.id] = self._manager.dict()
 
         a_edge = Edge(u=u, v=v, edge_type=UndirectedEdge(), metadata=metadata)
         self.edges[u.id][v.id] = a_edge
@@ -134,9 +278,9 @@ class Graph(BaseGraphInterface):
             raise GraphError("Self loops are currently not allowed")
 
         if u.id not in self.edges:
-            self.edges[u.id] = {}
+            self.edges[u.id] = self._manager.dict()
         if v.id not in self._reverse_edges:
-            self._reverse_edges[v.id] = {}
+            self._reverse_edges[v.id] = self._manager.dict()
 
         edge = Edge(u=u, v=v, edge_type=DirectedEdge(), metadata=metadata)
 
@@ -247,18 +391,38 @@ class Graph(BaseGraphInterface):
             raise GraphError(f"There is no edge from {v} to {u}")
 
         if metadata is not None:
-            self.edges[u.id][v.id].metadata = metadata
-            self.edges[v.id][u.id].metadata = metadata
+            obj = self.edges[u.id][v.id]
+            obj.metadata = metadata
+            self.edges[u.id][v.id] = obj
 
-            self._reverse_edges[u.id][v.id].metadata = metadata
-            self._reverse_edges[v.id][u.id].metadata = metadata
+            obj = self.edges[v.id][u.id]
+            obj.metadata = metadata
+            self.edges[v.id][u.id] = obj
+
+            obj = self._reverse_edges[u.id][v.id]
+            obj.metadata = metadata
+            self._reverse_edges[u.id][v.id] = obj
+
+            obj = self._reverse_edges[v.id][u.id]
+            obj.metadata = metadata
+            self._reverse_edges[v.id][u.id] = obj
 
         if edge_type is not None:
-            self.edges[u.id][v.id].edge_type = edge_type
-            self.edges[v.id][u.id].edge_type = edge_type
+            obj = self.edges[u.id][v.id]
+            obj.edge_type = edge_type
+            self.edges[u.id][v.id] = obj
 
-            self._reverse_edges[u.id][v.id].edge_type = edge_type
-            self._reverse_edges[v.id][u.id].edge_type = edge_type
+            obj = self.edges[v.id][u.id]
+            obj.edge_type = edge_type
+            self.edges[v.id][u.id] = obj
+
+            obj = self._reverse_edges[u.id][v.id]
+            obj.edge_type = edge_type
+            self._reverse_edges[u.id][v.id] = obj
+
+            obj = self._reverse_edges[v.id][u.id]
+            obj.edge_type = edge_type
+            self._reverse_edges[v.id][u.id] = obj
 
     def update_directed_edge(
         self,
@@ -283,12 +447,22 @@ class Graph(BaseGraphInterface):
             raise GraphError(f"There is no edge from {u} to {v}")
 
         if metadata is not None:
-            self.edges[u.id][v.id].metadata = metadata
-            self._reverse_edges[v.id][u.id].metadata = metadata
+            obj = self.edges[u.id][v.id]
+            obj.metadata = metadata
+            self.edges[u.id][v.id] = obj
+
+            obj = self._reverse_edges[v.id][u.id]
+            obj.metadata = metadata
+            self._reverse_edges[v.id][u.id] = obj
 
         if edge_type is not None:
-            self.edges[u.id][v.id].edge_type = edge_type
-            self._reverse_edges[v.id][u.id].edge_type = edge_type
+            obj = self.edges[u.id][v.id]
+            obj.edge_type = edge_type
+            self.edges[u.id][v.id] = obj
+
+            obj = self._reverse_edges[v.id][u.id]
+            obj.edge_type = edge_type
+            self._reverse_edges[v.id][u.id] = obj
 
     def edge_exists(self, u: Node, v: Node):
         """

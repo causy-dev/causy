@@ -8,7 +8,7 @@ from typing import Optional, List, Dict, Callable, Union
 import torch.multiprocessing as mp
 
 from causy.edge_types import DirectedEdge
-from causy.graph import Graph
+from causy.graph import GraphManager
 from causy.graph_utils import unpack_run
 from causy.interfaces import (
     PipelineStepInterface,
@@ -94,7 +94,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :param data: the dictionary
         :return: the graph
         """
-        graph = Graph()
+        graph = GraphManager()
         for key, values in sorted(data.items()):
             graph.add_node(key, values, id_=key)
         return graph
@@ -117,7 +117,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             for key in keys:
                 nodes[key].append(row[key])
 
-        graph = Graph()
+        graph = GraphManager()
         for key in keys:
             graph.add_node(key, nodes[key], id_=key)
 
@@ -162,7 +162,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         for filter in self.pipeline_steps:
             logger.info(f"Executing pipeline step {filter.__class__.__name__}")
             if isinstance(filter, LogicStepInterface):
-                filter.execute(self.graph, self)
+                filter.execute(self.graph.graph, self)
                 continue
 
             # collect the time it takes to execute the pipeline step
@@ -312,7 +312,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             for result in self.pool.imap_unordered(
                 unpack_run,
                 self._format_yield(
-                    test_fn, self.graph, test_fn.generator.generate(self.graph, self)
+                    test_fn,
+                    self.graph.graph,
+                    test_fn.generator.generate(self.graph, self),
                 ),
                 chunksize=test_fn.chunk_size_parallel_processing,
             ):
@@ -323,10 +325,10 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 )
         else:
             if test_fn.generator.chunked:
-                for chunk in test_fn.generator.generate(self.graph, self):
+                for chunk in test_fn.generator.generate(self.graph.graph, self):
                     iterator = [
                         unpack_run(i)
-                        for i in [[test_fn, [*c], self.graph] for c in chunk]
+                        for i in [[test_fn, [*c], self.graph.graph] for c in chunk]
                     ]
                     actions_taken.extend(
                         self._take_action(iterator, dry_run=not apply_to_graph)
@@ -335,8 +337,8 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 iterator = [
                     unpack_run(i)
                     for i in [
-                        [test_fn, [*i], self.graph]
-                        for i in test_fn.generator.generate(self.graph, self)
+                        [test_fn, [*i], self.graph.graph]
+                        for i in test_fn.generator.generate(self.graph.graph, self)
                     ]
                 ]
                 actions_taken.extend(

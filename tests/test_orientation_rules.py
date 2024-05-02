@@ -1,4 +1,4 @@
-from causy.graph import Graph
+from causy.graph import GraphManager
 from causy.graph_model import graph_model_factory
 from causy.interfaces import TestResult, TestResultAction, CausyAlgorithm
 from causy.orientation_rules.fci import ColliderRuleFCI
@@ -16,7 +16,7 @@ class OrientationTestCase(CausyTestCase):
                 name="FCIColliderRule",
             )
         )()
-        model.graph = Graph()
+        model.graph = GraphManager()
         x = model.graph.add_node("X", [0, 1, 2])
         y = model.graph.add_node("Y", [3, 4, 5])
         z = model.graph.add_node("Z", [6, 7, 8])

@@ -1,13 +1,13 @@
 import torch
 
-from causy.graph import Graph, GraphError, Node
+from causy.graph import GraphManager, GraphError, Node
 
 from tests.utils import CausyTestCase
 
 
 class GraphTestCase(CausyTestCase):
     def test_add_node(self):
-        graph = Graph()
+        graph = GraphManager()
         node = graph.add_node("test", [1, 2, 3])
         self.assertEqual(node.name, "test")
         self.assertTrue(
@@ -17,7 +17,7 @@ class GraphTestCase(CausyTestCase):
         self.assertEqual(len(graph.edges), 0)
 
     def test_add_node_custom_id(self):
-        graph = Graph()
+        graph = GraphManager()
         node = graph.add_node("test", [1, 2, 3], id_="custom")
         self.assertEqual(node.name, "test")
         self.assertTrue(
@@ -28,18 +28,18 @@ class GraphTestCase(CausyTestCase):
         self.assertEqual(node.id, "custom")
 
     def test_add_node_custom_id_already_exists(self):
-        graph = Graph()
+        graph = GraphManager()
         graph.add_node("test", [1, 2, 3], id_="custom")
         with self.assertRaises(ValueError):
             graph.add_node("test", [1, 2, 3], id_="custom")
 
     def test_add_node_with_unsupported_values(self):
-        graph = Graph()
+        graph = GraphManager()
         with self.assertRaises(ValueError):
             graph.add_node("test", [1, 2, 3, "a"])
 
     def test_add_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         graph.add_edge(node1, node2, {"test": "test"})
@@ -52,7 +52,7 @@ class GraphTestCase(CausyTestCase):
         self.assertTrue(graph.edge_exists(node1, node2))
 
     def test_add_directed_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         graph.add_directed_edge(node1, node2, {"test": "test"})
@@ -63,7 +63,7 @@ class GraphTestCase(CausyTestCase):
         self.assertFalse(graph.directed_edge_exists(node2, node1))
 
     def test_add_edge_with_non_existing_node(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
         with self.assertRaises(GraphError):
@@ -73,13 +73,13 @@ class GraphTestCase(CausyTestCase):
             graph.add_edge(node2, node1, {"test": "test"})
 
     def test_add_self_loop(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         with self.assertRaises(GraphError):
             graph.add_edge(node1, node1, {"test": "test"})
 
     def test_remove_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         graph.add_edge(node1, node2, {"test": "test"})
@@ -88,13 +88,13 @@ class GraphTestCase(CausyTestCase):
         self.assertFalse(graph.edge_exists(node2, node1))
 
     def test_remove_edge_with_non_existing_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         self.assertIsNone(graph.remove_edge(node1, node2))
 
     def test_remove_edge_with_non_existing_node(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
         with self.assertRaises(GraphError):
@@ -104,7 +104,7 @@ class GraphTestCase(CausyTestCase):
             graph.remove_edge(node2, node1)
 
     def test_remove_directed_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         graph.add_edge(node1, node2, {"test": "test"})
@@ -113,7 +113,7 @@ class GraphTestCase(CausyTestCase):
         self.assertTrue(graph.directed_edge_exists(node2, node1))
 
     def test_remove_directed_edge_with_non_existing_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         self.assertIsNone(graph.remove_directed_edge(node1, node2))
@@ -123,7 +123,7 @@ class GraphTestCase(CausyTestCase):
         self.assertIsNone(graph.remove_directed_edge(node1, node2))
 
     def test_remove_directed_edge_with_non_existing_node(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
         with self.assertRaises(GraphError):
@@ -133,7 +133,7 @@ class GraphTestCase(CausyTestCase):
             graph.remove_directed_edge(node2, node1)
 
     def test_update_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         graph.add_edge(node1, node2, {"test": "test"})
@@ -142,14 +142,14 @@ class GraphTestCase(CausyTestCase):
         self.assertEqual(graph.edge_value(node2, node1), {"test": "test2"})
 
     def test_update_edge_with_non_existing_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         with self.assertRaises(GraphError):
             graph.update_edge(node2, node1, {"test": "test"})
 
     def test_update_edge_with_non_existing_node(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
         with self.assertRaises(GraphError):
@@ -159,7 +159,7 @@ class GraphTestCase(CausyTestCase):
             graph.update_edge(node2, node1, {"test": "test"})
 
     def test_update_directed_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         graph.add_edge(node1, node2, {"test": "test"})
@@ -168,7 +168,7 @@ class GraphTestCase(CausyTestCase):
         self.assertEqual(graph.edge_value(node2, node1), {"test": "test"})
 
     def test_update_directed_edge_with_non_existing_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
 
@@ -182,7 +182,7 @@ class GraphTestCase(CausyTestCase):
             graph.update_directed_edge(node2, node1, {"test": "test"})
 
     def test_update_directed_edge_with_non_existing_node(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
 
@@ -193,7 +193,7 @@ class GraphTestCase(CausyTestCase):
             graph.update_directed_edge(node2, node1, {"test": "test"})
 
     def test_edge_value_with_non_existing_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = Node(name="test2", values=torch.Tensor([1, 2, 3]), id="custom")
 
@@ -201,7 +201,7 @@ class GraphTestCase(CausyTestCase):
         self.assertIsNone(graph.edge_value(node2, node1))
 
     def test_edge_exists(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node(name="test2", values=[1, 2, 3])
         graph.add_edge(node1, node2, {"test": "test"})
@@ -209,14 +209,14 @@ class GraphTestCase(CausyTestCase):
         self.assertTrue(graph.edge_exists(node2, node1))
 
     def test_edge_exists_with_non_existing_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node(name="test2", values=[1, 2, 3])
         self.assertFalse(graph.edge_exists(node1, node2))
         self.assertFalse(graph.edge_exists(node2, node1))
 
     def test_undirected_edge_exists(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node(name="test2", values=[1, 2, 3])
         graph.add_edge(node1, node2, {"test": "test"})
@@ -224,7 +224,7 @@ class GraphTestCase(CausyTestCase):
         self.assertTrue(graph.undirected_edge_exists(node2, node1))
 
     def test_undirected_edge_exists_with_non_existing_edge(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node(name="test2", values=[1, 2, 3])
         self.assertFalse(graph.undirected_edge_exists(node1, node2))
@@ -237,14 +237,14 @@ class GraphTestCase(CausyTestCase):
         self.assertFalse(graph.undirected_edge_exists(node2, node1))
 
     def test_parents_of_node_two_nodes(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         graph.add_directed_edge(node1, node2, {"test": "test"})
         self.assertEqual(graph.parents_of_node(node2), [node1])
 
     def test_parents_of_node_three_nodes(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         node3 = graph.add_node("test2", [1, 2, 3])
@@ -255,14 +255,14 @@ class GraphTestCase(CausyTestCase):
         self.assertIn(node3, result)
 
     def test_directed_paths_two_nodes(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         graph.add_directed_edge(node1, node2, {"test": "test"})
         self.assertEqual(graph.directed_paths(node1, node2), [[(node1, node2)]])
 
     def test_directed_paths_three_nodes(self):
-        graph = Graph()
+        graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
         node3 = graph.add_node("test2", [1, 2, 3])

@@ -156,7 +156,7 @@ class ExtendedPartialCorrelationTestMatrix(
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
             return
 
-        other_neighbours = set(graph.edges[nodes[0]])
+        other_neighbours = set(graph.edges[nodes[0]].keys())
         other_neighbours.remove(graph.nodes[nodes[1]].id)
 
         if not set(nodes[2:]).issubset(set([on for on in list(other_neighbours)])):

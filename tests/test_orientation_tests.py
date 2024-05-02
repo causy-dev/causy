@@ -1,4 +1,4 @@
-from causy.graph import Graph
+from causy.graph import GraphManager
 from causy.interfaces import TestResult, TestResultAction, CausyAlgorithm
 from causy.orientation_rules.pc import (
     ColliderTest,
@@ -22,7 +22,7 @@ class OrientationRuleTestCase(CausyTestCase):
                 name="TestCollider",
             )
         )()
-        model.graph = Graph()
+        model.graph = GraphManager()
         x = model.graph.add_node("X", [0, 1, 2])
         y = model.graph.add_node("Y", [3, 4, 5])
         z = model.graph.add_node("Z", [6, 7, 8])
@@ -51,7 +51,7 @@ class OrientationRuleTestCase(CausyTestCase):
                 name="TestCollider",
             )
         )()
-        model.graph = Graph()
+        model.graph = GraphManager()
         x = model.graph.add_node("X", [])
         y = model.graph.add_node("Y", [])
         z = model.graph.add_node("Z", [])
@@ -79,7 +79,7 @@ class OrientationRuleTestCase(CausyTestCase):
                 name="TestCollider",
             )
         )()
-        model.graph = Graph()
+        model.graph = GraphManager()
         x = model.graph.add_node("X", [])
         y = model.graph.add_node("Y", [])
         z = model.graph.add_node("Z", [])
@@ -99,7 +99,7 @@ class OrientationRuleTestCase(CausyTestCase):
                 name="TestCollider",
             )
         )()
-        model.graph = Graph()
+        model.graph = GraphManager()
         x = model.graph.add_node("X", [])
         y = model.graph.add_node("Y", [])
         z = model.graph.add_node("Z", [])
@@ -123,7 +123,7 @@ class OrientationRuleTestCase(CausyTestCase):
                 name="TestCollider",
             )
         )()
-        model.graph = Graph()
+        model.graph = GraphManager()
         x = model.graph.add_node("X", [])
         y = model.graph.add_node("Y", [])
         z = model.graph.add_node("Z", [])
@@ -150,7 +150,7 @@ class OrientationRuleTestCase(CausyTestCase):
                 name="TestCollider",
             )
         )()
-        model.graph = Graph()
+        model.graph = GraphManager()
         x = model.graph.add_node("X", [])
         y = model.graph.add_node("Y", [])
         z = model.graph.add_node("Z", [])
