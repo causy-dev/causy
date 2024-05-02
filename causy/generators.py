@@ -77,7 +77,7 @@ class PairsWithEdgesInBetweenGenerator(GeneratorInterface):
     def generate(
         self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
     ):
-        local_edges = graph.edges
+        local_edges = copy.deepcopy(graph.edges)
 
         edges = []
 
@@ -135,8 +135,9 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
         for i in range(start, stop):
             logger.debug(f"PairsWithNeighboursGenerator: i={i}")
             checked_combinations = set()
-            local_edges = graph.edges
+            local_edges = copy.deepcopy(dict(graph.edges))
             for node in local_edges.keys():
+                local_edges[node] = copy.deepcopy(dict(local_edges[node]))
                 for neighbour in local_edges[node].keys():
                     if (node, neighbour) in checked_combinations:
                         continue
@@ -162,11 +163,9 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                         chunk = []
                         for k in combinations:
                             chunk.append([node, neighbour] + [ks for ks in k])
-                        print(chunk)
                         yield chunk
                     else:
                         for k in combinations:
-                            print([node, neighbour] + [ks for ks in k])
                             yield [node, neighbour] + [ks for ks in k]
 
 
