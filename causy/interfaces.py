@@ -229,6 +229,33 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
 
     display_name: Optional[str] = None
 
+    def __init__(
+        self,
+        threshold: float = None,
+        generator: Optional[GeneratorInterface] = None,
+        chunk_size_parallel_processing: int = None,
+        parallel: bool = None,
+        display_name: Optional[str] = None,
+    ):
+        super().__init__()
+        if generator:
+            if isinstance(generator, dict):
+                self.generator = load_pipeline_artefact_by_definition(generator)
+            else:
+                self.generator = generator
+
+        if chunk_size_parallel_processing:
+            self.chunk_size_parallel_processing = chunk_size_parallel_processing
+
+        if parallel:
+            self.parallel = parallel
+
+        if display_name:
+            self.display_name = display_name
+
+        if threshold:
+            self.threshold = threshold
+
     @computed_field
     @property
     def name(self) -> str:
