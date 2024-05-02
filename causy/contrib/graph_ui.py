@@ -14,6 +14,7 @@ class EdgeUIConfig(BaseModel):
     marker_end: Optional[str] = None
     label_field: Optional[str] = None
     animated: Optional[bool] = False
+    label: Optional[str] = None
 
 
 class ConditionalEdgeUIConfigComparison(enum.StrEnum):
