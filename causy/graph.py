@@ -1,8 +1,5 @@
 import collections
-import enum
-from abc import ABC
 from dataclasses import dataclass
-from multiprocessing import Manager
 from typing import List, Optional, Dict, Set, Tuple, Union, OrderedDict, Any
 from uuid import uuid4
 import logging
@@ -318,9 +315,10 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
     def action_history(self) -> List[Dict[str, List[TestResult]]]:
         return self.graph.action_history
 
-    graph: Graph = Graph()
+    graph: Graph = None
 
     def __init__(self):
+        self.graph = Graph()
         self.graph.nodes = collections.OrderedDict({})
         self.graph.edges = self.__init_dict()
         self.graph._reverse_edges = self.__init_dict()
@@ -328,6 +326,11 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
         self.graph.action_history = []
 
     def __init_dict(self):
+        """
+        Initialize a dictionary - we encapsulate this to make it easier to change the implementation of the dictionary
+        As this might be necessary for multiprocessing
+        :return:
+        """
         return UltraDict({})
 
     def add_edge(self, u: Node, v: Node, metadata: Dict):

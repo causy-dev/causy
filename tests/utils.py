@@ -19,8 +19,6 @@ class CausyTestCase(TestCase):
 
     def assertGraphStructureIsEqual(self, graph1, graph2, msg=None):
         for node_from in graph1.edges:
-            graph1.edges[node_from] = dict(graph1.edges[node_from])
-            graph2.edges[node_from] = dict(graph2.edges[node_from])
             for node_to in graph1.edges[node_from]:
                 if (
                     node_from not in graph2.edges

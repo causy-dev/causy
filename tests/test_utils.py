@@ -34,7 +34,6 @@ class UtilsTestCase(CausyTestCase):
             load_pipeline_steps_by_definition(steps)[0], CalculatePearsonCorrelations
         )
 
-    @skip("Known Bug: we have interesting memory sharing between the two models")
     def test_tests(self):
         model_one = IIDSampleGenerator(
             edges=[
