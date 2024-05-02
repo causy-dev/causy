@@ -1,5 +1,5 @@
 # TripAdvisor Rating Impact on Hotel Popularity
-This dataset in this folder is taken from:
+The dataset in this folder is taken from:
 ```
 CC-BY-SA: JOCELYN DUMLAO
 TripAdvisor Review Ratings Dataset
