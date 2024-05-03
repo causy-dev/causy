@@ -314,7 +314,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 self._format_yield(
                     test_fn,
                     self.graph.graph,
-                    test_fn.generator.generate(self.graph, self),
+                    test_fn.generator.generate(self.graph.graph, self),
                 ),
                 chunksize=test_fn.chunk_size_parallel_processing,
             ):

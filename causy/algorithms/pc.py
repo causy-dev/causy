@@ -30,14 +30,15 @@ from causy.orientation_rules.pc import (
 )
 
 PC_ORIENTATION_RULES = [
-    ColliderTest(),
+    ColliderTest(display_name="Collider Test"),
     Loop(
         pipeline_steps=[
-            NonColliderTest(),
-            FurtherOrientTripleTest(),
-            OrientQuadrupleTest(),
-            FurtherOrientQuadrupleTest(),
+            NonColliderTest(display_name="Non-Collider Test"),
+            FurtherOrientTripleTest(display_name="Further Orient Triple Test"),
+            OrientQuadrupleTest(display_name="Orient Quadruple Test"),
+            FurtherOrientQuadrupleTest(display_name="Further Orient Quadruple Test"),
         ],
+        display_name="Orientation Rules Loop",
         exit_condition=ExitOnNoActions(),
     ),
 ]
@@ -133,7 +134,9 @@ ParallelPC = graph_model_factory(
                 ),
             ),
             *PC_ORIENTATION_RULES,
-            ComputeDirectEffectsMultivariateRegression(),
+            ComputeDirectEffectsMultivariateRegression(
+                display_name="Compute Direct Effects"
+            ),
         ],
         edge_types=PC_EDGE_TYPES,
         extensions=[PC_GRAPH_UI_EXTENSION],

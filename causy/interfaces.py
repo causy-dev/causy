@@ -334,6 +334,7 @@ class LogicStepInterface(ABC, BaseModel, Generic[LogicStepInterfaceType]):
             Union[List[PipelineStepInterfaceType], Dict[Any, Any]]
         ] = None,
         exit_condition: Union[ExitConditionInterface, Dict[Any, Any]] = None,
+        display_name: Optional[str] = None,
     ):
         super().__init__()
         # TODO check if this is a good idea
@@ -346,6 +347,9 @@ class LogicStepInterface(ABC, BaseModel, Generic[LogicStepInterfaceType]):
 
         self.pipeline_steps = pipeline_steps or []
         self.exit_condition = exit_condition
+
+        if display_name:
+            self.display_name = display_name
 
 
 CausyExtensionType = TypeVar("CausyExtensionType", bound="CausyExtension")
