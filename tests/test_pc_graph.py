@@ -103,6 +103,32 @@ class PCTestTestCase(CausyTestCase):
             )
         )
 
+    def test_second_toy_model_example(self):
+        rdnv = self.seeded_random.normalvariate
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("A"), NodeReference("C"), 1),
+                SampleEdge(NodeReference("B"), NodeReference("C"), 2),
+                SampleEdge(NodeReference("A"), NodeReference("D"), 3),
+                SampleEdge(NodeReference("B"), NodeReference("D"), 1),
+                SampleEdge(NodeReference("C"), NodeReference("D"), 1),
+                SampleEdge(NodeReference("B"), NodeReference("E"), 4),
+                SampleEdge(NodeReference("E"), NodeReference("F"), 5),
+                SampleEdge(NodeReference("B"), NodeReference("F"), 6),
+                SampleEdge(NodeReference("C"), NodeReference("F"), 1),
+                SampleEdge(NodeReference("D"), NodeReference("F"), 1),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+
+        sample_size = 10000
+        test_data, sample_graph = model.generate(sample_size)
+
+        tst = PCStable()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
     # test structure learning
     def test_toy_model_structure(self):
         """
