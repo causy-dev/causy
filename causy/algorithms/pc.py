@@ -117,7 +117,7 @@ ParallelPC = graph_model_factory(
                         ),
                     ),
                     chunked=False,
-                    every_nth=200,
+                    every_nth=500,
                 ),
             ),
             ExtendedPartialCorrelationTestMatrix(

@@ -5,8 +5,7 @@ from uuid import uuid4
 import logging
 
 import torch
-from UltraDict import UltraDict
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from causy.edge_types import UndirectedEdge, DirectedEdge
 from causy.interfaces import (
@@ -29,7 +28,7 @@ class Node(NodeInterface):
 
     name: str
     id: str
-    values: torch.Tensor
+    values: Optional[torch.Tensor] = None
     metadata: Optional[Dict[str, Any]] = None
 
     def __hash__(self):
@@ -49,6 +48,7 @@ class Edge(EdgeInterface):
     v: NodeInterface
     edge_type: EdgeTypeInterface
     metadata: Optional[Dict[str, Any]] = None
+    deleted: Optional[bool] = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -62,15 +62,45 @@ class GraphError(Exception):
 
 
 class GraphAccessMixin:
-    def parents_of_node(self, u: Node):
+    def directed_edge_is_soft_deleted(
+        self, u: Union[Node, str], v: Union[Node, str]
+    ) -> bool:
+        """
+        Check if an edge is soft deleted
+        :param u:
+        :param v:
+        :return:
+        """
+
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
+        if u not in self.edges:
+            return False
+        if v not in self.edges[u]:
+            return False
+        return self.edges[u][v].deleted
+
+    def parents_of_node(self, u: Union[Node, str]):
         """
         Return all parents of a node u
         :param u: node u
         :return: list of nodes (parents)
         """
-        return [self.nodes[n] for n in self._reverse_edges[u.id].keys()]
+        if isinstance(u, Node):
+            u = u.id
 
-    def only_directed_edge_exists(self, u: Node, v: Node):
+        return [
+            self.nodes[n]
+            for n in self._reverse_edges[u].keys()
+            if not self.directed_edge_is_soft_deleted(n, u)
+        ]
+
+    def only_directed_edge_exists(
+        self, u: Union[Node, str], v: Union[Node, str]
+    ) -> bool:
         """
         Check if a directed edge exists between u and v, but no directed edge exists between v and u. Case: u -> v
         :param u: node u
@@ -81,42 +111,92 @@ class GraphAccessMixin:
             return True
         return False
 
-    def edge_exists(self, u: Node, v: Node):
+    def edge_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
         Check if any edge exists between u and v. Cases: u -> v, u <-> v, u <- v
         :param u: node u
         :param v: node v
         :return: True if any edge exists, False otherwise
         """
-        if u.id not in self.nodes:
+
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
+        if u not in self.nodes:
             return False
-        if v.id not in self.nodes:
+        if v not in self.nodes:
             return False
-        if u.id in self.edges and v.id in self.edges[u.id]:
+        if (
+            u in self.edges
+            and v in self.edges[u]
+            and not self.directed_edge_is_soft_deleted(u, v)
+        ):
             return True
-        if v.id in self.edges and u.id in self.edges[v.id]:
+        if (
+            v in self.edges
+            and u in self.edges[v]
+            and not self.directed_edge_is_soft_deleted(v, u)
+        ):
             return True
         return False
 
-    def directed_edge_exists(self, u: Node, v: Node):
+    def directed_edge_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
         Check if a directed edge exists between u and v. Cases: u -> v, u <-> v
         :param u: node u
         :param v: node v
         :return: True if a directed edge exists, False otherwise
         """
-        if u.id not in self.nodes:
+
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
+        if u not in self.nodes:
             return False
-        if v.id not in self.nodes:
+        if v not in self.nodes:
             return False
-        if u.id not in self.edges:
+        if u not in self.edges:
             return False
-        if v.id not in self.edges[u.id]:
+        if v not in self.edges[u]:
+            return False
+
+        if self.directed_edge_is_soft_deleted(u, v):
             return False
 
         return True
 
-    def edge_value(self, u: Node, v: Node) -> Optional[Dict]:
+    def node_by_id(self, id_: str) -> Optional[Node]:
+        """
+        Retrieve a node by its id
+        :param id_:
+        :return:
+        """
+        return self.nodes.get(id_)
+
+    def __resolve_node_references(
+        self, u: Union[Node, str], v: Optional[Union[Node, str]] = None
+    ) -> Union[Node, Tuple[Node, Node]]:
+        """
+        Resolve node references
+        :param u:
+        :param v:
+        :return: Returns a tuple of nodes if v is not None, otherwise returns a single node
+        """
+        if isinstance(u, str):
+            u = self.node_by_id(u)
+        if v and isinstance(v, str):
+            v = self.node_by_id(v)
+
+        if v is None:
+            return u
+
+        return u, v
+
+    def edge_value(self, u: Union[Node, str], v: Union[Node, str]) -> Optional[Dict]:
         """
         retrieve the value of an edge
         :param u:
@@ -124,27 +204,33 @@ class GraphAccessMixin:
         :return:
         """
 
-        if u.id not in self.edges:
-            return None
-        if v.id not in self.edges[u.id]:
-            return None
-        return self.edges[u.id][v.id].metadata
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
 
-    def edge_type(self, u: Node, v: Node) -> Optional[EdgeTypeInterface]:
+        if not self.edge_exists(u, v):
+            return None
+        return self.edges[u][v].metadata
+
+    def edge_type(
+        self, u: Union[Node, str], v: Union[Node, str]
+    ) -> Optional[EdgeTypeInterface]:
         """
         retrieve the value of an edge
         :param u:
         :param v:
         :return:
         """
-
-        if u.id not in self.edges:
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+        if not self.edge_exists(u, v):
             return None
-        if v.id not in self.edges[u.id]:
-            return None
-        return self.edges[u.id][v.id].edge_type
+        return self.edges[u][v].edge_type
 
-    def undirected_edge_exists(self, u: Node, v: Node):
+    def undirected_edge_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
         Check if an undirected edge exists between u and v. Note: currently, an undirected edges is implemented just as
         a directed edge. However, they are two functions as they mean different things in different algorithms.
@@ -155,12 +241,13 @@ class GraphAccessMixin:
         :param v: node v
         :return: True if an undirected edge exists, False otherwise
         """
+
         if self.directed_edge_exists(u, v) and self.directed_edge_exists(v, u):
             return True
         return False
 
     def retrieve_edge_history(
-        self, u, v, action: TestResultAction = None
+        self, u: Union[Node, str], v: Union[Node, str], action: TestResultAction = None
     ) -> List[TestResult]:
         """
         Retrieve the edge history
@@ -169,48 +256,46 @@ class GraphAccessMixin:
         :param action:
         :return:
         """
-        if action is None:
-            return self.edge_history[(u.id, v.id)]
 
-        if (u.id, v.id) not in self.edge_history:
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
+        if action is None:
+            return self.edge_history[(u, v)]
+
+        if (u, v) not in self.edge_history:
             return []
 
-        return [i for i in self.edge_history[(u.id, v.id)] if i.action == action]
+        return [i for i in self.edge_history[(u, v)] if i.action == action]
 
-    def directed_path_exists(self, u: Node, v: Node):
+    def directed_path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
         Check if a directed path from u to v exists
         :param u: node u
         :param v: node v
         :return: True if a directed path exists, False otherwise
         """
+
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
         if self.directed_edge_exists(u, v):
             return True
-        for w in self.edges[u.id]:
+        for w in self.edges[u]:
             if self.directed_path_exists(self.nodes[w], v):
                 return True
         return False
 
-    def edge_exists(self, u: Node, v: Node):
-        """
-        Check if any edge exists between u and v. Cases: u -> v, u <-> v, u <- v
-        :param u: node u
-        :param v: node v
-        :return: True if any edge exists, False otherwise
-        """
-        if u.id not in self.nodes:
-            return False
-        if v.id not in self.nodes:
-            return False
-        if u.id in self.edges and v.id in self.edges[u.id]:
-            return True
-        if v.id in self.edges and u.id in self.edges[v.id]:
-            return True
-        return False
-
     def edge_of_type_exists(
-        self, u: Node, v: Node, edge_type: EdgeTypeInterface = DirectedEdge()
-    ):
+        self,
+        u: Union[Node, str],
+        v: Union[Node, str],
+        edge_type: EdgeTypeInterface = DirectedEdge(),
+    ) -> bool:
         """
         Check if an edge of a specific type exists between u and v.
         :param u: node u
@@ -219,27 +304,29 @@ class GraphAccessMixin:
         :return: True if an edge of this type exists, False otherwise
         """
 
-        if u.id not in self.nodes:
-            return False
-        if v.id not in self.nodes:
-            return False
-        if u.id not in self.edges:
-            return False
-        if v.id not in self.edges[u.id]:
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
+        if not self.edge_exists(u, v):
             return False
 
-        if self.edges[u.id][v.id].edge_type != edge_type:
+        if self.edges[u][v].edge_type != edge_type:
             return False
 
         return True
 
-    def directed_paths(self, u: Node, v: Node):
+    def directed_paths(
+        self, u: Union[Node, str], v: Union[Node, str]
+    ) -> List[List[Tuple[Node, Node]]]:
         """
         Return all directed paths from u to v
         :param u: node u
         :param v: node v
         :return: list of directed paths
         """
+        u, v = self.__resolve_node_references(u, v)
         # TODO: try a better data structure for this
         if self.directed_edge_exists(u, v):
             return [[(u, v)]]
@@ -250,7 +337,7 @@ class GraphAccessMixin:
                     paths.append([(u, self.nodes[w])] + path)
         return paths
 
-    def inducing_path_exists(self, u: Node, v: Node):
+    def inducing_path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
         Check if an inducing path from u to v exists.
         An inducing path from u to v is a directed path from u to v on which all mediators are colliders.
@@ -258,6 +345,12 @@ class GraphAccessMixin:
         :param v: node v
         :return: True if an inducing path exists, False otherwise
         """
+
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
         if not self.directed_path_exists(u, v):
             return False
         for path in self.directed_paths(u, v):
@@ -276,15 +369,16 @@ class GraphAccessMixin:
         edges = []
         for u in self.edges:
             for v in self.edges[u]:
-                edges.append(self.edges[u][v])
+                if not self.directed_edge_is_soft_deleted(self.nodes[u], self.nodes[v]):
+                    edges.append(self.edges[u][v])
         return edges
 
 
 class Graph(BaseModel, GraphAccessMixin):
     nodes: OrderedDict[str, Node] = collections.OrderedDict({})
-    edges: Dict[str, Dict[str, Edge]] = {}
-    _reverse_edges: Dict[str, Dict[str, Edge]] = {}
-    edge_history: Dict[Tuple[str, str], List[TestResult]] = {}
+    edges: Dict[str, Dict[str, Edge]] = dict()
+    _reverse_edges: Dict[str, Dict[str, Edge]] = dict()
+    edge_history: Dict[Tuple[str, str], List[TestResult]] = dict()
     action_history: List[Dict[str, List[TestResult]]] = []
 
 
@@ -331,7 +425,7 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
         As this might be necessary for multiprocessing
         :return:
         """
-        return UltraDict({})
+        return dict()
 
     def add_edge(self, u: Node, v: Node, metadata: Dict):
         """
@@ -409,7 +503,7 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
             self.edge_history[(u.id, v.id)] = []
         self.edge_history[(u.id, v.id)].append(action)
 
-    def remove_edge(self, u: Node, v: Node):
+    def remove_edge(self, u: Node, v: Node, soft_delete: bool = False):
         """
         Remove an edge from the graph (undirected)
         :param u: u node
@@ -421,6 +515,17 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
         if v.id not in self.nodes:
             raise GraphError(f"Node {v} does not exist")
 
+        if soft_delete:
+            if u.id in self.edges and v.id in self.edges[u.id]:
+                self.edges[u.id][v.id].deleted = True
+                self._reverse_edges[v.id][u.id].deleted = True
+
+            if v.id in self.edges and u.id in self.edges[v.id]:
+                self.edges[v.id][u.id].deleted = True
+                self._reverse_edges[u.id][v.id].deleted = True
+
+            return
+
         if u.id in self.edges and v.id in self.edges[u.id]:
             del self.edges[u.id][v.id]
             del self._reverse_edges[u.id][v.id]
@@ -429,11 +534,11 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
             del self.edges[v.id][u.id]
             del self._reverse_edges[v.id][u.id]
 
-    def remove_directed_edge(self, u: Node, v: Node):
+    def remove_directed_edge(self, u: Node, v: Node, soft_delete: bool = False):
         """
-        Remove an edge from the graph
-        :param u: u node
-        :param v: v node
+        :param u:
+        :param v:
+        :param soft_delete: does not remove the edge, but marks it as deleted (useful in multithreading)
         :return:
         """
         if u.id not in self.nodes:
@@ -444,6 +549,11 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
         if u.id not in self.edges:
             return  # no edges from u
         if v.id not in self.edges[u.id]:
+            return
+
+        if soft_delete:
+            self.edges[u.id][v.id].deleted = True
+            self._reverse_edges[v.id][u.id].deleted = True
             return
 
         del self.edges[u.id][v.id]
@@ -553,6 +663,19 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
             obj = self._reverse_edges[v.id][u.id]
             obj.edge_type = edge_type
             self._reverse_edges[v.id][u.id] = obj
+
+    def purge_soft_deleted_edges(self):
+        """
+        Remove all edges that are marked as soft deleted from the graph
+        """
+        edges_to_remove = []
+        for u_id, edges in self.edges.items():
+            for v_id, edge in edges.items():
+                if edge.deleted is True:
+                    edges_to_remove.append((self.nodes[u_id], self.nodes[v_id]))
+
+        for u, v in edges_to_remove:
+            self.remove_directed_edge(u, v)
 
     def add_node(
         self,

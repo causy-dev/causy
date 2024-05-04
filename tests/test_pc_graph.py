@@ -45,7 +45,7 @@ class PCTestTestCase(CausyTestCase):
             ],
             random=lambda: rdnv(0, 1),
         )
-        sample_size = 100000
+        sample_size = 10000
         test_data, graph = model.generate(sample_size)
 
         tst = PCStable()

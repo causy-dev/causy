@@ -175,6 +175,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     "duration": time.time() - started,
                 }
             )
+            self.graph.purge_soft_deleted_edges()
 
         return action_history
 
@@ -222,7 +223,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                             f"Tried to remove undirected edge {i.u.name} <-> {i.v.name}. But it does not exist."
                         )
                         continue
-                    self.graph.remove_edge(i.u, i.v)
+                    self.graph.remove_edge(i.u, i.v, soft_delete=True)
                     self.graph.add_edge_history(i.u, i.v, i)
                     self.graph.add_edge_history(i.v, i.u, i)
                 elif i.action == TestResultAction.UPDATE_EDGE:
@@ -253,7 +254,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         )
                         continue
 
-                    self.graph.remove_directed_edge(i.u, i.v)
+                    self.graph.remove_directed_edge(i.u, i.v, soft_delete=True)
                     # TODO: move this to pre/post update hooks
                     if self.graph.edge_exists(
                         i.v, i.u

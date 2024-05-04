@@ -1,9 +1,31 @@
+import json
 import random
 from unittest import TestCase
 from unittest.util import safe_repr
 
 import numpy as np
 import torch
+from pydantic import parse_obj_as
+
+from causy.graph import Graph
+from causy.serialization import CausyJSONEncoder
+
+
+def dump_fixture_graph(graph, file_path):
+    """Dump the graph to a file.
+    NOTE: It only dumps the graph structure, not the edge history.
+    """
+    with open(file_path, "w+") as f:
+        result = graph.graph.model_dump()
+        del result["edge_history"]
+        result["action_history"] = []
+        f.write(json.dumps(result, cls=CausyJSONEncoder, indent=4))
+
+
+def load_fixture_graph(file_path):
+    with open(file_path, "r") as f:
+        data = json.loads(f.read())
+        return parse_obj_as(Graph, data)
 
 
 class CausyTestCase(TestCase):
