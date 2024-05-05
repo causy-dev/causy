@@ -384,7 +384,7 @@ class IndependenceTestTestCase(CausyTestCase):
             ],
             random=lambda: rdnv(0, 1),
         )
-        data, graph = model.generate(1000000)
+        data, graph = model.generate(100000)
 
         pipeline = [
             CalculatePearsonCorrelations(),
