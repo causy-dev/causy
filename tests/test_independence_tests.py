@@ -134,7 +134,7 @@ class IndependenceTestTestCase(CausyTestCase):
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
         # X and Z are independent given Y, no other pair of nodes is independent given one other node
-        self.assertEqual(len(tst.graph.action_history[-1]["actions"]), 1)
+        self.assertEqual(len(tst.graph.action_history[-1].actions), 1)
 
     def test_partial_correlation_test_2(self):
         rdnv = self.seeded_random.normalvariate

@@ -92,7 +92,7 @@ def execute(
 
     result = CausyResult(
         algorithm=algorithm_reference,
-        action_history=[ActionHistoryStep(**ah) for ah in model.graph.action_history],
+        action_history=model.graph.graph.action_history,
         edges=model.graph.retrieve_edges(),
         nodes=model.graph.nodes,
     )

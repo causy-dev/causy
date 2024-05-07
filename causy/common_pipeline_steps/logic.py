@@ -1,3 +1,4 @@
+import time
 from typing import Optional, List, Union, Dict, Any, Generic
 
 from pydantic import BaseModel
@@ -10,6 +11,7 @@ from causy.interfaces import (
     ExitConditionInterface,
     PipelineStepInterfaceType,
     LogicStepInterfaceType,
+    ActionHistoryStep,
 )
 from causy.graph_utils import (
     load_pipeline_artefact_by_definition,
@@ -34,18 +36,33 @@ class Loop(LogicStepInterface[LogicStepInterfaceType], Generic[LogicStepInterfac
         :return:
         """
         n = 0
-        steps = None
+        steps = []
+        loop_started = time.time()
+        actions_taken = None
         while not self.exit_condition(
             graph=graph,
             graph_model_instance_=graph_model_instance_,
-            actions_taken=steps,
+            actions_taken=actions_taken,
             iteration=n,
         ):
-            steps = []
+            actions_taken = []
             for pipeline_step in self.pipeline_steps:
+                started = time.time()
                 result = graph_model_instance_.execute_pipeline_step(pipeline_step)
-                steps.extend(result)
+                steps.append(
+                    ActionHistoryStep(
+                        name=pipeline_step.name,
+                        actions=result,
+                        duration=time.time() - started,
+                    )
+                )
+                actions_taken.extend(result)
             n += 1
+        return ActionHistoryStep(
+            name=self.name,
+            steps=steps,
+            duration=time.time() - loop_started,
+        )
 
 
 class ApplyActionsTogether(
@@ -65,8 +82,26 @@ class ApplyActionsTogether(
         :return:
         """
         actions = []
+        steps = []
+        loop_started = time.time()
         for pipeline_step in self.pipeline_steps:
-            result = graph_model_instance_.execute_pipeline_step(pipeline_step)
+            started = time.time()
+            result = graph_model_instance_.execute_pipeline_step(
+                pipeline_step, apply_to_graph=False
+            )
+            steps.append(
+                ActionHistoryStep(
+                    name=pipeline_step.name,
+                    actions=result,
+                    duration=time.time() - started,
+                )
+            )
             actions.extend(result)
 
         graph_model_instance_._take_action(actions)
+
+        return ActionHistoryStep(
+            name=self.name,
+            steps=steps,
+            duration=time.time() - loop_started,
+        )

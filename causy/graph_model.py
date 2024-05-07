@@ -17,6 +17,7 @@ from causy.interfaces import (
     BaseGraphInterface,
     GraphModelInterface,
     CausyAlgorithm,
+    ActionHistoryStep,
 )
 
 logger = logging.getLogger(__name__)
@@ -157,27 +158,27 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         Execute all pipeline_steps
         :return: the steps taken during the step execution
         """
-        action_history = []
 
         for filter in self.pipeline_steps:
             logger.info(f"Executing pipeline step {filter.__class__.__name__}")
             if isinstance(filter, LogicStepInterface):
-                filter.execute(self.graph.graph, self)
+                actions_taken = filter.execute(self.graph.graph, self)
+                self.graph.graph.action_history.append(actions_taken)
                 continue
 
-            # collect the time it takes to execute the pipeline step
             started = time.time()
-            result = self.execute_pipeline_step(filter)
-            action_history.append(
-                {
-                    "name": filter.name,
-                    "actions": result,
-                    "duration": time.time() - started,
-                }
+            actions_taken = self.execute_pipeline_step(filter)
+            self.graph.graph.action_history.append(
+                ActionHistoryStep(
+                    name=filter.name,
+                    actions=actions_taken,
+                    duration=time.time() - started,
+                )
             )
+
             self.graph.purge_soft_deleted_edges()
 
-        return action_history
+        return self.graph.action_history
 
     def _format_yield(self, test_fn, graph, generator):
         """
@@ -292,13 +293,12 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     ):
         """
         Execute a single pipeline_step on the graph. either in parallel or in a single process depending on the test_fn.parallel flag
+        :param apply_to_graph:  if the action should be applied to the graph
         :param test_fn: the test function
         :param threshold: the threshold
         :return:
         """
         actions_taken = []
-        started = time.time()
-
         # initialize the worker pool (we currently use all available cores * 2)
 
         # run all combinations in parallel except if the number of combinations is smaller then the chunk size
@@ -345,14 +345,6 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 actions_taken.extend(
                     self._take_action(iterator, dry_run=not apply_to_graph)
                 )
-
-        self.graph.action_history.append(
-            {
-                "name": test_fn.name,
-                "actions": actions_taken,
-                "duration": time.time() - started,
-            }
-        )
 
         return actions_taken
 

@@ -169,7 +169,7 @@ class GraphModelInterface(ABC):
         pass
 
     @abstractmethod
-    def execute_pipeline_step(self, step):
+    def execute_pipeline_step(self, step, apply_to_graph: bool = True):
         pass
 
 
@@ -385,6 +385,7 @@ class ActionHistoryStep(BaseModel):
     name: str
     duration: Optional[float] = None  # seconds
     actions: Optional[List[TestResult]] = []
+    steps: Optional[List["ActionHistoryStep"]] = []
 
 
 class CausyResult(BaseModel):

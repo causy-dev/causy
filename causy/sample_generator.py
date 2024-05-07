@@ -352,7 +352,9 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
 
         # Fill in the first rows with the input matrices
         for i, matrix in enumerate(matrices):
-            block_diag[:n, i * n : (i + 1) * n] = torch.tensor(matrix)
+            block_diag[:n, i * n : (i + 1) * n] = torch.tensor(
+                matrix, dtype=torch.float64
+            )
 
         # Fill in the lower left off-diagonal with identity matrices
         row_start = n

@@ -15,6 +15,7 @@ from causy.interfaces import (
     TestResult,
     EdgeInterface,
     EdgeTypeInterface,
+    ActionHistoryStep,
 )
 
 logger = logging.getLogger(__name__)
@@ -379,7 +380,7 @@ class Graph(BaseModel, GraphAccessMixin):
     edges: Dict[str, Dict[str, Edge]] = dict()
     _reverse_edges: Dict[str, Dict[str, Edge]] = dict()
     edge_history: Dict[Tuple[str, str], List[TestResult]] = dict()
-    action_history: List[Dict[str, List[TestResult]]] = []
+    action_history: List[ActionHistoryStep] = []
 
 
 class GraphManager(GraphAccessMixin, BaseGraphInterface):
@@ -409,7 +410,7 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
     def action_history(self) -> List[Dict[str, List[TestResult]]]:
         return self.graph.action_history
 
-    graph: Graph = None
+    graph: Optional[Graph] = None
 
     def __init__(self):
         self.graph = Graph()
