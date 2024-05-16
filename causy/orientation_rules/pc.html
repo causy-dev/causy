@@ -95,7 +95,7 @@
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -163,7 +163,7 @@
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -229,7 +229,7 @@
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -287,7 +287,7 @@
 </span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>
-</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -355,7 +355,7 @@
 </span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>
-</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -468,7 +468,7 @@
 </span><span id="ColliderTest-28"><a href="#ColliderTest-28"><span class="linenos">28</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="ColliderTest-29"><a href="#ColliderTest-29"><span class="linenos">29</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="ColliderTest-30"><a href="#ColliderTest-30"><span class="linenos">30</span></a>
-</span><span id="ColliderTest-31"><a href="#ColliderTest-31"><span class="linenos">31</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="ColliderTest-31"><a href="#ColliderTest-31"><span class="linenos">31</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="ColliderTest-32"><a href="#ColliderTest-32"><span class="linenos">32</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="ColliderTest-33"><a href="#ColliderTest-33"><span class="linenos">33</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="ColliderTest-34"><a href="#ColliderTest-34"><span class="linenos">34</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -544,7 +544,7 @@ inheritance.</p>
                 <dd id="ColliderTest.parallel" class="variable"><a href="../interfaces.html#PipelineStepInterface.parallel">parallel</a></dd>
                 <dd id="ColliderTest.display_name" class="variable"><a href="../interfaces.html#PipelineStepInterface.display_name">display_name</a></dd>
                 <dd id="ColliderTest.name" class="variable"><a href="../interfaces.html#PipelineStepInterface.name">name</a></dd>
-                <dd id="ColliderTest.test" class="function"><a href="../interfaces.html#PipelineStepInterface.test">test</a></dd>
+                <dd id="ColliderTest.process" class="function"><a href="../interfaces.html#PipelineStepInterface.process">process</a></dd>
                 <dd id="ColliderTest.model_config" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_config">model_config</a></dd>
                 <dd id="ColliderTest.model_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_fields">model_fields</a></dd>
                 <dd id="ColliderTest.model_computed_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_computed_fields">model_computed_fields</a></dd>
@@ -601,7 +601,7 @@ inheritance.</p>
 </span><span id="NonColliderTest-96"><a href="#NonColliderTest-96"><span class="linenos"> 96</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="NonColliderTest-97"><a href="#NonColliderTest-97"><span class="linenos"> 97</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="NonColliderTest-98"><a href="#NonColliderTest-98"><span class="linenos"> 98</span></a>
-</span><span id="NonColliderTest-99"><a href="#NonColliderTest-99"><span class="linenos"> 99</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="NonColliderTest-99"><a href="#NonColliderTest-99"><span class="linenos"> 99</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="NonColliderTest-100"><a href="#NonColliderTest-100"><span class="linenos">100</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="NonColliderTest-101"><a href="#NonColliderTest-101"><span class="linenos">101</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="NonColliderTest-102"><a href="#NonColliderTest-102"><span class="linenos">102</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -675,7 +675,7 @@ inheritance.</p>
                 <dd id="NonColliderTest.parallel" class="variable"><a href="../interfaces.html#PipelineStepInterface.parallel">parallel</a></dd>
                 <dd id="NonColliderTest.display_name" class="variable"><a href="../interfaces.html#PipelineStepInterface.display_name">display_name</a></dd>
                 <dd id="NonColliderTest.name" class="variable"><a href="../interfaces.html#PipelineStepInterface.name">name</a></dd>
-                <dd id="NonColliderTest.test" class="function"><a href="../interfaces.html#PipelineStepInterface.test">test</a></dd>
+                <dd id="NonColliderTest.process" class="function"><a href="../interfaces.html#PipelineStepInterface.process">process</a></dd>
                 <dd id="NonColliderTest.model_config" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_config">model_config</a></dd>
                 <dd id="NonColliderTest.model_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_fields">model_fields</a></dd>
                 <dd id="NonColliderTest.model_computed_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_computed_fields">model_computed_fields</a></dd>
@@ -732,7 +732,7 @@ inheritance.</p>
 </span><span id="FurtherOrientTripleTest-162"><a href="#FurtherOrientTripleTest-162"><span class="linenos">162</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="FurtherOrientTripleTest-163"><a href="#FurtherOrientTripleTest-163"><span class="linenos">163</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="FurtherOrientTripleTest-164"><a href="#FurtherOrientTripleTest-164"><span class="linenos">164</span></a>
-</span><span id="FurtherOrientTripleTest-165"><a href="#FurtherOrientTripleTest-165"><span class="linenos">165</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="FurtherOrientTripleTest-165"><a href="#FurtherOrientTripleTest-165"><span class="linenos">165</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="FurtherOrientTripleTest-166"><a href="#FurtherOrientTripleTest-166"><span class="linenos">166</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="FurtherOrientTripleTest-167"><a href="#FurtherOrientTripleTest-167"><span class="linenos">167</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="FurtherOrientTripleTest-168"><a href="#FurtherOrientTripleTest-168"><span class="linenos">168</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -798,7 +798,7 @@ inheritance.</p>
                 <dd id="FurtherOrientTripleTest.parallel" class="variable"><a href="../interfaces.html#PipelineStepInterface.parallel">parallel</a></dd>
                 <dd id="FurtherOrientTripleTest.display_name" class="variable"><a href="../interfaces.html#PipelineStepInterface.display_name">display_name</a></dd>
                 <dd id="FurtherOrientTripleTest.name" class="variable"><a href="../interfaces.html#PipelineStepInterface.name">name</a></dd>
-                <dd id="FurtherOrientTripleTest.test" class="function"><a href="../interfaces.html#PipelineStepInterface.test">test</a></dd>
+                <dd id="FurtherOrientTripleTest.process" class="function"><a href="../interfaces.html#PipelineStepInterface.process">process</a></dd>
                 <dd id="FurtherOrientTripleTest.model_config" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_config">model_config</a></dd>
                 <dd id="FurtherOrientTripleTest.model_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_fields">model_fields</a></dd>
                 <dd id="FurtherOrientTripleTest.model_computed_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_computed_fields">model_computed_fields</a></dd>
@@ -855,7 +855,7 @@ inheritance.</p>
 </span><span id="OrientQuadrupleTest-220"><a href="#OrientQuadrupleTest-220"><span class="linenos">220</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="OrientQuadrupleTest-221"><a href="#OrientQuadrupleTest-221"><span class="linenos">221</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="OrientQuadrupleTest-222"><a href="#OrientQuadrupleTest-222"><span class="linenos">222</span></a>
-</span><span id="OrientQuadrupleTest-223"><a href="#OrientQuadrupleTest-223"><span class="linenos">223</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="OrientQuadrupleTest-223"><a href="#OrientQuadrupleTest-223"><span class="linenos">223</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="OrientQuadrupleTest-224"><a href="#OrientQuadrupleTest-224"><span class="linenos">224</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="OrientQuadrupleTest-225"><a href="#OrientQuadrupleTest-225"><span class="linenos">225</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="OrientQuadrupleTest-226"><a href="#OrientQuadrupleTest-226"><span class="linenos">226</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -931,7 +931,7 @@ inheritance.</p>
                 <dd id="OrientQuadrupleTest.parallel" class="variable"><a href="../interfaces.html#PipelineStepInterface.parallel">parallel</a></dd>
                 <dd id="OrientQuadrupleTest.display_name" class="variable"><a href="../interfaces.html#PipelineStepInterface.display_name">display_name</a></dd>
                 <dd id="OrientQuadrupleTest.name" class="variable"><a href="../interfaces.html#PipelineStepInterface.name">name</a></dd>
-                <dd id="OrientQuadrupleTest.test" class="function"><a href="../interfaces.html#PipelineStepInterface.test">test</a></dd>
+                <dd id="OrientQuadrupleTest.process" class="function"><a href="../interfaces.html#PipelineStepInterface.process">process</a></dd>
                 <dd id="OrientQuadrupleTest.model_config" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_config">model_config</a></dd>
                 <dd id="OrientQuadrupleTest.model_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_fields">model_fields</a></dd>
                 <dd id="OrientQuadrupleTest.model_computed_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_computed_fields">model_computed_fields</a></dd>
@@ -988,7 +988,7 @@ inheritance.</p>
 </span><span id="FurtherOrientQuadrupleTest-288"><a href="#FurtherOrientQuadrupleTest-288"><span class="linenos">288</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="FurtherOrientQuadrupleTest-289"><a href="#FurtherOrientQuadrupleTest-289"><span class="linenos">289</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="FurtherOrientQuadrupleTest-290"><a href="#FurtherOrientQuadrupleTest-290"><span class="linenos">290</span></a>
-</span><span id="FurtherOrientQuadrupleTest-291"><a href="#FurtherOrientQuadrupleTest-291"><span class="linenos">291</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="FurtherOrientQuadrupleTest-291"><a href="#FurtherOrientQuadrupleTest-291"><span class="linenos">291</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="FurtherOrientQuadrupleTest-292"><a href="#FurtherOrientQuadrupleTest-292"><span class="linenos">292</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="FurtherOrientQuadrupleTest-293"><a href="#FurtherOrientQuadrupleTest-293"><span class="linenos">293</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="FurtherOrientQuadrupleTest-294"><a href="#FurtherOrientQuadrupleTest-294"><span class="linenos">294</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1096,7 +1096,7 @@ inheritance.</p>
                 <dd id="FurtherOrientQuadrupleTest.parallel" class="variable"><a href="../interfaces.html#PipelineStepInterface.parallel">parallel</a></dd>
                 <dd id="FurtherOrientQuadrupleTest.display_name" class="variable"><a href="../interfaces.html#PipelineStepInterface.display_name">display_name</a></dd>
                 <dd id="FurtherOrientQuadrupleTest.name" class="variable"><a href="../interfaces.html#PipelineStepInterface.name">name</a></dd>
-                <dd id="FurtherOrientQuadrupleTest.test" class="function"><a href="../interfaces.html#PipelineStepInterface.test">test</a></dd>
+                <dd id="FurtherOrientQuadrupleTest.process" class="function"><a href="../interfaces.html#PipelineStepInterface.process">process</a></dd>
                 <dd id="FurtherOrientQuadrupleTest.model_config" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_config">model_config</a></dd>
                 <dd id="FurtherOrientQuadrupleTest.model_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_fields">model_fields</a></dd>
                 <dd id="FurtherOrientQuadrupleTest.model_computed_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_computed_fields">model_computed_fields</a></dd>

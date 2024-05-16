@@ -77,7 +77,7 @@
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -168,7 +168,7 @@
 </span><span id="ColliderRuleFCI-22"><a href="#ColliderRuleFCI-22"><span class="linenos">22</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span id="ColliderRuleFCI-23"><a href="#ColliderRuleFCI-23"><span class="linenos">23</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="ColliderRuleFCI-24"><a href="#ColliderRuleFCI-24"><span class="linenos">24</span></a>
-</span><span id="ColliderRuleFCI-25"><a href="#ColliderRuleFCI-25"><span class="linenos">25</span></a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
+</span><span id="ColliderRuleFCI-25"><a href="#ColliderRuleFCI-25"><span class="linenos">25</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
 </span><span id="ColliderRuleFCI-26"><a href="#ColliderRuleFCI-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span>
 </span><span id="ColliderRuleFCI-27"><a href="#ColliderRuleFCI-27"><span class="linenos">27</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span> <span class="o">|</span> <span class="n">TestResult</span><span class="p">]:</span>
 </span><span id="ColliderRuleFCI-28"><a href="#ColliderRuleFCI-28"><span class="linenos">28</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -254,7 +254,7 @@ inheritance.</p>
                 <dd id="ColliderRuleFCI.parallel" class="variable"><a href="../interfaces.html#PipelineStepInterface.parallel">parallel</a></dd>
                 <dd id="ColliderRuleFCI.display_name" class="variable"><a href="../interfaces.html#PipelineStepInterface.display_name">display_name</a></dd>
                 <dd id="ColliderRuleFCI.name" class="variable"><a href="../interfaces.html#PipelineStepInterface.name">name</a></dd>
-                <dd id="ColliderRuleFCI.test" class="function"><a href="../interfaces.html#PipelineStepInterface.test">test</a></dd>
+                <dd id="ColliderRuleFCI.process" class="function"><a href="../interfaces.html#PipelineStepInterface.process">process</a></dd>
                 <dd id="ColliderRuleFCI.model_config" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_config">model_config</a></dd>
                 <dd id="ColliderRuleFCI.model_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_fields">model_fields</a></dd>
                 <dd id="ColliderRuleFCI.model_computed_fields" class="variable"><a href="../interfaces.html#PipelineStepInterface.model_computed_fields">model_computed_fields</a></dd>
