@@ -57,12 +57,22 @@ PC_EDGE_TYPES = [DirectedEdge(), UndirectedEdge()]
 PC = graph_model_factory(
     CausyAlgorithm(
         pipeline_steps=[
-            CalculatePearsonCorrelations(),
-            CorrelationCoefficientTest(threshold=PC_DEFAULT_THRESHOLD),
-            PartialCorrelationTest(threshold=PC_DEFAULT_THRESHOLD),
-            ExtendedPartialCorrelationTestMatrix(threshold=PC_DEFAULT_THRESHOLD),
+            CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
+            CorrelationCoefficientTest(
+                threshold=PC_DEFAULT_THRESHOLD,
+                display_name="Correlation Coefficient Test",
+            ),
+            PartialCorrelationTest(
+                threshold=PC_DEFAULT_THRESHOLD, display_name="Partial Correlation Test"
+            ),
+            ExtendedPartialCorrelationTestMatrix(
+                threshold=PC_DEFAULT_THRESHOLD,
+                display_name="Extended Partial Correlation Test Matrix",
+            ),
             *PC_ORIENTATION_RULES,
-            ComputeDirectEffectsMultivariateRegression(),
+            ComputeDirectEffectsMultivariateRegression(
+                display_name="Compute Direct Effects"
+            ),
         ],
         edge_types=PC_EDGE_TYPES,
         extensions=[PC_GRAPH_UI_EXTENSION],
