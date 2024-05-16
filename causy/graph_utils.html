@@ -89,31 +89,30 @@
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">st_function</span><span class="p">:</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="k">if</span> <span class="s2">&quot;params&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="k">return</span> <span class="n">st_function</span><span class="p">()</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="k">return</span> <span class="n">st_function</span><span class="p">(</span><span class="o">**</span><span class="n">step</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">])</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="k">del</span> <span class="n">step</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="k">return</span> <span class="n">st_function</span><span class="p">(</span><span class="o">**</span><span class="n">step</span><span class="p">)</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="k">def</span> <span class="nf">load_pipeline_steps_by_definition</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>        <span class="n">st_function</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="n">pipeline</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">st_function</span><span class="p">)</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="k">return</span> <span class="n">pipeline</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="k">def</span> <span class="nf">load_pipeline_steps_by_definition</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>        <span class="n">st_function</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>        <span class="n">pipeline</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">st_function</span><span class="p">)</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="k">return</span> <span class="n">pipeline</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="k">def</span> <span class="nf">retrieve_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">    Returns a list of edges from the graph</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">    :param graph: a graph</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">    :return: a list of edges</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">u</span><span class="p">]:</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>            <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="k">return</span> <span class="n">edges</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="k">def</span> <span class="nf">retrieve_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">    Returns a list of edges from the graph</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">    :param graph: a graph</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">    :return: a list of edges</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">u</span><span class="p">]:</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>            <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="k">return</span> <span class="n">edges</span>
 </span></pre></div>
 
 
@@ -178,10 +177,9 @@
 </span><span id="load_pipeline_artefact_by_definition-22"><a href="#load_pipeline_artefact_by_definition-22"><span class="linenos">22</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">st_function</span><span class="p">:</span>
 </span><span id="load_pipeline_artefact_by_definition-23"><a href="#load_pipeline_artefact_by_definition-23"><span class="linenos">23</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
 </span><span id="load_pipeline_artefact_by_definition-24"><a href="#load_pipeline_artefact_by_definition-24"><span class="linenos">24</span></a>
-</span><span id="load_pipeline_artefact_by_definition-25"><a href="#load_pipeline_artefact_by_definition-25"><span class="linenos">25</span></a>    <span class="k">if</span> <span class="s2">&quot;params&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-</span><span id="load_pipeline_artefact_by_definition-26"><a href="#load_pipeline_artefact_by_definition-26"><span class="linenos">26</span></a>        <span class="k">return</span> <span class="n">st_function</span><span class="p">()</span>
-</span><span id="load_pipeline_artefact_by_definition-27"><a href="#load_pipeline_artefact_by_definition-27"><span class="linenos">27</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="load_pipeline_artefact_by_definition-28"><a href="#load_pipeline_artefact_by_definition-28"><span class="linenos">28</span></a>        <span class="k">return</span> <span class="n">st_function</span><span class="p">(</span><span class="o">**</span><span class="n">step</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">])</span>
+</span><span id="load_pipeline_artefact_by_definition-25"><a href="#load_pipeline_artefact_by_definition-25"><span class="linenos">25</span></a>    <span class="k">del</span> <span class="n">step</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+</span><span id="load_pipeline_artefact_by_definition-26"><a href="#load_pipeline_artefact_by_definition-26"><span class="linenos">26</span></a>
+</span><span id="load_pipeline_artefact_by_definition-27"><a href="#load_pipeline_artefact_by_definition-27"><span class="linenos">27</span></a>    <span class="k">return</span> <span class="n">st_function</span><span class="p">(</span><span class="o">**</span><span class="n">step</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -199,12 +197,12 @@
 
     </div>
     <a class="headerlink" href="#load_pipeline_steps_by_definition"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="load_pipeline_steps_by_definition-31"><a href="#load_pipeline_steps_by_definition-31"><span class="linenos">31</span></a><span class="k">def</span> <span class="nf">load_pipeline_steps_by_definition</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
-</span><span id="load_pipeline_steps_by_definition-32"><a href="#load_pipeline_steps_by_definition-32"><span class="linenos">32</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="load_pipeline_steps_by_definition-33"><a href="#load_pipeline_steps_by_definition-33"><span class="linenos">33</span></a>    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
-</span><span id="load_pipeline_steps_by_definition-34"><a href="#load_pipeline_steps_by_definition-34"><span class="linenos">34</span></a>        <span class="n">st_function</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
-</span><span id="load_pipeline_steps_by_definition-35"><a href="#load_pipeline_steps_by_definition-35"><span class="linenos">35</span></a>        <span class="n">pipeline</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">st_function</span><span class="p">)</span>
-</span><span id="load_pipeline_steps_by_definition-36"><a href="#load_pipeline_steps_by_definition-36"><span class="linenos">36</span></a>    <span class="k">return</span> <span class="n">pipeline</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="load_pipeline_steps_by_definition-30"><a href="#load_pipeline_steps_by_definition-30"><span class="linenos">30</span></a><span class="k">def</span> <span class="nf">load_pipeline_steps_by_definition</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+</span><span id="load_pipeline_steps_by_definition-31"><a href="#load_pipeline_steps_by_definition-31"><span class="linenos">31</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="load_pipeline_steps_by_definition-32"><a href="#load_pipeline_steps_by_definition-32"><span class="linenos">32</span></a>    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
+</span><span id="load_pipeline_steps_by_definition-33"><a href="#load_pipeline_steps_by_definition-33"><span class="linenos">33</span></a>        <span class="n">st_function</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+</span><span id="load_pipeline_steps_by_definition-34"><a href="#load_pipeline_steps_by_definition-34"><span class="linenos">34</span></a>        <span class="n">pipeline</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">st_function</span><span class="p">)</span>
+</span><span id="load_pipeline_steps_by_definition-35"><a href="#load_pipeline_steps_by_definition-35"><span class="linenos">35</span></a>    <span class="k">return</span> <span class="n">pipeline</span>
 </span></pre></div>
 
 
@@ -222,17 +220,17 @@
 
     </div>
     <a class="headerlink" href="#retrieve_edges"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="retrieve_edges-39"><a href="#retrieve_edges-39"><span class="linenos">39</span></a><span class="k">def</span> <span class="nf">retrieve_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
-</span><span id="retrieve_edges-40"><a href="#retrieve_edges-40"><span class="linenos">40</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="retrieve_edges-41"><a href="#retrieve_edges-41"><span class="linenos">41</span></a><span class="sd">    Returns a list of edges from the graph</span>
-</span><span id="retrieve_edges-42"><a href="#retrieve_edges-42"><span class="linenos">42</span></a><span class="sd">    :param graph: a graph</span>
-</span><span id="retrieve_edges-43"><a href="#retrieve_edges-43"><span class="linenos">43</span></a><span class="sd">    :return: a list of edges</span>
-</span><span id="retrieve_edges-44"><a href="#retrieve_edges-44"><span class="linenos">44</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="retrieve_edges-45"><a href="#retrieve_edges-45"><span class="linenos">45</span></a>    <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="retrieve_edges-46"><a href="#retrieve_edges-46"><span class="linenos">46</span></a>    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
-</span><span id="retrieve_edges-47"><a href="#retrieve_edges-47"><span class="linenos">47</span></a>        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">u</span><span class="p">]:</span>
-</span><span id="retrieve_edges-48"><a href="#retrieve_edges-48"><span class="linenos">48</span></a>            <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-</span><span id="retrieve_edges-49"><a href="#retrieve_edges-49"><span class="linenos">49</span></a>    <span class="k">return</span> <span class="n">edges</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="retrieve_edges-38"><a href="#retrieve_edges-38"><span class="linenos">38</span></a><span class="k">def</span> <span class="nf">retrieve_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+</span><span id="retrieve_edges-39"><a href="#retrieve_edges-39"><span class="linenos">39</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="retrieve_edges-40"><a href="#retrieve_edges-40"><span class="linenos">40</span></a><span class="sd">    Returns a list of edges from the graph</span>
+</span><span id="retrieve_edges-41"><a href="#retrieve_edges-41"><span class="linenos">41</span></a><span class="sd">    :param graph: a graph</span>
+</span><span id="retrieve_edges-42"><a href="#retrieve_edges-42"><span class="linenos">42</span></a><span class="sd">    :return: a list of edges</span>
+</span><span id="retrieve_edges-43"><a href="#retrieve_edges-43"><span class="linenos">43</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="retrieve_edges-44"><a href="#retrieve_edges-44"><span class="linenos">44</span></a>    <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="retrieve_edges-45"><a href="#retrieve_edges-45"><span class="linenos">45</span></a>    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+</span><span id="retrieve_edges-46"><a href="#retrieve_edges-46"><span class="linenos">46</span></a>        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">u</span><span class="p">]:</span>
+</span><span id="retrieve_edges-47"><a href="#retrieve_edges-47"><span class="linenos">47</span></a>            <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+</span><span id="retrieve_edges-48"><a href="#retrieve_edges-48"><span class="linenos">48</span></a>    <span class="k">return</span> <span class="n">edges</span>
 </span></pre></div>
 
 
