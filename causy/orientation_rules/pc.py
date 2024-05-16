@@ -27,7 +27,7 @@ class ColliderTest(
     chunk_size_parallel_processing: int = 1
     parallel: bool = False
 
-    def test(
+    def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> Optional[List[TestResult] | TestResult]:
         """
@@ -95,7 +95,7 @@ class NonColliderTest(
     chunk_size_parallel_processing: int = 1
     parallel: bool = False
 
-    def test(
+    def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> Optional[List[TestResult] | TestResult]:
         """
@@ -161,7 +161,7 @@ class FurtherOrientTripleTest(
     chunk_size_parallel_processing: int = 1
     parallel: bool = False
 
-    def test(
+    def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> Optional[List[TestResult] | TestResult]:
         """
@@ -219,7 +219,7 @@ class OrientQuadrupleTest(
     chunk_size_parallel_processing: int = 1
     parallel: bool = False
 
-    def test(
+    def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> Optional[List[TestResult] | TestResult]:
         """
@@ -287,7 +287,7 @@ class FurtherOrientQuadrupleTest(
     chunk_size_parallel_processing: int = 1
     parallel: bool = False
 
-    def test(
+    def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> Optional[List[TestResult] | TestResult]:
         """

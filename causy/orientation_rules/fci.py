@@ -21,7 +21,7 @@ class ColliderRuleFCI(
     chunk_size_parallel_processing: int = 1
     parallel: bool = False
 
-    def test(
+    def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> Optional[List[TestResult] | TestResult]:
         """
