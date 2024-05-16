@@ -30,7 +30,9 @@ class CorrelationCoefficientTest(
     chunk_size_parallel_processing: int = 1
     parallel: bool = False
 
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
+    def process(
+        self, nodes: List[str], graph: BaseGraphInterface
+    ) -> Optional[TestResult]:
         """
         Test if u and v are independent and delete edge in graph if they are.
         :param nodes: list of nodes
@@ -65,7 +67,7 @@ class PartialCorrelationTest(
     chunk_size_parallel_processing: int = 1
     parallel: bool = False
 
-    def test(
+    def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> Optional[List[TestResult]]:
         """
@@ -142,7 +144,9 @@ class ExtendedPartialCorrelationTestMatrix(
     chunk_size_parallel_processing: int = 1000
     parallel: bool = False
 
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
+    def process(
+        self, nodes: List[str], graph: BaseGraphInterface
+    ) -> Optional[TestResult]:
         """
         Test if nodes u,v are independent given Z (set of nodes) based on partial correlation using the inverted covariance matrix (precision matrix).
         https://en.wikipedia.org/wiki/Partial_correlation#Using_matrix_inversion
@@ -244,7 +248,9 @@ class ExtendedPartialCorrelationTestLinearRegression(
     chunk_size_parallel_processing: int = 1000
     parallel: bool = False
 
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
+    def process(
+        self, nodes: List[str], graph: BaseGraphInterface
+    ) -> Optional[TestResult]:
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
             return
 

@@ -24,7 +24,7 @@ class CalculatePearsonCorrelations(
     chunk_size_parallel_processing: int = 1
     parallel: bool = False
 
-    def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
+    def process(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
         """
         Calculate the correlation between each pair of nodes and store it to the respective edge.
         :param nodes: list of nodes

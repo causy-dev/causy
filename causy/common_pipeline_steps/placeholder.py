@@ -18,7 +18,7 @@ class PlaceholderTest(
     chunk_size_parallel_processing: int = 10
     parallel: bool = False
 
-    def test(
+    def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
     ) -> List[TestResult] | TestResult:
         """

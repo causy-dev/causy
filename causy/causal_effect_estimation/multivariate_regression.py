@@ -18,7 +18,7 @@ class ComputeDirectEffectsMultivariateRegression(PipelineStepInterface):
     chunk_size_parallel_processing: int = 1
     parallel: bool = False
 
-    def test(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
+    def process(self, nodes: Tuple[str], graph: BaseGraphInterface) -> TestResult:
         """
         Calculate the direct effect of each edge in the graph using multivariate regression.
         :param nodes: list of nodes

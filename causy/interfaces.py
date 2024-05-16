@@ -262,7 +262,9 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
         return serialize_module_name(self)
 
     @abstractmethod
-    def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
+    def process(
+        self, nodes: List[str], graph: BaseGraphInterface
+    ) -> Optional[TestResult]:
         """
         Test if u and v are independent
         :param u: u values
@@ -274,7 +276,7 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
     def __call__(
         self, nodes: List[str], graph: BaseGraphInterface
     ) -> Optional[TestResult]:
-        return self.test(nodes, graph)
+        return self.process(nodes, graph)
 
 
 class ExitConditionInterface(ABC, BaseModel):
