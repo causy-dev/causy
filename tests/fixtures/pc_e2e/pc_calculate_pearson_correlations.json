@@ -1,0 +1,231 @@
+{
+    "nodes": {
+        "W": {
+            "name": "W",
+            "id": "W",
+            "values": null,
+            "metadata": {}
+        },
+        "X": {
+            "name": "X",
+            "id": "X",
+            "values": null,
+            "metadata": {}
+        },
+        "Y": {
+            "name": "Y",
+            "id": "Y",
+            "values": null,
+            "metadata": {}
+        },
+        "Z": {
+            "name": "Z",
+            "id": "Z",
+            "values": null,
+            "metadata": {}
+        }
+    },
+    "edges": {
+        "W": {
+            "X": {
+                "u": {
+                    "name": "X",
+                    "id": "X"
+                },
+                "v": {
+                    "name": "W",
+                    "id": "W"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9703949748135333
+                }
+            },
+            "Y": {
+                "u": {
+                    "name": "Y",
+                    "id": "Y"
+                },
+                "v": {
+                    "name": "W",
+                    "id": "W"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9661009021664821
+                }
+            },
+            "Z": {
+                "u": {
+                    "name": "Z",
+                    "id": "Z"
+                },
+                "v": {
+                    "name": "W",
+                    "id": "W"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9222121457360171
+                }
+            }
+        },
+        "X": {
+            "W": {
+                "u": {
+                    "name": "X",
+                    "id": "X"
+                },
+                "v": {
+                    "name": "W",
+                    "id": "W"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9703949748135333
+                }
+            },
+            "Y": {
+                "u": {
+                    "name": "Y",
+                    "id": "Y"
+                },
+                "v": {
+                    "name": "X",
+                    "id": "X"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9795601481724155
+                }
+            },
+            "Z": {
+                "u": {
+                    "name": "Z",
+                    "id": "Z"
+                },
+                "v": {
+                    "name": "X",
+                    "id": "X"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9496894703844956
+                }
+            }
+        },
+        "Y": {
+            "W": {
+                "u": {
+                    "name": "Y",
+                    "id": "Y"
+                },
+                "v": {
+                    "name": "W",
+                    "id": "W"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9661009021664821
+                }
+            },
+            "X": {
+                "u": {
+                    "name": "Y",
+                    "id": "Y"
+                },
+                "v": {
+                    "name": "X",
+                    "id": "X"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9795601481724155
+                }
+            },
+            "Z": {
+                "u": {
+                    "name": "Z",
+                    "id": "Z"
+                },
+                "v": {
+                    "name": "Y",
+                    "id": "Y"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9893085361810942
+                }
+            }
+        },
+        "Z": {
+            "W": {
+                "u": {
+                    "name": "Z",
+                    "id": "Z"
+                },
+                "v": {
+                    "name": "W",
+                    "id": "W"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9222121457360171
+                }
+            },
+            "X": {
+                "u": {
+                    "name": "Z",
+                    "id": "Z"
+                },
+                "v": {
+                    "name": "X",
+                    "id": "X"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9496894703844956
+                }
+            },
+            "Y": {
+                "u": {
+                    "name": "Z",
+                    "id": "Z"
+                },
+                "v": {
+                    "name": "Y",
+                    "id": "Y"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED"
+                },
+                "metadata": {
+                    "correlation": 0.9893085361810942
+                }
+            }
+        }
+    },
+    "action_history": []
+}

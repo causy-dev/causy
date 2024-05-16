@@ -2,11 +2,13 @@ import logging
 import platform
 from abc import ABC
 from copy import deepcopy
+import time
 from typing import Optional, List, Dict, Callable, Union
 
 import torch.multiprocessing as mp
 
-from causy.graph import Graph, EdgeType
+from causy.edge_types import DirectedEdge
+from causy.graph import GraphManager
 from causy.graph_utils import unpack_run
 from causy.interfaces import (
     PipelineStepInterface,
@@ -14,6 +16,8 @@ from causy.interfaces import (
     LogicStepInterface,
     BaseGraphInterface,
     GraphModelInterface,
+    CausyAlgorithm,
+    ActionHistoryStep,
 )
 
 logger = logging.getLogger(__name__)
@@ -32,6 +36,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
     """
 
+    algorithm: CausyAlgorithm
     pipeline_steps: List[PipelineStepInterface]
     graph: BaseGraphInterface
     pool: mp.Pool
@@ -39,10 +44,14 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     def __init__(
         self,
         graph=None,
-        pipeline_steps: Optional[List[PipelineStepInterface]] = None,
+        algorithm: CausyAlgorithm = None,
     ):
         self.graph = graph
-        self.pipeline_steps = pipeline_steps or []
+        self.algorithm = algorithm
+
+        if algorithm.pipeline_steps is not None:
+            self.pipeline_steps = algorithm.pipeline_steps or []
+
         if self.__multiprocessing_required(self.pipeline_steps):
             self.pool = self.__initialize_pool()
         else:
@@ -86,7 +95,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :param data: the dictionary
         :return: the graph
         """
-        graph = Graph()
+        graph = GraphManager()
         for key, values in sorted(data.items()):
             graph.add_node(key, values, id_=key)
         return graph
@@ -109,7 +118,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             for key in keys:
                 nodes[key].append(row[key])
 
-        graph = Graph()
+        graph = GraphManager()
         for key in keys:
             graph.add_node(key, nodes[key], id_=key)
 
@@ -149,20 +158,27 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         Execute all pipeline_steps
         :return: the steps taken during the step execution
         """
-        action_history = []
 
         for filter in self.pipeline_steps:
             logger.info(f"Executing pipeline step {filter.__class__.__name__}")
             if isinstance(filter, LogicStepInterface):
-                filter.execute(self.graph, self)
+                actions_taken = filter.execute(self.graph.graph, self)
+                self.graph.graph.action_history.append(actions_taken)
                 continue
 
-            result = self.execute_pipeline_step(filter)
-            action_history.append(
-                {"step": filter.__class__.__name__, "actions": result}
+            started = time.time()
+            actions_taken = self.execute_pipeline_step(filter)
+            self.graph.graph.action_history.append(
+                ActionHistoryStep(
+                    name=filter.name,
+                    actions=actions_taken,
+                    duration=time.time() - started,
+                )
             )
 
-        return action_history
+            self.graph.purge_soft_deleted_edges()
+
+        return self.graph.action_history
 
     def _format_yield(self, test_fn, graph, generator):
         """
@@ -208,7 +224,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                             f"Tried to remove undirected edge {i.u.name} <-> {i.v.name}. But it does not exist."
                         )
                         continue
-                    self.graph.remove_edge(i.u, i.v)
+                    self.graph.remove_edge(i.u, i.v, soft_delete=True)
                     self.graph.add_edge_history(i.u, i.v, i)
                     self.graph.add_edge_history(i.v, i.u, i)
                 elif i.action == TestResultAction.UPDATE_EDGE:
@@ -239,13 +255,13 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         )
                         continue
 
-                    self.graph.remove_directed_edge(i.u, i.v)
+                    self.graph.remove_directed_edge(i.u, i.v, soft_delete=True)
                     # TODO: move this to pre/post update hooks
                     if self.graph.edge_exists(
                         i.v, i.u
                     ):  # if the edge is undirected, make it directed
                         self.graph.update_directed_edge(
-                            i.v, i.u, edge_type=EdgeType.DIRECTED
+                            i.v, i.u, edge_type=DirectedEdge()
                         )
                     self.graph.add_edge_history(i.u, i.v, i)
 
@@ -277,12 +293,12 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     ):
         """
         Execute a single pipeline_step on the graph. either in parallel or in a single process depending on the test_fn.parallel flag
+        :param apply_to_graph:  if the action should be applied to the graph
         :param test_fn: the test function
         :param threshold: the threshold
         :return:
         """
         actions_taken = []
-
         # initialize the worker pool (we currently use all available cores * 2)
 
         # run all combinations in parallel except if the number of combinations is smaller then the chunk size
@@ -297,7 +313,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             for result in self.pool.imap_unordered(
                 unpack_run,
                 self._format_yield(
-                    test_fn, self.graph, test_fn.generator.generate(self.graph, self)
+                    test_fn,
+                    self.graph.graph,
+                    test_fn.generator.generate(self.graph.graph, self),
                 ),
                 chunksize=test_fn.chunk_size_parallel_processing,
             ):
@@ -308,10 +326,10 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 )
         else:
             if test_fn.generator.chunked:
-                for chunk in test_fn.generator.generate(self.graph, self):
+                for chunk in test_fn.generator.generate(self.graph.graph, self):
                     iterator = [
                         unpack_run(i)
-                        for i in [[test_fn, [*c], self.graph] for c in chunk]
+                        for i in [[test_fn, [*c], self.graph.graph] for c in chunk]
                     ]
                     actions_taken.extend(
                         self._take_action(iterator, dry_run=not apply_to_graph)
@@ -320,32 +338,28 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 iterator = [
                     unpack_run(i)
                     for i in [
-                        [test_fn, [*i], self.graph]
-                        for i in test_fn.generator.generate(self.graph, self)
+                        [test_fn, [*i], self.graph.graph]
+                        for i in test_fn.generator.generate(self.graph.graph, self)
                     ]
                 ]
                 actions_taken.extend(
                     self._take_action(iterator, dry_run=not apply_to_graph)
                 )
 
-        self.graph.action_history.append(
-            {"step": type(test_fn).__name__, "actions": actions_taken}
-        )
-
         return actions_taken
 
 
 def graph_model_factory(
-    pipeline_steps: Optional[List[PipelineStepInterface]] = None,
+    algorithm: CausyAlgorithm = None,
 ) -> type[AbstractGraphModel]:
     """
     Create a graph model based on a List of pipeline_steps
-    :param pipeline_steps: a list of pipeline_steps which should be applied to the graph
+    :param algorithm: the algorithm which should be used to create the graph model
     :return: the graph model
     """
 
     class GraphModel(AbstractGraphModel):
         def __init__(self):
-            super().__init__(pipeline_steps=pipeline_steps)
+            super().__init__(algorithm=algorithm)
 
     return GraphModel

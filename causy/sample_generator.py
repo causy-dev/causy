@@ -6,7 +6,7 @@ from types import SimpleNamespace
 import torch
 import random as python_random
 
-from causy.graph import Graph
+from causy.graph import GraphManager
 from typing import Dict, Callable, List, Optional, Union
 
 import logging
@@ -211,7 +211,7 @@ class IIDSampleGenerator(AbstractSampleGenerator):
         :return: the generated data and the sample graph
         """
         output = self._generate_data(size)
-        graph = Graph()
+        graph = GraphManager()
         for i in self._variables:
             graph.add_node(
                 i,
@@ -310,7 +310,7 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
         :return: the generated data and the sample graph
         """
         output = self._generate_data(size)
-        graph = Graph()
+        graph = GraphManager()
         for i in self._variables:
             for t in range(size):
                 graph.add_node(
@@ -352,7 +352,9 @@ class TimeseriesSampleGenerator(AbstractSampleGenerator):
 
         # Fill in the first rows with the input matrices
         for i, matrix in enumerate(matrices):
-            block_diag[:n, i * n : (i + 1) * n] = torch.tensor(matrix)
+            block_diag[:n, i * n : (i + 1) * n] = torch.tensor(
+                matrix, dtype=torch.float64
+            )
 
         # Fill in the lower left off-diagonal with identity matrices
         row_start = n

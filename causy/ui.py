@@ -1,15 +1,24 @@
 import os
-from datetime import datetime
 
 import fastapi
+import typer
 import uvicorn
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional, Union
 
-from fastapi import APIRouter
-from pydantic import BaseModel, Json, UUID4, Field
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, UUID4
 from starlette.staticfiles import StaticFiles
 
 import logging
+
+from causy.interfaces import (
+    NodeInterface,
+    CausyAlgorithm,
+    CausyAlgorithmReference,
+    CausyResult,
+    CausyAlgorithmReferenceType,
+)
+from causy.serialization import load_algorithm_by_reference
 
 logger = logging.getLogger(__name__)
 
@@ -18,43 +27,17 @@ API_ROUTES = APIRouter()
 MODEL = None
 
 
-class CausyAlgorithm(BaseModel):
-    type: str
-    reference: str
-
-
-class CausyNodePosition(BaseModel):
+class NodePosition(BaseModel):
     x: Optional[float]
     y: Optional[float]
 
 
-class CausyNode(BaseModel):
-    id: UUID4
-    name: str
-    position: Optional[CausyNodePosition] = None
+class PositionedNode(NodeInterface):
+    position: Optional[NodePosition] = None
 
 
-class CausyEdgeValue(BaseModel):
-    metadata: Dict[str, Any] = None
-    edge_type: str = None
-
-
-class CausyEdge(BaseModel):
-    class Config:
-        populate_by_name = True
-
-    from_field: CausyNode = Field(alias="from")
-    to: CausyNode
-    value: CausyEdgeValue
-
-
-class CausyModel(BaseModel):
-    name: str
-    created_at: datetime
-    algorithm: CausyAlgorithm
-    steps: List[Dict[str, Any]]
-    nodes: Dict[UUID4, CausyNode]
-    edges: List[CausyEdge]
+class CausyExtendedResult(CausyResult):
+    nodes: Dict[Union[UUID4, str], PositionedNode]
 
 
 @API_ROUTES.get("/status", response_model=Dict[str, Any])
@@ -63,10 +46,28 @@ async def get_status():
     return {"status": "ok"}
 
 
-@API_ROUTES.get("/model", response_model=CausyModel)
+@API_ROUTES.get("/model", response_model=CausyExtendedResult)
 async def get_model():
     """Get the current model."""
     return MODEL
+
+
+@API_ROUTES.get(
+    "/algorithm/{reference_type}/{reference}", response_model=CausyAlgorithm
+)
+async def get_algorithm(reference_type: str, reference: str):
+    """Get the current algorithm."""
+    if reference.startswith("/") or ".." in reference:
+        raise HTTPException(400, "Invalid reference")
+
+    if reference_type not in CausyAlgorithmReferenceType.__members__.values():
+        raise HTTPException(400, "Invalid reference type")
+
+    try:
+        algorithm = load_algorithm_by_reference(reference_type, reference)
+        return algorithm
+    except Exception as e:
+        raise HTTPException(400, str(e))
 
 
 def server(result: Dict[str, Any]):
@@ -77,7 +78,8 @@ def server(result: Dict[str, Any]):
         description="causys internal api to serve data from the result files",
     )
     global MODEL
-    MODEL = CausyModel(**result)
+    result["algorithm"] = CausyAlgorithmReference(**result["algorithm"])
+    MODEL = CausyExtendedResult(**result)
 
     app.include_router(API_ROUTES, prefix="/api/v1", tags=["api"])
     app.mount(
@@ -94,7 +96,7 @@ def server(result: Dict[str, Any]):
 
     # cors e.g. for development of separate frontend
     if cors_enabled:
-        logger.warning("🌐 CORS enabled")
+        logger.warning(typer.style("🌐 CORS enabled", fg=typer.colors.YELLOW))
         from fastapi.middleware.cors import CORSMiddleware
 
         app.add_middleware(

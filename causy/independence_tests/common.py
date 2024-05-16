@@ -1,10 +1,8 @@
 import itertools
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Generic
 import logging
 
 import torch
-import torch.nn as nn
-import torch.optim as optim
 
 from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
 from causy.math_utils import get_t_and_critical_t
@@ -16,17 +14,21 @@ from causy.interfaces import (
     TestResultAction,
     AS_MANY_AS_FIELDS,
     ComparisonSettings,
+    GeneratorInterface,
+    PipelineStepInterfaceType,
 )
 
 logger = logging.getLogger(__name__)
 
 
-class CorrelationCoefficientTest(PipelineStepInterface):
-    generator = AllCombinationsGenerator(
+class CorrelationCoefficientTest(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
+    generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
@@ -54,12 +56,14 @@ class CorrelationCoefficientTest(PipelineStepInterface):
             )
 
 
-class PartialCorrelationTest(PipelineStepInterface):
-    generator = AllCombinationsGenerator(
+class PartialCorrelationTest(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
+    generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=3, max=3)
     )
-    chunk_size_parallel_processing = 1
-    parallel = False
+    chunk_size_parallel_processing: int = 1
+    parallel: bool = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -128,13 +132,15 @@ class PartialCorrelationTest(PipelineStepInterface):
         return results
 
 
-class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
-    generator = PairsWithNeighboursGenerator(
+class ExtendedPartialCorrelationTestMatrix(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
+    generator: Optional[GeneratorInterface] = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
         shuffle_combinations=False,
     )
-    chunk_size_parallel_processing = 1000
-    parallel = False
+    chunk_size_parallel_processing: int = 1000
+    parallel: bool = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         """
@@ -150,7 +156,13 @@ class ExtendedPartialCorrelationTestMatrix(PipelineStepInterface):
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):
             return
 
-        other_neighbours = set(graph.edges[nodes[0]])
+        other_neighbours = set(
+            [
+                k
+                for k, value in graph.edges[nodes[0]].items()
+                if graph.directed_edge_exists(k, nodes[0])
+            ]
+        )
         other_neighbours.remove(graph.nodes[nodes[1]].id)
 
         if not set(nodes[2:]).issubset(set([on for on in list(other_neighbours)])):
@@ -222,13 +234,15 @@ def partial_correlation_regression(x, y, z):
     )
 
 
-class ExtendedPartialCorrelationTestLinearRegression(PipelineStepInterface):
-    generator = PairsWithNeighboursGenerator(
+class ExtendedPartialCorrelationTestLinearRegression(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
+    generator: Optional[GeneratorInterface] = PairsWithNeighboursGenerator(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
         shuffle_combinations=False,
     )
-    chunk_size_parallel_processing = 1000
-    parallel = False
+    chunk_size_parallel_processing: int = 1000
+    parallel: bool = False
 
     def test(self, nodes: List[str], graph: BaseGraphInterface) -> Optional[TestResult]:
         if not graph.edge_exists(graph.nodes[nodes[0]], graph.nodes[nodes[1]]):

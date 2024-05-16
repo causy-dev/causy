@@ -1,20 +1,22 @@
 import logging
-from typing import Tuple, List
+from typing import Tuple, List, Generic
 
 from causy.interfaces import (
     PipelineStepInterface,
     TestResult,
     BaseGraphInterface,
     TestResultAction,
+    PipelineStepInterfaceType,
 )
 
 logger = logging.getLogger(__name__)
 
 
-class PlaceholderTest(PipelineStepInterface):
-    num_of_comparison_elements = 2
-    chunk_size_parallel_processing = 10
-    parallel = False
+class PlaceholderTest(
+    PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
+):
+    chunk_size_parallel_processing: int = 10
+    parallel: bool = False
 
     def test(
         self, nodes: Tuple[str], graph: BaseGraphInterface

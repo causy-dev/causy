@@ -1,58 +1,77 @@
-from causy.graph_utils import serialize_module_name
+import datetime
+import importlib
+import json
+from json import JSONEncoder
+from typing import Dict, Any
+import os
+
+import torch
+from pydantic import parse_obj_as
+
+from causy.graph_utils import load_pipeline_steps_by_definition
+from causy.interfaces import CausyAlgorithmReferenceType
 
 
-def serialize_model(model, algorithm_name: str = None):
+def load_algorithm_from_reference(algorithm: str):
+    st_function = importlib.import_module("causy.algorithms")
+    st_function = getattr(st_function, algorithm)
+    if not st_function:
+        raise ValueError(f"Algorithm {algorithm} not found")
+    return st_function
+
+
+def serialize_algorithm(model, algorithm_name: str = None):
     """Serialize the model into a dictionary."""
-    output = []
-    for step in model.pipeline_steps:
-        output.append(step.serialize())
 
-    return {"name": algorithm_name, "steps": output}
+    if algorithm_name:
+        model.algorithm.name = algorithm_name
+    return model.algorithm.model_dump()
 
 
-class SerializeMixin:
-    """Mixin class for serializing and deserializing graph steps."""
+def load_algorithm_from_specification(algorithm_dict: Dict[str, Any]):
+    """Load the model from a dictionary."""
+    algorithm_dict["pipeline_steps"] = load_pipeline_steps_by_definition(
+        algorithm_dict["pipeline_steps"]
+    )
+    from causy.interfaces import CausyAlgorithm
 
-    def _serialize_object(self, obj):
-        """Serialize the object into a dictionary."""
-        result = {}
-        for attr in [
-            attr
-            for attr in dir(obj)
-            if not attr.startswith("__") and not attr.startswith("_")
-        ]:
-            if type(getattr(self, attr)) in [int, float, str, bool, type(None)]:
-                result[attr] = getattr(self, attr)
-            elif isinstance(getattr(self, attr), SerializeMixin):
-                result[attr] = getattr(self, attr).serialize()
-            elif isinstance(getattr(self, attr), list):
-                result[attr] = [
-                    x.serialize() if isinstance(x, SerializeMixin) else x
-                    for x in getattr(self, attr)
-                ]
-            elif isinstance(getattr(self, attr), dict):
-                result[attr] = {
-                    x.serialize() if isinstance(x, SerializeMixin) else x
-                    for x in getattr(self, attr)
-                }
-            elif isinstance(getattr(self, attr), tuple) or isinstance(
-                getattr(self, attr), set
-            ):
-                # tuples are immutable, so we have to convert them to lists
-                result[attr] = [
-                    x.serialize() if isinstance(x, SerializeMixin) else x
-                    for x in getattr(self, attr)
-                ]
+    return parse_obj_as(CausyAlgorithm, algorithm_dict)
 
-        return result
 
-    def serialize(self):
-        """Serialize the object into a dictionary."""
-        # get all attributes of the class and its children
-        params = self._serialize_object(self.__class__)
-        params.update(self._serialize_object(self))
+def load_algorithm_by_reference(reference_type: str, algorithm: str):
+    # TODO: test me
+    if reference_type == CausyAlgorithmReferenceType.FILE:
+        # validate if the reference points only in the same directory or subdirectory
+        # to avoid security issues
+        absolute_path = os.path.realpath(algorithm)
+        common_prefix = os.path.commonprefix([os.getcwd(), absolute_path])
+        if common_prefix != os.getcwd():
+            raise ValueError("Invalid reference")
 
-        return {
-            "name": serialize_module_name(self),
-            "params": params,
-        }
+        with open(absolute_path, "r") as file:
+            # load the algorithm from the file
+            algorithm = json.loads(file.read())
+        return load_algorithm_from_specification(algorithm)
+    elif reference_type == CausyAlgorithmReferenceType.NAME:
+        return load_algorithm_from_reference(algorithm)().algorithm
+    elif reference_type == CausyAlgorithmReferenceType.PYTHON_MODULE:
+        st_function = importlib.import_module(algorithm)
+        st_function = getattr(st_function, algorithm)
+        if not st_function:
+            raise ValueError(f"Algorithm {algorithm} not found")
+        return st_function()
+
+
+class CausyJSONEncoder(JSONEncoder):
+    def default(self, obj):
+        if type(obj) is torch.Tensor:
+            return None
+        elif type(obj) is datetime.datetime:
+            return obj.isoformat()
+        return super().default(obj)
+
+
+def load_json(pipeline_file: str):
+    with open(pipeline_file, "r") as file:
+        pipeline = json.loads(file.read())
+    return pipeline

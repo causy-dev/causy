@@ -1,3 +1,6 @@
+import copy
+from unittest import skip
+
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_utils import (
     serialize_module_name,
@@ -58,7 +61,9 @@ class UtilsTestCase(CausyTestCase):
         )
 
         _, g1 = model_one.generate(10000)
+        g1 = copy.deepcopy(g1)
         _, g2 = model_two.generate(10000)
+
         with self.assertRaises(AssertionError):
             self.assertGraphStructureIsEqual(g1, g2)
 
