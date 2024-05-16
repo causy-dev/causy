@@ -110,9 +110,9 @@ CustomPC = graph_model_factory(
   CausyAlgorithm(
     pipeline_steps=[
       CalculatePearsonCorrelations(),
-      CorrelationCoefficientTest(threshold=0.1),
-      PartialCorrelationTest(threshold=0.01),
-      ExtendedPartialCorrelationTestMatrix(threshold=0.01),
+      CorrelationCoefficientTest(threshold=0.05),
+      PartialCorrelationTest(threshold=0.05),
+      ExtendedPartialCorrelationTestMatrix(threshold=0.05),
       ColliderTest(),
       Loop(
         pipeline_steps=[
