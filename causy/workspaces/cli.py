@@ -1,3 +1,5 @@
+import json
+
 import click
 import pydantic_yaml
 import questionary
@@ -14,7 +16,17 @@ from jinja2 import (
     PackageLoader,
 )
 
-from causy.interfaces import CausyAlgorithmReference, CausyAlgorithmReferenceType
+from causy.graph_model import graph_model_factory
+from causy.interfaces import (
+    CausyAlgorithmReference,
+    CausyAlgorithmReferenceType,
+    CausyResult,
+)
+from causy.serialization import (
+    load_algorithm_from_specification,
+    load_algorithm_by_reference,
+    CausyJSONEncoder,
+)
 from causy.workspaces.models import Workspace, Experiment, DataLoader
 
 app = typer.Typer()
@@ -185,6 +197,41 @@ def _create_data_loader(workspace: Workspace) -> Workspace:
     return workspace
 
 
+def _execute_experiment(workspace: Workspace, experiment: Experiment) -> CausyResult:
+    """
+    Execute an experiment. This function will load the pipeline and the data loader and execute the pipeline.
+    :param workspace:
+    :param experiment:
+    :return:
+    """
+    typer.echo(f"Loading Pipeline: {experiment.pipeline}")
+    pipeline = load_algorithm_by_reference(
+        workspace.pipelines[experiment.pipeline].type,
+        workspace.pipelines[experiment.pipeline].reference,
+    )
+    typer.echo(f"Loading Data: {experiment.data_loader}")
+    if workspace.data_loaders[experiment.data_loader].type == "json":
+        with open(workspace.data_loaders[experiment.data_loader].reference, "r") as f:
+            data = json.load(f)
+    elif workspace.data_loaders[experiment.data_loader].type == "jsonl":
+        with open(workspace.data_loaders[experiment.data_loader].reference, "r") as f:
+            # TODO: use srsly.json_loads
+            data = [json.loads(line) for line in f]
+    elif workspace.data_loaders[experiment.data_loader].type == "dynamic":
+        raise NotImplementedError("Dynamic data loading not implemented yet")
+
+    model = graph_model_factory(pipeline)()
+    model.create_graph_from_data(data)
+    model.create_all_possible_edges()
+    model.execute_pipeline_steps()
+    return CausyResult(
+        algorithm=workspace.pipelines[experiment.pipeline],
+        action_history=model.graph.graph.action_history,
+        edges=model.graph.retrieve_edges(),
+        nodes=model.graph.nodes,
+    )
+
+
 @app.command()
 def create_pipeline():
     """Create a new pipeline in the current workspace."""
@@ -326,5 +373,23 @@ def init():
 
 
 @app.command()
-def execute(experiment_name=""):
-    pass
+def execute(experiment_name=None):
+    workspace = _current_workspace()
+    if experiment_name is None:
+        # execute all experiments
+        for experiment_name, experiment in workspace.experiments.items():
+            typer.echo(f"Executing experiment: {experiment_name}")
+            result = _execute_experiment(workspace, experiment)
+
+            with open(f"{experiment_name}.json", "w") as f:
+                f.write(json.dumps(result.model_dump(), cls=CausyJSONEncoder, indent=4))
+    else:
+        if experiment_name not in workspace.experiments:
+            typer.echo(f"Experiment {experiment_name} not found in the workspace.")
+            return
+        experiment = workspace.experiments[experiment_name]
+        typer.echo(f"Executing experiment: {experiment_name}")
+        result = _execute_experiment(workspace, experiment)
+
+        with open(f"{experiment_name}.json", "w") as f:
+            f.write(json.dumps(result.model_dump(), cls=CausyJSONEncoder, indent=4))
