@@ -17,6 +17,8 @@ uvicorn = "^0.27.0"
 srsly = "^2.4.8"
 pydantic-yaml = "^1.2.1"
 click = "^8.1.7"
+questionary = "^2.0.1"
+jinja2 = "^3.1.4"
 
 
 [tool.poetry.group.dev.dependencies]

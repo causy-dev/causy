@@ -15,11 +15,11 @@ class DataLoaderType(enum.StrEnum):
 class DataLoader(BaseModel):
     """represents a single data loader
     :param type: the type of dataloader
-    :param path: path to either the python class which can be executed to load the data or the data source file itself
+    :param reference: path to either the python class which can be executed to load the data or the data source file itself
     """
 
     type: DataLoaderType
-    path: str
+    reference: str
 
 
 class Experiment(BaseModel):
