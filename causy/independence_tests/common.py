@@ -17,6 +17,7 @@ from causy.interfaces import (
     GeneratorInterface,
     PipelineStepInterfaceType,
 )
+from causy.variables import IntegerParameter, BoolParameter
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,8 @@ class CorrelationCoefficientTest(
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing: int = 1
-    parallel: bool = False
+    chunk_size_parallel_processing: IntegerParameter = 1
+    parallel: BoolParameter = False
 
     def process(
         self, nodes: List[str], graph: BaseGraphInterface
@@ -64,8 +65,8 @@ class PartialCorrelationTest(
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=3, max=3)
     )
-    chunk_size_parallel_processing: int = 1
-    parallel: bool = False
+    chunk_size_parallel_processing: IntegerParameter = 1
+    parallel: BoolParameter = False
 
     def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -141,8 +142,8 @@ class ExtendedPartialCorrelationTestMatrix(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
         shuffle_combinations=False,
     )
-    chunk_size_parallel_processing: int = 1000
-    parallel: bool = False
+    chunk_size_parallel_processing: IntegerParameter = 1000
+    parallel: BoolParameter = False
 
     def process(
         self, nodes: List[str], graph: BaseGraphInterface
@@ -245,8 +246,8 @@ class ExtendedPartialCorrelationTestLinearRegression(
         comparison_settings=ComparisonSettings(min=4, max=AS_MANY_AS_FIELDS),
         shuffle_combinations=False,
     )
-    chunk_size_parallel_processing: int = 1000
-    parallel: bool = False
+    chunk_size_parallel_processing: IntegerParameter = 1000
+    parallel: BoolParameter = False
 
     def process(
         self, nodes: List[str], graph: BaseGraphInterface

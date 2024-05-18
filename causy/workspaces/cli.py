@@ -27,7 +27,8 @@ from causy.serialization import (
     load_algorithm_by_reference,
     CausyJSONEncoder,
 )
-from causy.workspaces.models import Workspace, Experiment, DataLoader
+from causy.variables import validate_variable_values, resolve_variables
+from causy.workspaces.interfaces import Workspace, Experiment, DataLoader
 
 app = typer.Typer()
 
@@ -112,11 +113,11 @@ def _create_pipeline(workspace: Workspace = None) -> Workspace:
         pipeline_reference = AVAILABLE_ALGORITHMS[pipeline_skeleton]
         pipeline_name = questionary.text("Enter the name of the pipeline").ask()
         pipeline_slug = slugify(pipeline_name, "_")
-        with open(f"{pipeline_slug}.yaml", "w") as f:
-            f.write(to_yaml_str(pipeline_reference().algorithm))
+        with open(f"{pipeline_slug}.yml", "w") as f:
+            f.write(to_yaml_str(pipeline_reference()._original_algorithm))
 
         pipeline = CausyAlgorithmReference(
-            reference=f"{pipeline_slug}.yaml", type=CausyAlgorithmReferenceType.FILE
+            reference=f"{pipeline_slug}.yml", type=CausyAlgorithmReferenceType.FILE
         )
         workspace.pipelines[pipeline_slug] = pipeline
     elif pipeline_creation == "SKELETON":
@@ -148,8 +149,21 @@ def _create_experiment(workspace: Workspace) -> Workspace:
 
     experiment_slug = slugify(experiment_name, "_")
 
+    # extract and prefill the variables
+    variables = {}
+    pipeline = load_algorithm_by_reference(
+        workspace.pipelines[experiment_pipeline].type,
+        workspace.pipelines[experiment_pipeline].reference,
+    )
+    if len(pipeline.variables) > 0:
+        variables = resolve_variables(pipeline.variables, {})
+
     workspace.experiments[experiment_slug] = Experiment(
-        **{"pipeline": experiment_pipeline, "data_loader": experiment_data_loader}
+        **{
+            "pipeline": experiment_pipeline,
+            "data_loader": experiment_data_loader,
+            "variables": variables,
+        }
     )
 
     typer.echo(f'Experiment "{experiment_name}" created.')
@@ -209,6 +223,11 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> CausyRe
         workspace.pipelines[experiment.pipeline].type,
         workspace.pipelines[experiment.pipeline].reference,
     )
+
+    validate_variable_values(pipeline, experiment.variables)
+    variables = resolve_variables(pipeline.variables, experiment.variables)
+    typer.echo(f"Using variables: {variables}")
+
     typer.echo(f"Loading Data: {experiment.data_loader}")
     if workspace.data_loaders[experiment.data_loader].type == "json":
         with open(workspace.data_loaders[experiment.data_loader].reference, "r") as f:
@@ -369,7 +388,7 @@ def init():
     with open(workspace_path, "w") as f:
         f.write(pydantic_yaml.to_yaml_str(workspace))
 
-    print(f"Workspace created in {workspace_path}")
+    typer.echo(f"Workspace created in {workspace_path}")
 
 
 @app.command()

@@ -273,10 +273,10 @@ class GraphAccessMixin:
 
     def directed_path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
-        Check if a directed reference from u to v exists
+        Check if a directed path from u to v exists
         :param u: node u
         :param v: node v
-        :return: True if a directed reference exists, False otherwise
+        :return: True if a directed path exists, False otherwise
         """
 
         if isinstance(u, Node):
@@ -340,11 +340,11 @@ class GraphAccessMixin:
 
     def inducing_path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
-        Check if an inducing reference from u to v exists.
-        An inducing reference from u to v is a directed reference from u to v on which all mediators are colliders.
+        Check if an inducing path from u to v exists.
+        An inducing path from u to v is a directed reference from u to v on which all mediators are colliders.
         :param u: node u
         :param v: node v
-        :return: True if an inducing reference exists, False otherwise
+        :return: True if an inducing path exists, False otherwise
         """
 
         if isinstance(u, Node):

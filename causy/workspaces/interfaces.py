@@ -31,6 +31,7 @@ class Experiment(BaseModel):
 
     pipeline: str
     data_loader: str
+    variables: Optional[Dict[str, Any]] = None
 
 
 class Workspace(BaseModel):

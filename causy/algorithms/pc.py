@@ -28,6 +28,12 @@ from causy.orientation_rules.pc import (
     OrientQuadrupleTest,
     FurtherOrientQuadrupleTest,
 )
+from causy.variables import (
+    FloatVariable,
+    StringVariable,
+    VariableReference,
+    IntegerVariable,
+)
 
 PC_DEFAULT_THRESHOLD = 0.005
 
@@ -59,14 +65,15 @@ PC = graph_model_factory(
         pipeline_steps=[
             CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
             CorrelationCoefficientTest(
-                threshold=PC_DEFAULT_THRESHOLD,
+                threshold=VariableReference(name="threshold"),
                 display_name="Correlation Coefficient Test",
             ),
             PartialCorrelationTest(
-                threshold=PC_DEFAULT_THRESHOLD, display_name="Partial Correlation Test"
+                threshold=VariableReference(name="threshold"),
+                display_name="Partial Correlation Test",
             ),
             ExtendedPartialCorrelationTestMatrix(
-                threshold=PC_DEFAULT_THRESHOLD,
+                threshold=VariableReference(name="threshold"),
                 display_name="Extended Partial Correlation Test Matrix",
             ),
             *PC_ORIENTATION_RULES,
@@ -77,6 +84,7 @@ PC = graph_model_factory(
         edge_types=PC_EDGE_TYPES,
         extensions=[PC_GRAPH_UI_EXTENSION],
         name="PC",
+        variables=[FloatVariable(name="threshold", value=PC_DEFAULT_THRESHOLD)],
     )
 )
 
@@ -86,10 +94,14 @@ PCStable = graph_model_factory(
             CalculatePearsonCorrelations(),
             ApplyActionsTogether(
                 pipeline_steps=[
-                    CorrelationCoefficientTest(threshold=PC_DEFAULT_THRESHOLD),
-                    PartialCorrelationTest(threshold=PC_DEFAULT_THRESHOLD),
+                    CorrelationCoefficientTest(
+                        threshold=VariableReference(name="threshold")
+                    ),
+                    PartialCorrelationTest(
+                        threshold=VariableReference(name="threshold"),
+                    ),
                     ExtendedPartialCorrelationTestMatrix(
-                        threshold=PC_DEFAULT_THRESHOLD
+                        threshold=VariableReference(name="threshold"),
                     ),
                 ]
             ),
@@ -99,6 +111,7 @@ PCStable = graph_model_factory(
         edge_types=PC_EDGE_TYPES,
         extensions=[PC_GRAPH_UI_EXTENSION],
         name="PCStable",
+        variables=[FloatVariable(name="threshold", value=PC_DEFAULT_THRESHOLD)],
     )
 )
 
@@ -108,18 +121,18 @@ ParallelPC = graph_model_factory(
         pipeline_steps=[
             CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
             CorrelationCoefficientTest(
-                threshold=PC_DEFAULT_THRESHOLD,
+                threshold=VariableReference(name="threshold"),
                 display_name="Correlation Coefficient Test",
             ),
             PartialCorrelationTest(
-                threshold=PC_DEFAULT_THRESHOLD,
+                threshold=VariableReference(name="threshold"),
                 parallel=True,
                 chunk_size_parallel_processing=50000,
                 display_name="Partial Correlation Test",
             ),
             ExtendedPartialCorrelationTestMatrix(
                 # run first a sampled version of the test so we can minimize the number of tests in the full version
-                threshold=PC_DEFAULT_THRESHOLD,
+                threshold=VariableReference(name="threshold"),
                 display_name="Sampled Extended Partial Correlation Test Matrix",
                 chunk_size_parallel_processing=5000,
                 parallel=True,
@@ -132,11 +145,11 @@ ParallelPC = graph_model_factory(
                         ),
                     ),
                     chunked=False,
-                    every_nth=200,
+                    every_nth=VariableReference(name="every_nth_sample"),
                 ),
             ),
             ExtendedPartialCorrelationTestMatrix(
-                threshold=PC_DEFAULT_THRESHOLD,
+                threshold=VariableReference(name="threshold"),
                 display_name="Extended Partial Correlation Test Matrix",
                 chunk_size_parallel_processing=20000,
                 parallel=True,
@@ -156,5 +169,9 @@ ParallelPC = graph_model_factory(
         edge_types=PC_EDGE_TYPES,
         extensions=[PC_GRAPH_UI_EXTENSION],
         name="ParallelPC",
+        variables=[
+            FloatVariable(name="threshold", value=PC_DEFAULT_THRESHOLD),
+            IntegerVariable(name="every_nth_sample", value=200),
+        ],
     )
 )

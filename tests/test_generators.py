@@ -44,7 +44,6 @@ class GeneratorsTestCase(CausyTestCase):
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
-        print(retrieve_edges(tst.graph))
         result = PairsWithNeighboursGenerator(
             comparison_settings=ComparisonSettings(min=3, max=4)
         ).generate(tst.graph.graph, tst)
@@ -52,4 +51,3 @@ class GeneratorsTestCase(CausyTestCase):
 
         for i in result:
             all_results.extend(i)
-        print(all_results)

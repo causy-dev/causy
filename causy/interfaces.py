@@ -2,6 +2,7 @@ import enum
 import multiprocessing
 from abc import ABC, abstractmethod
 from datetime import datetime
+from types import NoneType
 
 from pydantic.dataclasses import dataclass
 from typing import List, Dict, Optional, Union, TypeVar, Generic, Any
@@ -17,6 +18,15 @@ from causy.graph_utils import (
 
 from pydantic import BaseModel, computed_field, AwareDatetime, Field
 
+from causy.variables import (
+    BaseVariable,
+    VariableInterfaceType,
+    StringParameter,
+    IntegerParameter,
+    BoolParameter,
+    FloatParameter,
+)
+
 logger = logging.getLogger(__name__)
 
 DEFAULT_THRESHOLD = 0.01
@@ -25,8 +35,8 @@ AS_MANY_AS_FIELDS = 0
 
 
 class ComparisonSettings(BaseModel):
-    min: int = 2
-    max: int = AS_MANY_AS_FIELDS
+    min: IntegerParameter = 2
+    max: IntegerParameter = AS_MANY_AS_FIELDS
 
     @computed_field
     @property
@@ -175,10 +185,10 @@ class GraphModelInterface(ABC):
 
 class GeneratorInterface(ABC, BaseModel):
     comparison_settings: Optional[ComparisonSettings] = None
-    chunked: Optional[bool] = False
-    every_nth: Optional[int] = None
+    chunked: Optional[BoolParameter] = False
+    every_nth: Optional[IntegerParameter] = None
     generator: Optional["GeneratorInterface"] = None
-    shuffle_combinations: Optional[bool] = None
+    shuffle_combinations: Optional[BoolParameter] = None
 
     @abstractmethod
     def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
@@ -187,11 +197,11 @@ class GeneratorInterface(ABC, BaseModel):
     def __init__(
         self,
         comparison_settings: Optional[ComparisonSettings] = None,
-        chunked: bool = None,
-        every_nth: int = None,
-        generator: "GeneratorInterface" = None,
-        shuffle_combinations: bool = None,
-    ):
+        chunked: Optional[BoolParameter] = None,
+        every_nth: Optional[IntegerParameter] = None,
+        generator: Optional["GeneratorInterface"] = None,
+        shuffle_combinations: Optional[BoolParameter] = None,
+    ) -> None:
         super().__init__(comparison_settings=comparison_settings)
         if isinstance(comparison_settings, dict):
             comparison_settings = load_pipeline_artefact_by_definition(
@@ -223,20 +233,20 @@ PipelineStepInterfaceType = TypeVar("PipelineStepInterfaceType")
 
 class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
     generator: Optional[GeneratorInterface] = None
-    threshold: Optional[float] = DEFAULT_THRESHOLD
-    chunk_size_parallel_processing: int = 1
-    parallel: bool = True
+    threshold: Optional[FloatParameter] = DEFAULT_THRESHOLD
+    chunk_size_parallel_processing: IntegerParameter = 1
+    parallel: BoolParameter = True
 
-    display_name: Optional[str] = None
+    display_name: Optional[StringParameter] = None
 
     def __init__(
         self,
-        threshold: float = None,
+        threshold: Optional[FloatParameter] = None,
         generator: Optional[GeneratorInterface] = None,
-        chunk_size_parallel_processing: int = None,
-        parallel: bool = None,
-        display_name: Optional[str] = None,
-    ):
+        chunk_size_parallel_processing: Optional[IntegerParameter] = None,
+        parallel: Optional[BoolParameter] = None,
+        display_name: Optional[StringParameter] = None,
+    ) -> None:
         super().__init__()
         if generator:
             if isinstance(generator, dict):
@@ -286,7 +296,7 @@ class ExitConditionInterface(ABC, BaseModel):
         graph: BaseGraphInterface,
         graph_model_instance_: GraphModelInterface,
         actions_taken: List[TestResult],
-        iteration: int,
+        iteration: IntegerParameter,
     ) -> bool:
         """
         :param graph:
@@ -319,7 +329,7 @@ class LogicStepInterface(ABC, BaseModel, Generic[LogicStepInterfaceType]):
     pipeline_steps: Optional[List[Union[PipelineStepInterfaceType]]] = None
     exit_condition: Optional[ExitConditionInterface] = None
 
-    display_name: Optional[str] = None
+    display_name: Optional[StringParameter] = None
 
     @abstractmethod
     def execute(self, graph: BaseGraphInterface, graph_model_instance_: dict):
@@ -370,6 +380,7 @@ class CausyAlgorithm(BaseModel):
     pipeline_steps: List[Union[PipelineStepInterfaceType, LogicStepInterface]]
     edge_types: List[EdgeTypeInterface]
     extensions: Optional[List[CausyExtensionType]] = None
+    variables: Optional[List[Union[VariableInterfaceType]]] = None
 
 
 class CausyAlgorithmReferenceType(enum.StrEnum):

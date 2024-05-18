@@ -13,6 +13,7 @@ from causy.interfaces import (
     AS_MANY_AS_FIELDS,
 )
 from causy.graph_utils import load_pipeline_artefact_by_definition
+from causy.variables import IntegerParameter, BoolParameter
 
 logger = logging.getLogger(__name__)
 
@@ -59,14 +60,14 @@ class PairsWithEdgesInBetweenGenerator(GeneratorInterface):
     However, if it is an edge which points in both/no directions, it will be iterated over them twice.
     """
 
-    chunk_size: int = 100
-    chunked: Optional[bool] = None
+    chunk_size: IntegerParameter = 100
+    chunked: Optional[BoolParameter] = None
 
     def __init__(
         self,
         *args,
-        chunk_size: Optional[int] = None,
-        chunked: Optional[bool] = None,
+        chunk_size: Optional[IntegerParameter] = None,
+        chunked: Optional[BoolParameter] = None,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
@@ -101,8 +102,8 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
     (if, among others, X and Y are neighbours and X and Z are neighbours)
     """
 
-    shuffle_combinations: bool = True
-    chunked: bool = True
+    shuffle_combinations: BoolParameter = True
+    chunked: BoolParameter = True
 
     def __init__(
         self,
@@ -129,8 +130,6 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
         if stop > len(graph.nodes) + 1:
             stop = len(graph.nodes) + 1
 
-        print(stop)
-
         # if stop is smaller then start, we can't create any combinations
         if stop < start:
             return
@@ -138,7 +137,7 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
         if start < 2:
             raise ValueError("PairsWithNeighboursGenerator: start must be at least 2")
         for range_size in range(start, stop):
-            print(f"range_size = {range_size}")
+            logger.info(f"range_size = {range_size}")
             logger.debug(f"PairsWithNeighboursGenerator: range_size={range_size}")
             checked_combinations = set()
             for node in graph.edges:
@@ -161,7 +160,7 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                             if graph.directed_edge_exists(k, node)
                         ]
                     )
-                    print(f"other_neighbors before removal={other_neighbours}")
+                    logger.info(f"other_neighbors before removal={other_neighbours}")
 
                     if neighbour in other_neighbours:
                         other_neighbours.remove(neighbour)
@@ -169,8 +168,8 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                         logger.debug(
                             "PairsWithNeighboursGenerator: neighbour not in other_neighbours. This should not happen."
                         )
-                    print(f"node={node}, neighbour={neighbour}")
-                    print(f"other_neighbours={other_neighbours}")
+                    logger.info(f"node={node}, neighbour={neighbour}")
+                    logger.info(f"other_neighbours={other_neighbours}")
                     combinations = list(
                         itertools.combinations(other_neighbours, range_size - 2)
                     )
@@ -196,7 +195,7 @@ class RandomSampleGenerator(GeneratorInterface, BaseModel):
     Executes another generator and returns a random sample of the results
     """
 
-    every_nth: int = 100
+    every_nth: IntegerParameter = 100
     generator: Optional[GeneratorInterface] = None
 
     def __init__(

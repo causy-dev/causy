@@ -3,7 +3,7 @@ import platform
 from abc import ABC
 from copy import deepcopy
 import time
-from typing import Optional, List, Dict, Callable, Union
+from typing import Optional, List, Dict, Callable, Union, Any
 
 import torch.multiprocessing as mp
 
@@ -19,6 +19,7 @@ from causy.interfaces import (
     CausyAlgorithm,
     ActionHistoryStep,
 )
+from causy.variables import resolve_variables_to_algorithm, resolve_variables
 
 logger = logging.getLogger(__name__)
 
@@ -351,14 +352,28 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
 def graph_model_factory(
     algorithm: CausyAlgorithm = None,
+    variables: Dict[str, Any] = None,
 ) -> type[AbstractGraphModel]:
     """
     Create a graph model based on a List of pipeline_steps
     :param algorithm: the algorithm which should be used to create the graph model
     :return: the graph model
     """
+    original_algorithm = deepcopy(algorithm)
+    if variables is None and algorithm.variables is not None:
+        variables = resolve_variables(algorithm.variables, {})
+    elif variables is None:
+        variables = {}
+
+    if len(variables) > 0:
+        algorithm.pipeline_steps = resolve_variables_to_algorithm(
+            algorithm.pipeline_steps, variables
+        )
 
     class GraphModel(AbstractGraphModel):
+        # store the original algorithm for later use like ejecting it without the resolved variables
+        _original_algorithm = original_algorithm
+
         def __init__(self):
             super().__init__(algorithm=algorithm)
 

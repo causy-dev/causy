@@ -1,6 +1,8 @@
 import importlib
 from typing import List, Tuple
 
+from causy.variables import deserialize_variable_references
+
 
 def unpack_run(args):
     tst = args[0]
@@ -30,6 +32,7 @@ def load_pipeline_steps_by_definition(steps):
     pipeline = []
     for step in steps:
         st_function = load_pipeline_artefact_by_definition(step)
+        st_function = deserialize_variable_references(st_function)
         pipeline.append(st_function)
     return pipeline
 

@@ -6,10 +6,12 @@ from typing import Dict, Any
 import os
 
 import torch
+import yaml
 from pydantic import parse_obj_as
 
 from causy.graph_utils import load_pipeline_steps_by_definition
 from causy.interfaces import CausyAlgorithmReferenceType
+from causy.variables import deserialize_variable
 
 
 def load_algorithm_from_reference(algorithm: str):
@@ -33,6 +35,12 @@ def load_algorithm_from_specification(algorithm_dict: Dict[str, Any]):
     algorithm_dict["pipeline_steps"] = load_pipeline_steps_by_definition(
         algorithm_dict["pipeline_steps"]
     )
+    if "variables" not in algorithm_dict or algorithm_dict["variables"] is None:
+        algorithm_dict["variables"] = []
+
+    algorithm_dict["variables"] = [
+        deserialize_variable(variable) for variable in algorithm_dict["variables"]
+    ]
     from causy.interfaces import CausyAlgorithm
 
     return parse_obj_as(CausyAlgorithm, algorithm_dict)
@@ -50,8 +58,21 @@ def load_algorithm_by_reference(reference_type: str, algorithm: str):
 
         with open(absolute_path, "r") as file:
             # load the algorithm from the file
-            algorithm = json.loads(file.read())
-        return load_algorithm_from_specification(algorithm)
+            # try first json
+            try:
+                algorithm = json.loads(file.read())
+                return load_algorithm_from_specification(algorithm)
+            except json.JSONDecodeError:
+                pass
+            file.seek(0)
+            # then try yaml
+            try:
+                data = yaml.load(file.read(), Loader=yaml.FullLoader)
+                return load_algorithm_from_specification(data)
+            except yaml.YAMLError:
+                pass
+            raise ValueError("Invalid file format")
+
     elif reference_type == CausyAlgorithmReferenceType.NAME:
         return load_algorithm_from_reference(algorithm)().algorithm
     elif reference_type == CausyAlgorithmReferenceType.PYTHON_MODULE:
