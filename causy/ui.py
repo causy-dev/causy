@@ -1,10 +1,11 @@
 import os
+from datetime import datetime
 from importlib.metadata import version
 
 import fastapi
 import typer
 import uvicorn
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, List
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, UUID4
@@ -20,8 +21,13 @@ from causy.interfaces import (
     CausyAlgorithmReferenceType,
 )
 from causy.serialization import load_algorithm_by_reference, load_json
-from causy.workspaces.cli import _current_workspace, _load_experiment
-from causy.workspaces.interfaces import Workspace
+from causy.workspaces.cli import (
+    _current_workspace,
+    _load_latest_experiment_result,
+    _load_experiment_result,
+    _load_experiment_versions,
+)
+from causy.workspaces.interfaces import Workspace, Experiment
 
 logger = logging.getLogger(__name__)
 
@@ -35,12 +41,23 @@ class NodePosition(BaseModel):
     y: Optional[float]
 
 
+class ExperimentVersion(BaseModel):
+    version: int
+    name: str
+
+
+class ExtendedExperiment(Experiment):
+    versions: Optional[List[ExperimentVersion]] = None
+    name: str = None
+
+
 class PositionedNode(NodeInterface):
     position: Optional[NodePosition] = None
 
 
 class CausyExtendedResult(CausyResult):
     nodes: Dict[Union[UUID4, str], PositionedNode]
+    version: Optional[int] = None
 
 
 @API_ROUTES.get("/status", response_model=Dict[str, Any])
@@ -70,8 +87,10 @@ async def get_workspace():
     return WORKSPACE
 
 
-@API_ROUTES.get("/experiments/{experiment_name}", response_model=CausyExtendedResult)
-async def get_experiment(experiment_name: str):
+@API_ROUTES.get(
+    "/experiments/{experiment_name}/latest", response_model=CausyExtendedResult
+)
+async def get_latest_experiment(experiment_name: str):
     """Get the current experiment."""
     if not WORKSPACE:
         raise HTTPException(404, "No workspace loaded")
@@ -80,14 +99,65 @@ async def get_experiment(experiment_name: str):
         raise HTTPException(404, "Experiment not found")
 
     try:
-        experiment = _load_experiment(WORKSPACE, experiment_name)
+        experiment = _load_latest_experiment_result(WORKSPACE, experiment_name)
+    except Exception as e:
+        raise HTTPException(400, str(e))
+
+    version = _load_experiment_versions(WORKSPACE, experiment_name)[0]
+
+    experiment["algorithm"] = CausyAlgorithmReference(**experiment["algorithm"])
+    experiment["version"] = version
+    experiment = CausyExtendedResult(**experiment)
+
+    return experiment
+
+
+@API_ROUTES.get(
+    "/experiments/{experiment_name}/{version_number}",
+    response_model=CausyExtendedResult,
+)
+async def get_experiment(experiment_name: str, version_number: int):
+    """Get the current experiment."""
+    if not WORKSPACE:
+        raise HTTPException(404, "No workspace loaded")
+
+    if experiment_name not in WORKSPACE.experiments:
+        raise HTTPException(404, "Experiment not found")
+
+    try:
+        experiment = _load_experiment_result(WORKSPACE, experiment_name, version_number)
     except Exception as e:
         raise HTTPException(400, str(e))
 
     experiment["algorithm"] = CausyAlgorithmReference(**experiment["algorithm"])
+    experiment["version"] = version_number
     experiment = CausyExtendedResult(**experiment)
 
     return experiment
+
+
+@API_ROUTES.get("/experiments", response_model=List[ExtendedExperiment])
+async def get_experiments():
+    """Get the current experiment."""
+    if not WORKSPACE:
+        raise HTTPException(404, "No workspace loaded")
+
+    experiments = []
+    for experiment_name, experiment in WORKSPACE.experiments.items():
+        extended_experiment = ExtendedExperiment(**experiment.model_dump())
+        versions = []
+        for experiment_version in _load_experiment_versions(WORKSPACE, experiment_name):
+            versions.append(
+                ExperimentVersion(
+                    version=experiment_version,
+                    name=datetime.fromtimestamp(experiment_version).isoformat(),
+                )
+            )
+        extended_experiment.versions = versions
+        extended_experiment.name = experiment_name
+        experiments.append(extended_experiment)
+
+    return experiments
 
 
 @API_ROUTES.get(
@@ -112,7 +182,7 @@ def server(result: Dict[str, Any] = None, workspace=None):
     """Create the FastAPI server."""
     app = fastapi.FastAPI(
         title="causy-api",
-        version="0.0.1",
+        version=version("causy"),
         description="causys internal api to serve data from the result files",
     )
     global MODEL

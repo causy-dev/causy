@@ -1,4 +1,6 @@
 import json
+from datetime import datetime
+from typing import Dict, List
 
 import click
 import pydantic_yaml
@@ -251,18 +253,62 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> CausyRe
     )
 
 
-def _load_experiment(workspace: Workspace, experiment_name: str) -> Experiment:
+def _load_latest_experiment_result(
+    workspace: Workspace, experiment_name: str
+) -> Experiment:
+    versions = _load_experiment_versions(workspace, experiment_name)
+
     if experiment_name not in workspace.experiments:
         raise ValueError(f"Experiment {experiment_name} not found in the workspace")
 
-    # check if experiment exists in file system
-    if not os.path.exists(f"{experiment_name}.json"):
+    if len(versions) == 0:
         raise ValueError(f"Experiment {experiment_name} not found in the file system")
 
-    with open(f"{experiment_name}.json", "r") as f:
+    with open(f"{experiment_name}_{versions[0]}.json", "r") as f:
         experiment = json.load(f)
 
     return experiment
+
+
+def _load_experiment_result(
+    workspace: Workspace, experiment_name: str, version_number: int
+) -> Experiment:
+    if experiment_name not in workspace.experiments:
+        raise ValueError(f"Experiment {experiment_name} not found in the workspace")
+
+    if version_number not in _load_experiment_versions(workspace, experiment_name):
+        raise ValueError(
+            f"Version {version_number} not found for experiment {experiment_name}"
+        )
+
+    with open(f"{experiment_name}_{version_number}.json", "r") as f:
+        experiment = json.load(f)
+
+    return experiment
+
+
+def _load_experiment_versions(workspace: Workspace, experiment_name: str) -> List[int]:
+    versions = []
+    for file in os.listdir():
+        # check for files if they have the right prefix followed by a unix timestamp (int) and the file extension, e.g. experiment_123456789.json.
+        # Extract the unix timestamp
+        if file.startswith(f"{experiment_name}_") and file.endswith(".json"):
+            segments = file.split("_")
+            timestamp = int(segments[-1].split(".")[0])
+            name = "_".join(segments[:-1])
+            if name != experiment_name:
+                # an experiment with a different name
+                continue
+            versions.append(timestamp)
+    return sorted(versions, reverse=True)
+
+
+def _save_experiment_result(
+    workspace: Workspace, experiment_name: str, result: CausyResult
+):
+    timestamp = int(datetime.timestamp(result.created_at))
+    with open(f"{experiment_name}_{timestamp}.json", "w") as f:
+        f.write(json.dumps(result.model_dump(), cls=CausyJSONEncoder, indent=4))
 
 
 @app.command()
@@ -413,9 +459,7 @@ def execute(experiment_name=None):
         for experiment_name, experiment in workspace.experiments.items():
             typer.echo(f"Executing experiment: {experiment_name}")
             result = _execute_experiment(workspace, experiment)
-
-            with open(f"{experiment_name}.json", "w") as f:
-                f.write(json.dumps(result.model_dump(), cls=CausyJSONEncoder, indent=4))
+            _save_experiment_result(workspace, experiment_name, result)
     else:
         if experiment_name not in workspace.experiments:
             typer.echo(f"Experiment {experiment_name} not found in the workspace.")
@@ -424,5 +468,4 @@ def execute(experiment_name=None):
         typer.echo(f"Executing experiment: {experiment_name}")
         result = _execute_experiment(workspace, experiment)
 
-        with open(f"{experiment_name}.json", "w") as f:
-            f.write(json.dumps(result.model_dump(), cls=CausyJSONEncoder, indent=4))
+        _save_experiment_result(workspace, experiment_name, result)
