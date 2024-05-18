@@ -251,6 +251,20 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> CausyRe
     )
 
 
+def _load_experiment(workspace: Workspace, experiment_name: str) -> Experiment:
+    if experiment_name not in workspace.experiments:
+        raise ValueError(f"Experiment {experiment_name} not found in the workspace")
+
+    # check if experiment exists in file system
+    if not os.path.exists(f"{experiment_name}.json"):
+        raise ValueError(f"Experiment {experiment_name} not found in the file system")
+
+    with open(f"{experiment_name}.json", "r") as f:
+        experiment = json.load(f)
+
+    return experiment
+
+
 @app.command()
 def create_pipeline():
     """Create a new pipeline in the current workspace."""

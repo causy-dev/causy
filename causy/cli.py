@@ -19,12 +19,13 @@ from causy.serialization import (
 from causy.graph_utils import (
     retrieve_edges,
 )
-from causy.ui import server
+from causy.ui import ui as ui_app
 from causy.workspaces.cli import app as workspaces_app
 
 app = typer.Typer()
 
 app.add_typer(workspaces_app, name="workspace")
+app.command(name="ui", help="run causy ui")(ui_app)
 
 
 @app.command()
@@ -35,16 +36,6 @@ def eject(algorithm: str, output_file: str):
     typer.echo(f"💾 Saving algorithm {algorithm} to {output_file}")
     with open(output_file, "w") as file:
         file.write(json.dumps(result, indent=4))
-
-
-@app.command()
-def ui(result_file: str):
-    result = load_json(result_file)
-
-    server_config, server_runner = server(result)
-    typer.launch(f"http://{server_config.host}:{server_config.port}")
-    typer.echo(f"🚀 Starting server at http://{server_config.host}:{server_config.port}")
-    server_runner.run()
 
 
 @app.command()
