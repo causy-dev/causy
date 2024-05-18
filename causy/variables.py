@@ -137,9 +137,7 @@ StringParameter = Union[str, VariableReference]
 CausyParameter = Union[BoolParameter, IntegerParameter, FloatParameter, StringParameter]
 
 
-def validate_variable_values(
-    algorithm: "CausyAlgorithm", variable_values: Dict[str, Any]
-):
+def validate_variable_values(algorithm, variable_values: Dict[str, Any]):
     """
     Validate the variable values for the algorithm.
     :param algorithm:
