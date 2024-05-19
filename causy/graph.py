@@ -11,12 +11,10 @@ from causy.edge_types import UndirectedEdge, DirectedEdge
 from causy.interfaces import (
     BaseGraphInterface,
     NodeInterface,
-    TestResultAction,
-    TestResult,
     EdgeInterface,
     EdgeTypeInterface,
-    ActionHistoryStep,
 )
+from causy.models import TestResultAction, TestResult, ActionHistoryStep
 
 logger = logging.getLogger(__name__)
 

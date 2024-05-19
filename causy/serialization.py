@@ -10,7 +10,7 @@ import yaml
 from pydantic import parse_obj_as
 
 from causy.graph_utils import load_pipeline_steps_by_definition
-from causy.interfaces import CausyAlgorithmReferenceType
+from causy.models import CausyAlgorithmReferenceType
 from causy.variables import deserialize_variable
 
 
@@ -41,7 +41,7 @@ def load_algorithm_from_specification(algorithm_dict: Dict[str, Any]):
     algorithm_dict["variables"] = [
         deserialize_variable(variable) for variable in algorithm_dict["variables"]
     ]
-    from causy.interfaces import CausyAlgorithm
+    from causy.models import CausyAlgorithm
 
     return parse_obj_as(CausyAlgorithm, algorithm_dict)
 

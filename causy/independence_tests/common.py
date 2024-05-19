@@ -10,13 +10,11 @@ from causy.interfaces import (
     PipelineStepInterface,
     BaseGraphInterface,
     NodeInterface,
-    TestResult,
-    TestResultAction,
     AS_MANY_AS_FIELDS,
-    ComparisonSettings,
     GeneratorInterface,
     PipelineStepInterfaceType,
 )
+from causy.models import ComparisonSettings, TestResultAction, TestResult
 from causy.variables import IntegerParameter, BoolParameter
 
 logger = logging.getLogger(__name__)

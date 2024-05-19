@@ -19,7 +19,7 @@ from jinja2 import (
 )
 
 from causy.graph_model import graph_model_factory
-from causy.interfaces import (
+from causy.models import (
     CausyAlgorithmReference,
     CausyAlgorithmReferenceType,
     CausyResult,
@@ -30,7 +30,8 @@ from causy.serialization import (
     CausyJSONEncoder,
 )
 from causy.variables import validate_variable_values, resolve_variables
-from causy.workspaces.interfaces import Workspace, Experiment, DataLoader
+from causy.workspaces.models import Workspace, Experiment
+from causy.data_loader import DataLoaderReference
 
 app = typer.Typer()
 
@@ -190,7 +191,7 @@ def _create_data_loader(workspace: Workspace) -> Workspace:
             "Choose the file or enter the file name:",
         ).ask()
         data_loader_slug = slugify(data_loader_name, "_")
-        workspace.data_loaders[data_loader_slug] = DataLoader(
+        workspace.data_loaders[data_loader_slug] = DataLoaderReference(
             **{
                 "type": data_loader_type,
                 "reference": data_loader_path,
@@ -201,7 +202,7 @@ def _create_data_loader(workspace: Workspace) -> Workspace:
         JINJA_ENV.get_template("dataloader.py.tpl").stream(
             data_loader_name=data_loader_name
         ).dump(f"{data_loader_slug}.py")
-        workspace.data_loaders[data_loader_slug] = DataLoader(
+        workspace.data_loaders[data_loader_slug] = DataLoaderReference(
             **{
                 "type": data_loader_type,
                 "reference": f"{data_loader_slug}.DataLoader",
@@ -429,7 +430,7 @@ def init():
             JINJA_ENV.get_template("dataloader.py.tpl").stream(
                 data_loader_name=data_loader_name
             ).dump(f"{data_loader_slug}.py")
-            workspace.data_loaders[data_loader_slug] = DataLoader(
+            workspace.data_loaders[data_loader_slug] = DataLoaderReference(
                 **{
                     "type": data_loader_type,
                     "reference": f"{data_loader_slug}.DataLoader",

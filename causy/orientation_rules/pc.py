@@ -4,13 +4,11 @@ import itertools
 from causy.generators import AllCombinationsGenerator
 from causy.interfaces import (
     BaseGraphInterface,
-    TestResult,
-    TestResultAction,
     PipelineStepInterface,
-    ComparisonSettings,
     GeneratorInterface,
     PipelineStepInterfaceType,
 )
+from causy.models import ComparisonSettings, TestResultAction, TestResult
 from causy.variables import IntegerParameter, BoolParameter
 
 

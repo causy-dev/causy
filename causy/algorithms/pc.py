@@ -2,7 +2,7 @@ from causy.causal_effect_estimation.multivariate_regression import (
     ComputeDirectEffectsMultivariateRegression,
 )
 from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
-from causy.contrib.graph_ui import GraphUIExtension
+from causy.contrib.graph_ui import GraphUIExtensionInterface
 from causy.edge_types import (
     DirectedEdge,
     UndirectedEdge,
@@ -20,7 +20,8 @@ from causy.independence_tests.common import (
 from causy.common_pipeline_steps.calculation import (
     CalculatePearsonCorrelations,
 )
-from causy.interfaces import AS_MANY_AS_FIELDS, ComparisonSettings, CausyAlgorithm
+from causy.interfaces import AS_MANY_AS_FIELDS
+from causy.models import ComparisonSettings, CausyAlgorithm
 from causy.orientation_rules.pc import (
     ColliderTest,
     NonColliderTest,
@@ -51,7 +52,7 @@ PC_ORIENTATION_RULES = [
     ),
 ]
 
-PC_GRAPH_UI_EXTENSION = GraphUIExtension(
+PC_GRAPH_UI_EXTENSION = GraphUIExtensionInterface(
     edges=[
         DirectedEdgeUIConfig(),
         UndirectedEdgeUIConfig(),

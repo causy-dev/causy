@@ -7,7 +7,7 @@ from causy.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
 )
-from causy.interfaces import CausyAlgorithm, ComparisonSettings
+from causy.models import ComparisonSettings, CausyAlgorithm
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 from tests.utils import CausyTestCase
 

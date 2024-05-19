@@ -2,14 +2,12 @@ from typing import Tuple, List, Optional, Generic
 
 from causy.generators import AllCombinationsGenerator
 from causy.interfaces import (
-    TestResultAction,
     PipelineStepInterface,
-    ComparisonSettings,
     BaseGraphInterface,
-    TestResult,
     GeneratorInterface,
     PipelineStepInterfaceType,
 )
+from causy.models import ComparisonSettings, TestResultAction, TestResult
 
 
 class ColliderRuleFCI(

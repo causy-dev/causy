@@ -1,9 +1,7 @@
 import torch
-import random
 
 from causy.sample_generator import (
     TimeseriesSampleGenerator,
-    random_normal,
     SampleEdge,
     IIDSampleGenerator,
     TimeAwareNodeReference,

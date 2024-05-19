@@ -12,13 +12,11 @@ from causy.graph import GraphManager
 from causy.graph_utils import unpack_run
 from causy.interfaces import (
     PipelineStepInterface,
-    TestResultAction,
     LogicStepInterface,
     BaseGraphInterface,
     GraphModelInterface,
-    CausyAlgorithm,
-    ActionHistoryStep,
 )
+from causy.models import TestResultAction, CausyAlgorithm, ActionHistoryStep
 from causy.variables import resolve_variables_to_algorithm, resolve_variables
 
 logger = logging.getLogger(__name__)

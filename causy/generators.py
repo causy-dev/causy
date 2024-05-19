@@ -6,12 +6,12 @@ from typing import Optional, Union, Dict
 from pydantic import BaseModel
 
 from causy.interfaces import (
-    ComparisonSettings,
     GeneratorInterface,
     BaseGraphInterface,
     GraphModelInterface,
     AS_MANY_AS_FIELDS,
 )
+from causy.models import ComparisonSettings
 from causy.graph_utils import load_pipeline_artefact_by_definition
 from causy.variables import IntegerParameter, BoolParameter
 

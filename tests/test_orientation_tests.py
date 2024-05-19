@@ -1,5 +1,5 @@
 from causy.graph import GraphManager
-from causy.interfaces import TestResult, TestResultAction, CausyAlgorithm
+from causy.models import TestResultAction, TestResult, CausyAlgorithm
 from causy.orientation_rules.pc import (
     ColliderTest,
     NonColliderTest,

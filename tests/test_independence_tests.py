@@ -1,12 +1,6 @@
-import random
-
-import torch
-
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_model import graph_model_factory
-from causy.graph_utils import retrieve_edges
-from causy.interfaces import CausyAlgorithm
-from causy.math_utils import sum_lists
+from causy.models import CausyAlgorithm
 from causy.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,

@@ -5,11 +5,10 @@ import torch
 from causy.generators import PairsWithEdgesInBetweenGenerator
 from causy.interfaces import (
     BaseGraphInterface,
-    TestResult,
     PipelineStepInterface,
-    TestResultAction,
     GeneratorInterface,
 )
+from causy.models import TestResultAction, TestResult
 
 
 class ComputeDirectEffectsMultivariateRegression(PipelineStepInterface):

@@ -3,11 +3,10 @@ from typing import Tuple, List, Generic
 
 from causy.interfaces import (
     PipelineStepInterface,
-    TestResult,
     BaseGraphInterface,
-    TestResultAction,
     PipelineStepInterfaceType,
 )
+from causy.models import TestResultAction, TestResult
 
 logger = logging.getLogger(__name__)
 
