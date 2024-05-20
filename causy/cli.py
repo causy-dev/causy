@@ -3,8 +3,9 @@ import logging
 
 import typer
 
+from causy.data_loader import JSONDataLoader
 from causy.graph_model import graph_model_factory
-from causy.interfaces import (
+from causy.models import (
     CausyResult,
     ActionHistoryStep,
     CausyAlgorithmReferenceType,
@@ -67,8 +68,9 @@ def execute(
     else:
         raise ValueError("Either pipeline_file or algorithm must be specified")
 
+    dl = JSONDataLoader(data_file)
     # initialize from json
-    model.create_graph_from_data(load_json(data_file))
+    model.create_graph_from_data(dl)
 
     # TODO: I should become a configurable skeleton builder
     model.create_all_possible_edges()

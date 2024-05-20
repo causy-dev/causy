@@ -231,6 +231,7 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
         chunk_size_parallel_processing: Optional[IntegerParameter] = None,
         parallel: Optional[BoolParameter] = None,
         display_name: Optional[StringParameter] = None,
+        **kwargs,
     ) -> None:
         super().__init__()
         if generator:

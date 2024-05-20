@@ -1,4 +1,5 @@
 import json
+import logging
 from datetime import datetime
 from typing import Dict, List
 
@@ -19,6 +20,7 @@ from jinja2 import (
 )
 
 from causy.graph_model import graph_model_factory
+from causy.graph_utils import hash_dictionary
 from causy.models import (
     CausyAlgorithmReference,
     CausyAlgorithmReferenceType,
@@ -31,9 +33,10 @@ from causy.serialization import (
 )
 from causy.variables import validate_variable_values, resolve_variables
 from causy.workspaces.models import Workspace, Experiment
-from causy.data_loader import DataLoaderReference
+from causy.data_loader import DataLoaderReference, load_data_loader
 
 app = typer.Typer()
+logger = logging.getLogger(__name__)
 
 WORKSPACE_FILE_NAME = "workspace.yml"
 
@@ -232,18 +235,10 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> CausyRe
     typer.echo(f"Using variables: {variables}")
 
     typer.echo(f"Loading Data: {experiment.data_loader}")
-    if workspace.data_loaders[experiment.data_loader].type == "json":
-        with open(workspace.data_loaders[experiment.data_loader].reference, "r") as f:
-            data = json.load(f)
-    elif workspace.data_loaders[experiment.data_loader].type == "jsonl":
-        with open(workspace.data_loaders[experiment.data_loader].reference, "r") as f:
-            # TODO: use srsly.json_loads
-            data = [json.loads(line) for line in f]
-    elif workspace.data_loaders[experiment.data_loader].type == "dynamic":
-        raise NotImplementedError("Dynamic data loading not implemented yet")
+    data_loader = load_data_loader(workspace.data_loaders[experiment.data_loader])
 
     model = graph_model_factory(pipeline)()
-    model.create_graph_from_data(data)
+    model.create_graph_from_data(data_loader)
     model.create_all_possible_edges()
     model.execute_pipeline_steps()
     return CausyResult(
@@ -251,6 +246,10 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> CausyRe
         action_history=model.graph.graph.action_history,
         edges=model.graph.retrieve_edges(),
         nodes=model.graph.nodes,
+        variables=variables,
+        data_loader_hash=data_loader.hash(),
+        algorithm_hash=pipeline.hash(),
+        variables_hash=hash_dictionary(variables),
     )
 
 
@@ -321,6 +320,58 @@ def create_pipeline():
     workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
     with open(workspace_path, "w") as f:
         f.write(pydantic_yaml.to_yaml_str(workspace))
+
+
+def _experiment_needs_reexecution(workspace: Workspace, experiment_name: str) -> bool:
+    """
+    Check if an experiment needs to be re-executed.
+    :param workspace:
+    :param experiment_name:
+    :return:
+    """
+    if experiment_name not in workspace.experiments:
+        raise ValueError(f"Experiment {experiment_name} not found in the workspace")
+
+    versions = _load_experiment_versions(workspace, experiment_name)
+
+    if len(versions) == 0:
+        logger.info(f"Experiment {experiment_name} not found in the file system.")
+        return True
+
+    latest_experiment = _load_latest_experiment_result(workspace, experiment_name)
+    experiment = workspace.experiments[experiment_name]
+    latest_experiment = CausyResult(**latest_experiment)
+    if (
+        latest_experiment.algorithm_hash is None
+        or latest_experiment.data_loader_hash is None
+    ):
+        logger.info(f"Experiment {experiment_name} has no hashes.")
+        return True
+
+    pipeline = load_algorithm_by_reference(
+        workspace.pipelines[experiment.pipeline].type,
+        workspace.pipelines[experiment.pipeline].reference,
+    )
+    model = graph_model_factory(pipeline)()
+    if latest_experiment.algorithm_hash != model.algorithm.hash():
+        logger.info(f"Experiment {experiment_name} has a different pipeline.")
+        return True
+
+    data_loder = load_data_loader(workspace.data_loaders[experiment.data_loader])
+    if latest_experiment.data_loader_hash != data_loder.hash():
+        logger.info(
+            f"Experiment {experiment_name} has a different data loader/dataset."
+        )
+        return True
+
+    validate_variable_values(pipeline, experiment.variables)
+    variables = resolve_variables(pipeline.variables, experiment.variables)
+
+    if latest_experiment.variables_hash != hash_dictionary(variables):
+        logger.info(f"Experiment {experiment_name} has different variables.")
+        return True
+
+    return False
 
 
 @app.command()
@@ -453,11 +504,23 @@ def init():
 
 
 @app.command()
-def execute(experiment_name=None):
+def execute(experiment_name=None, force_reexecution=False):
+    """
+    Execute an experiment or all experiments in the workspace.
+    :param experiment_name: name of the experiment to execute (as defined in the workspace) - if defined only this experiment will be executed
+    :param force_reexecution: if True, all experiments will be re-executed regardless of there were changes or not
+    :return:
+    """
     workspace = _current_workspace()
     if experiment_name is None:
         # execute all experiments
         for experiment_name, experiment in workspace.experiments.items():
+            if (
+                not _experiment_needs_reexecution(workspace, experiment_name)
+                and not force_reexecution
+            ):
+                typer.echo(f"Skipping experiment: {experiment_name}. (no changes)")
+                continue
             typer.echo(f"Executing experiment: {experiment_name}")
             result = _execute_experiment(workspace, experiment)
             _save_experiment_result(workspace, experiment_name, result)

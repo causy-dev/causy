@@ -7,6 +7,7 @@ from typing import Optional, List, Dict, Callable, Union, Any
 
 import torch.multiprocessing as mp
 
+from causy.data_loader import AbstractDataLoader
 from causy.edge_types import DirectedEdge
 from causy.graph import GraphManager
 from causy.graph_utils import unpack_run
@@ -17,7 +18,10 @@ from causy.interfaces import (
     GraphModelInterface,
 )
 from causy.models import TestResultAction, CausyAlgorithm, ActionHistoryStep
-from causy.variables import resolve_variables_to_algorithm, resolve_variables
+from causy.variables import (
+    resolve_variables_to_algorithm_for_pipeline_steps,
+    resolve_variables,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -123,8 +127,38 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         return graph
 
+    def _create_from_data_loader(self, data_loader: AbstractDataLoader):
+        """
+        Create a graph from a data loader
+        :param data_loader: the data loader
+        :return: the graph
+        """
+        nodes: Dict[str, List[float]] = {}
+        keys = None
+
+        # load nodes into node dict
+        for row in data_loader.load():
+            if isinstance(row, dict) and "_dict" in row:
+                # edge case for when data is in a dict of lists
+                return self.__create_graph_from_dict(row["_dict"])
+
+            if keys is None:
+                keys = row.keys()
+                for key in sorted(keys):
+                    nodes[key] = []
+
+            for key in keys:
+                nodes[key].append(row[key])
+
+        graph = GraphManager()
+        for key in keys:
+            graph.add_node(key, nodes[key], id_=key)
+
+        return graph
+
     def create_graph_from_data(
-        self, data: Union[List[Dict[str, float]], Dict[str, List[float]]]
+        self,
+        data: Union[List[Dict[str, float]], Dict[str, List[float]], AbstractDataLoader],
     ):
         """
         Create a graph from data
@@ -132,7 +166,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :return:
         """
 
-        if isinstance(data, dict):
+        if isinstance(data, AbstractDataLoader):
+            graph = self._create_from_data_loader(data)
+        elif isinstance(data, dict):
             graph = self.__create_graph_from_dict(data)
         else:
             graph = self.__create_graph_from_list(data)
@@ -364,7 +400,7 @@ def graph_model_factory(
         variables = {}
 
     if len(variables) > 0:
-        algorithm.pipeline_steps = resolve_variables_to_algorithm(
+        algorithm.pipeline_steps = resolve_variables_to_algorithm_for_pipeline_steps(
             algorithm.pipeline_steps, variables
         )
 

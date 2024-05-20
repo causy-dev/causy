@@ -1,5 +1,7 @@
+import hashlib
 import importlib
-from typing import List, Tuple
+import json
+from typing import List, Tuple, Dict
 
 from causy.variables import deserialize_variable_references
 
@@ -48,3 +50,20 @@ def retrieve_edges(graph) -> List[Tuple[str, str]]:
         for v in graph.edges[u]:
             edges.append((u, v))
     return edges
+
+
+def hash_dictionary(dct: Dict):
+    """
+    Hash a dictionary using SHA256 (e.g. for caching)
+    :param dct:
+    :return:
+    """
+    return hashlib.sha256(
+        json.dumps(
+            dct,
+            ensure_ascii=False,
+            sort_keys=True,
+            indent=None,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()

@@ -15,10 +15,6 @@ import logging
 
 from causy.interfaces import (
     NodeInterface,
-    CausyAlgorithm,
-    CausyAlgorithmReference,
-    CausyResult,
-    CausyAlgorithmReferenceType,
 )
 from causy.serialization import load_algorithm_by_reference, load_json
 from causy.workspaces.cli import (
@@ -27,7 +23,13 @@ from causy.workspaces.cli import (
     _load_experiment_result,
     _load_experiment_versions,
 )
-from causy.workspaces.interfaces import Workspace, Experiment
+from causy.workspaces.models import Workspace, Experiment
+from causy.models import (
+    CausyResult,
+    CausyAlgorithmReference,
+    CausyAlgorithmReferenceType,
+    CausyAlgorithm,
+)
 
 logger = logging.getLogger(__name__)
 

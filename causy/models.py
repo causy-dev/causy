@@ -1,10 +1,12 @@
 import enum
+import hashlib
+import json
 from datetime import datetime
-from typing import Optional, Dict, List, Union
+from typing import Optional, Dict, List, Union, Any
 
 from pydantic import BaseModel, computed_field, Field
 
-from causy.graph_utils import serialize_module_name
+from causy.graph_utils import serialize_module_name, hash_dictionary
 from causy.interfaces import (
     AS_MANY_AS_FIELDS,
     NodeInterface,
@@ -70,6 +72,9 @@ class CausyAlgorithm(BaseModel):
     extensions: Optional[List[CausyExtensionInterface]] = None
     variables: Optional[List[Union[VariableInterfaceType]]] = None
 
+    def hash(self) -> str:
+        return hash_dictionary(self.model_dump())
+
 
 class ActionHistoryStep(BaseModel):
     name: str
@@ -84,3 +89,7 @@ class CausyResult(BaseModel):
     nodes: Dict[str, NodeInterface]
     edges: List[EdgeInterface]
     action_history: List[ActionHistoryStep]
+    variables: Optional[Dict[str, Any]] = None
+    data_loader_hash: Optional[str] = None
+    algorithm_hash: Optional[str] = None
+    variables_hash: Optional[str] = None
