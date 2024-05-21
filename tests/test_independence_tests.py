@@ -1,7 +1,7 @@
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_model import graph_model_factory
 from causy.models import CausyAlgorithm
-from causy.independence_tests.common import (
+from causy.causal_discovery.constraint.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
     ExtendedPartialCorrelationTestMatrix,

@@ -1,16 +1,16 @@
-from causy.algorithms.pc import PC_EDGE_TYPES
+from causy.causal_discovery.constraint.algorithms.pc import PC_EDGE_TYPES
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_model import graph_model_factory
-from causy.independence_tests.common import (
+from causy.causal_discovery.constraint.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
     ExtendedPartialCorrelationTestMatrix,
 )
 from causy.models import CausyAlgorithm
-from causy.orientation_rules.pc import ColliderTest
+from causy.causal_discovery.constraint.orientation_rules.pc import ColliderTest
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 
-from tests.utils import CausyTestCase, dump_fixture_graph, load_fixture_graph
+from tests.utils import CausyTestCase, load_fixture_graph
 
 
 class PCTestTestCase(CausyTestCase):

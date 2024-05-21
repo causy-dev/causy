@@ -1,6 +1,6 @@
 import csv
 
-from causy.algorithms import PC
+from causy.causal_discovery.constraint.algorithms import PC
 from causy.graph_utils import retrieve_edges
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 

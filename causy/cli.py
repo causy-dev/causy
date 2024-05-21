@@ -7,21 +7,20 @@ from causy.data_loader import JSONDataLoader
 from causy.graph_model import graph_model_factory
 from causy.models import (
     CausyResult,
-    ActionHistoryStep,
     CausyAlgorithmReferenceType,
 )
 from causy.serialization import (
     serialize_algorithm,
     load_algorithm_from_specification,
     CausyJSONEncoder,
-    load_algorithm_from_reference,
     load_json,
 )
 from causy.graph_utils import (
     retrieve_edges,
 )
-from causy.ui import ui as ui_app
+from causy.ui.cli import ui as ui_app
 from causy.workspaces.cli import app as workspaces_app
+from causy.causal_discovery import AVAILABLE_ALGORITHMS
 
 app = typer.Typer()
 
@@ -32,7 +31,7 @@ app.command(name="ui", help="run causy ui")(ui_app)
 @app.command()
 def eject(algorithm: str, output_file: str):
     typer.echo(f"💾 Loading algorithm {algorithm}")
-    model = load_algorithm_from_reference(algorithm)()
+    model = AVAILABLE_ALGORITHMS[algorithm]()
     result = serialize_algorithm(model, algorithm_name=algorithm)
     typer.echo(f"💾 Saving algorithm {algorithm} to {output_file}")
     with open(output_file, "w") as file:
@@ -59,7 +58,7 @@ def execute(
         }
     elif algorithm:
         typer.echo(f"💾 Creating pipeline from algorithm {algorithm}")
-        model = load_algorithm_from_reference(algorithm)()
+        model = AVAILABLE_ALGORITHMS[algorithm]()
         algorithm_reference = {
             "type": CausyAlgorithmReferenceType.NAME,
             "reference": algorithm,

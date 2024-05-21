@@ -1,6 +1,6 @@
 from causy.graph import GraphManager
 from causy.models import TestResultAction, TestResult, CausyAlgorithm
-from causy.orientation_rules.pc import (
+from causy.causal_discovery.constraint.orientation_rules.pc import (
     ColliderTest,
     NonColliderTest,
     FurtherOrientTripleTest,

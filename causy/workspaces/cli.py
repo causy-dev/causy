@@ -1,7 +1,7 @@
 import json
 import logging
 from datetime import datetime
-from typing import Dict, List
+from typing import List
 
 import pydantic_yaml
 import questionary
@@ -9,7 +9,7 @@ import typer
 import os
 
 from markdown.extensions.toc import slugify
-from pydantic_yaml import parse_yaml_raw_as, to_yaml_str
+from pydantic_yaml import to_yaml_str
 from jinja2 import (
     Environment,
     select_autoescape,
@@ -26,7 +26,6 @@ from causy.models import (
     CausyResult,
 )
 from causy.serialization import (
-    load_algorithm_from_specification,
     load_algorithm_by_reference,
     CausyJSONEncoder,
 )
@@ -96,7 +95,7 @@ def _create_pipeline(workspace: Workspace = None) -> Workspace:
     ).ask()
 
     if pipeline_creation == "PRECONFIGURED":
-        from causy.algorithms import AVAILABLE_ALGORITHMS
+        from causy.causal_discovery.constraint.algorithms import AVAILABLE_ALGORITHMS
 
         pipeline_name = questionary.select(
             "Which pipeline do you want to use?", choices=AVAILABLE_ALGORITHMS.keys()
@@ -110,7 +109,7 @@ def _create_pipeline(workspace: Workspace = None) -> Workspace:
         )
         workspace.pipelines[pipeline_name] = pipeline
     elif pipeline_creation == "EJECT":
-        from causy.algorithms import AVAILABLE_ALGORITHMS
+        from causy.causal_discovery.constraint.algorithms import AVAILABLE_ALGORITHMS
 
         pipeline_skeleton = questionary.select(
             "Which pipeline do you want to use?", choices=AVAILABLE_ALGORITHMS.keys()

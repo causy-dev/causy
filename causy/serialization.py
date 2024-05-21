@@ -12,14 +12,7 @@ from pydantic import parse_obj_as
 from causy.graph_utils import load_pipeline_steps_by_definition
 from causy.models import CausyAlgorithmReferenceType
 from causy.variables import deserialize_variable
-
-
-def load_algorithm_from_reference(algorithm: str):
-    st_function = importlib.import_module("causy.algorithms")
-    st_function = getattr(st_function, algorithm)
-    if not st_function:
-        raise ValueError(f"Algorithm {algorithm} not found")
-    return st_function
+from causy.causal_discovery import AVAILABLE_ALGORITHMS
 
 
 def serialize_algorithm(model, algorithm_name: str = None):
@@ -74,7 +67,7 @@ def load_algorithm_by_reference(reference_type: str, algorithm: str):
             raise ValueError("Invalid file format")
 
     elif reference_type == CausyAlgorithmReferenceType.NAME:
-        return load_algorithm_from_reference(algorithm)().algorithm
+        return AVAILABLE_ALGORITHMS[algorithm]().algorithm
     elif reference_type == CausyAlgorithmReferenceType.PYTHON_MODULE:
         st_function = importlib.import_module(algorithm)
         st_function = getattr(st_function, algorithm)

@@ -1,7 +1,7 @@
+from causy.causal_discovery.constraint.orientation_rules.fci import ColliderRuleFCI
 from causy.graph import GraphManager
 from causy.graph_model import graph_model_factory
 from causy.models import TestResultAction, TestResult, CausyAlgorithm
-from causy.orientation_rules.fci import ColliderRuleFCI
 
 from tests.utils import CausyTestCase
 

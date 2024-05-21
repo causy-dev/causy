@@ -20,6 +20,7 @@ click = "^8.1.7"
 questionary = "^2.0.1"
 jinja2 = "^3.1.4"
 markdown = "^3.6"
+httpx = "^0.27.0"
 
 
 [tool.poetry.group.dev.dependencies]

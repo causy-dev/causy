@@ -1,9 +1,8 @@
-from causy.algorithms.pc import PC_EDGE_TYPES
+from causy.causal_discovery.constraint.algorithms.pc import PC_EDGE_TYPES
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.generators import PairsWithNeighboursGenerator
 from causy.graph_model import graph_model_factory
-from causy.graph_utils import retrieve_edges
-from causy.independence_tests.common import (
+from causy.causal_discovery.constraint.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
 )

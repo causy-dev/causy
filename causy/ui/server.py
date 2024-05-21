@@ -1,65 +1,33 @@
+import logging
 import os
 from datetime import datetime
 from importlib.metadata import version
+from typing import Dict, Any, List, Optional
 
 import fastapi
 import typer
 import uvicorn
-from typing import Any, Dict, Optional, Union, List
 
+from causy.models import (
+    CausyAlgorithmReference,
+    CausyAlgorithm,
+    CausyAlgorithmReferenceType,
+)
+from causy.serialization import load_algorithm_by_reference
+from causy.ui.models import CausyExtendedResult, ExtendedExperiment, ExperimentVersion
+from causy.workspaces.cli import (
+    _load_latest_experiment_result,
+    _load_experiment_versions,
+    _load_experiment_result,
+)
+from causy.workspaces.models import Workspace
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, UUID4
 from starlette.staticfiles import StaticFiles
 
-import logging
-
-from causy.interfaces import (
-    NodeInterface,
-)
-from causy.serialization import load_algorithm_by_reference, load_json
-from causy.workspaces.cli import (
-    _current_workspace,
-    _load_latest_experiment_result,
-    _load_experiment_result,
-    _load_experiment_versions,
-)
-from causy.workspaces.models import Workspace, Experiment
-from causy.models import (
-    CausyResult,
-    CausyAlgorithmReference,
-    CausyAlgorithmReferenceType,
-    CausyAlgorithm,
-)
-
 logger = logging.getLogger(__name__)
-
 API_ROUTES = APIRouter()
-
-MODEL = None
-
-
-class NodePosition(BaseModel):
-    x: Optional[float]
-    y: Optional[float]
-
-
-class ExperimentVersion(BaseModel):
-    version: int
-    name: str
-
-
-class ExtendedExperiment(Experiment):
-    versions: Optional[List[ExperimentVersion]] = None
-    name: str = None
-
-
-class PositionedNode(NodeInterface):
-    position: Optional[NodePosition] = None
-
-
-class CausyExtendedResult(CausyResult):
-    nodes: Dict[Union[UUID4, str], PositionedNode]
-    version: Optional[int] = None
+MODEL: Optional[CausyExtendedResult] = None
+WORKSPACE: Optional[Workspace] = None
 
 
 @API_ROUTES.get("/status", response_model=Dict[str, Any])
@@ -180,33 +148,55 @@ async def get_algorithm(reference_type: str, reference: str):
         raise HTTPException(400, str(e))
 
 
-def server(result: Dict[str, Any] = None, workspace=None):
-    """Create the FastAPI server."""
+def _create_ui_app(with_static=True):
+    """Get the server."""
     app = fastapi.FastAPI(
         title="causy-api",
         version=version("causy"),
         description="causys internal api to serve data from the result files",
     )
+    app.include_router(API_ROUTES, prefix="/api/v1", tags=["api"])
+    if with_static:
+        app.mount(
+            "",
+            StaticFiles(
+                directory=os.path.join(os.path.dirname(__file__), "static"), html=True
+            ),
+            name="static",
+        )
+    return app
+
+
+def _set_model(result: Dict[str, Any]):
+    """Set the model."""
     global MODEL
+    # for testing
+    if result is None:
+        MODEL = None
+        return
+
+    result["algorithm"] = CausyAlgorithmReference(**result["algorithm"])
+    MODEL = CausyExtendedResult(**result)
+
+
+def _set_workspace(workspace: Workspace):
+    """Set the workspace."""
     global WORKSPACE
+    WORKSPACE = workspace
+
+
+def server(result: Dict[str, Any] = None, workspace: Workspace = None):
+    """Create the FastAPI server."""
+    app = _create_ui_app()
+
     if result:
-        result["algorithm"] = CausyAlgorithmReference(**result["algorithm"])
-        MODEL = CausyExtendedResult(**result)
+        _set_model(result)
 
     if workspace:
-        WORKSPACE = workspace
+        _set_workspace(workspace)
 
     if not MODEL and not WORKSPACE:
         raise ValueError("No model or workspace provided")
-
-    app.include_router(API_ROUTES, prefix="/api/v1", tags=["api"])
-    app.mount(
-        "",
-        StaticFiles(
-            directory=os.path.join(os.path.dirname(__file__), "static"), html=True
-        ),
-        name="static",
-    )
 
     host = os.getenv("HOST", "localhost")
     port = int(os.getenv("PORT", "8000"))
@@ -228,17 +218,3 @@ def server(result: Dict[str, Any] = None, workspace=None):
     server_config = uvicorn.Config(app, host=host, port=port, log_level="error")
     server = uvicorn.Server(server_config)
     return server_config, server
-
-
-def ui(result_file: str = None):
-    """Start the causy UI."""
-    if not result_file:
-        workspace = _current_workspace()
-        server_config, server_runner = server(workspace=workspace)
-    else:
-        result = load_json(result_file)
-        server_config, server_runner = server(result=result)
-
-    typer.launch(f"http://{server_config.host}:{server_config.port}")
-    typer.echo(f"🚀 Starting server at http://{server_config.host}:{server_config.port}")
-    server_runner.run()

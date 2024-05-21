@@ -12,7 +12,7 @@ from causy.edge_types import (
 from causy.generators import PairsWithNeighboursGenerator, RandomSampleGenerator
 from causy.graph_model import graph_model_factory
 from causy.common_pipeline_steps.logic import Loop, ApplyActionsTogether
-from causy.independence_tests.common import (
+from causy.causal_discovery.constraint.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
     ExtendedPartialCorrelationTestMatrix,
@@ -22,7 +22,7 @@ from causy.common_pipeline_steps.calculation import (
 )
 from causy.interfaces import AS_MANY_AS_FIELDS
 from causy.models import ComparisonSettings, CausyAlgorithm
-from causy.orientation_rules.pc import (
+from causy.causal_discovery.constraint.orientation_rules.pc import (
     ColliderTest,
     NonColliderTest,
     FurtherOrientTripleTest,
@@ -31,7 +31,6 @@ from causy.orientation_rules.pc import (
 )
 from causy.variables import (
     FloatVariable,
-    StringVariable,
     VariableReference,
     IntegerVariable,
 )
