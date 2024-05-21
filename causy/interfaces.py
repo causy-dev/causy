@@ -48,13 +48,20 @@ class NodeInterface(BaseModel, ABC):
         arbitrary_types_allowed = True
 
 
-class EdgeTypeInterface(BaseModel, ABC):
+EdgeTypeInterfaceType = TypeVar("EdgeTypeInterfaceType")
+
+
+class EdgeTypeInterface(ABC, BaseModel, Generic[EdgeTypeInterfaceType]):
     """
     Edge type interface for the graph
     An edge type is defined by a name
     """
 
     name: str
+
+    # define if it is a directed or undirected edge type (default is undirected). We use this e.g. when we compare the graph.
+    IS_DIRECTED: bool = True
+    STR_REPRESENTATION: str = "-"
 
     def __hash__(self):
         return hash(self.name)
@@ -82,6 +89,30 @@ class EdgeInterface(BaseModel, ABC):
 
     class Config:
         arbitrary_types_allowed = True
+
+    def __eq__(self, other):
+        """
+        Check if two edges are equal by comparing the nodes and the edge type
+        :param other:
+        :return:
+        """
+        if not isinstance(other, EdgeInterface):
+            return False
+
+        if self.edge_type != other.edge_type:
+            return False
+        if self.edge_type.IS_DIRECTED:
+            return self.u == other.u and self.v == other.v
+        else:
+            return self.is_connection_between_same_nodes(other)
+
+    def is_connection_between_same_nodes(self, edge):
+        return (
+            self.u == edge.u
+            and self.v == edge.v
+            or self.u == edge.v
+            and self.v == edge.u
+        )
 
 
 class TestResultInterface(BaseModel, ABC):

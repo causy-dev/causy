@@ -1,7 +1,7 @@
 import json
 import logging
 from datetime import datetime
-from typing import List
+from typing import List, Dict
 
 import pydantic_yaml
 import questionary
@@ -17,6 +17,8 @@ from jinja2 import (
     FileSystemLoader,
     PackageLoader,
 )
+from rich.console import Console
+from rich.table import Table
 
 from causy.graph_model import graph_model_factory
 from causy.graph_utils import hash_dictionary
@@ -28,6 +30,7 @@ from causy.models import (
 from causy.serialization import (
     load_algorithm_by_reference,
     CausyJSONEncoder,
+    deserialize_result,
 )
 from causy.variables import validate_variable_values, resolve_variables
 from causy.workspaces.models import Workspace, Experiment
@@ -38,7 +41,6 @@ workspace_app = typer.Typer()
 pipeline_app = typer.Typer()
 experiment_app = typer.Typer()
 dataloader_app = typer.Typer()
-
 logger = logging.getLogger(__name__)
 
 NO_COLOR = os.environ.get("NO_COLOR", False)
@@ -256,11 +258,11 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> Result:
 
     typer.echo(f"Loading Data: {experiment.data_loader}")
     data_loader = load_data_loader(workspace.data_loaders[experiment.data_loader])
-
-    model = graph_model_factory(pipeline)()
+    model = graph_model_factory(pipeline, experiment.variables)()
     model.create_graph_from_data(data_loader)
     model.create_all_possible_edges()
     model.execute_pipeline_steps()
+
     return Result(
         algorithm=workspace.pipelines[experiment.pipeline],
         action_history=model.graph.graph.action_history,
@@ -292,7 +294,7 @@ def _load_latest_experiment_result(
 
 def _load_experiment_result(
     workspace: Workspace, experiment_name: str, version_number: int
-) -> Experiment:
+) -> Dict[str, any]:
     if experiment_name not in workspace.experiments:
         raise ValueError(f"Experiment {experiment_name} not found in the workspace")
 
@@ -384,7 +386,7 @@ def _experiment_needs_reexecution(workspace: Workspace, experiment_name: str) ->
 
     latest_experiment = _load_latest_experiment_result(workspace, experiment_name)
     experiment = workspace.experiments[experiment_name]
-    latest_experiment = Result(**latest_experiment)
+    latest_experiment = deserialize_result(latest_experiment)
     if (
         latest_experiment.algorithm_hash is None
         or latest_experiment.data_loader_hash is None
@@ -396,7 +398,15 @@ def _experiment_needs_reexecution(workspace: Workspace, experiment_name: str) ->
         workspace.pipelines[experiment.pipeline].type,
         workspace.pipelines[experiment.pipeline].reference,
     )
-    model = graph_model_factory(pipeline)()
+
+    validate_variable_values(pipeline, experiment.variables)
+    variables = resolve_variables(pipeline.variables, experiment.variables)
+
+    if latest_experiment.variables_hash != hash_dictionary(variables):
+        logger.info(f"Experiment {experiment_name} has different variables.")
+        return True
+
+    model = graph_model_factory(pipeline, variables)()
     if latest_experiment.algorithm_hash != model.algorithm.hash():
         logger.info(f"Experiment {experiment_name} has a different pipeline.")
         return True
@@ -406,13 +416,6 @@ def _experiment_needs_reexecution(workspace: Workspace, experiment_name: str) ->
         logger.info(
             f"Experiment {experiment_name} has a different data loader/dataset."
         )
-        return True
-
-    validate_variable_values(pipeline, experiment.variables)
-    variables = resolve_variables(pipeline.variables, experiment.variables)
-
-    if latest_experiment.variables_hash != hash_dictionary(variables):
-        logger.info(f"Experiment {experiment_name} has different variables.")
         return True
 
     return False
@@ -709,6 +712,117 @@ def execute(experiment_name: str = None, force_reexecution: bool = False):
         result = _execute_experiment(workspace, experiment)
 
         _save_experiment_result(workspace, experiment_name, result)
+
+
+@workspace_app.command()
+def diff(experiment_names: List[str], only_differences: bool = False):
+    """
+    Show the differences between multiple experiment results.
+    """
+    workspace = _current_workspace()
+    if len(experiment_names) < 2:
+        show_error("Please provide at least two experiment names/versions.")
+        return
+
+    experiments_to_compare = []
+    resolved_experiments = []
+
+    # check if the experiment strings are experiments or experiment_versions and load the respective experiments/versions
+    for experiment_name in experiment_names:
+        if experiment_name not in workspace.experiments:
+            potential_version = experiment_name.split("_")[-1]
+            try:
+                version = int(potential_version)
+            except ValueError:
+                show_error(f"Experiment {experiment_name} not found in the workspace")
+                return
+            experiment_name = "_".join(experiment_name.split("_")[:-1])
+            if version not in _load_experiment_versions(workspace, experiment_name):
+                show_error(
+                    f"Version {version} not found for experiment {experiment_name}"
+                )
+                return
+            experiment_result = deserialize_result(
+                _load_experiment_result(workspace, experiment_name, version)
+            )
+            experiment = workspace.experiments[experiment_name]
+            experiment_version = f"{experiment_name}_{version}"
+
+        else:
+            experiment = workspace.experiments[experiment_name]
+            experiment_result = deserialize_result(
+                _load_latest_experiment_result(workspace, experiment_name)
+            )
+            experiment_version = f"{experiment_name}_latest"
+
+        experiments_to_compare.append(
+            {
+                "result": experiment_result,
+                "experiment": experiment,
+                "version": experiment_version,
+            }
+        )
+        resolved_experiments.append(experiment_version)
+    find_equivalents = {}
+
+    # find the differences between all experiments and the differences for each of the other edges
+
+    for experiment in experiments_to_compare:
+        for edge in experiment["result"].edges:
+            u, v = sorted([edge.u.name, edge.v.name])
+            if u not in find_equivalents:
+                find_equivalents[u] = {}
+            if v not in find_equivalents[u]:
+                find_equivalents[u][v] = {}
+
+            if experiment["version"] in find_equivalents[u][v]:
+                if find_equivalents[u][v][experiment["version"]] != edge:
+                    typer.echo(
+                        f"Experiment {experiment['experiment']} has an inconsistent edge {u} -> {v}"
+                    )
+            else:
+                find_equivalents[u][v][experiment["version"]] = edge
+
+    experiment_table = []
+
+    for node_u, s in find_equivalents.items():
+        for node_v, result in s.items():
+            experiment_table_row = {exp: None for exp in resolved_experiments}
+            for experiment, edge in result.items():
+                experiment_table_row[experiment] = edge
+
+            experiment_table.append(experiment_table_row)
+
+    table = Table()
+    table.add_column("Edge")
+
+    for experiment in resolved_experiments:
+        table.add_column(experiment, justify="center")
+
+    for row in experiment_table:
+        elements = [key for key in row.values()]
+        first_element = None
+        for e in elements:
+            if e is not None:
+                first_element = e
+                break
+
+        all_elements_same = all([e == first_element for e in elements])
+        if only_differences and all_elements_same:
+            continue
+        table.add_row(
+            *[f"{first_element.u.name} - {first_element.v.name}"]
+            + [
+                f"{row[experiment].edge_type.STR_REPRESENTATION}"
+                if row[experiment]
+                else ""
+                for experiment in resolved_experiments
+            ],
+            style="green" if all_elements_same else "red",
+        )
+
+    console = Console()
+    console.print(table)
 
 
 workspace_app.add_typer(pipeline_app, name="pipeline", help="Manage pipelines")

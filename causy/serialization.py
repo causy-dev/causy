@@ -1,3 +1,4 @@
+import copy
 import datetime
 import importlib
 import json
@@ -9,8 +10,9 @@ import torch
 import yaml
 from pydantic import parse_obj_as
 
+from causy.edge_types import EDGE_TYPES
 from causy.graph_utils import load_pipeline_steps_by_definition
-from causy.models import CausyAlgorithmReferenceType
+from causy.models import CausyAlgorithmReferenceType, Result, AlgorithmReference
 from causy.variables import deserialize_variable
 from causy.causal_discovery import AVAILABLE_ALGORITHMS
 
@@ -67,7 +69,7 @@ def load_algorithm_by_reference(reference_type: str, algorithm: str):
             raise ValueError("Invalid file format")
 
     elif reference_type == CausyAlgorithmReferenceType.NAME:
-        return AVAILABLE_ALGORITHMS[algorithm]().algorithm
+        return copy.deepcopy(AVAILABLE_ALGORITHMS[algorithm]()._original_algorithm)
     elif reference_type == CausyAlgorithmReferenceType.PYTHON_MODULE:
         st_function = importlib.import_module(algorithm)
         st_function = getattr(st_function, algorithm)
@@ -89,3 +91,14 @@ def load_json(pipeline_file: str):
     with open(pipeline_file, "r") as file:
         pipeline = json.loads(file.read())
     return pipeline
+
+
+def deserialize_result(result: Dict[str, Any], klass=Result):
+    """Deserialize the result."""
+
+    result["algorithm"] = AlgorithmReference(**result["algorithm"])
+    for i, edge in enumerate(result["edges"]):
+        result["edges"][i]["edge_type"] = EDGE_TYPES[edge["edge_type"]["name"]](
+            **edge["edge_type"]
+        )
+    return parse_obj_as(klass, result)

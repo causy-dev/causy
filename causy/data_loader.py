@@ -82,11 +82,15 @@ class JSONDataLoader(FileDataLoader):
         with open(self.reference, "r") as f:
             data = json.loads(f.read())
             if isinstance(data, list):
-                return iter(data)
+                for item in data:
+                    yield item
             elif isinstance(data, dict):
                 yield {"_dict": data}
                 return
-            return iter(data)
+            else:
+                raise ValueError(
+                    f"Invalid JSON format. Data in {self.reference} is of type {type(data)}."
+                )
 
 
 class JSONLDataLoader(FileDataLoader):

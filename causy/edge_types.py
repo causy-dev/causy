@@ -1,4 +1,5 @@
-from typing import Optional, List
+import enum
+from typing import Optional, List, Generic
 
 from causy.contrib.graph_ui import (
     EdgeTypeConfig,
@@ -8,11 +9,20 @@ from causy.contrib.graph_ui import (
 )
 from causy.interfaces import (
     EdgeTypeInterface,
+    EdgeTypeInterfaceType,
 )
 
 
-class DirectedEdge(EdgeTypeInterface):
-    name: str = "DIRECTED"
+class EdgeTypeEnum(enum.StrEnum):
+    DIRECTED = "directed"
+    UNDIRECTED = "undirected"
+    BIDIRECTED = "bidirected"
+
+
+class DirectedEdge(EdgeTypeInterface, Generic[EdgeTypeInterfaceType]):
+    name: str = EdgeTypeEnum.DIRECTED.name
+    IS_DIRECTED: bool = True
+    STR_REPRESENTATION: str = "-->"  # u --> v
 
 
 class DirectedEdgeUIConfig(EdgeTypeConfig):
@@ -47,8 +57,10 @@ class DirectedEdgeUIConfig(EdgeTypeConfig):
     ]
 
 
-class UndirectedEdge(EdgeTypeInterface):
-    name: str = "UNDIRECTED"
+class UndirectedEdge(EdgeTypeInterface, Generic[EdgeTypeInterfaceType]):
+    name: str = EdgeTypeEnum.UNDIRECTED.name
+    IS_DIRECTED: bool = False
+    STR_REPRESENTATION: str = "---"  # u --- v
 
 
 class UndirectedEdgeUIConfig(EdgeTypeConfig):
@@ -66,8 +78,10 @@ class UndirectedEdgeUIConfig(EdgeTypeConfig):
     )
 
 
-class BiDirectedEdge(EdgeTypeInterface):
-    name: str = "BIDIRECTED"
+class BiDirectedEdge(EdgeTypeInterface, Generic[EdgeTypeInterfaceType]):
+    name: str = EdgeTypeEnum.BIDIRECTED.name
+    IS_DIRECTED: bool = False  # This is a bi-directed edge - so it is not directed in the traditional sense
+    STR_REPRESENTATION: str = "<->"  # u <-> v
 
 
 class BiDirectedEdgeUIConfig(EdgeTypeConfig):
@@ -82,3 +96,10 @@ class BiDirectedEdgeUIConfig(EdgeTypeConfig):
         marker_start="ArrowClosed",
         marker_end="ArrowClosed",
     )
+
+
+EDGE_TYPES = {
+    DirectedEdge().name: DirectedEdge,
+    UndirectedEdge().name: UndirectedEdge,
+    BiDirectedEdge().name: BiDirectedEdge,
+}
