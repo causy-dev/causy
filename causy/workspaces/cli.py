@@ -3,7 +3,6 @@ import logging
 from datetime import datetime
 from typing import Dict, List
 
-import click
 import pydantic_yaml
 import questionary
 import typer
