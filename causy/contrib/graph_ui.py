@@ -3,7 +3,7 @@ from typing import Optional, List, Generic
 
 from pydantic import BaseModel
 
-from causy.interfaces import CausyExtensionInterface, CausyExtensionType
+from causy.interfaces import ExtensionInterface, ExtensionType
 
 
 class EdgeUIConfig(BaseModel):
@@ -42,6 +42,6 @@ class EdgeTypeConfig(BaseModel):
 
 
 class GraphUIExtensionInterface(
-    CausyExtensionInterface[CausyExtensionType], Generic[CausyExtensionType]
+    ExtensionInterface[ExtensionType], Generic[ExtensionType]
 ):
     edges: List[EdgeTypeConfig]

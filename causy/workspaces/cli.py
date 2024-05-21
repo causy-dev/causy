@@ -21,9 +21,9 @@ from jinja2 import (
 from causy.graph_model import graph_model_factory
 from causy.graph_utils import hash_dictionary
 from causy.models import (
-    CausyAlgorithmReference,
+    AlgorithmReference,
     CausyAlgorithmReferenceType,
-    CausyResult,
+    Result,
 )
 from causy.serialization import (
     load_algorithm_by_reference,
@@ -33,8 +33,15 @@ from causy.variables import validate_variable_values, resolve_variables
 from causy.workspaces.models import Workspace, Experiment
 from causy.data_loader import DataLoaderReference, load_data_loader
 
-app = typer.Typer()
+workspace_app = typer.Typer()
+
+pipeline_app = typer.Typer()
+experiment_app = typer.Typer()
+dataloader_app = typer.Typer()
+
 logger = logging.getLogger(__name__)
+
+NO_COLOR = os.environ.get("NO_COLOR", False)
 
 WORKSPACE_FILE_NAME = "workspace.yml"
 
@@ -51,6 +58,17 @@ JINJA_ENV = Environment(
 
 class WorkspaceNotFoundError(Exception):
     pass
+
+
+def show_error(message: str):
+    if NO_COLOR:
+        typer.echo(f"❌ {message}", err=True)
+    else:
+        typer.echo(typer.style(f"❌ {message}", fg=typer.colors.RED), err=True)
+
+
+def show_success(message: str):
+    typer.echo(f"✅ {message}")
 
 
 def _current_workspace(fail_if_none: bool = True) -> Workspace:
@@ -97,16 +115,19 @@ def _create_pipeline(workspace: Workspace = None) -> Workspace:
     if pipeline_creation == "PRECONFIGURED":
         from causy.causal_discovery.constraint.algorithms import AVAILABLE_ALGORITHMS
 
-        pipeline_name = questionary.select(
+        pipeline_reference = questionary.select(
             "Which pipeline do you want to use?", choices=AVAILABLE_ALGORITHMS.keys()
         ).ask()
-
-        pipeline_reference = AVAILABLE_ALGORITHMS[pipeline_name]
+        pipeline_reference = AVAILABLE_ALGORITHMS[pipeline_reference]
         # make pipeline reference as string
-        pipeline = CausyAlgorithmReference(
+        pipeline = AlgorithmReference(
             reference=pipeline_reference().algorithm.name,
             type=CausyAlgorithmReferenceType.NAME,
         )
+
+        pipeline_name = questionary.text("Enter the name of the pipeline").ask()
+        pipeline_name = slugify(pipeline_name, "_")
+
         workspace.pipelines[pipeline_name] = pipeline
     elif pipeline_creation == "EJECT":
         from causy.causal_discovery.constraint.algorithms import AVAILABLE_ALGORITHMS
@@ -120,17 +141,18 @@ def _create_pipeline(workspace: Workspace = None) -> Workspace:
         with open(f"{pipeline_slug}.yml", "w") as f:
             f.write(to_yaml_str(pipeline_reference()._original_algorithm))
 
-        pipeline = CausyAlgorithmReference(
+        pipeline = AlgorithmReference(
             reference=f"{pipeline_slug}.yml", type=CausyAlgorithmReferenceType.FILE
         )
-        workspace.pipelines[pipeline_slug] = pipeline
+
+        workspace.pipelines[pipeline_name] = pipeline
     elif pipeline_creation == "SKELETON":
         pipeline_name = questionary.text("Enter the name of the pipeline").ask()
         pipeline_slug = slugify(pipeline_name, "_")
         JINJA_ENV.get_template("pipeline.py.tpl").stream(
             pipeline_name=pipeline_name
         ).dump(f"{pipeline_slug}.py")
-        pipeline = CausyAlgorithmReference(
+        pipeline = AlgorithmReference(
             reference=f"{pipeline_slug}.PIPELINE",
             type=CausyAlgorithmReferenceType.PYTHON_MODULE,
         )
@@ -215,7 +237,7 @@ def _create_data_loader(workspace: Workspace) -> Workspace:
     return workspace
 
 
-def _execute_experiment(workspace: Workspace, experiment: Experiment) -> CausyResult:
+def _execute_experiment(workspace: Workspace, experiment: Experiment) -> Result:
     """
     Execute an experiment. This function will load the pipeline and the data loader and execute the pipeline.
     :param workspace:
@@ -239,7 +261,7 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> CausyRe
     model.create_graph_from_data(data_loader)
     model.create_all_possible_edges()
     model.execute_pipeline_steps()
-    return CausyResult(
+    return Result(
         algorithm=workspace.pipelines[experiment.pipeline],
         action_history=model.graph.graph.action_history,
         edges=model.graph.retrieve_edges(),
@@ -301,15 +323,13 @@ def _load_experiment_versions(workspace: Workspace, experiment_name: str) -> Lis
     return sorted(versions, reverse=True)
 
 
-def _save_experiment_result(
-    workspace: Workspace, experiment_name: str, result: CausyResult
-):
+def _save_experiment_result(workspace: Workspace, experiment_name: str, result: Result):
     timestamp = int(datetime.timestamp(result.created_at))
     with open(f"{experiment_name}_{timestamp}.json", "w") as f:
         f.write(json.dumps(result.model_dump(), cls=CausyJSONEncoder, indent=4))
 
 
-@app.command()
+@pipeline_app.command(name="add")
 def create_pipeline():
     """Create a new pipeline in the current workspace."""
     workspace = _current_workspace()
@@ -318,6 +338,32 @@ def create_pipeline():
     workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
     with open(workspace_path, "w") as f:
         f.write(pydantic_yaml.to_yaml_str(workspace))
+
+
+@pipeline_app.command(name="rm")
+def remove_pipeline(pipeline_name: str):
+    """Remove a pipeline from the current workspace."""
+    workspace = _current_workspace()
+
+    if pipeline_name not in workspace.pipelines:
+        show_error(f"Pipeline {pipeline_name} not found in the workspace.")
+        return
+
+    # check if the pipeline is still in use
+    for experiment_name, experiment in workspace.experiments.items():
+        if experiment.pipeline == pipeline_name:
+            show_error(
+                f"Pipeline {pipeline_name} is still in use by experiment {experiment_name}. Cannot remove."
+            )
+            return
+
+    del workspace.pipelines[pipeline_name]
+
+    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
+    with open(workspace_path, "w") as f:
+        f.write(pydantic_yaml.to_yaml_str(workspace))
+
+    show_success(f"Pipeline {pipeline_name} removed from the workspace.")
 
 
 def _experiment_needs_reexecution(workspace: Workspace, experiment_name: str) -> bool:
@@ -338,7 +384,7 @@ def _experiment_needs_reexecution(workspace: Workspace, experiment_name: str) ->
 
     latest_experiment = _load_latest_experiment_result(workspace, experiment_name)
     experiment = workspace.experiments[experiment_name]
-    latest_experiment = CausyResult(**latest_experiment)
+    latest_experiment = Result(**latest_experiment)
     if (
         latest_experiment.algorithm_hash is None
         or latest_experiment.data_loader_hash is None
@@ -372,7 +418,19 @@ def _experiment_needs_reexecution(workspace: Workspace, experiment_name: str) ->
     return False
 
 
-@app.command()
+def _clear_experiment(experiment_name: str, workspace: Workspace):
+    versions = _load_experiment_versions(workspace, experiment_name)
+    versions_removed = 0
+    for version in versions:
+        try:
+            os.remove(f"{experiment_name}_{version}.json")
+            versions_removed += 1
+        except FileNotFoundError:
+            pass
+    return versions_removed
+
+
+@experiment_app.command(name="add")
 def create_experiment():
     """Create a new experiment in the current workspace."""
     workspace = _current_workspace()
@@ -383,7 +441,99 @@ def create_experiment():
         f.write(pydantic_yaml.to_yaml_str(workspace))
 
 
-@app.command()
+@experiment_app.command(name="rm")
+def remove_experiment(experiment_name: str):
+    """Remove an experiment from the current workspace."""
+    workspace = _current_workspace()
+
+    if experiment_name not in workspace.experiments:
+        show_error(f"Experiment {experiment_name} not found in the workspace.")
+        return
+
+    versions_removed = _clear_experiment(experiment_name, workspace)
+
+    del workspace.experiments[experiment_name]
+
+    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
+    with open(workspace_path, "w") as f:
+        f.write(pydantic_yaml.to_yaml_str(workspace))
+
+    show_success(
+        f"Experiment {experiment_name} removed from the workspace. Removed {versions_removed} versions."
+    )
+
+
+@experiment_app.command(name="clear")
+def clear_experiment(experiment_name: str):
+    """Clear all versions of an experiment."""
+    workspace = _current_workspace()
+
+    if experiment_name not in workspace.experiments:
+        show_error(f"Experiment {experiment_name} not found in the workspace.")
+        return
+
+    versions_removed = _clear_experiment(experiment_name, workspace)
+
+    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
+    with open(workspace_path, "w") as f:
+        f.write(pydantic_yaml.to_yaml_str(workspace))
+
+    show_success(
+        f"Experiment {experiment_name} cleared. Removed {versions_removed} versions."
+    )
+
+
+@experiment_app.command(name="update-variable")
+def update_experiment_variable(
+    experiment_name: str, variable_name: str, variable_value: str
+):
+    """Update a variable in an experiment."""
+    workspace = _current_workspace()
+
+    if experiment_name not in workspace.experiments:
+        show_error(f"Experiment {experiment_name} not found in the workspace.")
+        return
+
+    experiment = workspace.experiments[experiment_name]
+
+    pipeline = load_algorithm_by_reference(
+        workspace.pipelines[experiment.pipeline].type,
+        workspace.pipelines[experiment.pipeline].reference,
+    )
+
+    current_variable = None
+    for existing_variable in pipeline.variables:
+        if variable_name == existing_variable.name:
+            current_variable = existing_variable
+            break
+    else:
+        show_error(f"Variable {variable_name} not found in the experiment.")
+        return
+
+    # try to cast the variable value to the correct type
+    try:
+        variable_value = current_variable._PYTHON_TYPE(variable_value)
+    except ValueError:
+        show_error(
+            f'Variable {variable_name} should be {current_variable.type}. But got "{variable_value}" which is not a valid value.'
+        )
+        return
+
+    # check if the variable is a valid value
+    if not validate_variable_values(pipeline, {variable_name: variable_value}):
+        show_error(f"Variable {variable_name} is not a valid value.")
+        return
+
+    experiment.variables[variable_name] = variable_value
+
+    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
+    with open(workspace_path, "w") as f:
+        f.write(pydantic_yaml.to_yaml_str(workspace))
+
+    show_success(f"Variable {variable_name} updated in experiment {experiment_name}.")
+
+
+@dataloader_app.command(name="add")
 def create_data_loader():
     """Create a new data loader in the current workspace."""
     workspace = _current_workspace()
@@ -394,7 +544,33 @@ def create_data_loader():
         f.write(pydantic_yaml.to_yaml_str(workspace))
 
 
-@app.command()
+@dataloader_app.command(name="rm")
+def remove_data_loader(data_loader_name: str):
+    """Remove a data loader from the current workspace."""
+    workspace = _current_workspace()
+
+    if data_loader_name not in workspace.data_loaders:
+        show_error(f"Data loader {data_loader_name} not found in the workspace.")
+        return
+
+    # check if the data loader is still in use
+    for experiment_name, experiment in workspace.experiments.items():
+        if experiment.data_loader == data_loader_name:
+            show_error(
+                f"Data loader {data_loader_name} is still in use by experiment {experiment_name}. Cannot remove."
+            )
+            return
+
+    del workspace.data_loaders[data_loader_name]
+
+    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
+    with open(workspace_path, "w") as f:
+        f.write(pydantic_yaml.to_yaml_str(workspace))
+
+    show_success(f"Data loader {data_loader_name} removed from the workspace.")
+
+
+@workspace_app.command()
 def info():
     """Show general information about the workspace."""
     workspace = _current_workspace()
@@ -405,7 +581,7 @@ def info():
     typer.echo(f"Experiments: {workspace.experiments}")
 
 
-@app.command()
+@workspace_app.command()
 def init():
     """
     Initialize a new workspace in the current directory.
@@ -501,22 +677,24 @@ def init():
     typer.echo(f"Workspace created in {workspace_path}")
 
 
-@app.command()
-def execute(experiment_name=None, force_reexecution=False):
+@workspace_app.command()
+def execute(experiment_name: str = None, force_reexecution: bool = False):
     """
     Execute an experiment or all experiments in the workspace.
-    :param experiment_name: name of the experiment to execute (as defined in the workspace) - if defined only this experiment will be executed
-    :param force_reexecution: if True, all experiments will be re-executed regardless of there were changes or not
-    :return:
     """
     workspace = _current_workspace()
     if experiment_name is None:
         # execute all experiments
         for experiment_name, experiment in workspace.experiments.items():
-            if (
-                not _experiment_needs_reexecution(workspace, experiment_name)
-                and not force_reexecution
-            ):
+            try:
+                needs_reexecution = _experiment_needs_reexecution(
+                    workspace, experiment_name
+                )
+            except ValueError as e:
+                show_error(str(e))
+                needs_reexecution = True
+
+            if needs_reexecution is False and force_reexecution is False:
                 typer.echo(f"Skipping experiment: {experiment_name}. (no changes)")
                 continue
             typer.echo(f"Executing experiment: {experiment_name}")
@@ -531,3 +709,8 @@ def execute(experiment_name=None, force_reexecution=False):
         result = _execute_experiment(workspace, experiment)
 
         _save_experiment_result(workspace, experiment_name, result)
+
+
+workspace_app.add_typer(pipeline_app, name="pipeline", help="Manage pipelines")
+workspace_app.add_typer(experiment_app, name="experiment", help="Manage experiments")
+workspace_app.add_typer(dataloader_app, name="dataloader", help="Manage data loaders")

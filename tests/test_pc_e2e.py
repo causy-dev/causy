@@ -6,7 +6,7 @@ from causy.causal_discovery.constraint.independence_tests.common import (
     PartialCorrelationTest,
     ExtendedPartialCorrelationTestMatrix,
 )
-from causy.models import CausyAlgorithm
+from causy.models import Algorithm
 from causy.causal_discovery.constraint.orientation_rules.pc import ColliderTest
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 
@@ -34,7 +34,7 @@ class PCTestTestCase(CausyTestCase):
         Test conditional independence of ordered pairs given pairs of other variables works.
         """
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                 ],
@@ -58,7 +58,7 @@ class PCTestTestCase(CausyTestCase):
 
     def test_pc_correlation_coefficient_test(self):
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                     CorrelationCoefficientTest(threshold=0.05),
@@ -83,7 +83,7 @@ class PCTestTestCase(CausyTestCase):
 
     def test_pc_partial_correlation_test(self):
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                     CorrelationCoefficientTest(threshold=0.05),
@@ -109,7 +109,7 @@ class PCTestTestCase(CausyTestCase):
 
     def test_pc_extended_partial_correlation_test_matrix(self):
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                     CorrelationCoefficientTest(threshold=0.05),
@@ -136,7 +136,7 @@ class PCTestTestCase(CausyTestCase):
 
     def test_pc_collider_test(self):
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                     CorrelationCoefficientTest(threshold=0.05),

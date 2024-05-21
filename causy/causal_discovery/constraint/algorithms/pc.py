@@ -21,7 +21,7 @@ from causy.common_pipeline_steps.calculation import (
     CalculatePearsonCorrelations,
 )
 from causy.interfaces import AS_MANY_AS_FIELDS
-from causy.models import ComparisonSettings, CausyAlgorithm
+from causy.models import ComparisonSettings, Algorithm
 from causy.causal_discovery.constraint.orientation_rules.pc import (
     ColliderTest,
     NonColliderTest,
@@ -61,7 +61,7 @@ PC_GRAPH_UI_EXTENSION = GraphUIExtensionInterface(
 PC_EDGE_TYPES = [DirectedEdge(), UndirectedEdge()]
 
 PC = graph_model_factory(
-    CausyAlgorithm(
+    Algorithm(
         pipeline_steps=[
             CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
             CorrelationCoefficientTest(
@@ -89,7 +89,7 @@ PC = graph_model_factory(
 )
 
 PCStable = graph_model_factory(
-    CausyAlgorithm(
+    Algorithm(
         pipeline_steps=[
             CalculatePearsonCorrelations(),
             ApplyActionsTogether(
@@ -117,7 +117,7 @@ PCStable = graph_model_factory(
 
 
 ParallelPC = graph_model_factory(
-    CausyAlgorithm(
+    Algorithm(
         pipeline_steps=[
             CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
             CorrelationCoefficientTest(

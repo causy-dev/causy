@@ -3,7 +3,7 @@ from typing import Optional, Dict, Any
 from pydantic import BaseModel
 
 from causy.data_loader import DataLoaderReference
-from causy.models import CausyAlgorithmReference, CausyAlgorithm
+from causy.models import AlgorithmReference, Algorithm
 
 
 class Experiment(BaseModel):
@@ -22,6 +22,6 @@ class Workspace(BaseModel):
     name: str
     author: Optional[str]
 
-    pipelines: Optional[Dict[str, CausyAlgorithm | CausyAlgorithmReference]]
+    pipelines: Optional[Dict[str, Algorithm | AlgorithmReference]]
     data_loaders: Optional[Dict[str, DataLoaderReference]]
     experiments: Optional[Dict[str, Experiment]]

@@ -350,10 +350,10 @@ class LogicStepInterface(ABC, BaseModel, Generic[LogicStepInterfaceType]):
             self.display_name = display_name
 
 
-CausyExtensionType = TypeVar("CausyExtensionType", bound="CausyExtensionInterface")
+ExtensionType = TypeVar("ExtensionType", bound="ExtensionInterface")
 
 
-class CausyExtensionInterface(BaseModel, Generic[CausyExtensionType]):
+class ExtensionInterface(BaseModel, Generic[ExtensionType]):
     @computed_field
     @property
     def name(self) -> str:

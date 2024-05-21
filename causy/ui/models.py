@@ -1,7 +1,7 @@
 from typing import Optional, List, Dict, Union
 
 from causy.interfaces import NodeInterface
-from causy.models import CausyResult
+from causy.models import Result
 from causy.workspaces.models import Experiment
 from pydantic import BaseModel, UUID4
 
@@ -25,6 +25,6 @@ class PositionedNode(NodeInterface):
     position: Optional[NodePosition] = None
 
 
-class CausyExtendedResult(CausyResult):
+class ExtendedResult(Result):
     nodes: Dict[Union[UUID4, str], PositionedNode]
     version: Optional[int] = None

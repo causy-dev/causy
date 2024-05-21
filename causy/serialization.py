@@ -34,9 +34,9 @@ def load_algorithm_from_specification(algorithm_dict: Dict[str, Any]):
     algorithm_dict["variables"] = [
         deserialize_variable(variable) for variable in algorithm_dict["variables"]
     ]
-    from causy.models import CausyAlgorithm
+    from causy.models import Algorithm
 
-    return parse_obj_as(CausyAlgorithm, algorithm_dict)
+    return parse_obj_as(Algorithm, algorithm_dict)
 
 
 def load_algorithm_by_reference(reference_type: str, algorithm: str):

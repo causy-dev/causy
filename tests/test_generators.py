@@ -6,7 +6,7 @@ from causy.causal_discovery.constraint.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
 )
-from causy.models import ComparisonSettings, CausyAlgorithm
+from causy.models import ComparisonSettings, Algorithm
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 from tests.utils import CausyTestCase
 
@@ -27,7 +27,7 @@ class GeneratorsTestCase(CausyTestCase):
         )
 
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                     CorrelationCoefficientTest(threshold=0.005),

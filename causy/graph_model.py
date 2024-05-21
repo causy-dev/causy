@@ -17,7 +17,7 @@ from causy.interfaces import (
     BaseGraphInterface,
     GraphModelInterface,
 )
-from causy.models import TestResultAction, CausyAlgorithm, ActionHistoryStep
+from causy.models import TestResultAction, Algorithm, ActionHistoryStep
 from causy.variables import (
     resolve_variables_to_algorithm_for_pipeline_steps,
     resolve_variables,
@@ -39,7 +39,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
     """
 
-    algorithm: CausyAlgorithm
+    algorithm: Algorithm
     pipeline_steps: List[PipelineStepInterface]
     graph: BaseGraphInterface
     pool: mp.Pool
@@ -47,7 +47,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     def __init__(
         self,
         graph=None,
-        algorithm: CausyAlgorithm = None,
+        algorithm: Algorithm = None,
     ):
         self.graph = graph
         self.algorithm = algorithm
@@ -385,7 +385,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
 
 def graph_model_factory(
-    algorithm: CausyAlgorithm = None,
+    algorithm: Algorithm = None,
     variables: Dict[str, Any] = None,
 ) -> type[AbstractGraphModel]:
     """

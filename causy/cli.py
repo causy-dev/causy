@@ -6,7 +6,7 @@ import typer
 from causy.data_loader import JSONDataLoader
 from causy.graph_model import graph_model_factory
 from causy.models import (
-    CausyResult,
+    Result,
     CausyAlgorithmReferenceType,
 )
 from causy.serialization import (
@@ -19,7 +19,7 @@ from causy.graph_utils import (
     retrieve_edges,
 )
 from causy.ui.cli import ui as ui_app
-from causy.workspaces.cli import app as workspaces_app
+from causy.workspaces.cli import workspace_app as workspaces_app
 from causy.causal_discovery import AVAILABLE_ALGORITHMS
 
 app = typer.Typer()
@@ -82,7 +82,7 @@ def execute(
             f"{model.graph.nodes[edge[0]].name} -> {model.graph.nodes[edge[1]].name}: {model.graph.edges[edge[0]][edge[1]]}"
         )
 
-    result = CausyResult(
+    result = Result(
         algorithm=algorithm_reference,
         action_history=model.graph.graph.action_history,
         edges=model.graph.retrieve_edges(),

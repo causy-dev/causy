@@ -13,11 +13,11 @@ from causy.interfaces import (
     PipelineStepInterfaceType,
     LogicStepInterface,
     EdgeTypeInterface,
-    CausyExtensionType,
+    ExtensionType,
     EdgeInterface,
     TestResultInterface,
     ComparisonSettingsInterface,
-    CausyExtensionInterface,
+    ExtensionInterface,
 )
 from causy.variables import IntegerParameter, VariableInterfaceType
 
@@ -59,17 +59,17 @@ class CausyAlgorithmReferenceType(enum.StrEnum):
     PYTHON_MODULE = "python_module"
 
 
-class CausyAlgorithmReference(BaseModel):
+class AlgorithmReference(BaseModel):
     reference: str
     type: CausyAlgorithmReferenceType
 
 
-class CausyAlgorithm(BaseModel):
+class Algorithm(BaseModel):
     name: str
     pipeline_steps: List[Union[PipelineStepInterfaceType, LogicStepInterface]]
     pipeline_steps: List[Union[PipelineStepInterfaceType, LogicStepInterface]]
     edge_types: List[EdgeTypeInterface]
-    extensions: Optional[List[CausyExtensionInterface]] = None
+    extensions: Optional[List[ExtensionInterface]] = None
     variables: Optional[List[Union[VariableInterfaceType]]] = None
 
     def hash(self) -> str:
@@ -83,8 +83,8 @@ class ActionHistoryStep(BaseModel):
     steps: Optional[List["ActionHistoryStep"]] = []
 
 
-class CausyResult(BaseModel):
-    algorithm: CausyAlgorithmReference
+class Result(BaseModel):
+    algorithm: AlgorithmReference
     created_at: datetime = Field(default_factory=datetime.now)
     nodes: Dict[str, NodeInterface]
     edges: List[EdgeInterface]

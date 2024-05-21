@@ -9,12 +9,12 @@ import typer
 import uvicorn
 
 from causy.models import (
-    CausyAlgorithmReference,
-    CausyAlgorithm,
+    AlgorithmReference,
+    Algorithm,
     CausyAlgorithmReferenceType,
 )
 from causy.serialization import load_algorithm_by_reference
-from causy.ui.models import CausyExtendedResult, ExtendedExperiment, ExperimentVersion
+from causy.ui.models import ExtendedResult, ExtendedExperiment, ExperimentVersion
 from causy.workspaces.cli import (
     _load_latest_experiment_result,
     _load_experiment_versions,
@@ -26,7 +26,7 @@ from starlette.staticfiles import StaticFiles
 
 logger = logging.getLogger(__name__)
 API_ROUTES = APIRouter()
-MODEL: Optional[CausyExtendedResult] = None
+MODEL: Optional[ExtendedResult] = None
 WORKSPACE: Optional[Workspace] = None
 
 
@@ -42,7 +42,7 @@ async def get_status():
     }
 
 
-@API_ROUTES.get("/model", response_model=CausyExtendedResult)
+@API_ROUTES.get("/model", response_model=ExtendedResult)
 async def get_model():
     """Get the current model."""
     if not MODEL:
@@ -57,9 +57,7 @@ async def get_workspace():
     return WORKSPACE
 
 
-@API_ROUTES.get(
-    "/experiments/{experiment_name}/latest", response_model=CausyExtendedResult
-)
+@API_ROUTES.get("/experiments/{experiment_name}/latest", response_model=ExtendedResult)
 async def get_latest_experiment(experiment_name: str):
     """Get the current experiment."""
     if not WORKSPACE:
@@ -75,16 +73,16 @@ async def get_latest_experiment(experiment_name: str):
 
     version = _load_experiment_versions(WORKSPACE, experiment_name)[0]
 
-    experiment["algorithm"] = CausyAlgorithmReference(**experiment["algorithm"])
+    experiment["algorithm"] = AlgorithmReference(**experiment["algorithm"])
     experiment["version"] = version
-    experiment = CausyExtendedResult(**experiment)
+    experiment = ExtendedResult(**experiment)
 
     return experiment
 
 
 @API_ROUTES.get(
     "/experiments/{experiment_name}/{version_number}",
-    response_model=CausyExtendedResult,
+    response_model=ExtendedResult,
 )
 async def get_experiment(experiment_name: str, version_number: int):
     """Get the current experiment."""
@@ -99,9 +97,9 @@ async def get_experiment(experiment_name: str, version_number: int):
     except Exception as e:
         raise HTTPException(400, str(e))
 
-    experiment["algorithm"] = CausyAlgorithmReference(**experiment["algorithm"])
+    experiment["algorithm"] = AlgorithmReference(**experiment["algorithm"])
     experiment["version"] = version_number
-    experiment = CausyExtendedResult(**experiment)
+    experiment = ExtendedResult(**experiment)
 
     return experiment
 
@@ -130,9 +128,7 @@ async def get_experiments():
     return experiments
 
 
-@API_ROUTES.get(
-    "/algorithm/{reference_type}/{reference}", response_model=CausyAlgorithm
-)
+@API_ROUTES.get("/algorithm/{reference_type}/{reference}", response_model=Algorithm)
 async def get_algorithm(reference_type: str, reference: str):
     """Get the current algorithm."""
     if reference.startswith("/") or ".." in reference:
@@ -175,8 +171,8 @@ def _set_model(result: Dict[str, Any]):
         MODEL = None
         return
 
-    result["algorithm"] = CausyAlgorithmReference(**result["algorithm"])
-    MODEL = CausyExtendedResult(**result)
+    result["algorithm"] = AlgorithmReference(**result["algorithm"])
+    MODEL = ExtendedResult(**result)
 
 
 def _set_workspace(workspace: Workspace):

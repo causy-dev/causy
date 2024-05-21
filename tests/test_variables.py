@@ -9,7 +9,7 @@ from causy.graph_utils import (
     load_pipeline_artefact_by_definition,
     load_pipeline_steps_by_definition,
 )
-from causy.models import CausyAlgorithm
+from causy.models import Algorithm
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 from causy.variables import (
     StringVariable,
@@ -169,7 +169,7 @@ class VariablesTestCase(CausyTestCase):
 
     def test_validate_variable_values(self):
         algorithm = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[],
                 edge_types=[],
                 extensions=[],
@@ -208,7 +208,7 @@ class VariablesTestCase(CausyTestCase):
 
     def test_resolve_variables(self):
         algorithm = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     PlaceholderTest(
                         placeholder_str=VariableReference(name="a_string"),
@@ -253,7 +253,7 @@ class VariablesTestCase(CausyTestCase):
 
     def test_resolve_variables_to_algorithm(self):
         algorithm = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     PlaceholderTest(
                         placeholder_str=VariableReference(name="a_string"),
@@ -280,7 +280,7 @@ class VariablesTestCase(CausyTestCase):
         )
 
         algorithm = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     PlaceholderTest(
                         placeholder_str=VariableReference(name="a_string"),
@@ -308,7 +308,7 @@ class VariablesTestCase(CausyTestCase):
                 },
             )
 
-        algorithm = CausyAlgorithm(
+        algorithm = Algorithm(
             pipeline_steps=[
                 PlaceholderTest(
                     placeholder_str=VariableReference(name="not_defined"),
@@ -327,7 +327,7 @@ class VariablesTestCase(CausyTestCase):
             },
         )
 
-        algorithm = CausyAlgorithm(
+        algorithm = Algorithm(
             pipeline_steps=[
                 PlaceholderTest(
                     placeholder_str=VariableReference(name="not_defined"),
