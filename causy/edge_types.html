@@ -31,22 +31,22 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#DirectedEdge">DirectedEdge</a>
+                    <a class="class" href="#EdgeTypeEnum">EdgeTypeEnum</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#DirectedEdge.name">name</a>
+                                <a class="variable" href="#EdgeTypeEnum.DIRECTED">DIRECTED</a>
                         </li>
                         <li>
-                                <a class="variable" href="#DirectedEdge.model_config">model_config</a>
+                                <a class="variable" href="#EdgeTypeEnum.UNDIRECTED">UNDIRECTED</a>
                         </li>
                         <li>
-                                <a class="variable" href="#DirectedEdge.model_fields">model_fields</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#DirectedEdge.model_computed_fields">model_computed_fields</a>
+                                <a class="variable" href="#EdgeTypeEnum.BIDIRECTED">BIDIRECTED</a>
                         </li>
                 </ul>
 
+            </li>
+            <li>
+                    <a class="class" href="#DirectedEdge">DirectedEdge</a>
             </li>
             <li>
                     <a class="class" href="#DirectedEdgeUIConfig">DirectedEdgeUIConfig</a>
@@ -74,21 +74,6 @@
             </li>
             <li>
                     <a class="class" href="#UndirectedEdge">UndirectedEdge</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="variable" href="#UndirectedEdge.name">name</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#UndirectedEdge.model_config">model_config</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#UndirectedEdge.model_fields">model_fields</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#UndirectedEdge.model_computed_fields">model_computed_fields</a>
-                        </li>
-                </ul>
-
             </li>
             <li>
                     <a class="class" href="#UndirectedEdgeUIConfig">UndirectedEdgeUIConfig</a>
@@ -113,21 +98,6 @@
             </li>
             <li>
                     <a class="class" href="#BiDirectedEdge">BiDirectedEdge</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="variable" href="#BiDirectedEdge.name">name</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#BiDirectedEdge.model_config">model_config</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#BiDirectedEdge.model_fields">model_fields</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#BiDirectedEdge.model_computed_fields">model_computed_fields</a>
-                        </li>
-                </ul>
-
             </li>
             <li>
                     <a class="class" href="#BiDirectedEdgeUIConfig">BiDirectedEdgeUIConfig</a>
@@ -150,6 +120,9 @@
                 </ul>
 
             </li>
+            <li>
+                    <a class="variable" href="#EDGE_TYPES">EDGE_TYPES</a>
+            </li>
     </ul>
 
 
@@ -171,107 +144,249 @@
 
                         <label class="view-source-button" for="mod-edge_types-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span> <span class="nn">causy.contrib.graph_ui</span> <span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>    <span class="n">EdgeTypeConfig</span><span class="p">,</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>    <span class="n">EdgeUIConfig</span><span class="p">,</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>    <span class="n">ConditionalEdgeUIConfig</span><span class="p">,</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>    <span class="n">ConditionalEdgeUIConfigComparison</span><span class="p">,</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="p">)</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">from</span> <span class="nn">causy.interfaces</span> <span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="n">EdgeTypeInterface</span><span class="p">,</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="p">)</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="k">class</span> <span class="nc">DirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">):</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DIRECTED&quot;</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="k">class</span> <span class="nc">DirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#0f0fff&quot;</span><span class="p">,</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Direct Effect: ${direct_effect.toFixed(4)}&quot;</span><span class="p">,</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="p">)</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="n">conditional_ui_configs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ConditionalEdgeUIConfig</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>        <span class="n">ConditionalEdgeUIConfig</span><span class="p">(</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>            <span class="n">ui_config</span><span class="o">=</span><span class="n">EdgeUIConfig</span><span class="p">(</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#f00000&quot;</span><span class="p">,</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>                <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>                <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>                <span class="n">animated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>                <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>                <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>                <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Direct Effect: ${direct_effect.toFixed(4)}&quot;</span><span class="p">,</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>            <span class="p">),</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>            <span class="n">condition_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>            <span class="n">condition_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>            <span class="n">condition_comparison</span><span class="o">=</span><span class="n">ConditionalEdgeUIConfigComparison</span><span class="o">.</span><span class="n">LESS</span><span class="p">,</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="p">)</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="p">]</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="k">class</span> <span class="nc">UndirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">):</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;UNDIRECTED&quot;</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="k">class</span> <span class="nc">UndirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">UndirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#333&quot;</span><span class="p">,</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Correlation: ${correlation.toFixed(4)}&quot;</span><span class="p">,</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="p">)</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="k">class</span> <span class="nc">BiDirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">):</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;BIDIRECTED&quot;</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="k">class</span> <span class="nc">BiDirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BiDirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#333&quot;</span><span class="p">,</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>    <span class="p">)</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">import</span> <span class="nn">enum</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Generic</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">causy.contrib.graph_ui</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>    <span class="n">EdgeTypeConfig</span><span class="p">,</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>    <span class="n">EdgeUIConfig</span><span class="p">,</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>    <span class="n">ConditionalEdgeUIConfig</span><span class="p">,</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>    <span class="n">ConditionalEdgeUIConfigComparison</span><span class="p">,</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="p">)</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span> <span class="nn">causy.interfaces</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>    <span class="n">EdgeTypeInterface</span><span class="p">,</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="n">EdgeTypeInterfaceType</span><span class="p">,</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="p">)</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="k">class</span> <span class="nc">EdgeTypeEnum</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">StrEnum</span><span class="p">):</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="n">DIRECTED</span> <span class="o">=</span> <span class="s2">&quot;directed&quot;</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="n">UNDIRECTED</span> <span class="o">=</span> <span class="s2">&quot;undirected&quot;</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="n">BIDIRECTED</span> <span class="o">=</span> <span class="s2">&quot;bidirected&quot;</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="k">class</span> <span class="nc">DirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">EdgeTypeInterfaceType</span><span class="p">]):</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">EdgeTypeEnum</span><span class="o">.</span><span class="n">DIRECTED</span><span class="o">.</span><span class="n">name</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">IS_DIRECTED</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>    <span class="n">STR_REPRESENTATION</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;--&gt;&quot;</span>  <span class="c1"># u --&gt; v</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="k">class</span> <span class="nc">DirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#0f0fff&quot;</span><span class="p">,</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Direct Effect: ${direct_effect.toFixed(4)}&quot;</span><span class="p">,</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="p">)</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="n">conditional_ui_configs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ConditionalEdgeUIConfig</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>        <span class="n">ConditionalEdgeUIConfig</span><span class="p">(</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>            <span class="n">ui_config</span><span class="o">=</span><span class="n">EdgeUIConfig</span><span class="p">(</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#f00000&quot;</span><span class="p">,</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>                <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>                <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>                <span class="n">animated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>                <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>                <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>                <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Direct Effect: ${direct_effect.toFixed(4)}&quot;</span><span class="p">,</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>            <span class="p">),</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>            <span class="n">condition_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>            <span class="n">condition_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>            <span class="n">condition_comparison</span><span class="o">=</span><span class="n">ConditionalEdgeUIConfigComparison</span><span class="o">.</span><span class="n">LESS</span><span class="p">,</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>        <span class="p">)</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="p">]</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="k">class</span> <span class="nc">UndirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">EdgeTypeInterfaceType</span><span class="p">]):</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">EdgeTypeEnum</span><span class="o">.</span><span class="n">UNDIRECTED</span><span class="o">.</span><span class="n">name</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="n">IS_DIRECTED</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">STR_REPRESENTATION</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;---&quot;</span>  <span class="c1"># u --- v</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="k">class</span> <span class="nc">UndirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">UndirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#333&quot;</span><span class="p">,</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Correlation: ${correlation.toFixed(4)}&quot;</span><span class="p">,</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="p">)</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="k">class</span> <span class="nc">BiDirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">EdgeTypeInterfaceType</span><span class="p">]):</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">EdgeTypeEnum</span><span class="o">.</span><span class="n">BIDIRECTED</span><span class="o">.</span><span class="n">name</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="n">IS_DIRECTED</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># This is a bi-directed edge - so it is not directed in the traditional sense</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="n">STR_REPRESENTATION</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&lt;-&gt;&quot;</span>  <span class="c1"># u &lt;-&gt; v</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="k">class</span> <span class="nc">BiDirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BiDirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#333&quot;</span><span class="p">,</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="p">)</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="n">EDGE_TYPES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="n">DirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">DirectedEdge</span><span class="p">,</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="n">UndirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">UndirectedEdge</span><span class="p">,</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="n">BiDirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">BiDirectedEdge</span><span class="p">,</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="p">}</span>
 </span></pre></div>
 
 
             </section>
+                <section id="EdgeTypeEnum">
+                            <input id="EdgeTypeEnum-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">EdgeTypeEnum</span><wbr>(<span class="base">enum.StrEnum</span>):
+
+                <label class="view-source-button" for="EdgeTypeEnum-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#EdgeTypeEnum"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="EdgeTypeEnum-17"><a href="#EdgeTypeEnum-17"><span class="linenos">17</span></a><span class="k">class</span> <span class="nc">EdgeTypeEnum</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">StrEnum</span><span class="p">):</span>
+</span><span id="EdgeTypeEnum-18"><a href="#EdgeTypeEnum-18"><span class="linenos">18</span></a>    <span class="n">DIRECTED</span> <span class="o">=</span> <span class="s2">&quot;directed&quot;</span>
+</span><span id="EdgeTypeEnum-19"><a href="#EdgeTypeEnum-19"><span class="linenos">19</span></a>    <span class="n">UNDIRECTED</span> <span class="o">=</span> <span class="s2">&quot;undirected&quot;</span>
+</span><span id="EdgeTypeEnum-20"><a href="#EdgeTypeEnum-20"><span class="linenos">20</span></a>    <span class="n">BIDIRECTED</span> <span class="o">=</span> <span class="s2">&quot;bidirected&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Enum where members are also (and must be) strings</p>
+</div>
+
+
+                            <div id="EdgeTypeEnum.DIRECTED" class="classattr">
+                                <div class="attr variable">
+            <span class="name">DIRECTED</span>        =
+<span class="default_value">&lt;<a href="#EdgeTypeEnum.DIRECTED">EdgeTypeEnum.DIRECTED</a>: &#39;directed&#39;&gt;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EdgeTypeEnum.DIRECTED"></a>
+    
+    
+
+                            </div>
+                            <div id="EdgeTypeEnum.UNDIRECTED" class="classattr">
+                                <div class="attr variable">
+            <span class="name">UNDIRECTED</span>        =
+<span class="default_value">&lt;<a href="#EdgeTypeEnum.UNDIRECTED">EdgeTypeEnum.UNDIRECTED</a>: &#39;undirected&#39;&gt;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EdgeTypeEnum.UNDIRECTED"></a>
+    
+    
+
+                            </div>
+                            <div id="EdgeTypeEnum.BIDIRECTED" class="classattr">
+                                <div class="attr variable">
+            <span class="name">BIDIRECTED</span>        =
+<span class="default_value">&lt;<a href="#EdgeTypeEnum.BIDIRECTED">EdgeTypeEnum.BIDIRECTED</a>: &#39;bidirected&#39;&gt;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EdgeTypeEnum.BIDIRECTED"></a>
+    
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>enum.Enum</dt>
+                                <dd id="EdgeTypeEnum.name" class="variable">name</dd>
+                <dd id="EdgeTypeEnum.value" class="variable">value</dd>
+
+            </div>
+            <div><dt>builtins.str</dt>
+                                <dd id="EdgeTypeEnum.encode" class="function">encode</dd>
+                <dd id="EdgeTypeEnum.replace" class="function">replace</dd>
+                <dd id="EdgeTypeEnum.split" class="function">split</dd>
+                <dd id="EdgeTypeEnum.rsplit" class="function">rsplit</dd>
+                <dd id="EdgeTypeEnum.join" class="function">join</dd>
+                <dd id="EdgeTypeEnum.capitalize" class="function">capitalize</dd>
+                <dd id="EdgeTypeEnum.casefold" class="function">casefold</dd>
+                <dd id="EdgeTypeEnum.title" class="function">title</dd>
+                <dd id="EdgeTypeEnum.center" class="function">center</dd>
+                <dd id="EdgeTypeEnum.count" class="function">count</dd>
+                <dd id="EdgeTypeEnum.expandtabs" class="function">expandtabs</dd>
+                <dd id="EdgeTypeEnum.find" class="function">find</dd>
+                <dd id="EdgeTypeEnum.partition" class="function">partition</dd>
+                <dd id="EdgeTypeEnum.index" class="function">index</dd>
+                <dd id="EdgeTypeEnum.ljust" class="function">ljust</dd>
+                <dd id="EdgeTypeEnum.lower" class="function">lower</dd>
+                <dd id="EdgeTypeEnum.lstrip" class="function">lstrip</dd>
+                <dd id="EdgeTypeEnum.rfind" class="function">rfind</dd>
+                <dd id="EdgeTypeEnum.rindex" class="function">rindex</dd>
+                <dd id="EdgeTypeEnum.rjust" class="function">rjust</dd>
+                <dd id="EdgeTypeEnum.rstrip" class="function">rstrip</dd>
+                <dd id="EdgeTypeEnum.rpartition" class="function">rpartition</dd>
+                <dd id="EdgeTypeEnum.splitlines" class="function">splitlines</dd>
+                <dd id="EdgeTypeEnum.strip" class="function">strip</dd>
+                <dd id="EdgeTypeEnum.swapcase" class="function">swapcase</dd>
+                <dd id="EdgeTypeEnum.translate" class="function">translate</dd>
+                <dd id="EdgeTypeEnum.upper" class="function">upper</dd>
+                <dd id="EdgeTypeEnum.startswith" class="function">startswith</dd>
+                <dd id="EdgeTypeEnum.endswith" class="function">endswith</dd>
+                <dd id="EdgeTypeEnum.removeprefix" class="function">removeprefix</dd>
+                <dd id="EdgeTypeEnum.removesuffix" class="function">removesuffix</dd>
+                <dd id="EdgeTypeEnum.isascii" class="function">isascii</dd>
+                <dd id="EdgeTypeEnum.islower" class="function">islower</dd>
+                <dd id="EdgeTypeEnum.isupper" class="function">isupper</dd>
+                <dd id="EdgeTypeEnum.istitle" class="function">istitle</dd>
+                <dd id="EdgeTypeEnum.isspace" class="function">isspace</dd>
+                <dd id="EdgeTypeEnum.isdecimal" class="function">isdecimal</dd>
+                <dd id="EdgeTypeEnum.isdigit" class="function">isdigit</dd>
+                <dd id="EdgeTypeEnum.isnumeric" class="function">isnumeric</dd>
+                <dd id="EdgeTypeEnum.isalpha" class="function">isalpha</dd>
+                <dd id="EdgeTypeEnum.isalnum" class="function">isalnum</dd>
+                <dd id="EdgeTypeEnum.isidentifier" class="function">isidentifier</dd>
+                <dd id="EdgeTypeEnum.isprintable" class="function">isprintable</dd>
+                <dd id="EdgeTypeEnum.zfill" class="function">zfill</dd>
+                <dd id="EdgeTypeEnum.format" class="function">format</dd>
+                <dd id="EdgeTypeEnum.format_map" class="function">format_map</dd>
+                <dd id="EdgeTypeEnum.maketrans" class="function">maketrans</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
                 <section id="DirectedEdge">
                             <input id="DirectedEdge-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">DirectedEdge</span><wbr>(<span class="base"><a href="interfaces.html#EdgeTypeInterface">causy.interfaces.EdgeTypeInterface</a></span>):
+    <span class="name">DirectedEdge</span><wbr>(<span class="base"><a href="interfaces.html#EdgeTypeInterface">causy.interfaces.EdgeTypeInterface</a></span>, <span class="base">typing.Generic[~EdgeTypeInterfaceType]</span>):
 
                 <label class="view-source-button" for="DirectedEdge-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#DirectedEdge"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DirectedEdge-15"><a href="#DirectedEdge-15"><span class="linenos">15</span></a><span class="k">class</span> <span class="nc">DirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">):</span>
-</span><span id="DirectedEdge-16"><a href="#DirectedEdge-16"><span class="linenos">16</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DIRECTED&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DirectedEdge-23"><a href="#DirectedEdge-23"><span class="linenos">23</span></a><span class="k">class</span> <span class="nc">DirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">EdgeTypeInterfaceType</span><span class="p">]):</span>
+</span><span id="DirectedEdge-24"><a href="#DirectedEdge-24"><span class="linenos">24</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">EdgeTypeEnum</span><span class="o">.</span><span class="n">DIRECTED</span><span class="o">.</span><span class="n">name</span>
+</span><span id="DirectedEdge-25"><a href="#DirectedEdge-25"><span class="linenos">25</span></a>    <span class="n">IS_DIRECTED</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="DirectedEdge-26"><a href="#DirectedEdge-26"><span class="linenos">26</span></a>    <span class="n">STR_REPRESENTATION</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;--&gt;&quot;</span>  <span class="c1"># u --&gt; v</span>
 </span></pre></div>
 
 
@@ -280,53 +395,6 @@ An edge type is defined by a name</p>
 </div>
 
 
-                            <div id="DirectedEdge.name" class="classattr">
-                                <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: str</span>
-
-        
-    </div>
-    <a class="headerlink" href="#DirectedEdge.name"></a>
-    
-    
-
-                            </div>
-                            <div id="DirectedEdge.model_config" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_config</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#DirectedEdge.model_config"></a>
-    
-    
-
-                            </div>
-                            <div id="DirectedEdge.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span>        =
-<span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=False, default=&#39;DIRECTED&#39;)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#DirectedEdge.model_fields"></a>
-    
-    
-
-                            </div>
-                            <div id="DirectedEdge.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#DirectedEdge.model_computed_fields"></a>
-    
-    
-
-                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -359,6 +427,15 @@ An edge type is defined by a name</p>
                 <dd id="DirectedEdge.update_forward_refs" class="function">update_forward_refs</dd>
 
             </div>
+            <div><dt><a href="interfaces.html#EdgeTypeInterface">causy.interfaces.EdgeTypeInterface</a></dt>
+                                <dd id="DirectedEdge.name" class="variable"><a href="interfaces.html#EdgeTypeInterface.name">name</a></dd>
+                <dd id="DirectedEdge.IS_DIRECTED" class="variable"><a href="interfaces.html#EdgeTypeInterface.IS_DIRECTED">IS_DIRECTED</a></dd>
+                <dd id="DirectedEdge.STR_REPRESENTATION" class="variable"><a href="interfaces.html#EdgeTypeInterface.STR_REPRESENTATION">STR_REPRESENTATION</a></dd>
+                <dd id="DirectedEdge.model_config" class="variable"><a href="interfaces.html#EdgeTypeInterface.model_config">model_config</a></dd>
+                <dd id="DirectedEdge.model_fields" class="variable"><a href="interfaces.html#EdgeTypeInterface.model_fields">model_fields</a></dd>
+                <dd id="DirectedEdge.model_computed_fields" class="variable"><a href="interfaces.html#EdgeTypeInterface.model_computed_fields">model_computed_fields</a></dd>
+
+            </div>
                                 </dl>
                             </div>
                 </section>
@@ -373,36 +450,36 @@ An edge type is defined by a name</p>
 
     </div>
     <a class="headerlink" href="#DirectedEdgeUIConfig"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DirectedEdgeUIConfig-19"><a href="#DirectedEdgeUIConfig-19"><span class="linenos">19</span></a><span class="k">class</span> <span class="nc">DirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
-</span><span id="DirectedEdgeUIConfig-20"><a href="#DirectedEdgeUIConfig-20"><span class="linenos">20</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
-</span><span id="DirectedEdgeUIConfig-21"><a href="#DirectedEdgeUIConfig-21"><span class="linenos">21</span></a>
-</span><span id="DirectedEdgeUIConfig-22"><a href="#DirectedEdgeUIConfig-22"><span class="linenos">22</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
-</span><span id="DirectedEdgeUIConfig-23"><a href="#DirectedEdgeUIConfig-23"><span class="linenos">23</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-24"><a href="#DirectedEdgeUIConfig-24"><span class="linenos">24</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#0f0fff&quot;</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-25"><a href="#DirectedEdgeUIConfig-25"><span class="linenos">25</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-26"><a href="#DirectedEdgeUIConfig-26"><span class="linenos">26</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-27"><a href="#DirectedEdgeUIConfig-27"><span class="linenos">27</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-28"><a href="#DirectedEdgeUIConfig-28"><span class="linenos">28</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-29"><a href="#DirectedEdgeUIConfig-29"><span class="linenos">29</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-30"><a href="#DirectedEdgeUIConfig-30"><span class="linenos">30</span></a>        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Direct Effect: ${direct_effect.toFixed(4)}&quot;</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-31"><a href="#DirectedEdgeUIConfig-31"><span class="linenos">31</span></a>    <span class="p">)</span>
-</span><span id="DirectedEdgeUIConfig-32"><a href="#DirectedEdgeUIConfig-32"><span class="linenos">32</span></a>    <span class="n">conditional_ui_configs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ConditionalEdgeUIConfig</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="DirectedEdgeUIConfig-33"><a href="#DirectedEdgeUIConfig-33"><span class="linenos">33</span></a>        <span class="n">ConditionalEdgeUIConfig</span><span class="p">(</span>
-</span><span id="DirectedEdgeUIConfig-34"><a href="#DirectedEdgeUIConfig-34"><span class="linenos">34</span></a>            <span class="n">ui_config</span><span class="o">=</span><span class="n">EdgeUIConfig</span><span class="p">(</span>
-</span><span id="DirectedEdgeUIConfig-35"><a href="#DirectedEdgeUIConfig-35"><span class="linenos">35</span></a>                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#f00000&quot;</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-36"><a href="#DirectedEdgeUIConfig-36"><span class="linenos">36</span></a>                <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-37"><a href="#DirectedEdgeUIConfig-37"><span class="linenos">37</span></a>                <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-38"><a href="#DirectedEdgeUIConfig-38"><span class="linenos">38</span></a>                <span class="n">animated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-39"><a href="#DirectedEdgeUIConfig-39"><span class="linenos">39</span></a>                <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-40"><a href="#DirectedEdgeUIConfig-40"><span class="linenos">40</span></a>                <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-41"><a href="#DirectedEdgeUIConfig-41"><span class="linenos">41</span></a>                <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-42"><a href="#DirectedEdgeUIConfig-42"><span class="linenos">42</span></a>                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Direct Effect: ${direct_effect.toFixed(4)}&quot;</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-43"><a href="#DirectedEdgeUIConfig-43"><span class="linenos">43</span></a>            <span class="p">),</span>
-</span><span id="DirectedEdgeUIConfig-44"><a href="#DirectedEdgeUIConfig-44"><span class="linenos">44</span></a>            <span class="n">condition_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-45"><a href="#DirectedEdgeUIConfig-45"><span class="linenos">45</span></a>            <span class="n">condition_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-46"><a href="#DirectedEdgeUIConfig-46"><span class="linenos">46</span></a>            <span class="n">condition_comparison</span><span class="o">=</span><span class="n">ConditionalEdgeUIConfigComparison</span><span class="o">.</span><span class="n">LESS</span><span class="p">,</span>
-</span><span id="DirectedEdgeUIConfig-47"><a href="#DirectedEdgeUIConfig-47"><span class="linenos">47</span></a>        <span class="p">)</span>
-</span><span id="DirectedEdgeUIConfig-48"><a href="#DirectedEdgeUIConfig-48"><span class="linenos">48</span></a>    <span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DirectedEdgeUIConfig-29"><a href="#DirectedEdgeUIConfig-29"><span class="linenos">29</span></a><span class="k">class</span> <span class="nc">DirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
+</span><span id="DirectedEdgeUIConfig-30"><a href="#DirectedEdgeUIConfig-30"><span class="linenos">30</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
+</span><span id="DirectedEdgeUIConfig-31"><a href="#DirectedEdgeUIConfig-31"><span class="linenos">31</span></a>
+</span><span id="DirectedEdgeUIConfig-32"><a href="#DirectedEdgeUIConfig-32"><span class="linenos">32</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
+</span><span id="DirectedEdgeUIConfig-33"><a href="#DirectedEdgeUIConfig-33"><span class="linenos">33</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-34"><a href="#DirectedEdgeUIConfig-34"><span class="linenos">34</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#0f0fff&quot;</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-35"><a href="#DirectedEdgeUIConfig-35"><span class="linenos">35</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-36"><a href="#DirectedEdgeUIConfig-36"><span class="linenos">36</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-37"><a href="#DirectedEdgeUIConfig-37"><span class="linenos">37</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-38"><a href="#DirectedEdgeUIConfig-38"><span class="linenos">38</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-39"><a href="#DirectedEdgeUIConfig-39"><span class="linenos">39</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-40"><a href="#DirectedEdgeUIConfig-40"><span class="linenos">40</span></a>        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Direct Effect: ${direct_effect.toFixed(4)}&quot;</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-41"><a href="#DirectedEdgeUIConfig-41"><span class="linenos">41</span></a>    <span class="p">)</span>
+</span><span id="DirectedEdgeUIConfig-42"><a href="#DirectedEdgeUIConfig-42"><span class="linenos">42</span></a>    <span class="n">conditional_ui_configs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ConditionalEdgeUIConfig</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="DirectedEdgeUIConfig-43"><a href="#DirectedEdgeUIConfig-43"><span class="linenos">43</span></a>        <span class="n">ConditionalEdgeUIConfig</span><span class="p">(</span>
+</span><span id="DirectedEdgeUIConfig-44"><a href="#DirectedEdgeUIConfig-44"><span class="linenos">44</span></a>            <span class="n">ui_config</span><span class="o">=</span><span class="n">EdgeUIConfig</span><span class="p">(</span>
+</span><span id="DirectedEdgeUIConfig-45"><a href="#DirectedEdgeUIConfig-45"><span class="linenos">45</span></a>                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#f00000&quot;</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-46"><a href="#DirectedEdgeUIConfig-46"><span class="linenos">46</span></a>                <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-47"><a href="#DirectedEdgeUIConfig-47"><span class="linenos">47</span></a>                <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-48"><a href="#DirectedEdgeUIConfig-48"><span class="linenos">48</span></a>                <span class="n">animated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-49"><a href="#DirectedEdgeUIConfig-49"><span class="linenos">49</span></a>                <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-50"><a href="#DirectedEdgeUIConfig-50"><span class="linenos">50</span></a>                <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-51"><a href="#DirectedEdgeUIConfig-51"><span class="linenos">51</span></a>                <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-52"><a href="#DirectedEdgeUIConfig-52"><span class="linenos">52</span></a>                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Direct Effect: ${direct_effect.toFixed(4)}&quot;</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-53"><a href="#DirectedEdgeUIConfig-53"><span class="linenos">53</span></a>            <span class="p">),</span>
+</span><span id="DirectedEdgeUIConfig-54"><a href="#DirectedEdgeUIConfig-54"><span class="linenos">54</span></a>            <span class="n">condition_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-55"><a href="#DirectedEdgeUIConfig-55"><span class="linenos">55</span></a>            <span class="n">condition_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-56"><a href="#DirectedEdgeUIConfig-56"><span class="linenos">56</span></a>            <span class="n">condition_comparison</span><span class="o">=</span><span class="n">ConditionalEdgeUIConfigComparison</span><span class="o">.</span><span class="n">LESS</span><span class="p">,</span>
+</span><span id="DirectedEdgeUIConfig-57"><a href="#DirectedEdgeUIConfig-57"><span class="linenos">57</span></a>        <span class="p">)</span>
+</span><span id="DirectedEdgeUIConfig-58"><a href="#DirectedEdgeUIConfig-58"><span class="linenos">58</span></a>    <span class="p">]</span>
 </span></pre></div>
 
 
@@ -546,14 +623,16 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">UndirectedEdge</span><wbr>(<span class="base"><a href="interfaces.html#EdgeTypeInterface">causy.interfaces.EdgeTypeInterface</a></span>):
+    <span class="name">UndirectedEdge</span><wbr>(<span class="base"><a href="interfaces.html#EdgeTypeInterface">causy.interfaces.EdgeTypeInterface</a></span>, <span class="base">typing.Generic[~EdgeTypeInterfaceType]</span>):
 
                 <label class="view-source-button" for="UndirectedEdge-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#UndirectedEdge"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="UndirectedEdge-51"><a href="#UndirectedEdge-51"><span class="linenos">51</span></a><span class="k">class</span> <span class="nc">UndirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">):</span>
-</span><span id="UndirectedEdge-52"><a href="#UndirectedEdge-52"><span class="linenos">52</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;UNDIRECTED&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UndirectedEdge-61"><a href="#UndirectedEdge-61"><span class="linenos">61</span></a><span class="k">class</span> <span class="nc">UndirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">EdgeTypeInterfaceType</span><span class="p">]):</span>
+</span><span id="UndirectedEdge-62"><a href="#UndirectedEdge-62"><span class="linenos">62</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">EdgeTypeEnum</span><span class="o">.</span><span class="n">UNDIRECTED</span><span class="o">.</span><span class="n">name</span>
+</span><span id="UndirectedEdge-63"><a href="#UndirectedEdge-63"><span class="linenos">63</span></a>    <span class="n">IS_DIRECTED</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="UndirectedEdge-64"><a href="#UndirectedEdge-64"><span class="linenos">64</span></a>    <span class="n">STR_REPRESENTATION</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;---&quot;</span>  <span class="c1"># u --- v</span>
 </span></pre></div>
 
 
@@ -562,53 +641,6 @@ An edge type is defined by a name</p>
 </div>
 
 
-                            <div id="UndirectedEdge.name" class="classattr">
-                                <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: str</span>
-
-        
-    </div>
-    <a class="headerlink" href="#UndirectedEdge.name"></a>
-    
-    
-
-                            </div>
-                            <div id="UndirectedEdge.model_config" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_config</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#UndirectedEdge.model_config"></a>
-    
-    
-
-                            </div>
-                            <div id="UndirectedEdge.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span>        =
-<span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=False, default=&#39;UNDIRECTED&#39;)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#UndirectedEdge.model_fields"></a>
-    
-    
-
-                            </div>
-                            <div id="UndirectedEdge.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#UndirectedEdge.model_computed_fields"></a>
-    
-    
-
-                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -641,6 +673,15 @@ An edge type is defined by a name</p>
                 <dd id="UndirectedEdge.update_forward_refs" class="function">update_forward_refs</dd>
 
             </div>
+            <div><dt><a href="interfaces.html#EdgeTypeInterface">causy.interfaces.EdgeTypeInterface</a></dt>
+                                <dd id="UndirectedEdge.name" class="variable"><a href="interfaces.html#EdgeTypeInterface.name">name</a></dd>
+                <dd id="UndirectedEdge.IS_DIRECTED" class="variable"><a href="interfaces.html#EdgeTypeInterface.IS_DIRECTED">IS_DIRECTED</a></dd>
+                <dd id="UndirectedEdge.STR_REPRESENTATION" class="variable"><a href="interfaces.html#EdgeTypeInterface.STR_REPRESENTATION">STR_REPRESENTATION</a></dd>
+                <dd id="UndirectedEdge.model_config" class="variable"><a href="interfaces.html#EdgeTypeInterface.model_config">model_config</a></dd>
+                <dd id="UndirectedEdge.model_fields" class="variable"><a href="interfaces.html#EdgeTypeInterface.model_fields">model_fields</a></dd>
+                <dd id="UndirectedEdge.model_computed_fields" class="variable"><a href="interfaces.html#EdgeTypeInterface.model_computed_fields">model_computed_fields</a></dd>
+
+            </div>
                                 </dl>
                             </div>
                 </section>
@@ -655,19 +696,19 @@ An edge type is defined by a name</p>
 
     </div>
     <a class="headerlink" href="#UndirectedEdgeUIConfig"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="UndirectedEdgeUIConfig-55"><a href="#UndirectedEdgeUIConfig-55"><span class="linenos">55</span></a><span class="k">class</span> <span class="nc">UndirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
-</span><span id="UndirectedEdgeUIConfig-56"><a href="#UndirectedEdgeUIConfig-56"><span class="linenos">56</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">UndirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
-</span><span id="UndirectedEdgeUIConfig-57"><a href="#UndirectedEdgeUIConfig-57"><span class="linenos">57</span></a>
-</span><span id="UndirectedEdgeUIConfig-58"><a href="#UndirectedEdgeUIConfig-58"><span class="linenos">58</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
-</span><span id="UndirectedEdgeUIConfig-59"><a href="#UndirectedEdgeUIConfig-59"><span class="linenos">59</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
-</span><span id="UndirectedEdgeUIConfig-60"><a href="#UndirectedEdgeUIConfig-60"><span class="linenos">60</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#333&quot;</span><span class="p">,</span>
-</span><span id="UndirectedEdgeUIConfig-61"><a href="#UndirectedEdgeUIConfig-61"><span class="linenos">61</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-</span><span id="UndirectedEdgeUIConfig-62"><a href="#UndirectedEdgeUIConfig-62"><span class="linenos">62</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
-</span><span id="UndirectedEdgeUIConfig-63"><a href="#UndirectedEdgeUIConfig-63"><span class="linenos">63</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="UndirectedEdgeUIConfig-64"><a href="#UndirectedEdgeUIConfig-64"><span class="linenos">64</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="UndirectedEdgeUIConfig-65"><a href="#UndirectedEdgeUIConfig-65"><span class="linenos">65</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="UndirectedEdgeUIConfig-66"><a href="#UndirectedEdgeUIConfig-66"><span class="linenos">66</span></a>        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Correlation: ${correlation.toFixed(4)}&quot;</span><span class="p">,</span>
-</span><span id="UndirectedEdgeUIConfig-67"><a href="#UndirectedEdgeUIConfig-67"><span class="linenos">67</span></a>    <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UndirectedEdgeUIConfig-67"><a href="#UndirectedEdgeUIConfig-67"><span class="linenos">67</span></a><span class="k">class</span> <span class="nc">UndirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
+</span><span id="UndirectedEdgeUIConfig-68"><a href="#UndirectedEdgeUIConfig-68"><span class="linenos">68</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">UndirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
+</span><span id="UndirectedEdgeUIConfig-69"><a href="#UndirectedEdgeUIConfig-69"><span class="linenos">69</span></a>
+</span><span id="UndirectedEdgeUIConfig-70"><a href="#UndirectedEdgeUIConfig-70"><span class="linenos">70</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
+</span><span id="UndirectedEdgeUIConfig-71"><a href="#UndirectedEdgeUIConfig-71"><span class="linenos">71</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
+</span><span id="UndirectedEdgeUIConfig-72"><a href="#UndirectedEdgeUIConfig-72"><span class="linenos">72</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#333&quot;</span><span class="p">,</span>
+</span><span id="UndirectedEdgeUIConfig-73"><a href="#UndirectedEdgeUIConfig-73"><span class="linenos">73</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+</span><span id="UndirectedEdgeUIConfig-74"><a href="#UndirectedEdgeUIConfig-74"><span class="linenos">74</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+</span><span id="UndirectedEdgeUIConfig-75"><a href="#UndirectedEdgeUIConfig-75"><span class="linenos">75</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="UndirectedEdgeUIConfig-76"><a href="#UndirectedEdgeUIConfig-76"><span class="linenos">76</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="UndirectedEdgeUIConfig-77"><a href="#UndirectedEdgeUIConfig-77"><span class="linenos">77</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="UndirectedEdgeUIConfig-78"><a href="#UndirectedEdgeUIConfig-78"><span class="linenos">78</span></a>        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Correlation: ${correlation.toFixed(4)}&quot;</span><span class="p">,</span>
+</span><span id="UndirectedEdgeUIConfig-79"><a href="#UndirectedEdgeUIConfig-79"><span class="linenos">79</span></a>    <span class="p">)</span>
 </span></pre></div>
 
 
@@ -804,14 +845,16 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">BiDirectedEdge</span><wbr>(<span class="base"><a href="interfaces.html#EdgeTypeInterface">causy.interfaces.EdgeTypeInterface</a></span>):
+    <span class="name">BiDirectedEdge</span><wbr>(<span class="base"><a href="interfaces.html#EdgeTypeInterface">causy.interfaces.EdgeTypeInterface</a></span>, <span class="base">typing.Generic[~EdgeTypeInterfaceType]</span>):
 
                 <label class="view-source-button" for="BiDirectedEdge-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#BiDirectedEdge"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BiDirectedEdge-70"><a href="#BiDirectedEdge-70"><span class="linenos">70</span></a><span class="k">class</span> <span class="nc">BiDirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">):</span>
-</span><span id="BiDirectedEdge-71"><a href="#BiDirectedEdge-71"><span class="linenos">71</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;BIDIRECTED&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BiDirectedEdge-82"><a href="#BiDirectedEdge-82"><span class="linenos">82</span></a><span class="k">class</span> <span class="nc">BiDirectedEdge</span><span class="p">(</span><span class="n">EdgeTypeInterface</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">EdgeTypeInterfaceType</span><span class="p">]):</span>
+</span><span id="BiDirectedEdge-83"><a href="#BiDirectedEdge-83"><span class="linenos">83</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">EdgeTypeEnum</span><span class="o">.</span><span class="n">BIDIRECTED</span><span class="o">.</span><span class="n">name</span>
+</span><span id="BiDirectedEdge-84"><a href="#BiDirectedEdge-84"><span class="linenos">84</span></a>    <span class="n">IS_DIRECTED</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># This is a bi-directed edge - so it is not directed in the traditional sense</span>
+</span><span id="BiDirectedEdge-85"><a href="#BiDirectedEdge-85"><span class="linenos">85</span></a>    <span class="n">STR_REPRESENTATION</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&lt;-&gt;&quot;</span>  <span class="c1"># u &lt;-&gt; v</span>
 </span></pre></div>
 
 
@@ -820,53 +863,6 @@ An edge type is defined by a name</p>
 </div>
 
 
-                            <div id="BiDirectedEdge.name" class="classattr">
-                                <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: str</span>
-
-        
-    </div>
-    <a class="headerlink" href="#BiDirectedEdge.name"></a>
-    
-    
-
-                            </div>
-                            <div id="BiDirectedEdge.model_config" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_config</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#BiDirectedEdge.model_config"></a>
-    
-    
-
-                            </div>
-                            <div id="BiDirectedEdge.model_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_fields</span>        =
-<span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=False, default=&#39;BIDIRECTED&#39;)}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#BiDirectedEdge.model_fields"></a>
-    
-    
-
-                            </div>
-                            <div id="BiDirectedEdge.model_computed_fields" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_computed_fields</span>        =
-<span class="default_value">{}</span>
-
-        
-    </div>
-    <a class="headerlink" href="#BiDirectedEdge.model_computed_fields"></a>
-    
-    
-
-                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -899,6 +895,15 @@ An edge type is defined by a name</p>
                 <dd id="BiDirectedEdge.update_forward_refs" class="function">update_forward_refs</dd>
 
             </div>
+            <div><dt><a href="interfaces.html#EdgeTypeInterface">causy.interfaces.EdgeTypeInterface</a></dt>
+                                <dd id="BiDirectedEdge.name" class="variable"><a href="interfaces.html#EdgeTypeInterface.name">name</a></dd>
+                <dd id="BiDirectedEdge.IS_DIRECTED" class="variable"><a href="interfaces.html#EdgeTypeInterface.IS_DIRECTED">IS_DIRECTED</a></dd>
+                <dd id="BiDirectedEdge.STR_REPRESENTATION" class="variable"><a href="interfaces.html#EdgeTypeInterface.STR_REPRESENTATION">STR_REPRESENTATION</a></dd>
+                <dd id="BiDirectedEdge.model_config" class="variable"><a href="interfaces.html#EdgeTypeInterface.model_config">model_config</a></dd>
+                <dd id="BiDirectedEdge.model_fields" class="variable"><a href="interfaces.html#EdgeTypeInterface.model_fields">model_fields</a></dd>
+                <dd id="BiDirectedEdge.model_computed_fields" class="variable"><a href="interfaces.html#EdgeTypeInterface.model_computed_fields">model_computed_fields</a></dd>
+
+            </div>
                                 </dl>
                             </div>
                 </section>
@@ -913,18 +918,18 @@ An edge type is defined by a name</p>
 
     </div>
     <a class="headerlink" href="#BiDirectedEdgeUIConfig"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BiDirectedEdgeUIConfig-74"><a href="#BiDirectedEdgeUIConfig-74"><span class="linenos">74</span></a><span class="k">class</span> <span class="nc">BiDirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
-</span><span id="BiDirectedEdgeUIConfig-75"><a href="#BiDirectedEdgeUIConfig-75"><span class="linenos">75</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BiDirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
-</span><span id="BiDirectedEdgeUIConfig-76"><a href="#BiDirectedEdgeUIConfig-76"><span class="linenos">76</span></a>
-</span><span id="BiDirectedEdgeUIConfig-77"><a href="#BiDirectedEdgeUIConfig-77"><span class="linenos">77</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
-</span><span id="BiDirectedEdgeUIConfig-78"><a href="#BiDirectedEdgeUIConfig-78"><span class="linenos">78</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
-</span><span id="BiDirectedEdgeUIConfig-79"><a href="#BiDirectedEdgeUIConfig-79"><span class="linenos">79</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#333&quot;</span><span class="p">,</span>
-</span><span id="BiDirectedEdgeUIConfig-80"><a href="#BiDirectedEdgeUIConfig-80"><span class="linenos">80</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-</span><span id="BiDirectedEdgeUIConfig-81"><a href="#BiDirectedEdgeUIConfig-81"><span class="linenos">81</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
-</span><span id="BiDirectedEdgeUIConfig-82"><a href="#BiDirectedEdgeUIConfig-82"><span class="linenos">82</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="BiDirectedEdgeUIConfig-83"><a href="#BiDirectedEdgeUIConfig-83"><span class="linenos">83</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
-</span><span id="BiDirectedEdgeUIConfig-84"><a href="#BiDirectedEdgeUIConfig-84"><span class="linenos">84</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
-</span><span id="BiDirectedEdgeUIConfig-85"><a href="#BiDirectedEdgeUIConfig-85"><span class="linenos">85</span></a>    <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BiDirectedEdgeUIConfig-88"><a href="#BiDirectedEdgeUIConfig-88"><span class="linenos">88</span></a><span class="k">class</span> <span class="nc">BiDirectedEdgeUIConfig</span><span class="p">(</span><span class="n">EdgeTypeConfig</span><span class="p">):</span>
+</span><span id="BiDirectedEdgeUIConfig-89"><a href="#BiDirectedEdgeUIConfig-89"><span class="linenos">89</span></a>    <span class="n">edge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BiDirectedEdge</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
+</span><span id="BiDirectedEdgeUIConfig-90"><a href="#BiDirectedEdgeUIConfig-90"><span class="linenos">90</span></a>
+</span><span id="BiDirectedEdgeUIConfig-91"><a href="#BiDirectedEdgeUIConfig-91"><span class="linenos">91</span></a>    <span class="n">default_ui_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EdgeUIConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">EdgeUIConfig</span><span class="p">(</span>
+</span><span id="BiDirectedEdgeUIConfig-92"><a href="#BiDirectedEdgeUIConfig-92"><span class="linenos">92</span></a>        <span class="n">label_field</span><span class="o">=</span><span class="s2">&quot;direct_effect&quot;</span><span class="p">,</span>
+</span><span id="BiDirectedEdgeUIConfig-93"><a href="#BiDirectedEdgeUIConfig-93"><span class="linenos">93</span></a>        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#333&quot;</span><span class="p">,</span>
+</span><span id="BiDirectedEdgeUIConfig-94"><a href="#BiDirectedEdgeUIConfig-94"><span class="linenos">94</span></a>        <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+</span><span id="BiDirectedEdgeUIConfig-95"><a href="#BiDirectedEdgeUIConfig-95"><span class="linenos">95</span></a>        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+</span><span id="BiDirectedEdgeUIConfig-96"><a href="#BiDirectedEdgeUIConfig-96"><span class="linenos">96</span></a>        <span class="n">animated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="BiDirectedEdgeUIConfig-97"><a href="#BiDirectedEdgeUIConfig-97"><span class="linenos">97</span></a>        <span class="n">marker_start</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
+</span><span id="BiDirectedEdgeUIConfig-98"><a href="#BiDirectedEdgeUIConfig-98"><span class="linenos">98</span></a>        <span class="n">marker_end</span><span class="o">=</span><span class="s2">&quot;ArrowClosed&quot;</span><span class="p">,</span>
+</span><span id="BiDirectedEdgeUIConfig-99"><a href="#BiDirectedEdgeUIConfig-99"><span class="linenos">99</span></a>    <span class="p">)</span>
 </span></pre></div>
 
 
@@ -1055,6 +1060,19 @@ __pydantic_private__: Instance attribute with the values of private attributes s
             </div>
                                 </dl>
                             </div>
+                </section>
+                <section id="EDGE_TYPES">
+                    <div class="attr variable">
+            <span class="name">EDGE_TYPES</span>        =
+<input id="EDGE_TYPES-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="EDGE_TYPES-view-value"></label><span class="default_value">{&#39;DIRECTED&#39;: &lt;class &#39;<a href="#DirectedEdge">DirectedEdge</a>&#39;&gt;, &#39;UNDIRECTED&#39;: &lt;class &#39;<a href="#UndirectedEdge">UndirectedEdge</a>&#39;&gt;, &#39;BIDIRECTED&#39;: &lt;class &#39;<a href="#BiDirectedEdge">BiDirectedEdge</a>&#39;&gt;}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EDGE_TYPES"></a>
+    
+    
+
                 </section>
     </main>
 <script>
