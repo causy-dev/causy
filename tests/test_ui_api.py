@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
 from causy.data_loader import DataLoaderReference, DataLoaderType
-from causy.models import AlgorithmReference, CausyAlgorithmReferenceType
+from causy.models import AlgorithmReference, AlgorithmReferenceType
 from causy.ui.server import _create_ui_app, _set_workspace, _set_model
 from causy.workspaces.models import Workspace, Experiment
 from tests.utils import CausyTestCase
@@ -53,7 +53,7 @@ class UIApiTestCase(CausyTestCase):
                 author="test_author",
                 pipelines={
                     "PC": AlgorithmReference(
-                        type=CausyAlgorithmReferenceType.NAME, reference="PC"
+                        type=AlgorithmReferenceType.NAME, reference="PC"
                     )
                 },
                 experiments={
@@ -158,7 +158,7 @@ class UIApiTestCase(CausyTestCase):
                 author="test_author",
                 pipelines={
                     "PC": AlgorithmReference(
-                        type=CausyAlgorithmReferenceType.NAME, reference="PC"
+                        type=AlgorithmReferenceType.NAME, reference="PC"
                     )
                 },
                 experiments={
@@ -198,7 +198,7 @@ class UIApiTestCase(CausyTestCase):
                 author="test_author",
                 pipelines={
                     "PC": AlgorithmReference(
-                        type=CausyAlgorithmReferenceType.NAME, reference="PC"
+                        type=AlgorithmReferenceType.NAME, reference="PC"
                     )
                 },
                 experiments={
@@ -237,7 +237,7 @@ class UIApiTestCase(CausyTestCase):
                 author="test_author",
                 pipelines={
                     "PC": AlgorithmReference(
-                        type=CausyAlgorithmReferenceType.NAME, reference="PC"
+                        type=AlgorithmReferenceType.NAME, reference="PC"
                     )
                 },
                 experiments={

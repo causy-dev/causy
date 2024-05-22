@@ -24,7 +24,7 @@ from causy.graph_model import graph_model_factory
 from causy.graph_utils import hash_dictionary
 from causy.models import (
     AlgorithmReference,
-    CausyAlgorithmReferenceType,
+    AlgorithmReferenceType,
     Result,
 )
 from causy.serialization import (
@@ -124,7 +124,7 @@ def _create_pipeline(workspace: Workspace = None) -> Workspace:
         # make pipeline reference as string
         pipeline = AlgorithmReference(
             reference=pipeline_reference().algorithm.name,
-            type=CausyAlgorithmReferenceType.NAME,
+            type=AlgorithmReferenceType.NAME,
         )
 
         pipeline_name = questionary.text("Enter the name of the pipeline").ask()
@@ -144,7 +144,7 @@ def _create_pipeline(workspace: Workspace = None) -> Workspace:
             f.write(to_yaml_str(pipeline_reference()._original_algorithm))
 
         pipeline = AlgorithmReference(
-            reference=f"{pipeline_slug}.yml", type=CausyAlgorithmReferenceType.FILE
+            reference=f"{pipeline_slug}.yml", type=AlgorithmReferenceType.FILE
         )
 
         workspace.pipelines[pipeline_name] = pipeline
@@ -156,7 +156,7 @@ def _create_pipeline(workspace: Workspace = None) -> Workspace:
         ).dump(f"{pipeline_slug}.py")
         pipeline = AlgorithmReference(
             reference=f"{pipeline_slug}.PIPELINE",
-            type=CausyAlgorithmReferenceType.PYTHON_MODULE,
+            type=AlgorithmReferenceType.PYTHON_MODULE,
         )
         workspace.pipelines[pipeline_slug] = pipeline
 

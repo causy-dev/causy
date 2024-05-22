@@ -12,7 +12,7 @@ from pydantic import parse_obj_as
 
 from causy.edge_types import EDGE_TYPES
 from causy.graph_utils import load_pipeline_steps_by_definition
-from causy.models import CausyAlgorithmReferenceType, Result, AlgorithmReference
+from causy.models import AlgorithmReferenceType, Result, AlgorithmReference
 from causy.variables import deserialize_variable
 from causy.causal_discovery import AVAILABLE_ALGORITHMS
 
@@ -43,7 +43,7 @@ def load_algorithm_from_specification(algorithm_dict: Dict[str, Any]):
 
 def load_algorithm_by_reference(reference_type: str, algorithm: str):
     # TODO: test me
-    if reference_type == CausyAlgorithmReferenceType.FILE:
+    if reference_type == AlgorithmReferenceType.FILE:
         # validate if the reference points only in the same directory or subdirectory
         # to avoid security issues
         absolute_path = os.path.realpath(algorithm)
@@ -68,9 +68,9 @@ def load_algorithm_by_reference(reference_type: str, algorithm: str):
                 pass
             raise ValueError("Invalid file format")
 
-    elif reference_type == CausyAlgorithmReferenceType.NAME:
+    elif reference_type == AlgorithmReferenceType.NAME:
         return copy.deepcopy(AVAILABLE_ALGORITHMS[algorithm]()._original_algorithm)
-    elif reference_type == CausyAlgorithmReferenceType.PYTHON_MODULE:
+    elif reference_type == AlgorithmReferenceType.PYTHON_MODULE:
         st_function = importlib.import_module(algorithm)
         st_function = getattr(st_function, algorithm)
         if not st_function:

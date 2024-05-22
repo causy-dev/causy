@@ -18,6 +18,7 @@ from causy.interfaces import (
     TestResultInterface,
     ComparisonSettingsInterface,
     ExtensionInterface,
+    EdgeTypeInterfaceType,
 )
 from causy.variables import IntegerParameter, VariableInterfaceType
 
@@ -53,7 +54,7 @@ class TestResult(TestResultInterface):
     data: Optional[Dict] = None
 
 
-class CausyAlgorithmReferenceType(enum.StrEnum):
+class AlgorithmReferenceType(enum.StrEnum):
     FILE = "file"
     NAME = "name"
     PYTHON_MODULE = "python_module"
@@ -61,15 +62,15 @@ class CausyAlgorithmReferenceType(enum.StrEnum):
 
 class AlgorithmReference(BaseModel):
     reference: str
-    type: CausyAlgorithmReferenceType
+    type: AlgorithmReferenceType
 
 
 class Algorithm(BaseModel):
     name: str
     pipeline_steps: List[Union[PipelineStepInterfaceType, LogicStepInterface]]
     pipeline_steps: List[Union[PipelineStepInterfaceType, LogicStepInterface]]
-    edge_types: List[EdgeTypeInterface]
-    extensions: Optional[List[ExtensionInterface]] = None
+    edge_types: List[EdgeTypeInterfaceType]
+    extensions: Optional[List[ExtensionType]] = None
     variables: Optional[List[Union[VariableInterfaceType]]] = None
 
     def hash(self) -> str:

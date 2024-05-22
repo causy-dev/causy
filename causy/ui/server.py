@@ -11,7 +11,7 @@ import uvicorn
 from causy.models import (
     AlgorithmReference,
     Algorithm,
-    CausyAlgorithmReferenceType,
+    AlgorithmReferenceType,
 )
 from causy.serialization import load_algorithm_by_reference
 from causy.ui.models import ExtendedResult, ExtendedExperiment, ExperimentVersion
@@ -134,7 +134,7 @@ async def get_algorithm(reference_type: str, reference: str):
     if reference.startswith("/") or ".." in reference:
         raise HTTPException(400, "Invalid reference")
 
-    if reference_type not in CausyAlgorithmReferenceType.__members__.values():
+    if reference_type not in AlgorithmReferenceType.__members__.values():
         raise HTTPException(400, "Invalid reference type")
 
     try:
@@ -156,7 +156,8 @@ def _create_ui_app(with_static=True):
         app.mount(
             "",
             StaticFiles(
-                directory=os.path.join(os.path.dirname(__file__), "static"), html=True
+                directory=os.path.join(os.path.dirname(__file__), "..", "static"),
+                html=True,
             ),
             name="static",
         )

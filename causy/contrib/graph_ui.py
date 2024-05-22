@@ -41,7 +41,5 @@ class EdgeTypeConfig(BaseModel):
     conditional_ui_configs: Optional[List[ConditionalEdgeUIConfig]] = None
 
 
-class GraphUIExtensionInterface(
-    ExtensionInterface[ExtensionType], Generic[ExtensionType]
-):
+class GraphUIExtension(ExtensionInterface[ExtensionType], Generic[ExtensionType]):
     edges: List[EdgeTypeConfig]

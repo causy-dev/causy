@@ -7,7 +7,7 @@ from causy.data_loader import JSONDataLoader
 from causy.graph_model import graph_model_factory
 from causy.models import (
     Result,
-    CausyAlgorithmReferenceType,
+    AlgorithmReferenceType,
 )
 from causy.serialization import (
     serialize_algorithm,
@@ -53,14 +53,14 @@ def execute(
         algorithm = load_algorithm_from_specification(model_dict)
         model = graph_model_factory(algorithm=algorithm)()
         algorithm_reference = {
-            "type": CausyAlgorithmReferenceType.FILE,
+            "type": AlgorithmReferenceType.FILE,
             "reference": pipeline,  # TODO: how to reference pipeline in a way that it can be loaded?
         }
     elif algorithm:
         typer.echo(f"💾 Creating pipeline from algorithm {algorithm}")
         model = AVAILABLE_ALGORITHMS[algorithm]()
         algorithm_reference = {
-            "type": CausyAlgorithmReferenceType.NAME,
+            "type": AlgorithmReferenceType.NAME,
             "reference": algorithm,
         }
 

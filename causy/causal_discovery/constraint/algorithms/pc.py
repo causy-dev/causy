@@ -2,7 +2,7 @@ from causy.causal_effect_estimation.multivariate_regression import (
     ComputeDirectEffectsMultivariateRegression,
 )
 from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
-from causy.contrib.graph_ui import GraphUIExtensionInterface
+from causy.contrib.graph_ui import GraphUIExtension
 from causy.edge_types import (
     DirectedEdge,
     UndirectedEdge,
@@ -51,7 +51,7 @@ PC_ORIENTATION_RULES = [
     ),
 ]
 
-PC_GRAPH_UI_EXTENSION = GraphUIExtensionInterface(
+PC_GRAPH_UI_EXTENSION = GraphUIExtension(
     edges=[
         DirectedEdgeUIConfig(),
         UndirectedEdgeUIConfig(),
