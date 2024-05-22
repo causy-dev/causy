@@ -1,18 +1,15 @@
 from typing import Tuple, Optional, Generic
 
 import torch
-from pydantic import BaseModel
 
 from causy.generators import AllCombinationsGenerator
 from causy.interfaces import (
     PipelineStepInterface,
-    ComparisonSettings,
     BaseGraphInterface,
-    TestResult,
-    TestResultAction,
     GeneratorInterface,
     PipelineStepInterfaceType,
 )
+from causy.models import ComparisonSettings, TestResultAction, TestResult
 
 
 class CalculatePearsonCorrelations(

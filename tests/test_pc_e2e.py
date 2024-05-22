@@ -1,21 +1,16 @@
-import csv
-import torch
-
-from causy.algorithms import PC, ParallelPC
-from causy.algorithms.pc import PCStable, PC_EDGE_TYPES
+from causy.causal_discovery.constraint.algorithms.pc import PC_EDGE_TYPES
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_model import graph_model_factory
-from causy.graph_utils import retrieve_edges
-from causy.independence_tests.common import (
+from causy.causal_discovery.constraint.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
     ExtendedPartialCorrelationTestMatrix,
 )
-from causy.interfaces import CausyAlgorithm
-from causy.orientation_rules.pc import ColliderTest
+from causy.models import Algorithm
+from causy.causal_discovery.constraint.orientation_rules.pc import ColliderTest
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 
-from tests.utils import CausyTestCase, dump_fixture_graph, load_fixture_graph
+from tests.utils import CausyTestCase, load_fixture_graph
 
 
 class PCTestTestCase(CausyTestCase):
@@ -39,7 +34,7 @@ class PCTestTestCase(CausyTestCase):
         Test conditional independence of ordered pairs given pairs of other variables works.
         """
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                 ],
@@ -63,7 +58,7 @@ class PCTestTestCase(CausyTestCase):
 
     def test_pc_correlation_coefficient_test(self):
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                     CorrelationCoefficientTest(threshold=0.05),
@@ -88,7 +83,7 @@ class PCTestTestCase(CausyTestCase):
 
     def test_pc_partial_correlation_test(self):
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                     CorrelationCoefficientTest(threshold=0.05),
@@ -114,7 +109,7 @@ class PCTestTestCase(CausyTestCase):
 
     def test_pc_extended_partial_correlation_test_matrix(self):
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                     CorrelationCoefficientTest(threshold=0.05),
@@ -141,7 +136,7 @@ class PCTestTestCase(CausyTestCase):
 
     def test_pc_collider_test(self):
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                     CorrelationCoefficientTest(threshold=0.05),

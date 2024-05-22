@@ -1,13 +1,7 @@
-import random
-
-import torch
-
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_model import graph_model_factory
-from causy.graph_utils import retrieve_edges
-from causy.interfaces import CausyAlgorithm
-from causy.math_utils import sum_lists
-from causy.independence_tests.common import (
+from causy.models import Algorithm
+from causy.causal_discovery.constraint.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
     ExtendedPartialCorrelationTestMatrix,
@@ -37,7 +31,7 @@ class IndependenceTestTestCase(CausyTestCase):
             CorrelationCoefficientTest(threshold=0.1),
         ]
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",
@@ -65,7 +59,7 @@ class IndependenceTestTestCase(CausyTestCase):
             CorrelationCoefficientTest(threshold=0.1),
         ]
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",
@@ -95,7 +89,7 @@ class IndependenceTestTestCase(CausyTestCase):
             CorrelationCoefficientTest(threshold=0.1),
         ]
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",
@@ -124,7 +118,7 @@ class IndependenceTestTestCase(CausyTestCase):
             PartialCorrelationTest(threshold=0.01),
         ]
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",
@@ -154,7 +148,7 @@ class IndependenceTestTestCase(CausyTestCase):
             PartialCorrelationTest(threshold=0.01),
         ]
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",
@@ -186,7 +180,7 @@ class IndependenceTestTestCase(CausyTestCase):
             PartialCorrelationTest(threshold=0.01),
         ]
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",
@@ -219,7 +213,7 @@ class IndependenceTestTestCase(CausyTestCase):
             ExtendedPartialCorrelationTestMatrix(threshold=0.01),
         ]
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",
@@ -253,7 +247,7 @@ class IndependenceTestTestCase(CausyTestCase):
             ExtendedPartialCorrelationTestMatrix(threshold=0.01),
         ]
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",
@@ -288,7 +282,7 @@ class IndependenceTestTestCase(CausyTestCase):
             ExtendedPartialCorrelationTestMatrix(threshold=0.01),
         ]
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",
@@ -323,7 +317,7 @@ class IndependenceTestTestCase(CausyTestCase):
         data, graph = model.generate(1000000)
 
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",
@@ -360,7 +354,7 @@ class IndependenceTestTestCase(CausyTestCase):
         data, graph = model.generate(1000000)
 
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",
@@ -393,7 +387,7 @@ class IndependenceTestTestCase(CausyTestCase):
             ExtendedPartialCorrelationTestLinearRegression(threshold=0.01),
         ]
         tst = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="CorrelationCoefficientTest",

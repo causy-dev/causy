@@ -3,21 +3,24 @@ import platform
 from abc import ABC
 from copy import deepcopy
 import time
-from typing import Optional, List, Dict, Callable, Union
+from typing import Optional, List, Dict, Callable, Union, Any
 
 import torch.multiprocessing as mp
 
+from causy.data_loader import AbstractDataLoader
 from causy.edge_types import DirectedEdge
 from causy.graph import GraphManager
 from causy.graph_utils import unpack_run
 from causy.interfaces import (
     PipelineStepInterface,
-    TestResultAction,
     LogicStepInterface,
     BaseGraphInterface,
     GraphModelInterface,
-    CausyAlgorithm,
-    ActionHistoryStep,
+)
+from causy.models import TestResultAction, Algorithm, ActionHistoryStep
+from causy.variables import (
+    resolve_variables_to_algorithm_for_pipeline_steps,
+    resolve_variables,
 )
 
 logger = logging.getLogger(__name__)
@@ -36,7 +39,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
     """
 
-    algorithm: CausyAlgorithm
+    algorithm: Algorithm
     pipeline_steps: List[PipelineStepInterface]
     graph: BaseGraphInterface
     pool: mp.Pool
@@ -44,7 +47,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     def __init__(
         self,
         graph=None,
-        algorithm: CausyAlgorithm = None,
+        algorithm: Algorithm = None,
     ):
         self.graph = graph
         self.algorithm = algorithm
@@ -124,8 +127,38 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
         return graph
 
+    def _create_from_data_loader(self, data_loader: AbstractDataLoader):
+        """
+        Create a graph from a data loader
+        :param data_loader: the data loader
+        :return: the graph
+        """
+        nodes: Dict[str, List[float]] = {}
+        keys = None
+
+        # load nodes into node dict
+        for row in data_loader.load():
+            if isinstance(row, dict) and "_dict" in row:
+                # edge case for when data is in a dict of lists
+                return self.__create_graph_from_dict(row["_dict"])
+
+            if keys is None:
+                keys = row.keys()
+                for key in sorted(keys):
+                    nodes[key] = []
+
+            for key in keys:
+                nodes[key].append(row[key])
+
+        graph = GraphManager()
+        for key in keys:
+            graph.add_node(key, nodes[key], id_=key)
+
+        return graph
+
     def create_graph_from_data(
-        self, data: Union[List[Dict[str, float]], Dict[str, List[float]]]
+        self,
+        data: Union[List[Dict[str, float]], Dict[str, List[float]], AbstractDataLoader],
     ):
         """
         Create a graph from data
@@ -133,7 +166,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :return:
         """
 
-        if isinstance(data, dict):
+        if isinstance(data, AbstractDataLoader):
+            graph = self._create_from_data_loader(data)
+        elif isinstance(data, dict):
             graph = self.__create_graph_from_dict(data)
         else:
             graph = self.__create_graph_from_list(data)
@@ -350,15 +385,29 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
 
 def graph_model_factory(
-    algorithm: CausyAlgorithm = None,
+    algorithm: Algorithm = None,
+    variables: Dict[str, Any] = None,
 ) -> type[AbstractGraphModel]:
     """
     Create a graph model based on a List of pipeline_steps
     :param algorithm: the algorithm which should be used to create the graph model
     :return: the graph model
     """
+    original_algorithm = deepcopy(algorithm)
+    if variables is None and algorithm.variables is not None:
+        variables = resolve_variables(algorithm.variables, {})
+    elif variables is None:
+        variables = {}
+
+    if len(variables) > 0:
+        algorithm.pipeline_steps = resolve_variables_to_algorithm_for_pipeline_steps(
+            algorithm.pipeline_steps, variables
+        )
 
     class GraphModel(AbstractGraphModel):
+        # store the original algorithm for later use like ejecting it without the resolved variables
+        _original_algorithm = original_algorithm
+
         def __init__(self):
             super().__init__(algorithm=algorithm)
 

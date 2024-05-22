@@ -1,6 +1,6 @@
 import torch
 
-from causy.algorithms import PC
+from causy.causal_discovery.constraint.algorithms import PC
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 
 from tests.utils import CausyTestCase

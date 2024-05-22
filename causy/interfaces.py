@@ -1,12 +1,9 @@
-import enum
 import multiprocessing
 from abc import ABC, abstractmethod
-from datetime import datetime
-
-from pydantic.dataclasses import dataclass
 from typing import List, Dict, Optional, Union, TypeVar, Generic, Any
 import logging
 
+from pydantic import BaseModel, computed_field, Field
 import torch
 
 from causy.graph_utils import (
@@ -14,8 +11,12 @@ from causy.graph_utils import (
     serialize_module_name,
     load_pipeline_steps_by_definition,
 )
-
-from pydantic import BaseModel, computed_field, AwareDatetime, Field
+from causy.variables import (
+    StringParameter,
+    IntegerParameter,
+    BoolParameter,
+    FloatParameter,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +25,9 @@ DEFAULT_THRESHOLD = 0.01
 AS_MANY_AS_FIELDS = 0
 
 
-class ComparisonSettings(BaseModel):
-    min: int = 2
-    max: int = AS_MANY_AS_FIELDS
+class ComparisonSettingsInterface(BaseModel, ABC):
+    min: IntegerParameter
+    max: IntegerParameter
 
     @computed_field
     @property
@@ -34,7 +35,7 @@ class ComparisonSettings(BaseModel):
         return serialize_module_name(self)
 
 
-class NodeInterface(BaseModel):
+class NodeInterface(BaseModel, ABC):
     """
     Node interface for the graph. A node is defined by a name and a value.
     """
@@ -47,13 +48,20 @@ class NodeInterface(BaseModel):
         arbitrary_types_allowed = True
 
 
-class EdgeTypeInterface(BaseModel):
+EdgeTypeInterfaceType = TypeVar("EdgeTypeInterfaceType")
+
+
+class EdgeTypeInterface(ABC, BaseModel, Generic[EdgeTypeInterfaceType]):
     """
     Edge type interface for the graph
     An edge type is defined by a name
     """
 
     name: str
+
+    # define if it is a directed or undirected edge type (default is undirected). We use this e.g. when we compare the graph.
+    IS_DIRECTED: bool = True
+    STR_REPRESENTATION: str = "-"
 
     def __hash__(self):
         return hash(self.name)
@@ -68,7 +76,7 @@ class EdgeTypeInterface(BaseModel):
         return self.name
 
 
-class EdgeInterface(BaseModel):
+class EdgeInterface(BaseModel, ABC):
     """
     Edge interface for the graph
     A graph edge is defined by two nodes and an edge type. It can also have metadata.
@@ -82,26 +90,44 @@ class EdgeInterface(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
+    def __eq__(self, other):
+        """
+        Check if two edges are equal by comparing the nodes and the edge type
+        :param other:
+        :return:
+        """
+        if not isinstance(other, EdgeInterface):
+            return False
 
-class TestResultAction(enum.StrEnum):
+        if self.edge_type != other.edge_type:
+            return False
+        if self.edge_type.IS_DIRECTED:
+            return self.u == other.u and self.v == other.v
+        else:
+            return self.is_connection_between_same_nodes(other)
+
+    def is_connection_between_same_nodes(self, edge):
+        return (
+            self.u == edge.u
+            and self.v == edge.v
+            or self.u == edge.v
+            and self.v == edge.u
+        )
+
+
+class TestResultInterface(BaseModel, ABC):
     """
-    Actions that can be taken on the graph. These actions are used to keep track of the history of the graph.
+    Test result interface for the graph
+    A test result is defined by two nodes and an action. It can also have metadata.
     """
 
-    REMOVE_EDGE_UNDIRECTED = "REMOVE_EDGE_UNDIRECTED"
-    UPDATE_EDGE = "UPDATE_EDGE"
-    UPDATE_EDGE_TYPE = "UPDATE_EDGE_TYPE"
-    UPDATE_EDGE_DIRECTED = "UPDATE_EDGE_DIRECTED"
-    UPDATE_EDGE_TYPE_DIRECTED = "UPDATE_EDGE_TYPE_DIRECTED"
-    DO_NOTHING = "DO_NOTHING"
-    REMOVE_EDGE_DIRECTED = "REMOVE_EDGE_DIRECTED"
-
-
-class TestResult(BaseModel):
     u: NodeInterface
     v: NodeInterface
-    action: TestResultAction
+    action: str
     data: Optional[Dict] = None
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class BaseGraphInterface(ABC):
@@ -109,11 +135,11 @@ class BaseGraphInterface(ABC):
     edges: Dict[str, Dict[str, Dict]]
 
     @abstractmethod
-    def retrieve_edge_history(self, u, v, action: TestResultAction) -> List[TestResult]:
+    def retrieve_edge_history(self, u, v, action: str) -> List[TestResultInterface]:
         pass
 
     @abstractmethod
-    def add_edge_history(self, u, v, action: TestResult):
+    def add_edge_history(self, u, v, action: TestResultInterface):
         pass
 
     @abstractmethod
@@ -174,11 +200,11 @@ class GraphModelInterface(ABC):
 
 
 class GeneratorInterface(ABC, BaseModel):
-    comparison_settings: Optional[ComparisonSettings] = None
-    chunked: Optional[bool] = False
-    every_nth: Optional[int] = None
+    comparison_settings: Optional[ComparisonSettingsInterface] = None
+    chunked: Optional[BoolParameter] = False
+    every_nth: Optional[IntegerParameter] = None
     generator: Optional["GeneratorInterface"] = None
-    shuffle_combinations: Optional[bool] = None
+    shuffle_combinations: Optional[BoolParameter] = None
 
     @abstractmethod
     def generate(self, graph: BaseGraphInterface, graph_model_instance_: dict):
@@ -186,12 +212,12 @@ class GeneratorInterface(ABC, BaseModel):
 
     def __init__(
         self,
-        comparison_settings: Optional[ComparisonSettings] = None,
-        chunked: bool = None,
-        every_nth: int = None,
-        generator: "GeneratorInterface" = None,
-        shuffle_combinations: bool = None,
-    ):
+        comparison_settings: Optional[ComparisonSettingsInterface] = None,
+        chunked: Optional[BoolParameter] = None,
+        every_nth: Optional[IntegerParameter] = None,
+        generator: Optional["GeneratorInterface"] = None,
+        shuffle_combinations: Optional[BoolParameter] = None,
+    ) -> None:
         super().__init__(comparison_settings=comparison_settings)
         if isinstance(comparison_settings, dict):
             comparison_settings = load_pipeline_artefact_by_definition(
@@ -223,20 +249,21 @@ PipelineStepInterfaceType = TypeVar("PipelineStepInterfaceType")
 
 class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
     generator: Optional[GeneratorInterface] = None
-    threshold: Optional[float] = DEFAULT_THRESHOLD
-    chunk_size_parallel_processing: int = 1
-    parallel: bool = True
+    threshold: Optional[FloatParameter] = DEFAULT_THRESHOLD
+    chunk_size_parallel_processing: IntegerParameter = 1
+    parallel: BoolParameter = True
 
-    display_name: Optional[str] = None
+    display_name: Optional[StringParameter] = None
 
     def __init__(
         self,
-        threshold: float = None,
+        threshold: Optional[FloatParameter] = None,
         generator: Optional[GeneratorInterface] = None,
-        chunk_size_parallel_processing: int = None,
-        parallel: bool = None,
-        display_name: Optional[str] = None,
-    ):
+        chunk_size_parallel_processing: Optional[IntegerParameter] = None,
+        parallel: Optional[BoolParameter] = None,
+        display_name: Optional[StringParameter] = None,
+        **kwargs,
+    ) -> None:
         super().__init__()
         if generator:
             if isinstance(generator, dict):
@@ -264,7 +291,7 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
     @abstractmethod
     def process(
         self, nodes: List[str], graph: BaseGraphInterface
-    ) -> Optional[TestResult]:
+    ) -> Optional[TestResultInterface]:
         """
         Test if u and v are independent
         :param u: u values
@@ -275,7 +302,7 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
 
     def __call__(
         self, nodes: List[str], graph: BaseGraphInterface
-    ) -> Optional[TestResult]:
+    ) -> Optional[TestResultInterface]:
         return self.process(nodes, graph)
 
 
@@ -285,8 +312,8 @@ class ExitConditionInterface(ABC, BaseModel):
         self,
         graph: BaseGraphInterface,
         graph_model_instance_: GraphModelInterface,
-        actions_taken: List[TestResult],
-        iteration: int,
+        actions_taken: List[TestResultInterface],
+        iteration: IntegerParameter,
     ) -> bool:
         """
         :param graph:
@@ -301,7 +328,7 @@ class ExitConditionInterface(ABC, BaseModel):
         self,
         graph: BaseGraphInterface,
         graph_model_instance_: GraphModelInterface,
-        actions_taken: List[TestResult],
+        actions_taken: List[TestResultInterface],
         iteration: int,
     ) -> bool:
         return self.check(graph, graph_model_instance_, actions_taken, iteration)
@@ -319,7 +346,7 @@ class LogicStepInterface(ABC, BaseModel, Generic[LogicStepInterfaceType]):
     pipeline_steps: Optional[List[Union[PipelineStepInterfaceType]]] = None
     exit_condition: Optional[ExitConditionInterface] = None
 
-    display_name: Optional[str] = None
+    display_name: Optional[StringParameter] = None
 
     @abstractmethod
     def execute(self, graph: BaseGraphInterface, graph_model_instance_: dict):
@@ -354,45 +381,11 @@ class LogicStepInterface(ABC, BaseModel, Generic[LogicStepInterfaceType]):
             self.display_name = display_name
 
 
-CausyExtensionType = TypeVar("CausyExtensionType", bound="CausyExtension")
+ExtensionType = TypeVar("ExtensionType", bound="ExtensionInterface")
 
 
-class CausyExtension(BaseModel, Generic[CausyExtensionType]):
+class ExtensionInterface(BaseModel, Generic[ExtensionType]):
     @computed_field
     @property
     def name(self) -> str:
         return serialize_module_name(self)
-
-
-class CausyAlgorithm(BaseModel):
-    name: str
-    pipeline_steps: List[Union[PipelineStepInterfaceType, LogicStepInterface]]
-    pipeline_steps: List[Union[PipelineStepInterfaceType, LogicStepInterface]]
-    edge_types: List[EdgeTypeInterface]
-    extensions: Optional[List[CausyExtensionType]] = None
-
-
-class CausyAlgorithmReferenceType(enum.StrEnum):
-    FILE = "file"
-    NAME = "name"
-    PYTHON_MODULE = "python_module"
-
-
-class CausyAlgorithmReference(BaseModel):
-    reference: str
-    type: CausyAlgorithmReferenceType
-
-
-class ActionHistoryStep(BaseModel):
-    name: str
-    duration: Optional[float] = None  # seconds
-    actions: Optional[List[TestResult]] = []
-    steps: Optional[List["ActionHistoryStep"]] = []
-
-
-class CausyResult(BaseModel):
-    algorithm: CausyAlgorithmReference
-    created_at: datetime = Field(default_factory=datetime.now)
-    nodes: Dict[str, NodeInterface]
-    edges: List[EdgeInterface]
-    action_history: List[ActionHistoryStep]

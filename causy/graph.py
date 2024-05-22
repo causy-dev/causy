@@ -11,12 +11,10 @@ from causy.edge_types import UndirectedEdge, DirectedEdge
 from causy.interfaces import (
     BaseGraphInterface,
     NodeInterface,
-    TestResultAction,
-    TestResult,
     EdgeInterface,
     EdgeTypeInterface,
-    ActionHistoryStep,
 )
+from causy.models import TestResultAction, TestResult, ActionHistoryStep
 
 logger = logging.getLogger(__name__)
 
@@ -341,7 +339,7 @@ class GraphAccessMixin:
     def inducing_path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
         Check if an inducing path from u to v exists.
-        An inducing path from u to v is a directed path from u to v on which all mediators are colliders.
+        An inducing path from u to v is a directed reference from u to v on which all mediators are colliders.
         :param u: node u
         :param v: node v
         :return: True if an inducing path exists, False otherwise

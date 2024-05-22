@@ -1,6 +1,6 @@
 from causy.graph import GraphManager
-from causy.interfaces import TestResult, TestResultAction, CausyAlgorithm
-from causy.orientation_rules.pc import (
+from causy.models import TestResultAction, TestResult, Algorithm
+from causy.causal_discovery.constraint.orientation_rules.pc import (
     ColliderTest,
     NonColliderTest,
     FurtherOrientTripleTest,
@@ -16,7 +16,7 @@ class OrientationRuleTestCase(CausyTestCase):
     def test_collider_test(self):
         pipeline = [ColliderTest()]
         model = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="TestCollider",
@@ -45,7 +45,7 @@ class OrientationRuleTestCase(CausyTestCase):
     def test_collider_test_with_nonempty_separation_set(self):
         pipeline = [ColliderTest()]
         model = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="TestCollider",
@@ -73,7 +73,7 @@ class OrientationRuleTestCase(CausyTestCase):
     def test_non_collider_test(self):
         pipeline = [NonColliderTest()]
         model = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="TestCollider",
@@ -93,7 +93,7 @@ class OrientationRuleTestCase(CausyTestCase):
     def test_further_orient_triple_test(self):
         pipeline = [FurtherOrientTripleTest()]
         model = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="TestCollider",
@@ -117,7 +117,7 @@ class OrientationRuleTestCase(CausyTestCase):
     def test_orient_quadruple_test(self):
         pipeline = [OrientQuadrupleTest()]
         model = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="TestCollider",
@@ -144,7 +144,7 @@ class OrientationRuleTestCase(CausyTestCase):
     def test_further_orient_quadruple_test(self):
         pipeline = [FurtherOrientQuadrupleTest()]
         model = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="TestCollider",

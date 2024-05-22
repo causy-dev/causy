@@ -1,5 +1,9 @@
+import hashlib
 import importlib
-from typing import List, Tuple
+import json
+from typing import List, Tuple, Dict
+
+from causy.variables import deserialize_variable_references
 
 
 def unpack_run(args):
@@ -30,6 +34,7 @@ def load_pipeline_steps_by_definition(steps):
     pipeline = []
     for step in steps:
         st_function = load_pipeline_artefact_by_definition(step)
+        st_function = deserialize_variable_references(st_function)
         pipeline.append(st_function)
     return pipeline
 
@@ -45,3 +50,20 @@ def retrieve_edges(graph) -> List[Tuple[str, str]]:
         for v in graph.edges[u]:
             edges.append((u, v))
     return edges
+
+
+def hash_dictionary(dct: Dict):
+    """
+    Hash a dictionary using SHA256 (e.g. for caching)
+    :param dct:
+    :return:
+    """
+    return hashlib.sha256(
+        json.dumps(
+            dct,
+            ensure_ascii=False,
+            sort_keys=True,
+            indent=None,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()

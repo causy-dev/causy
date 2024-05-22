@@ -3,48 +3,39 @@ import logging
 
 import typer
 
+from causy.data_loader import JSONDataLoader
 from causy.graph_model import graph_model_factory
-from causy.interfaces import (
-    CausyResult,
-    ActionHistoryStep,
-    CausyAlgorithmReferenceType,
+from causy.models import (
+    Result,
+    AlgorithmReferenceType,
 )
 from causy.serialization import (
     serialize_algorithm,
     load_algorithm_from_specification,
     CausyJSONEncoder,
-    load_algorithm_from_reference,
     load_json,
 )
 from causy.graph_utils import (
     retrieve_edges,
 )
-from causy.ui import server
-from causy.workspaces.cli import app as workspaces_app
+from causy.ui.cli import ui as ui_app
+from causy.workspaces.cli import workspace_app as workspaces_app
+from causy.causal_discovery import AVAILABLE_ALGORITHMS
 
 app = typer.Typer()
 
 app.add_typer(workspaces_app, name="workspace")
+app.command(name="ui", help="run causy ui")(ui_app)
 
 
 @app.command()
 def eject(algorithm: str, output_file: str):
     typer.echo(f"💾 Loading algorithm {algorithm}")
-    model = load_algorithm_from_reference(algorithm)()
+    model = AVAILABLE_ALGORITHMS[algorithm]()
     result = serialize_algorithm(model, algorithm_name=algorithm)
     typer.echo(f"💾 Saving algorithm {algorithm} to {output_file}")
     with open(output_file, "w") as file:
         file.write(json.dumps(result, indent=4))
-
-
-@app.command()
-def ui(result_file: str):
-    result = load_json(result_file)
-
-    server_config, server_runner = server(result)
-    typer.launch(f"http://{server_config.host}:{server_config.port}")
-    typer.echo(f"🚀 Starting server at http://{server_config.host}:{server_config.port}")
-    server_runner.run()
 
 
 @app.command()
@@ -62,22 +53,23 @@ def execute(
         algorithm = load_algorithm_from_specification(model_dict)
         model = graph_model_factory(algorithm=algorithm)()
         algorithm_reference = {
-            "type": CausyAlgorithmReferenceType.FILE,
+            "type": AlgorithmReferenceType.FILE,
             "reference": pipeline,  # TODO: how to reference pipeline in a way that it can be loaded?
         }
     elif algorithm:
         typer.echo(f"💾 Creating pipeline from algorithm {algorithm}")
-        model = load_algorithm_from_reference(algorithm)()
+        model = AVAILABLE_ALGORITHMS[algorithm]()
         algorithm_reference = {
-            "type": CausyAlgorithmReferenceType.NAME,
+            "type": AlgorithmReferenceType.NAME,
             "reference": algorithm,
         }
 
     else:
         raise ValueError("Either pipeline_file or algorithm must be specified")
 
+    dl = JSONDataLoader(data_file)
     # initialize from json
-    model.create_graph_from_data(load_json(data_file))
+    model.create_graph_from_data(dl)
 
     # TODO: I should become a configurable skeleton builder
     model.create_all_possible_edges()
@@ -90,7 +82,7 @@ def execute(
             f"{model.graph.nodes[edge[0]].name} -> {model.graph.nodes[edge[1]].name}: {model.graph.edges[edge[0]][edge[1]]}"
         )
 
-    result = CausyResult(
+    result = Result(
         algorithm=algorithm_reference,
         action_history=model.graph.graph.action_history,
         edges=model.graph.retrieve_edges(),

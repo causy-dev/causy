@@ -1,13 +1,12 @@
-from causy.algorithms.pc import PC_EDGE_TYPES
+from causy.causal_discovery.constraint.algorithms.pc import PC_EDGE_TYPES
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.generators import PairsWithNeighboursGenerator
 from causy.graph_model import graph_model_factory
-from causy.graph_utils import retrieve_edges
-from causy.independence_tests.common import (
+from causy.causal_discovery.constraint.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
 )
-from causy.interfaces import CausyAlgorithm, ComparisonSettings
+from causy.models import ComparisonSettings, Algorithm
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 from tests.utils import CausyTestCase
 
@@ -28,7 +27,7 @@ class GeneratorsTestCase(CausyTestCase):
         )
 
         algo = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=[
                     CalculatePearsonCorrelations(),
                     CorrelationCoefficientTest(threshold=0.005),
@@ -44,7 +43,6 @@ class GeneratorsTestCase(CausyTestCase):
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
-        print(retrieve_edges(tst.graph))
         result = PairsWithNeighboursGenerator(
             comparison_settings=ComparisonSettings(min=3, max=4)
         ).generate(tst.graph.graph, tst)
@@ -52,4 +50,3 @@ class GeneratorsTestCase(CausyTestCase):
 
         for i in result:
             all_results.extend(i)
-        print(all_results)

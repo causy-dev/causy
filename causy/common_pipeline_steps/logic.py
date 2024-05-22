@@ -1,22 +1,16 @@
 import time
-from typing import Optional, List, Union, Dict, Any, Generic
+from typing import Optional, Generic
 
-from pydantic import BaseModel
 
 from causy.interfaces import (
     LogicStepInterface,
     BaseGraphInterface,
     GraphModelInterface,
-    PipelineStepInterface,
     ExitConditionInterface,
-    PipelineStepInterfaceType,
     LogicStepInterfaceType,
-    ActionHistoryStep,
 )
-from causy.graph_utils import (
-    load_pipeline_artefact_by_definition,
-    load_pipeline_steps_by_definition,
-)
+
+from causy.models import ActionHistoryStep
 
 
 class Loop(LogicStepInterface[LogicStepInterfaceType], Generic[LogicStepInterfaceType]):

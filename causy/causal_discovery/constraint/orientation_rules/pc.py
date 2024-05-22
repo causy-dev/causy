@@ -4,13 +4,13 @@ import itertools
 from causy.generators import AllCombinationsGenerator
 from causy.interfaces import (
     BaseGraphInterface,
-    TestResult,
-    TestResultAction,
     PipelineStepInterface,
-    ComparisonSettings,
     GeneratorInterface,
     PipelineStepInterfaceType,
 )
+from causy.models import ComparisonSettings, TestResultAction, TestResult
+from causy.variables import IntegerParameter, BoolParameter
+
 
 # theory for all orientation rules with pictures:
 # https://hpi.de/fileadmin/user_upload/fachgebiete/plattner/teaching/CausalInference/2019/Introduction_to_Constraint-Based_Causal_Structure_Learning.pdf
@@ -24,8 +24,8 @@ class ColliderTest(
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing: int = 1
-    parallel: bool = False
+    chunk_size_parallel_processing: IntegerParameter = 1
+    parallel: BoolParameter = False
 
     def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -92,8 +92,8 @@ class NonColliderTest(
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing: int = 1
-    parallel: bool = False
+    chunk_size_parallel_processing: IntegerParameter = 1
+    parallel: BoolParameter = False
 
     def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -158,8 +158,8 @@ class FurtherOrientTripleTest(
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing: int = 1
-    parallel: bool = False
+    chunk_size_parallel_processing: IntegerParameter = 1
+    parallel: BoolParameter = False
 
     def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -216,8 +216,8 @@ class OrientQuadrupleTest(
     generator: Optional[GeneratorInterface] = AllCombinationsGenerator(
         comparison_settings=ComparisonSettings(min=2, max=2)
     )
-    chunk_size_parallel_processing: int = 1
-    parallel: bool = False
+    chunk_size_parallel_processing: IntegerParameter = 1
+    parallel: BoolParameter = False
 
     def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface

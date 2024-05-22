@@ -1,7 +1,7 @@
+from causy.causal_discovery.constraint.orientation_rules.fci import ColliderRuleFCI
 from causy.graph import GraphManager
 from causy.graph_model import graph_model_factory
-from causy.interfaces import TestResult, TestResultAction, CausyAlgorithm
-from causy.orientation_rules.fci import ColliderRuleFCI
+from causy.models import TestResultAction, TestResult, Algorithm
 
 from tests.utils import CausyTestCase
 
@@ -10,7 +10,7 @@ class OrientationTestCase(CausyTestCase):
     def test_collider_rule_fci(self):
         pipeline = [ColliderRuleFCI()]
         model = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="FCIColliderRule",

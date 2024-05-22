@@ -1,8 +1,10 @@
-from causy.algorithms.pc import PC_DEFAULT_THRESHOLD
+from causy.causal_discovery.constraint.algorithms.pc import PC_DEFAULT_THRESHOLD
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_model import graph_model_factory
-from causy.independence_tests.common import CorrelationCoefficientTest
-from causy.interfaces import CausyAlgorithm
+from causy.causal_discovery.constraint.independence_tests.common import (
+    CorrelationCoefficientTest,
+)
+from causy.models import Algorithm
 from causy.serialization import serialize_algorithm, load_algorithm_from_specification
 
 from tests.utils import CausyTestCase
@@ -15,7 +17,7 @@ class SerializationTestCase(CausyTestCase):
             CorrelationCoefficientTest(threshold=PC_DEFAULT_THRESHOLD),
         ]
         model = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="test_serialize",
@@ -34,7 +36,7 @@ class SerializationTestCase(CausyTestCase):
             CorrelationCoefficientTest(threshold=PC_DEFAULT_THRESHOLD),
         ]
         model = graph_model_factory(
-            CausyAlgorithm(
+            Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[],
                 name="test_serialize",
