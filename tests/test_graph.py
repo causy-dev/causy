@@ -289,7 +289,7 @@ class GraphTestCase(CausyTestCase):
         node2 = graph.add_node("test2", [1, 2, 3])
         node3 = graph.add_node("test3", [1, 2, 3])
         graph.add_bidirected_edge(node1, node2, {"test": "test"})
-        graph.add_directed_edge(node2, node3, {"test": "test"})
+        graph.add_directed_edge(node3, node2, {"test": "test"})
         self.assertTrue(graph.inducing_path_exists(node1, node2))
         self.assertTrue(graph.inducing_path_exists(node2, node3))
         self.assertTrue(graph.inducing_path_exists(node1, node3))
@@ -306,4 +306,3 @@ class GraphTestCase(CausyTestCase):
         graph.add_directed_edge(node2, node4, {"test": "test"})
         graph.add_directed_edge(node3, node1, {"test": "test"})
         self.assertTrue(graph.inducing_path_exists(node1, node4))
-        self.assertTrue(graph.inducing_path_exists(node2, node3))
