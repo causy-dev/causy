@@ -294,7 +294,7 @@ class GraphTestCase(CausyTestCase):
         self.assertTrue(graph.inducing_path_exists(node2, node3))
         self.assertTrue(graph.inducing_path_exists(node1, node3))
 
-    def test_inducing_path_exists(self):
+    def test_inducing_path_exists_2(self):
         graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
