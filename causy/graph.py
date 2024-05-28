@@ -7,7 +7,7 @@ import logging
 import torch
 from pydantic import BaseModel, Field
 
-from causy.edge_types import UndirectedEdge, DirectedEdge
+from causy.edge_types import UndirectedEdge, DirectedEdge, BiDirectedEdge
 from causy.interfaces import (
     BaseGraphInterface,
     NodeInterface,
@@ -289,6 +289,26 @@ class GraphAccessMixin:
                 return True
         return False
 
+    def path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
+        """
+        Check if a path from u to v exists
+        :param u: node u
+        :param v: node v
+        :return: True if a path exists, False otherwise
+        """
+
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
+        if self.edge_exists(u, v):
+            return True
+        for w in self.edges[u]:
+            if self.path_exists(self.nodes[w], v):
+                return True
+        return False
+
     def edge_of_type_exists(
         self,
         u: Union[Node, str],
@@ -329,17 +349,36 @@ class GraphAccessMixin:
         # TODO: try a better data structure for this
         if self.directed_edge_exists(u, v):
             return [[(u, v)]]
-        paths = []
+        directed_paths = []
         for w in self.edges[u.id]:
             if self.directed_edge_exists(u, self.nodes[w]):
-                for path in self.directed_paths(self.nodes[w], v):
+                for directed_path in self.directed_paths(self.nodes[w], v):
+                    directed_paths.append([(u, self.nodes[w])] + directed_path)
+        return directed_paths
+
+    def paths(
+        self, u: Union[Node, str], v: Union[Node, str]
+    ) -> List[List[Tuple[Node, Node]]]:
+        """
+        Return all paths from u to v
+        :param u: node u
+        :param v: node v
+        :return: list of paths
+        """
+        u, v = self.__resolve_node_references(u, v)
+        if self.edge_exists(u, v):
+            return [[(u, v)]]
+        paths = []
+        for w in self.edges[u.id]:
+            if self.edge_exists(u, self.nodes[w]):
+                for path in self.paths(self.nodes[w], v):
                     paths.append([(u, self.nodes[w])] + path)
         return paths
 
     def inducing_path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
         Check if an inducing path from u to v exists.
-        An inducing path from u to v is a directed reference from u to v on which all mediators are colliders.
+        An inducing path from u to v is a path from u to v on which all mediators are colliders and all colliders are ancestors of u or v.
         :param u: node u
         :param v: node v
         :return: True if an inducing path exists, False otherwise
@@ -350,15 +389,44 @@ class GraphAccessMixin:
         if isinstance(v, Node):
             v = v.id
 
-        if not self.directed_path_exists(u, v):
+        if not self.path_exists(u, v):
             return False
-        for path in self.directed_paths(u, v):
+
+        # check if all mediators are colliders
+        for path in self.paths(u, v):
+            if len(path) == 1:
+                return True
+            if not self.directed_edge_exists(path[0][0], path[0][1]):
+                print("no directed edge at second node")
+                return False
+            if not self.directed_edge_exists(
+                path[len(path) - 1][1], path[len(path) - 1][0]
+            ):
+                print("no directed edge at second last node")
+                return False
+            if len(path) == 2:
+                if not self.directed_path_exists(
+                    path[0][1], u
+                ) and not self.directed_path_exists(path[0][1], v):
+                    print("no directed path to end nodes 1")
+                    return False
             for i in range(1, len(path) - 1):
                 r, w = path[i]
                 if not self.bidirected_edge_exists(r, w):
-                    # TODO: check if this is correct (@sof)
-                    return True
-        return False
+                    print("no bidirected edge in the middle of the path")
+                    return False
+                # check if all colliders are ancestors of u or v
+                if not self.directed_path_exists(
+                    r, u
+                ) and not self.directed_path_exists(r, v):
+                    print("no directed path to end nodes 2")
+                    return False
+                if not self.directed_path_exists(
+                    w, u
+                ) and not self.directed_path_exists(w, v):
+                    print("no directed path to end nodes 3")
+                    return False
+        return True
 
     def retrieve_edges(self) -> List[Edge]:
         """
@@ -487,6 +555,43 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
 
         self.edges[u.id][v.id] = edge
         self._reverse_edges[v.id][u.id] = edge
+
+        self.edge_history[(u.id, v.id)] = []
+
+    def add_bidirected_edge(self, u: Node, v: Node, metadata: Dict):
+        """
+        Add a bidirected edge from u to v to the graph
+        :param u: u node
+        :param v: v node
+        :param metadata: metadata of the edge
+        :return:
+        """
+
+        if u.id not in self.nodes:
+            raise GraphError(f"Node {u} does not exist")
+        if v.id not in self.nodes:
+            raise GraphError(f"Node {v} does not exist")
+
+        if u.id == v.id:
+            raise GraphError("Self loops are currently not allowed")
+
+        if u.id not in self.edges:
+            self.edges[u.id] = self.__init_dict()
+        if v.id not in self.edges:
+            self.edges[v.id] = self.__init_dict()
+        if v.id not in self._reverse_edges:
+            self._reverse_edges[v.id] = self.__init_dict()
+        if u.id not in self._reverse_edges:
+            self._reverse_edges[u.id] = self.__init_dict()
+
+        uv_edge = Edge(u=u, v=v, edge_type=BiDirectedEdge(), metadata=metadata)
+        vu_edge = Edge(u=v, v=u, edge_type=BiDirectedEdge(), metadata=metadata)
+
+        self.edges[u.id][v.id] = uv_edge
+        self._reverse_edges[v.id][u.id] = uv_edge
+
+        self.edges[v.id][u.id] = vu_edge
+        self._reverse_edges[u.id][v.id] = vu_edge
 
         self.edge_history[(u.id, v.id)] = []
 
