@@ -247,7 +247,7 @@ class GraphTestCase(CausyTestCase):
         graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
-        node3 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
         graph.add_directed_edge(node1, node2, {"test": "test"})
         graph.add_directed_edge(node3, node2, {"test": "test"})
         result = graph.parents_of_node(node2)
@@ -270,6 +270,129 @@ class GraphTestCase(CausyTestCase):
         graph.add_directed_edge(node2, node3, {"test": "test"})
         self.assertEqual(
             graph.directed_paths(node1, node3), [[(node1, node2), (node2, node3)]]
+        )
+
+    def test_directed_paths_three_two_paths(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        graph.add_directed_edge(node1, node4, {"test": "test"})
+        graph.add_directed_edge(node4, node3, {"test": "test"})
+        self.assertEqual(
+            graph.directed_paths(node1, node3),
+            [[(node1, node2), (node2, node3)], [(node1, node4), (node4, node3)]],
+        )
+
+    def test_paths_two_nodes_undirected_edge(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        self.assertEqual(graph.paths(node1, node2), [[(node1, node2)]])
+
+    def test_paths_two_nodes_directed_edge(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        self.assertEqual(graph.paths(node2, node1), [[(node2, node1)]])
+
+    def test_paths_two_nodes_bidirected_edge(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        graph.add_bidirected_edge(node1, node2, {"test": "test"})
+        self.assertEqual(graph.paths(node2, node1), [[(node2, node1)]])
+
+    def test_paths_three_nodes_directed_edge(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        self.assertEqual(graph.paths(node1, node3), [[(node1, node2), (node2, node3)]])
+
+    def test_paths_three_nodes_bidirected_edge(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_bidirected_edge(node1, node2, {"test": "test"})
+        graph.add_bidirected_edge(node2, node3, {"test": "test"})
+        self.assertEqual(graph.paths(node1, node3), [[(node1, node2), (node2, node3)]])
+
+    def test_paths_three_nodes_bidirected_edge_2(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_bidirected_edge(node1, node2, {"test": "test"})
+        graph.add_bidirected_edge(node2, node3, {"test": "test"})
+        self.assertEqual(graph.paths(node3, node1), [[(node3, node2), (node2, node1)]])
+
+    def test_paths_three_nodes_two_paths(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        graph.add_directed_edge(node1, node4, {"test": "test"})
+        graph.add_directed_edge(node4, node3, {"test": "test"})
+        self.assertEqual(
+            graph.paths(node1, node3),
+            [[(node1, node2), (node2, node3)], [(node1, node4), (node4, node3)]],
+        )
+
+    def test_paths_three_nodes_two_paths_bidirected_edge(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_bidirected_edge(node1, node2, {"test": "test"})
+        graph.add_bidirected_edge(node2, node3, {"test": "test"})
+        graph.add_bidirected_edge(node1, node4, {"test": "test"})
+        graph.add_bidirected_edge(node4, node3, {"test": "test"})
+        self.assertEqual(
+            graph.paths(node1, node3),
+            [[(node1, node2), (node2, node3)], [(node1, node4), (node4, node3)]],
+        )
+
+    def test_paths_three_nodes_two_paths_mixed_edge_types(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_bidirected_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node3, node2, {"test": "test"})
+        graph.add_bidirected_edge(node1, node4, {"test": "test"})
+        graph.add_bidirected_edge(node4, node3, {"test": "test"})
+        self.assertEqual(
+            graph.paths(node1, node3),
+            [[(node1, node2), (node2, node3)], [(node1, node4), (node4, node3)]],
+        )
+
+    def test_paths_three_nodes_two_paths_mixed_edge_types_2(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_bidirected_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        graph.add_bidirected_edge(node1, node4, {"test": "test"})
+        graph.add_bidirected_edge(node4, node3, {"test": "test"})
+        self.assertEqual(
+            graph.paths(node1, node3),
+            [[(node1, node2), (node2, node3)], [(node1, node4), (node4, node3)]],
         )
 
     def test_inducing_path_exists_basic(self):

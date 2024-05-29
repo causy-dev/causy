@@ -396,11 +396,11 @@ class GraphAccessMixin:
         print(f"len_paths={len(self.paths(u, v))}")
         print(self.paths(u, v))
         for path in self.paths(u, v):
-            if self._is_path_inducing(path):
+            if self._is_path_inducing(path, u, v):
                 return True
         return False
 
-    def _is_path_inducing(self, path):
+    def _is_path_inducing(self, path, u, v):
         if len(path) == 1:
             return True
         if not self.directed_edge_exists(path[0][0], path[0][1]):
