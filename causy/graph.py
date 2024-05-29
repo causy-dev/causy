@@ -378,7 +378,7 @@ class GraphAccessMixin:
     def inducing_path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
         Check if an inducing path from u to v exists.
-        An inducing path from u to v is a path from u to v on which all mediators are colliders and all colliders are ancestors of u or v.
+        An inducing path from u to v is a path from u to v on which all nodes that are not start or end nodes are colliders and all colliders are ancestors of u or v.
         :param u: node u
         :param v: node v
         :return: True if an inducing path exists, False otherwise
