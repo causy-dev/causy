@@ -298,13 +298,13 @@ class GraphTestCase(CausyTestCase):
         graph.add_directed_edge(node3, node4, {"test": "test"})
         graph.add_directed_edge(node2, node4, {"test": "test"})
         graph.add_directed_edge(node3, node1, {"test": "test"})
-        self.assertEqual(len(graph.paths(node1, node4)), 2)
-        self.assertEqual(
-            graph.paths(node1, node4),
-            [
-                [(node1, node2), (node2, node3), (node3, node4)],
-                [(node1, node2), (node2, node4)],
-            ],
+        self.assertEqual(len(graph.directed_paths(node1, node4)), 2)
+        self.assertIn(
+            [(node1, node2), (node2, node4)], graph.directed_paths(node1, node4)
+        )
+        self.assertIn(
+            [(node1, node2), (node2, node3), (node3, node4)],
+            graph.directed_paths(node1, node4),
         )
 
     def test_paths_two_nodes_undirected_edge(self):

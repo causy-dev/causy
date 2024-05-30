@@ -340,21 +340,30 @@ class GraphAccessMixin:
         self, u: Union[Node, str], v: Union[Node, str]
     ) -> List[List[Tuple[Node, Node]]]:
         """
-        Return all directed paths from u to v
+        Return all directed paths from u to v using BFS with backtracking
         :param u: node u
         :param v: node v
         :return: list of directed paths
         """
         u, v = self.__resolve_node_references(u, v)
-        directed_paths = []
-        # TODO: try a better data structure for this
-        if self.directed_edge_exists(u, v):
-            return [[(u, v)]]
-        for w in self.edges[u.id]:
-            if self.directed_edge_exists(u, self.nodes[w]):
-                for directed_path in self.directed_paths(self.nodes[w], v):
-                    directed_paths.append([(u, self.nodes[w])] + directed_path)
-        return directed_paths
+        all_paths = []
+        queue = [(u, [])]  # Queue contains tuples of (current_node, current_path)
+
+        while queue:
+            current_node, path = queue.pop(0)  # Dequeue the first element
+
+            if current_node == v:
+                all_paths.append(path)
+                continue
+
+            for neighbor_id in self.edges[current_node.id]:
+                neighbor_node = self.nodes[neighbor_id]
+                if not any(neighbor_node in edge for edge in path):  # Check for cycles
+                    queue.append(
+                        (neighbor_node, path + [(current_node, neighbor_node)])
+                    )
+
+        return all_paths
 
     def paths(
         self, u: Union[Node, str], v: Union[Node, str]
@@ -365,10 +374,11 @@ class GraphAccessMixin:
         :param v: node v
         :return: list of paths
         """
+        # does not work yet, think about how to deal with cycles (TODO @sof)
         u, v = self.__resolve_node_references(u, v)
+        paths = []
         if self.edge_exists(u, v):
             return [[(u, v)]]
-        paths = []
         for w in self.edges[u.id]:
             if self.edge_exists(u, self.nodes[w]):
                 for path in self.paths(self.nodes[w], v):
