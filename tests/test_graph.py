@@ -262,6 +262,16 @@ class GraphTestCase(CausyTestCase):
         self.assertTrue(graph.directed_path_exists(node1, node2))
         self.assertFalse(graph.directed_path_exists(node2, node1))
 
+    def test_directed_path_exists_three_nodes(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        self.assertTrue(graph.directed_path_exists(node1, node3))
+        self.assertFalse(graph.directed_path_exists(node3, node1))
+
     def test_directed_paths_two_nodes(self):
         graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])

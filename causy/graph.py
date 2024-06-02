@@ -441,38 +441,14 @@ class GraphAccessMixin:
         return False
 
     def _is_path_inducing(self, path, u, v):
-        if len(path) == 1:
-            return True
-        if not self.directed_edge_exists(path[0][0], path[0][1]):
-            print("no directed edge at second node")
-            return False
-        if not self.directed_edge_exists(
-            path[len(path) - 1][1], path[len(path) - 1][0]
-        ):
-            print("no directed edge at second last node")
-            return False
-        if len(path) == 2:
-            if not self.directed_path_exists(
-                path[0][1], u
-            ) and not self.directed_path_exists(path[0][1], v):
-                print("no directed path to end nodes 1")
-                print(f"testing {u.name} -> {v.name}")
+        for edge in path[:-1]:
+            if not self.directed_edge_exists(edge[0], edge[1]):
                 return False
-        for i in range(1, len(path) - 1):
-            r, w = path[i]
-            if not self.edge_of_type_exists(r, w, BiDirectedEdge()):
-                print("no bidirected edge in the middle of the path")
+        for edge in path[1:-1]:
+            if not self.edge_of_type_exists(edge[0], edge[1], BiDirectedEdge()):
                 return False
-            # check if all colliders are ancestors of u or v
-            if not self.directed_path_exists(r, u) and not self.directed_path_exists(
-                r, v
-            ):
-                print("no directed path to end nodes 2")
-                return False
-            if not self.directed_path_exists(w, u) and not self.directed_path_exists(
-                w, v
-            ):
-                print("no directed path to end nodes 3")
+        for edge in path[1:]:
+            if not self.directed_edge_exists(edge[1], edge[0]):
                 return False
         return True
 
