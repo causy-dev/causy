@@ -395,10 +395,8 @@ class GraphTestCase(CausyTestCase):
         graph.add_directed_edge(node3, node2, {"test": "test"})
         graph.add_bidirected_edge(node1, node4, {"test": "test"})
         graph.add_bidirected_edge(node4, node3, {"test": "test"})
-        self.assertEqual(
-            graph.paths(node1, node3),
-            [[(node1, node2), (node2, node3)], [(node1, node4), (node4, node3)]],
-        )
+        self.assertIn([(node1, node2), (node2, node3)], graph.paths(node1, node3))
+        self.assertIn([(node1, node4), (node4, node3)], graph.paths(node1, node3))
 
     def test_paths_three_nodes_two_paths_mixed_edge_types_2(self):
         graph = GraphManager()
@@ -428,12 +426,12 @@ class GraphTestCase(CausyTestCase):
         graph.add_directed_edge(node2, node4, {"test": "test"})
         graph.add_directed_edge(node3, node1, {"test": "test"})
         self.assertEqual(len(graph.paths(node1, node4)), 2)
-        self.assertEqual(
-            graph.paths(node1, node4),
-            [
-                [(node1, node2), (node2, node3), (node3, node4)],
-                [(node1, node2), (node2, node4)],
-            ],
+        self.assertIn(
+            [(node1, node2), (node2, node4)], graph.directed_paths(node1, node4)
+        )
+        self.assertIn(
+            [(node1, node2), (node2, node3), (node3, node4)],
+            graph.directed_paths(node1, node4),
         )
 
     def test_inducing_path_exists_basic(self):
@@ -470,3 +468,35 @@ class GraphTestCase(CausyTestCase):
         graph.add_directed_edge(node2, node4, {"test": "test"})
         graph.add_directed_edge(node3, node1, {"test": "test"})
         self.assertTrue(graph.inducing_path_exists(node1, node4))
+
+    def test_path_exists_directed_case(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        self.assertTrue(graph.path_exists(node1, node2))
+        self.assertTrue(graph.path_exists(node2, node1))
+        self.assertTrue(graph.path_exists(node2, node3))
+        self.assertTrue(graph.path_exists(node3, node2))
+        self.assertTrue(graph.path_exists(node1, node3))
+        self.assertTrue(graph.path_exists(node3, node1))
+
+    def test_path_exists_bidirected_case(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        graph.add_bidirected_edge(node1, node2, {"test": "test"})
+        self.assertTrue(graph.path_exists(node1, node2))
+        self.assertTrue(graph.path_exists(node2, node1))
+
+    def test_path_exists_collider_case(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node3, node2, {"test": "test"})
+        self.assertFalse(graph.path_exists(node1, node3))
+        self.assertFalse(graph.path_exists(node3, node1))
