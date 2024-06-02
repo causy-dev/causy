@@ -168,6 +168,33 @@ class GraphAccessMixin:
 
         return True
 
+    def edge_of_type_exists(
+        self,
+        u: Union[Node, str],
+        v: Union[Node, str],
+        edge_type: EdgeTypeInterface = DirectedEdge(),
+    ) -> bool:
+        """
+        Check if an edge of a specific type exists between u and v.
+        :param u: node u
+        :param v: node v
+        :param edge_type: the type of the edge to check for
+        :return: True if an edge of this type exists, False otherwise
+        """
+
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
+        if not self.edge_exists(u, v):
+            return False
+
+        if self.edges[u][v].edge_type != edge_type:
+            return False
+
+        return True
+
     def node_by_id(self, id_: str) -> Optional[Node]:
         """
         Retrieve a node by its id
@@ -297,16 +324,8 @@ class GraphAccessMixin:
         :return: True if a path exists, False otherwise
         """
 
-        if isinstance(u, Node):
-            u = u.id
-        if isinstance(v, Node):
-            v = v.id
-
-        if self.edge_exists(u, v):
+        if len(self.paths(u, v)) > 0 or len(self.paths(v, u)) > 0:
             return True
-        for w in self.edges[u]:
-            if self.path_exists(self.nodes[w], v):
-                return True
         return False
 
     def edge_of_type_exists(
@@ -368,22 +387,36 @@ class GraphAccessMixin:
     def paths(
         self, u: Union[Node, str], v: Union[Node, str]
     ) -> List[List[Tuple[Node, Node]]]:
-        """
-        Return all paths from u to v
-        :param u: node u
-        :param v: node v
-        :return: list of paths
-        """
-        # does not work yet, think about how to deal with cycles (TODO @sof)
         u, v = self.__resolve_node_references(u, v)
-        paths = []
+        all_paths = []
+        queue = [(u, [])]  # Queue contains tuples of (current_node, current_path)
+
         if self.edge_exists(u, v):
-            return [[(u, v)]]
-        for w in self.edges[u.id]:
-            if self.edge_exists(u, self.nodes[w]):
-                for path in self.paths(self.nodes[w], v):
-                    paths.append([(u, self.nodes[w])] + path)
-        return paths
+            all_paths.append([(u, v)])
+
+        while queue:
+            current_node, path = queue.pop(0)  # Dequeue the first element
+
+            if current_node == v:  # as we already checked for the edge
+                if path not in all_paths:
+                    all_paths.append(path)
+                continue
+
+            if current_node.id not in self.edges:
+                continue
+
+            keys = list(self.edges[current_node.id].keys())
+            if current_node.id in self._reverse_edges:
+                keys += list(self._reverse_edges[current_node.id].keys())
+
+            for neighbor_id in keys:
+                neighbor_node = self.nodes[neighbor_id]
+                if not any(neighbor_node in edge for edge in path):  # Check for cycles
+                    queue.append(
+                        (neighbor_node, path + [(current_node, neighbor_node)])
+                    )
+
+        return all_paths
 
     def inducing_path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
@@ -430,7 +463,7 @@ class GraphAccessMixin:
                 return False
         for i in range(1, len(path) - 1):
             r, w = path[i]
-            if not self.bidirected_edge_exists(r, w):
+            if not self.edge_of_type_exists(r, w, BiDirectedEdge()):
                 print("no bidirected edge in the middle of the path")
                 return False
             # check if all colliders are ancestors of u or v
