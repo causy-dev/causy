@@ -441,15 +441,32 @@ class GraphAccessMixin:
         return False
 
     def _is_path_inducing(self, path, u, v):
+        """
+        Check if a path is inducing
+        :param path: list of edges
+        :param u: start node
+        :param v: end node
+        :return: Boolean
+        """
+        # check that all edges but the last one are directed from start node to end node (does not exclude bidirected edges)
         for edge in path[:-1]:
             if not self.directed_edge_exists(edge[0], edge[1]):
                 return False
+        # check that all edge but the first and the last are bidirected
         for edge in path[1:-1]:
             if not self.edge_of_type_exists(edge[0], edge[1], BiDirectedEdge()):
                 return False
+        # check that the last edge has an arrowhead to the second last node on the path so it is a collider
+        if not self.directed_edge_exists(path[-1][1], path[-1][0]):
+            return False
+        # check that every collider is an ancestor of either the end or the start node
         for edge in path[1:]:
-            if not self.directed_edge_exists(edge[1], edge[0]):
-                return False
+            if (
+                len(self.directed_paths(edge[0], u)) >= 1
+                or len(self.directed_paths(edge[0], v)) >= 1
+            ):
+                continue
+            return False
         return True
 
     def retrieve_edges(self) -> List[Edge]:
