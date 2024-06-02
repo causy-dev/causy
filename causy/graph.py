@@ -303,18 +303,14 @@ class GraphAccessMixin:
         :param v: node v
         :return: True if a directed path exists, False otherwise
         """
-
-        if isinstance(u, Node):
-            u = u.id
-        if isinstance(v, Node):
-            v = v.id
-
-        if self.directed_edge_exists(u, v):
-            return True
-        for w in self.edges[u]:
-            if self.directed_path_exists(self.nodes[w], v):
-                return True
-        return False
+        helper_bool = True
+        if not self.paths(u, v):
+            return False
+        for path in self.paths(u, v):
+            for edge in path:
+                if not self.only_directed_edge_exists(edge[0], edge[1]):
+                    helper_bool = False
+        return helper_bool
 
     def path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
@@ -440,6 +436,7 @@ class GraphAccessMixin:
         print(self.paths(u, v))
         for path in self.paths(u, v):
             if self._is_path_inducing(path, u, v):
+                print(" - ".join([f"{p[0].name} -> {p[1].name}" for p in path]))
                 return True
         return False
 
