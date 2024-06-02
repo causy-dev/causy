@@ -448,6 +448,13 @@ class GraphAccessMixin:
         :param v: end node
         :return: Boolean
         """
+        if len(path) == 1:
+            if self.only_directed_edge_exists(
+                path[0][0], path[0][1]
+            ) or self.only_directed_edge_exists(path[0][1], path[0][0]):
+                return True
+            if self.edge_of_type_exists(path[0][0], path[0][1], BiDirectedEdge()):
+                return False
         # check that all edges but the last one are directed from start node to end node (does not exclude bidirected edges)
         for edge in path[:-1]:
             if not self.directed_edge_exists(edge[0], edge[1]):
