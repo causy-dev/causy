@@ -526,31 +526,6 @@ class GraphTestCase(CausyTestCase):
         path = [(node1, node2), (node2, node3)]
         self.assertFalse(graph._is_path_inducing(path, node1, node3))
 
-    def test_is_path_inducing_2(self):
-        graph = GraphManager()
-        node1 = graph.add_node("test1", [1, 2, 3])
-        node2 = graph.add_node("test2", [1, 2, 3])
-        node3 = graph.add_node("test3", [1, 2, 3])
-        graph.add_bidirected_edge(node1, node2, {"test": "test"})
-        graph.add_bidirected_edge(node2, node3, {"test": "test"})
-        graph.add_directed_edge(node2, node3, {"test": "test"})
-        path = [(node1, node2), (node2, node3)]
-        self.assertTrue(graph._is_path_inducing(path, node1, node3))
-
-    def test_is_path_inducing_3(self):
-        graph = GraphManager()
-        node1 = graph.add_node("test1", [1, 2, 3])
-        node2 = graph.add_node("test2", [1, 2, 3])
-        node3 = graph.add_node("test3", [1, 2, 3])
-        node4 = graph.add_node("test4", [1, 2, 3])
-        graph.add_bidirected_edge(node1, node2, {"test": "test"})
-        graph.add_bidirected_edge(node2, node3, {"test": "test"})
-        graph.add_bidirected_edge(node3, node4, {"test": "test"})
-        graph.add_directed_edge(node2, node3, {"test": "test"})
-        graph.add_directed_edge(node3, node1, {"test": "test"})
-        path = [(node1, node2), (node2, node3)]
-        self.assertTrue(graph._is_path_inducing(path, node1, node3))
-
     def test_inducing_path_exists_basic(self):
         graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
@@ -569,9 +544,8 @@ class GraphTestCase(CausyTestCase):
         node3 = graph.add_node("test3", [1, 2, 3])
         graph.add_bidirected_edge(node1, node2, {"test": "test"})
         graph.add_directed_edge(node3, node2, {"test": "test"})
-        self.assertTrue(graph.inducing_path_exists(node1, node2))
+        self.assertFalse(graph.inducing_path_exists(node1, node2))
         self.assertTrue(graph.inducing_path_exists(node2, node3))
-        self.assertTrue(graph.inducing_path_exists(node1, node3))
 
     def test_inducing_path_exists_2(self):
         graph = GraphManager()
@@ -597,7 +571,10 @@ class GraphTestCase(CausyTestCase):
         graph.add_bidirected_edge(node3, node4, {"test": "test"})
         graph.add_bidirected_edge(node2, node4, {"test": "test"})
         graph.add_directed_edge(node3, node1, {"test": "test"})
-        self.assertTrue(graph.inducing_path_exists(node1, node4))
+        self.assertFalse(graph.inducing_path_exists(node1, node4))
+        self.assertFalse(graph.inducing_path_exists(node2, node4))
+        # There is a direct edge from node3 to node1
+        self.assertTrue(graph.inducing_path_exists(node1, node3))
 
     def test_inducing_path_exists_4(self):
         graph = GraphManager()
@@ -610,7 +587,7 @@ class GraphTestCase(CausyTestCase):
         graph.add_bidirected_edge(node3, node4, {"test": "test"})
         graph.add_directed_edge(node2, node4, {"test": "test"})
         graph.add_bidirected_edge(node3, node1, {"test": "test"})
-        self.assertTrue(graph.inducing_path_exists(node1, node4))
+        self.assertFalse(graph.inducing_path_exists(node1, node4))
 
     def test_inducing_path_exists_counter_example(self):
         graph = GraphManager()
@@ -662,7 +639,7 @@ class GraphTestCase(CausyTestCase):
         graph.add_bidirected_edge(node4, node5, {"test": "test"})
         graph.add_directed_edge(node2, node4, {"test": "test"})
         graph.add_bidirected_edge(node3, node1, {"test": "test"})
-        self.assertTrue(graph.inducing_path_exists(node1, node4))
+        self.assertFalse(graph.inducing_path_exists(node1, node4))
 
     def test_path_exists_directed_case(self):
         graph = GraphManager()

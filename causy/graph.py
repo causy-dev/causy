@@ -373,10 +373,13 @@ class GraphAccessMixin:
 
             for neighbor_id in self.edges[current_node.id]:
                 neighbor_node = self.nodes[neighbor_id]
-                if not any(neighbor_node in edge for edge in path):  # Check for cycles
-                    queue.append(
-                        (neighbor_node, path + [(current_node, neighbor_node)])
-                    )
+                if self.only_directed_edge_exists(current_node, neighbor_node):
+                    if not any(
+                        neighbor_node in edge for edge in path
+                    ):  # Check for cycles
+                        queue.append(
+                            (neighbor_node, path + [(current_node, neighbor_node)])
+                        )
 
         return all_paths
 
@@ -432,11 +435,8 @@ class GraphAccessMixin:
             return False
 
         # check if all mediators are colliders
-        print(f"len_paths={len(self.paths(u, v))}")
-        print(self.paths(u, v))
         for path in self.paths(u, v):
             if self._is_path_inducing(path, u, v):
-                print(" - ".join([f"{p[0].name} -> {p[1].name}" for p in path]))
                 return True
         return False
 
@@ -458,6 +458,12 @@ class GraphAccessMixin:
         # check that all edges but the last one are directed from start node to end node (does not exclude bidirected edges)
         for edge in path[:-1]:
             if not self.directed_edge_exists(edge[0], edge[1]):
+                return False
+        # special case: if there are only two edges, check that the there is an only directed edge from the middle node to either the first or the last node
+        if len(path) == 2:
+            if not self.only_directed_edge_exists(
+                path[1][0], path[0][0]
+            ) and not self.only_directed_edge_exists(path[1][0], path[0][0]):
                 return False
         # check that all edge but the first and the last are bidirected
         for edge in path[1:-1]:
