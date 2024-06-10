@@ -1,5 +1,5 @@
 > [!WARNING]
-> causy is currently in a very early and experimental stage of development. It currently only supports one algorithm. We do not recommend using it in production.
+> causy is currently in a very early and experimental stage of development. We do not recommend using it in production.
 # causy
 
 Causal discovery made easy. Causy allows you to use and implement causal discovery algorithms with easy to use, extend and maintain pipelines. It is built based on pytorch which allows you to run the algorithms on CPUs as well as GPUs seamlessly.
@@ -21,48 +21,51 @@ pip install causy
 ```
 
 ## Usage
-Causy can be used via CLI or via code. 
+Causy can be used with workspaces via CLI or via code. 
 
-### Usage via CLI
+### Workspaces Quickstart
 
-Run causy with one of the default algorithms
+See options for causy workspace
 ```bash
-causy execute --help
-causy execute your_data.json --algorithm PC --output-file output.json
+causy workspace --help
 ```
 
-The input data should be a json file with a list of dictionaries. Each dictionary represents a data point. The keys of the dictionary are the variable names and the values are the values of the variables. The values can be either numeric or categorical. 
-
-```json
-[
-    {"a": 1, "b": 0.3},
-    {"a": 0.5, "b": 0.2}
-]
-```
-
-You can customize your causy pipeline by ejecting and modifying the pipeline file.
+Create a new workspace and start the process to configure your pipeline, data loader and experiments interactively. Your  input data should be a json file stored in the same directory. 
 ```bash
-causy eject PC pc.json
-# edit pc.json
-causy execute your_data.json --pipeline pc.json  --output-file output.json
+causy workspace init
 ```
 
-This might be useful if you want to configure a custom algorithm or if you want to customize the pipeline of a default algorithm.
-
-#### Causy UI (experimental)
-To visualize the causal discovery process, we are currently working on a web-based UI. The UI is currently in a very early stage of development and is not yet ready for use. If you want to try it out, you can run the following command:
+Add an experiment 
 ```bash
-causy ui output.json
+causy workspace experiment add your_experiment_name
 ```
-This runs a web server on port 8000 which allows you to visualize the causal discovery process. The UI is currently read-only and does not allow you to interact with the causal discovery process.
 
+Update a variable in the experiment
+```bash
+causy workspace experiment update-variable your_experiment_name your_variable_name your_variable_value 
+```
+
+Run multiple experiments
+```bash
+causy workspace execute 
+```
+
+Compare the graphs of the experiments with different variable values via a matrix plot
+```bash
+causy workspace diff
+```
+
+Compare the graphs in the UI, switch between different experiments and visualize the causal discovery process
+```bash
+causy ui
+```
 
 ### Usage via Code
 
 Use a default algorithm
 
 ```python
-from causy.causal_discovery.constraint.algorithms import PC
+from causy.algorithms import PC
 from causy.graph_utils import retrieve_edges
 
 model = PC()
@@ -90,61 +93,55 @@ from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
 from causy.graph_model import graph_model_factory
 from causy.common_pipeline_steps.logic import Loop
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
-from causy.causal_discovery.constraint.independence_tests.common import (
-    CorrelationCoefficientTest,
-    PartialCorrelationTest,
-    ExtendedPartialCorrelationTestMatrix,
+from causy.independence_tests.common import (
+  CorrelationCoefficientTest,
+  PartialCorrelationTest,
+  ExtendedPartialCorrelationTestMatrix,
 )
-from causy.causal_discovery.constraint.orientation_rules.pc import (
-    ColliderTest,
-    NonColliderTest,
-    FurtherOrientTripleTest,
-    OrientQuadrupleTest,
-    FurtherOrientQuadrupleTest,
+from causy.orientation_rules.pc import (
+  ColliderTest,
+  NonColliderTest,
+  FurtherOrientTripleTest,
+  OrientQuadrupleTest,
+  FurtherOrientQuadrupleTest,
 )
-from causy.models import Algorithm
-from causy.causal_discovery.constraint.algorithms.pc import PC_EDGE_TYPES
 from causy.graph_utils import retrieve_edges
 
 CustomPC = graph_model_factory(
-    Algorithm(
-        pipeline_steps=[
-            CalculatePearsonCorrelations(),
-            CorrelationCoefficientTest(threshold=0.05),
-            PartialCorrelationTest(threshold=0.05),
-            ExtendedPartialCorrelationTestMatrix(threshold=0.05),
-            ColliderTest(),
-            Loop(
-                pipeline_steps=[
-                    NonColliderTest(),
-                    FurtherOrientTripleTest(),
-                    OrientQuadrupleTest(),
-                    FurtherOrientQuadrupleTest(),
-                ],
-                exit_condition=ExitOnNoActions(),
-            ),
-        ],
-        name="CustomPC",
-        edge_types=PC_EDGE_TYPES,
-    )
+  pipeline_steps=[
+    CalculatePearsonCorrelations(),
+    CorrelationCoefficientTest(threshold=0.1),
+    PartialCorrelationTest(threshold=0.01),
+    ExtendedPartialCorrelationTestMatrix(threshold=0.01),
+    ColliderTest(),
+    Loop(
+      pipeline_steps=[
+        NonColliderTest(),
+        FurtherOrientTripleTest(),
+        OrientQuadrupleTest(),
+        FurtherOrientQuadrupleTest(),
+      ],
+      exit_condition=ExitOnNoActions(),
+    ),
+  ]
 )
 
 model = CustomPC()
 
 model.create_graph_from_data(
-    [
-        {"a": 1, "b": 0.3},
-        {"a": 0.5, "b": 0.2}
-    ]
+  [
+    {"a": 1, "b": 0.3},
+    {"a": 0.5, "b": 0.2}
+  ]
 )
 model.create_all_possible_edges()
 model.execute_pipeline_steps()
 edges = retrieve_edges(model.graph)
 
 for edge in edges:
-    print(
-        f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
-    )
+  print(
+    f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
+  )
 ```
 
 ### Supported algorithms
@@ -152,7 +149,7 @@ Currently causy supports the following algorithms:
 - PC (Peter-Clark)
   - PC - the original PC algorithm without any modifications ```causy.algorithms.PC```
   - ParallelPC - a parallelized version of the PC algorithm ```causy.algorithms.ParallelPC```
-  - PCStable - a stable version of the PC algorithm ```causy.algorithms.PCStable```
+
 ### Supported pipeline steps
 Detailed information about the pipeline steps can be found in the [API Documentation](https://causy-dev.github.io/causy/causy.html).
 
