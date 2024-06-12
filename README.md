@@ -10,12 +10,10 @@ Current causal discovery algorithms are often designed for the primary purpose o
 
 By shipping causy with sensitively configured default pipelines, we also aim to provide a tool that can be used by non-experts to get started with causal discovery.
 
-Thanks to the pytorch backend, causy is remarkably faster compared to serial CPU based implementations. 
-
-In the future, causy aims to provide interactive visualizations which allow you to understand the causal discovery process.
+Causy workspaces allow you to easily manage your experiments and visualize the causal discovery process. Causy can also be used via code for researchers who want to quickly test adjustments to a causal discovery algorithm by modifying a pipeline.
 
 ## Installation
-Currently we only support python 3.11. To install causy run
+Currently, we only support python 3.11. To install causy run
 ```bash
 pip install causy
 ```
@@ -145,7 +143,7 @@ for edge in edges:
 ```
 
 ### Supported algorithms
-Currently causy supports the following algorithms:
+Currently, causy supports the following algorithms:
 - PC (Peter-Clark)
   - PC - the original PC algorithm without any modifications ```causy.algorithms.PC```
   - ParallelPC - a parallelized version of the PC algorithm ```causy.algorithms.ParallelPC```
