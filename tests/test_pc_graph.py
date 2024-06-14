@@ -349,14 +349,15 @@ class PCTestTestCase(CausyTestCase):
 
         self.assertGraphStructureIsEqual(tst.graph, graph)
 
-        self.assertTrue(
-            tst.graph.directed_edge_exists(tst.graph.nodes["X"], tst.graph.nodes["Y"])
+        self.assertFalse(
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["X"], tst.graph.nodes["Y"]
+            )
         )
         self.assertFalse(
-            tst.graph.directed_edge_exists(tst.graph.nodes["Y"], tst.graph.nodes["X"])
-        )
-        self.assertFalse(
-            tst.graph.directed_edge_exists(tst.graph.nodes["X"], tst.graph.nodes["Y"])
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["Y"], tst.graph.nodes["X"]
+            )
         )
 
     def test_with_toy_model_disjoint_graph(self):
@@ -388,16 +389,24 @@ class PCTestTestCase(CausyTestCase):
             tst.graph.edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["W"])
         )
         self.assertFalse(
-            tst.graph.directed_edge_exists(tst.graph.nodes["X"], tst.graph.nodes["Y"])
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["X"], tst.graph.nodes["Y"]
+            )
         )
         self.assertFalse(
-            tst.graph.directed_edge_exists(tst.graph.nodes["Y"], tst.graph.nodes["X"])
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["Y"], tst.graph.nodes["X"]
+            )
         )
         self.assertFalse(
-            tst.graph.directed_edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["W"])
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["Z"], tst.graph.nodes["W"]
+            )
         )
         self.assertFalse(
-            tst.graph.directed_edge_exists(tst.graph.nodes["W"], tst.graph.nodes["Z"])
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["W"], tst.graph.nodes["Z"]
+            )
         )
         self.assertFalse(
             tst.graph.edge_exists(tst.graph.nodes["Y"], tst.graph.nodes["Z"])
