@@ -454,7 +454,7 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
         self.edges[u.id][v.id] = a_edge
         self._reverse_edges[v.id][u.id] = a_edge
 
-        b_edge = Edge(u=u, v=v, edge_type=UndirectedEdge(), metadata=metadata)
+        b_edge = Edge(u=v, v=u, edge_type=UndirectedEdge(), metadata=metadata)
         self.edges[v.id][u.id] = b_edge
         self._reverse_edges[u.id][v.id] = b_edge
 

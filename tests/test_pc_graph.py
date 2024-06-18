@@ -327,3 +327,90 @@ class PCTestTestCase(CausyTestCase):
         self.assertFalse(
             tst.graph.directed_edge_exists(tst.graph.nodes["Q"], tst.graph.nodes["Z"])
         )
+
+    def test_with_minimal_toy_model_not_disjoint_graph(self):
+        """
+        Test if orientation of edges work: Minimal example with empty separation set (collider case, unshielded triples).
+        """
+        rdnv = self.seeded_random.normalvariate
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        sample_size = 100000
+        test_data, graph = model.generate(sample_size)
+
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+        self.assertFalse(
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["X"], tst.graph.nodes["Y"]
+            )
+        )
+        self.assertFalse(
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["Y"], tst.graph.nodes["X"]
+            )
+        )
+
+    def test_with_toy_model_disjoint_graph(self):
+        """
+        Test if orientation of edges work: disjoint graph.
+        """
+        rdnv = self.seeded_random.normalvariate
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Z"), NodeReference("W"), 2),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        sample_size = 100000
+        test_data, graph = model.generate(sample_size)
+
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+        self.assertTrue(
+            tst.graph.edge_exists(tst.graph.nodes["X"], tst.graph.nodes["Y"])
+        )
+        self.assertTrue(
+            tst.graph.edge_exists(tst.graph.nodes["Z"], tst.graph.nodes["W"])
+        )
+        self.assertFalse(
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["X"], tst.graph.nodes["Y"]
+            )
+        )
+        self.assertFalse(
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["Y"], tst.graph.nodes["X"]
+            )
+        )
+        self.assertFalse(
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["Z"], tst.graph.nodes["W"]
+            )
+        )
+        self.assertFalse(
+            tst.graph.only_directed_edge_exists(
+                tst.graph.nodes["W"], tst.graph.nodes["Z"]
+            )
+        )
+        self.assertFalse(
+            tst.graph.edge_exists(tst.graph.nodes["Y"], tst.graph.nodes["Z"])
+        )
+        self.assertFalse(
+            tst.graph.edge_exists(tst.graph.nodes["W"], tst.graph.nodes["X"])
+        )
