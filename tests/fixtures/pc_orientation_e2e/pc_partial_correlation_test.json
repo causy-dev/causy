@@ -1,0 +1,107 @@
+{
+    "nodes": {
+        "X": {
+            "name": "X",
+            "id": "X",
+            "values": null,
+            "metadata": {}
+        },
+        "Y": {
+            "name": "Y",
+            "id": "Y",
+            "values": null,
+            "metadata": {}
+        },
+        "Z": {
+            "name": "Z",
+            "id": "Z",
+            "values": null,
+            "metadata": {}
+        }
+    },
+    "edges": {
+        "X": {
+            "Y": {
+                "u": {
+                    "name": "X",
+                    "id": "X"
+                },
+                "v": {
+                    "name": "Y",
+                    "id": "Y"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED",
+                    "IS_DIRECTED": false,
+                    "STR_REPRESENTATION": "---"
+                },
+                "metadata": {
+                    "correlation": 0.7022886164790771
+                },
+                "deleted": false
+            }
+        },
+        "Y": {
+            "X": {
+                "u": {
+                    "name": "Y",
+                    "id": "Y"
+                },
+                "v": {
+                    "name": "X",
+                    "id": "X"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED",
+                    "IS_DIRECTED": false,
+                    "STR_REPRESENTATION": "---"
+                },
+                "metadata": {
+                    "correlation": 0.7022886164790771
+                },
+                "deleted": false
+            },
+            "Z": {
+                "u": {
+                    "name": "Y",
+                    "id": "Y"
+                },
+                "v": {
+                    "name": "Z",
+                    "id": "Z"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED",
+                    "IS_DIRECTED": false,
+                    "STR_REPRESENTATION": "---"
+                },
+                "metadata": {
+                    "correlation": 0.6983952130781167
+                },
+                "deleted": false
+            }
+        },
+        "Z": {
+            "Y": {
+                "u": {
+                    "name": "Z",
+                    "id": "Z"
+                },
+                "v": {
+                    "name": "Y",
+                    "id": "Y"
+                },
+                "edge_type": {
+                    "name": "UNDIRECTED",
+                    "IS_DIRECTED": false,
+                    "STR_REPRESENTATION": "---"
+                },
+                "metadata": {
+                    "correlation": 0.6983952130781167
+                },
+                "deleted": false
+            }
+        }
+    },
+    "action_history": []
+}
