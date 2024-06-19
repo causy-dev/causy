@@ -176,7 +176,7 @@ class PCTestTestCase(CausyTestCase):
                 name="PC",
             )
         )
-        with open("./fixtures/rki-data.csv") as f:
+        with open("tests/fixtures/rki-data.csv") as f:
             data = csv.DictReader(f)
             test_data_rki = []
             for row in data:
@@ -207,7 +207,7 @@ class PCTestTestCase(CausyTestCase):
                 name="PC",
             )
         )
-        with open("./fixtures/rki-data.csv") as f:
+        with open("tests/fixtures/rki-data.csv") as f:
             data = csv.DictReader(f)
             test_data_rki = []
             for row in data:
@@ -239,7 +239,7 @@ class PCTestTestCase(CausyTestCase):
                 name="PC",
             )
         )
-        with open("./fixtures/rki-data.csv") as f:
+        with open("tests/fixtures/rki-data.csv") as f:
             data = csv.DictReader(f)
             test_data_rki = []
             for row in data:
@@ -272,7 +272,7 @@ class PCTestTestCase(CausyTestCase):
                 name="PC",
             )
         )
-        with open("./fixtures/rki-data.csv") as f:
+        with open("tests/fixtures/rki-data.csv") as f:
             data = csv.DictReader(f)
             test_data_rki = []
             for row in data:
@@ -306,7 +306,7 @@ class PCTestTestCase(CausyTestCase):
                 name="PC",
             )
         )
-        with open("./fixtures/rki-data.csv") as f:
+        with open("tests/fixtures/rki-data.csv") as f:
             data = csv.DictReader(f)
             test_data_rki = []
             for row in data:
@@ -320,6 +320,8 @@ class PCTestTestCase(CausyTestCase):
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
 
-        # reference = load_fixture_graph("tests/fixtures/pc_e2e_rki/pc_collider_test.json")
-        dump_fixture_graph(tst.graph, "fixtures/pc_e2e_rki/pc_collider_test.json")
-        # self.assertGraphStructureIsEqual(reference, tst.graph)
+        reference = load_fixture_graph(
+            "tests/fixtures/pc_e2e_rki/pc_collider_test.json"
+        )
+        # dump_fixture_graph(tst.graph, "fixtures/pc_e2e_rki/pc_collider_test.json")
+        self.assertGraphStructureIsEqual(reference, tst.graph)
