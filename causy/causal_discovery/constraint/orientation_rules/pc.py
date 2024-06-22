@@ -47,7 +47,7 @@ class ColliderTest(
 
         # if u and v are adjacent, do nothing
         if graph.undirected_edge_exists(x, y):
-            return TestResult(u=x, v=y, action=TestResultAction.DO_NOTHING, data={})
+            return
 
         # if u and v are NOT adjacent, store all shared adjacent nodes
         potential_zs = set(graph.edges[x.id].keys()).intersection(
