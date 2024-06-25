@@ -37,7 +37,7 @@
                                 <a class="variable" href="#Experiment.pipeline">pipeline</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Experiment.data_loader">data_loader</a>
+                                <a class="variable" href="#Experiment.dataloader">dataloader</a>
                         </li>
                         <li>
                                 <a class="variable" href="#Experiment.variables">variables</a>
@@ -67,7 +67,7 @@
                                 <a class="variable" href="#Workspace.pipelines">pipelines</a>
                         </li>
                         <li>
-                                <a class="variable" href="#Workspace.data_loaders">data_loaders</a>
+                                <a class="variable" href="#Workspace.dataloaders">dataloaders</a>
                         </li>
                         <li>
                                 <a class="variable" href="#Workspace.experiments">experiments</a>
@@ -121,7 +121,7 @@
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="n">pipeline</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">data_loader</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">dataloader</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="n">variables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
@@ -130,7 +130,7 @@
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="n">pipelines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Algorithm</span> <span class="o">|</span> <span class="n">AlgorithmReference</span><span class="p">]]</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="n">data_loaders</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataLoaderReference</span><span class="p">]]</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="n">dataloaders</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataLoaderReference</span><span class="p">]]</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="n">experiments</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">]]</span>
 </span></pre></div>
 
@@ -155,7 +155,7 @@
 </span><span id="Experiment-15"><a href="#Experiment-15"><span class="linenos">15</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Experiment-16"><a href="#Experiment-16"><span class="linenos">16</span></a>
 </span><span id="Experiment-17"><a href="#Experiment-17"><span class="linenos">17</span></a>    <span class="n">pipeline</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="Experiment-18"><a href="#Experiment-18"><span class="linenos">18</span></a>    <span class="n">data_loader</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="Experiment-18"><a href="#Experiment-18"><span class="linenos">18</span></a>    <span class="n">dataloader</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="Experiment-19"><a href="#Experiment-19"><span class="linenos">19</span></a>    <span class="n">variables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 </span></pre></div>
 
@@ -182,13 +182,13 @@
     
 
                             </div>
-                            <div id="Experiment.data_loader" class="classattr">
+                            <div id="Experiment.dataloader" class="classattr">
                                 <div class="attr variable">
-            <span class="name">data_loader</span><span class="annotation">: str</span>
+            <span class="name">dataloader</span><span class="annotation">: str</span>
 
         
     </div>
-    <a class="headerlink" href="#Experiment.data_loader"></a>
+    <a class="headerlink" href="#Experiment.dataloader"></a>
     
     
 
@@ -220,7 +220,7 @@
                                 <div class="attr variable">
             <span class="name">model_fields</span>        =
 <input id="Experiment.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="Experiment.model_fields-view-value"></label><span class="default_value">{&#39;pipeline&#39;: FieldInfo(annotation=str, required=True), &#39;data_loader&#39;: FieldInfo(annotation=str, required=True), &#39;variables&#39;: FieldInfo(annotation=Union[Dict[str, Any], NoneType], required=False, default=None)}</span>
+            <label class="view-value-button pdoc-button" for="Experiment.model_fields-view-value"></label><span class="default_value">{&#39;pipeline&#39;: FieldInfo(annotation=str, required=True), &#39;dataloader&#39;: FieldInfo(annotation=str, required=True), &#39;variables&#39;: FieldInfo(annotation=Union[Dict[str, Any], NoneType], required=False, default=None)}</span>
 
         
     </div>
@@ -292,7 +292,7 @@
 </span><span id="Workspace-24"><a href="#Workspace-24"><span class="linenos">24</span></a>    <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span id="Workspace-25"><a href="#Workspace-25"><span class="linenos">25</span></a>
 </span><span id="Workspace-26"><a href="#Workspace-26"><span class="linenos">26</span></a>    <span class="n">pipelines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Algorithm</span> <span class="o">|</span> <span class="n">AlgorithmReference</span><span class="p">]]</span>
-</span><span id="Workspace-27"><a href="#Workspace-27"><span class="linenos">27</span></a>    <span class="n">data_loaders</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataLoaderReference</span><span class="p">]]</span>
+</span><span id="Workspace-27"><a href="#Workspace-27"><span class="linenos">27</span></a>    <span class="n">dataloaders</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataLoaderReference</span><span class="p">]]</span>
 </span><span id="Workspace-28"><a href="#Workspace-28"><span class="linenos">28</span></a>    <span class="n">experiments</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">]]</span>
 </span></pre></div>
 
@@ -360,13 +360,13 @@ __pydantic_private__: Instance attribute with the values of private attributes s
     
 
                             </div>
-                            <div id="Workspace.data_loaders" class="classattr">
+                            <div id="Workspace.dataloaders" class="classattr">
                                 <div class="attr variable">
-            <span class="name">data_loaders</span><span class="annotation">: Optional[Dict[str, <a href="../data_loader.html#DataLoaderReference">causy.data_loader.DataLoaderReference</a>]]</span>
+            <span class="name">dataloaders</span><span class="annotation">: Optional[Dict[str, <a href="../data_loader.html#DataLoaderReference">causy.data_loader.DataLoaderReference</a>]]</span>
 
         
     </div>
-    <a class="headerlink" href="#Workspace.data_loaders"></a>
+    <a class="headerlink" href="#Workspace.dataloaders"></a>
     
     
 
@@ -398,7 +398,7 @@ __pydantic_private__: Instance attribute with the values of private attributes s
                                 <div class="attr variable">
             <span class="name">model_fields</span>        =
 <input id="Workspace.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="Workspace.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True), &#39;author&#39;: FieldInfo(annotation=Union[str, NoneType], required=True), &#39;pipelines&#39;: FieldInfo(annotation=Union[Dict[str, Union[Algorithm, AlgorithmReference]], NoneType], required=True), &#39;data_loaders&#39;: FieldInfo(annotation=Union[Dict[str, DataLoaderReference], NoneType], required=True), &#39;experiments&#39;: FieldInfo(annotation=Union[Dict[str, Experiment], NoneType], required=True)}</span>
+            <label class="view-value-button pdoc-button" for="Workspace.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True), &#39;author&#39;: FieldInfo(annotation=Union[str, NoneType], required=True), &#39;pipelines&#39;: FieldInfo(annotation=Union[Dict[str, Union[Algorithm, AlgorithmReference]], NoneType], required=True), &#39;dataloaders&#39;: FieldInfo(annotation=Union[Dict[str, DataLoaderReference], NoneType], required=True), &#39;experiments&#39;: FieldInfo(annotation=Union[Dict[str, Experiment], NoneType], required=True)}</span>
 
         
     </div>
