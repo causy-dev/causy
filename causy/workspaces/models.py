@@ -14,7 +14,7 @@ class Experiment(BaseModel):
     """
 
     pipeline: str
-    data_loader: str
+    dataloader: str
     variables: Optional[Dict[str, Any]] = None
 
 
@@ -23,5 +23,5 @@ class Workspace(BaseModel):
     author: Optional[str]
 
     pipelines: Optional[Dict[str, Algorithm | AlgorithmReference]]
-    data_loaders: Optional[Dict[str, DataLoaderReference]]
+    dataloaders: Optional[Dict[str, DataLoaderReference]]
     experiments: Optional[Dict[str, Experiment]]

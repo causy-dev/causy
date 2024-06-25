@@ -71,11 +71,12 @@ def load_algorithm_by_reference(reference_type: str, algorithm: str):
     elif reference_type == AlgorithmReferenceType.NAME:
         return copy.deepcopy(AVAILABLE_ALGORITHMS[algorithm]()._original_algorithm)
     elif reference_type == AlgorithmReferenceType.PYTHON_MODULE:
-        st_function = importlib.import_module(algorithm)
-        st_function = getattr(st_function, algorithm)
+        module_, ref_ = algorithm.rsplit(".", 1)
+        module = importlib.import_module(module_)
+        st_function = getattr(module, ref_)
         if not st_function:
             raise ValueError(f"Algorithm {algorithm} not found")
-        return st_function()
+        return st_function()._original_algorithm
 
 
 class CausyJSONEncoder(JSONEncoder):

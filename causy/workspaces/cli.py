@@ -1,5 +1,6 @@
 import json
 import logging
+from collections import OrderedDict
 from datetime import datetime
 from typing import List, Dict
 
@@ -8,6 +9,7 @@ import questionary
 import typer
 import os
 
+import yaml
 from markdown.extensions.toc import slugify
 from pydantic_yaml import to_yaml_str
 from jinja2 import (
@@ -71,6 +73,20 @@ def show_error(message: str):
 
 def show_success(message: str):
     typer.echo(f"✅ {message}")
+
+
+def write_to_workspace(workspace: Workspace):
+    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
+    ordered_val = OrderedDict(json.loads(workspace.model_dump_json()))
+    yaml.add_representer(
+        OrderedDict,
+        lambda dumper, data: dumper.represent_mapping(
+            "tag:yaml.org,2002:map", data.items()
+        ),
+    )
+    output = yaml.dump(ordered_val)
+    with open(workspace_path, "w") as f:
+        f.write(output)
 
 
 def _current_workspace(fail_if_none: bool = True) -> Workspace:
@@ -172,7 +188,7 @@ def _create_experiment(workspace: Workspace) -> Workspace:
     ).ask()
     experiment_data_loader = questionary.select(
         "Select the data loader for the experiment",
-        choices=workspace.data_loaders.keys(),
+        choices=workspace.dataloaders.keys(),
     ).ask()
 
     experiment_slug = slugify(experiment_name, "_")
@@ -189,7 +205,7 @@ def _create_experiment(workspace: Workspace) -> Workspace:
     workspace.experiments[experiment_slug] = Experiment(
         **{
             "pipeline": experiment_pipeline,
-            "data_loader": experiment_data_loader,
+            "dataloader": experiment_data_loader,
             "variables": variables,
         }
     )
@@ -216,7 +232,7 @@ def _create_data_loader(workspace: Workspace) -> Workspace:
             "Choose the file or enter the file name:",
         ).ask()
         data_loader_slug = slugify(data_loader_name, "_")
-        workspace.data_loaders[data_loader_slug] = DataLoaderReference(
+        workspace.dataloaders[data_loader_slug] = DataLoaderReference(
             **{
                 "type": data_loader_type,
                 "reference": data_loader_path,
@@ -227,7 +243,7 @@ def _create_data_loader(workspace: Workspace) -> Workspace:
         JINJA_ENV.get_template("dataloader.py.tpl").stream(
             data_loader_name=data_loader_name
         ).dump(f"{data_loader_slug}.py")
-        workspace.data_loaders[data_loader_slug] = DataLoaderReference(
+        workspace.dataloaders[data_loader_slug] = DataLoaderReference(
             **{
                 "type": data_loader_type,
                 "reference": f"{data_loader_slug}.DataLoader",
@@ -256,8 +272,8 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> Result:
     variables = resolve_variables(pipeline.variables, experiment.variables)
     typer.echo(f"Using variables: {variables}")
 
-    typer.echo(f"Loading Data: {experiment.data_loader}")
-    data_loader = load_data_loader(workspace.data_loaders[experiment.data_loader])
+    typer.echo(f"Loading Data: {experiment.dataloader}")
+    data_loader = load_data_loader(workspace.dataloaders[experiment.dataloader])
     model = graph_model_factory(pipeline, experiment.variables)()
     model.create_graph_from_data(data_loader)
     model.create_all_possible_edges()
@@ -337,9 +353,7 @@ def create_pipeline():
     workspace = _current_workspace()
     workspace = _create_pipeline(workspace)
 
-    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
-    with open(workspace_path, "w") as f:
-        f.write(pydantic_yaml.to_yaml_str(workspace))
+    write_to_workspace(workspace)
 
 
 @pipeline_app.command(name="rm")
@@ -361,9 +375,7 @@ def remove_pipeline(pipeline_name: str):
 
     del workspace.pipelines[pipeline_name]
 
-    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
-    with open(workspace_path, "w") as f:
-        f.write(pydantic_yaml.to_yaml_str(workspace))
+    write_to_workspace(workspace)
 
     show_success(f"Pipeline {pipeline_name} removed from the workspace.")
 
@@ -411,7 +423,7 @@ def _experiment_needs_reexecution(workspace: Workspace, experiment_name: str) ->
         logger.info(f"Experiment {experiment_name} has a different pipeline.")
         return True
 
-    data_loder = load_data_loader(workspace.data_loaders[experiment.data_loader])
+    data_loder = load_data_loader(workspace.dataloaders[experiment.dataloader])
     if latest_experiment.data_loader_hash != data_loder.hash():
         logger.info(
             f"Experiment {experiment_name} has a different data loader/dataset."
@@ -439,9 +451,7 @@ def create_experiment():
     workspace = _current_workspace()
     workspace = _create_experiment(workspace)
 
-    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
-    with open(workspace_path, "w") as f:
-        f.write(pydantic_yaml.to_yaml_str(workspace))
+    write_to_workspace(workspace)
 
 
 @experiment_app.command(name="rm")
@@ -457,9 +467,7 @@ def remove_experiment(experiment_name: str):
 
     del workspace.experiments[experiment_name]
 
-    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
-    with open(workspace_path, "w") as f:
-        f.write(pydantic_yaml.to_yaml_str(workspace))
+    write_to_workspace(workspace)
 
     show_success(
         f"Experiment {experiment_name} removed from the workspace. Removed {versions_removed} versions."
@@ -477,9 +485,7 @@ def clear_experiment(experiment_name: str):
 
     versions_removed = _clear_experiment(experiment_name, workspace)
 
-    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
-    with open(workspace_path, "w") as f:
-        f.write(pydantic_yaml.to_yaml_str(workspace))
+    write_to_workspace(workspace)
 
     show_success(
         f"Experiment {experiment_name} cleared. Removed {versions_removed} versions."
@@ -529,9 +535,7 @@ def update_experiment_variable(
 
     experiment.variables[variable_name] = variable_value
 
-    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
-    with open(workspace_path, "w") as f:
-        f.write(pydantic_yaml.to_yaml_str(workspace))
+    write_to_workspace(workspace)
 
     show_success(f"Variable {variable_name} updated in experiment {experiment_name}.")
 
@@ -542,9 +546,7 @@ def create_data_loader():
     workspace = _current_workspace()
     workspace = _create_data_loader(workspace)
 
-    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
-    with open(workspace_path, "w") as f:
-        f.write(pydantic_yaml.to_yaml_str(workspace))
+    write_to_workspace(workspace)
 
 
 @dataloader_app.command(name="rm")
@@ -552,23 +554,21 @@ def remove_data_loader(data_loader_name: str):
     """Remove a data loader from the current workspace."""
     workspace = _current_workspace()
 
-    if data_loader_name not in workspace.data_loaders:
+    if data_loader_name not in workspace.dataloaders:
         show_error(f"Data loader {data_loader_name} not found in the workspace.")
         return
 
     # check if the data loader is still in use
     for experiment_name, experiment in workspace.experiments.items():
-        if experiment.data_loader == data_loader_name:
+        if experiment.dataloader == data_loader_name:
             show_error(
                 f"Data loader {data_loader_name} is still in use by experiment {experiment_name}. Cannot remove."
             )
             return
 
-    del workspace.data_loaders[data_loader_name]
+    del workspace.dataloaders[data_loader_name]
 
-    workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
-    with open(workspace_path, "w") as f:
-        f.write(pydantic_yaml.to_yaml_str(workspace))
+    write_to_workspace(workspace)
 
     show_success(f"Data loader {data_loader_name} removed from the workspace.")
 
@@ -580,7 +580,7 @@ def info():
     typer.echo(f"Workspace: {workspace.name}")
     typer.echo(f"Author: {workspace.author}")
     typer.echo(f"Pipelines: {workspace.pipelines}")
-    typer.echo(f"Data loaders: {workspace.data_loaders}")
+    typer.echo(f"Data loaders: {workspace.dataloaders}")
     typer.echo(f"Experiments: {workspace.experiments}")
 
 
@@ -600,7 +600,7 @@ def init():
         **{
             "name": "",
             "author": "",
-            "data_loaders": {},
+            "dataloaders": {},
             "pipelines": {},
             "experiments": {},
         }
@@ -625,7 +625,7 @@ def init():
         "Do you want to configure a data loader?", default=False
     )
 
-    workspace.data_loaders = {}
+    workspace.dataloaders = {}
     if configure_data_loader:
         data_loader_type = questionary.select(
             "Do you want to use an existing pipeline or create a new one?",
@@ -646,7 +646,7 @@ def init():
                 "Enter the name of the data loader"
             ).ask()
             data_loader_slug = slugify(data_loader_name, "_")
-            workspace.data_loaders[data_loader_slug] = {
+            workspace.dataloaders[data_loader_slug] = {
                 "type": data_loader_type,
                 "reference": data_loader_path,
             }
@@ -658,7 +658,7 @@ def init():
             JINJA_ENV.get_template("dataloader.py.tpl").stream(
                 data_loader_name=data_loader_name
             ).dump(f"{data_loader_slug}.py")
-            workspace.data_loaders[data_loader_slug] = DataLoaderReference(
+            workspace.dataloaders[data_loader_slug] = DataLoaderReference(
                 **{
                     "type": data_loader_type,
                     "reference": f"{data_loader_slug}.DataLoader",
@@ -666,7 +666,7 @@ def init():
             )
     workspace.experiments = {}
 
-    if len(workspace.pipelines) > 0 and len(workspace.data_loaders) > 0:
+    if len(workspace.pipelines) > 0 and len(workspace.dataloaders) > 0:
         configure_experiment = typer.confirm(
             "Do you want to configure an experiment?", default=False
         )

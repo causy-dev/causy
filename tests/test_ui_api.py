@@ -28,7 +28,7 @@ class UIApiTestCase(CausyTestCase):
                 author="test_author",
                 pipelines=None,
                 experiments=None,
-                data_loaders=None,
+                dataloaders=None,
             )
         )
 
@@ -58,12 +58,12 @@ class UIApiTestCase(CausyTestCase):
                 },
                 experiments={
                     "test_experiment": Experiment(
-                        pipeline="PC", data_loader="data_loader", variables=None
+                        pipeline="PC", dataloader="dataloader", variables=None
                     )
                 },
-                data_loaders={
+                dataloaders={
                     "test_data_loader": DataLoaderReference(
-                        type=DataLoaderType.JSON, reference="data_loader"
+                        type=DataLoaderType.JSON, reference="dataloader"
                     )
                 },
             )
@@ -79,11 +79,11 @@ class UIApiTestCase(CausyTestCase):
         )
 
         self.assertEqual(
-            result["data_loaders"],
+            result["dataloaders"],
             {
                 "test_data_loader": {
                     "type": "json",
-                    "reference": "data_loader",
+                    "reference": "dataloader",
                     "options": None,
                 }
             },
@@ -94,7 +94,7 @@ class UIApiTestCase(CausyTestCase):
             {
                 "test_experiment": {
                     "pipeline": "PC",
-                    "data_loader": "data_loader",
+                    "dataloader": "dataloader",
                     "variables": None,
                 }
             },
@@ -108,9 +108,9 @@ class UIApiTestCase(CausyTestCase):
             "nodes": {},
             "edges": [],
             "action_history": [],
-            "data_loader": {
+            "dataloader": {
                 "type": "json",
-                "reference": "data_loader",
+                "reference": "dataloader",
                 "options": None,
             },
             "variables": {"test": "test"},
@@ -163,12 +163,12 @@ class UIApiTestCase(CausyTestCase):
                 },
                 experiments={
                     "test_experiment": Experiment(
-                        pipeline="PC", data_loader="data_loader", variables=None
+                        pipeline="PC", dataloader="dataloader", variables=None
                     )
                 },
-                data_loaders={
+                dataloaders={
                     "test_data_loader": DataLoaderReference(
-                        type=DataLoaderType.JSON, reference="data_loader"
+                        type=DataLoaderType.JSON, reference="dataloader"
                     )
                 },
             )
@@ -180,7 +180,7 @@ class UIApiTestCase(CausyTestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0]["name"], "test_experiment")
         self.assertEqual(result[0]["pipeline"], "PC")
-        self.assertEqual(result[0]["data_loader"], "data_loader")
+        self.assertEqual(result[0]["dataloader"], "dataloader")
         self.assertEqual(result[0]["variables"], None)
         self.assertEqual(len(result[0]["versions"]), 0)
 
@@ -203,12 +203,12 @@ class UIApiTestCase(CausyTestCase):
                 },
                 experiments={
                     "test_experiment": Experiment(
-                        pipeline="PC", data_loader="data_loader", variables=None
+                        pipeline="PC", dataloader="dataloader", variables=None
                     )
                 },
-                data_loaders={
+                dataloaders={
                     "test_data_loader": DataLoaderReference(
-                        type=DataLoaderType.JSON, reference="data_loader"
+                        type=DataLoaderType.JSON, reference="dataloader"
                     )
                 },
             )
@@ -242,12 +242,12 @@ class UIApiTestCase(CausyTestCase):
                 },
                 experiments={
                     "test_experiment": Experiment(
-                        pipeline="PC", data_loader="data_loader", variables=None
+                        pipeline="PC", dataloader="dataloader", variables=None
                     )
                 },
-                data_loaders={
+                dataloaders={
                     "test_data_loader": DataLoaderReference(
-                        type=DataLoaderType.JSON, reference="data_loader"
+                        type=DataLoaderType.JSON, reference="dataloader"
                     )
                 },
             )
