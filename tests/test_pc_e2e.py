@@ -11,8 +11,13 @@ from causy.causal_discovery.constraint.independence_tests.common import (
     ExtendedPartialCorrelationTestMatrix,
 )
 from causy.models import Algorithm
-from causy.causal_discovery.constraint.orientation_rules.pc import ColliderTest, NonColliderTest, \
-    FurtherOrientTripleTest, OrientQuadrupleTest, FurtherOrientQuadrupleTest
+from causy.causal_discovery.constraint.orientation_rules.pc import (
+    ColliderTest,
+    NonColliderTest,
+    FurtherOrientTripleTest,
+    OrientQuadrupleTest,
+    FurtherOrientQuadrupleTest,
+)
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 
 from tests.utils import CausyTestCase, load_fixture_graph, dump_fixture_graph
@@ -341,9 +346,13 @@ class PCTestTestCase(CausyTestCase):
                     Loop(
                         pipeline_steps=[
                             NonColliderTest(display_name="Non-Collider Test"),
-                            FurtherOrientTripleTest(display_name="Further Orient Triple Test"),
+                            FurtherOrientTripleTest(
+                                display_name="Further Orient Triple Test"
+                            ),
                             OrientQuadrupleTest(display_name="Orient Quadruple Test"),
-                            FurtherOrientQuadrupleTest(display_name="Further Orient Quadruple Test"),
+                            FurtherOrientQuadrupleTest(
+                                display_name="Further Orient Quadruple Test"
+                            ),
                         ],
                         display_name="Orientation Rules Loop",
                         exit_condition=ExitOnNoActions(),
@@ -367,8 +376,6 @@ class PCTestTestCase(CausyTestCase):
         tst.create_graph_from_data(test_data_rki)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
-        reference = load_fixture_graph(
-            "tests/fixtures/pc_e2e_rki/pc_all.json"
-        )
+        reference = load_fixture_graph("tests/fixtures/pc_e2e_rki/pc_all.json")
         # dump_fixture_graph(tst.graph, "fixtures/pc_e2e_rki/pc_all.json")
         self.assertGraphStructureIsEqual(reference, tst.graph)
