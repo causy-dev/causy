@@ -23,8 +23,6 @@ markdown = "^3.6"
 httpx = "^0.27.0"
 pyyaml = "^6.0.1"
 
-
-pyyaml = "^6.0.1"
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.5.1"
 pyinstrument = "^4.5.3"
@@ -34,10 +32,8 @@ pdoc = "^14.1.0"
 pre-commit = "^3.4.0"
 coverage = "^7.3.2"
 
-
 [tool.poetry-version-plugin]
 source = "git-tag"
-
 
 [build-system]
 requires = ["poetry-core"]
