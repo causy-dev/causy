@@ -2,6 +2,8 @@ import csv
 
 from causy.causal_discovery.constraint.algorithms.pc import PC_EDGE_TYPES
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
+from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
+from causy.common_pipeline_steps.logic import Loop
 from causy.graph_model import graph_model_factory
 from causy.causal_discovery.constraint.independence_tests.common import (
     CorrelationCoefficientTest,
@@ -9,7 +11,8 @@ from causy.causal_discovery.constraint.independence_tests.common import (
     ExtendedPartialCorrelationTestMatrix,
 )
 from causy.models import Algorithm
-from causy.causal_discovery.constraint.orientation_rules.pc import ColliderTest
+from causy.causal_discovery.constraint.orientation_rules.pc import ColliderTest, NonColliderTest, \
+    FurtherOrientTripleTest, OrientQuadrupleTest, FurtherOrientQuadrupleTest
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
 
 from tests.utils import CausyTestCase, load_fixture_graph, dump_fixture_graph
@@ -324,4 +327,48 @@ class PCTestTestCase(CausyTestCase):
             "tests/fixtures/pc_e2e_rki/pc_collider_test.json"
         )
         # dump_fixture_graph(tst.graph, "fixtures/pc_e2e_rki/pc_collider_test.json")
+        self.assertGraphStructureIsEqual(reference, tst.graph)
+
+    def test_pc_rki_whole_pc_algo(self):
+        algo = graph_model_factory(
+            Algorithm(
+                pipeline_steps=[
+                    CalculatePearsonCorrelations(),
+                    CorrelationCoefficientTest(threshold=0.05),
+                    PartialCorrelationTest(threshold=0.05),
+                    ExtendedPartialCorrelationTestMatrix(threshold=0.05),
+                    ColliderTest(display_name="Collider Test"),
+                    Loop(
+                        pipeline_steps=[
+                            NonColliderTest(display_name="Non-Collider Test"),
+                            FurtherOrientTripleTest(display_name="Further Orient Triple Test"),
+                            OrientQuadrupleTest(display_name="Orient Quadruple Test"),
+                            FurtherOrientQuadrupleTest(display_name="Further Orient Quadruple Test"),
+                        ],
+                        display_name="Orientation Rules Loop",
+                        exit_condition=ExitOnNoActions(),
+                    ),
+                ],
+                edge_types=PC_EDGE_TYPES,
+                extensions=[],
+                name="PC",
+            )
+        )
+        with open("tests/fixtures/rki-data.csv") as f:
+            data = csv.DictReader(f)
+            test_data_rki = []
+            for row in data:
+                for k in row.keys():
+                    if row[k] == "":
+                        row[k] = 0.0
+                    row[k] = float(row[k])
+                test_data_rki.append(row)
+        tst = algo()
+        tst.create_graph_from_data(test_data_rki)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+        reference = load_fixture_graph(
+            "tests/fixtures/pc_e2e_rki/pc_all.json"
+        )
+        # dump_fixture_graph(tst.graph, "fixtures/pc_e2e_rki/pc_all.json")
         self.assertGraphStructureIsEqual(reference, tst.graph)
