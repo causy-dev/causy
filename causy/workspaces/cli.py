@@ -8,6 +8,7 @@ import pydantic_yaml
 import questionary
 import typer
 import os
+import sys
 
 import yaml
 from markdown.extensions.toc import slugify
@@ -98,6 +99,8 @@ def _current_workspace(fail_if_none: bool = True) -> Workspace:
 
     workspace_data = None
     workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
+    # add the current directory to the path to allow for imports
+    sys.path.append(os.getcwd())
     if os.path.exists(workspace_path):
         with open(workspace_path, "r") as f:
             workspace_data = f.read()
@@ -590,6 +593,7 @@ def init():
     Initialize a new workspace in the current directory.
     """
     workspace_path = os.path.join(os.getcwd(), WORKSPACE_FILE_NAME)
+    sys.path.append(os.getcwd())
 
     if os.path.exists(workspace_path):
         typer.confirm(
