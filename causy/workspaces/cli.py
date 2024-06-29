@@ -289,6 +289,7 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> Result:
         transient=True,
     ) as progress:
         prev_task = None
+        prev_task_data = None
         for task in model.execute_pipeline_steps():
             current += 1
             if prev_task is not None:
