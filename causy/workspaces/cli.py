@@ -650,10 +650,12 @@ def init():
                 "Enter the name of the data loader"
             ).ask()
             data_loader_slug = slugify(data_loader_name, "_")
-            workspace.dataloaders[data_loader_slug] = {
-                "type": data_loader_type,
-                "reference": data_loader_path,
-            }
+            workspace.dataloaders[data_loader_slug] = DataLoaderReference(
+                **{
+                    "type": data_loader_type,
+                    "reference": data_loader_path,
+                }
+            )
         elif data_loader_type == "dynamic":
             data_loader_name = questionary.text(
                 "Enter the name of the data loader"
