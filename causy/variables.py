@@ -8,6 +8,8 @@ from pydantic import BaseModel, computed_field
 
 VariableInterfaceType = TypeVar("VariableInterfaceType")
 
+VariableType = Union[str, int, float, bool]
+
 
 class VariableTypes(enum.Enum):
     String = "string"
@@ -149,7 +151,7 @@ StringParameter = Union[str, VariableReference]
 CausyParameter = Union[BoolParameter, IntegerParameter, FloatParameter, StringParameter]
 
 
-def validate_variable_values(algorithm, variable_values: Dict[str, Any]):
+def validate_variable_values(algorithm, variable_values: Dict[str, VariableType]):
     """
     Validate the variable values for the algorithm.
     :param algorithm:
@@ -169,8 +171,8 @@ def validate_variable_values(algorithm, variable_values: Dict[str, Any]):
 
 
 def resolve_variables(
-    variables: List[BaseVariable], variable_values: Dict[str, Any]
-) -> Dict[str, Any]:
+    variables: List[BaseVariable], variable_values: Dict[str, VariableType]
+) -> Dict[str, VariableType]:
     """
     Resolve the variables from the list of variables and the variable values coming from the user.
     :param variables:
@@ -225,7 +227,7 @@ def resolve_variables_to_algorithm_for_pipeline_steps(pipeline_steps, variables)
     return pipeline_steps
 
 
-def deserialize_variable(variable_dict: Dict[str, Any]) -> BaseVariable:
+def deserialize_variable(variable_dict: Dict[str, VariableType]) -> BaseVariable:
     """
     Deserialize the variable from the dictionary.
     :param variable_dict:

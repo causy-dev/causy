@@ -1,11 +1,12 @@
 import json
 import random
+from typing import List
 from unittest import TestCase
 from unittest.util import safe_repr
 
 import numpy as np
 import torch
-from pydantic import parse_obj_as
+from pydantic import TypeAdapter
 
 from causy.graph import Graph
 from causy.serialization import CausyJSONEncoder
@@ -25,7 +26,7 @@ def dump_fixture_graph(graph, file_path):
 def load_fixture_graph(file_path):
     with open(file_path, "r") as f:
         data = json.loads(f.read())
-        return parse_obj_as(Graph, data)
+        return TypeAdapter(Graph).validate_python(data)
 
 
 class CausyTestCase(TestCase):

@@ -21,6 +21,8 @@ from causy.models import TestResultAction, Algorithm, ActionHistoryStep
 from causy.variables import (
     resolve_variables_to_algorithm_for_pipeline_steps,
     resolve_variables,
+    VariableType,
+    VariableTypes,
 )
 
 logger = logging.getLogger(__name__)
@@ -386,7 +388,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
 def graph_model_factory(
     algorithm: Algorithm = None,
-    variables: Dict[str, Any] = None,
+    variables: Dict[str, VariableTypes] = None,
 ) -> type[AbstractGraphModel]:
     """
     Create a graph model based on a List of pipeline_steps
