@@ -190,24 +190,27 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     continue
                 self.graph.add_edge(u, v, {})
 
-    def execute_pipeline_steps(self) -> Generator:
+    def execute_pipeline_steps(self) -> List[ActionHistoryStep]:
         """
         Execute all pipeline_steps
         :return: the steps taken during the step execution
         """
+        all(self.execute_pipeline_step_with_progress())
+        return self.graph.action_history
 
+    def execute_pipeline_step_with_progress(self) -> Generator:
+        started = time.time()
         for filter in self.pipeline_steps:
             logger.info(f"Executing pipeline step {filter.__class__.__name__}")
             if isinstance(filter, LogicStepInterface):
                 actions_taken = filter.execute(self.graph.graph, self)
                 self.graph.graph.action_history.append(actions_taken)
                 continue
-
-            started = time.time()
             yield {
                 "step": filter.__class__.__name__,
                 "previous_duration": time.time() - started,
             }
+            started = time.time()
             actions_taken = self.execute_pipeline_step(filter)
             self.graph.graph.action_history.append(
                 ActionHistoryStep(

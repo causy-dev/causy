@@ -290,14 +290,14 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> Result:
     ) as progress:
         prev_task = None
         prev_task_data = None
-        for task in model.execute_pipeline_steps():
+        for task in model.execute_pipeline_step_with_progress():
             current += 1
             if prev_task is not None:
                 progress.update(
                     prev_task,
                     completed=True,
                     current=1,
-                    description=f"✅ {prev_task_data['step']} ({task['previous_duration']}s)",
+                    description=f"✅ {prev_task_data['step']} ({round(task['previous_duration'])}s)",
                 )
             prev_task = progress.add_task(description=task["step"], total=1)
             prev_task_data = task
