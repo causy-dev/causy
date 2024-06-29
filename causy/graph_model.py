@@ -3,7 +3,7 @@ import platform
 from abc import ABC
 from copy import deepcopy
 import time
-from typing import Optional, List, Dict, Callable, Union, Any
+from typing import Optional, List, Dict, Callable, Union, Any, Generator
 
 import torch.multiprocessing as mp
 
@@ -190,7 +190,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     continue
                 self.graph.add_edge(u, v, {})
 
-    def execute_pipeline_steps(self):
+    def execute_pipeline_steps(self) -> Generator:
         """
         Execute all pipeline_steps
         :return: the steps taken during the step execution
@@ -204,6 +204,10 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 continue
 
             started = time.time()
+            yield {
+                "step": filter.__class__.__name__,
+                "previous_duration": time.time() - started,
+            }
             actions_taken = self.execute_pipeline_step(filter)
             self.graph.graph.action_history.append(
                 ActionHistoryStep(
@@ -214,8 +218,6 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             )
 
             self.graph.purge_soft_deleted_edges()
-
-        return self.graph.action_history
 
     def _format_yield(self, test_fn, graph, generator):
         """

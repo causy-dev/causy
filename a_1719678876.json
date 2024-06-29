@@ -1,0 +1,948 @@
+{
+    "algorithm": {
+        "reference": "ParallelPC",
+        "type": "name"
+    },
+    "created_at": "2024-06-29T18:34:36.045583",
+    "nodes": {
+        "Schulabgaenger mit Hochschulreife": {
+            "name": "Schulabgaenger mit Hochschulreife",
+            "id": "Schulabgaenger mit Hochschulreife"
+        },
+        "Haushaltseinkommen": {
+            "name": "Haushaltseinkommen",
+            "id": "Haushaltseinkommen"
+        },
+        "Schuldnerquote": {
+            "name": "Schuldnerquote",
+            "id": "Schuldnerquote"
+        },
+        "Akademischer Abschluss": {
+            "name": "Akademischer Abschluss",
+            "id": "Akademischer Abschluss"
+        },
+        "Erwerbsfaehige": {
+            "name": "Erwerbsfaehige",
+            "id": "Erwerbsfaehige"
+        },
+        "Anteil Erwerbsfaehige mit akademischen Abschluss": {
+            "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+            "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+        },
+        "Beschaeftigtenquote": {
+            "name": "Beschaeftigtenquote",
+            "id": "Beschaeftigtenquote"
+        }
+    },
+    "edges": [
+        {
+            "u": {
+                "name": "Schuldnerquote",
+                "id": "Schuldnerquote"
+            },
+            "v": {
+                "name": "Beschaeftigtenquote",
+                "id": "Beschaeftigtenquote"
+            },
+            "edge_type": {
+                "name": "UNDIRECTED",
+                "IS_DIRECTED": false,
+                "STR_REPRESENTATION": "---"
+            },
+            "metadata": {
+                "correlation": -0.47028318773234723
+            }
+        },
+        {
+            "u": {
+                "name": "Akademischer Abschluss",
+                "id": "Akademischer Abschluss"
+            },
+            "v": {
+                "name": "Erwerbsfaehige",
+                "id": "Erwerbsfaehige"
+            },
+            "edge_type": {
+                "name": "UNDIRECTED",
+                "IS_DIRECTED": false,
+                "STR_REPRESENTATION": "---"
+            },
+            "metadata": {
+                "correlation": 0.9561933961761238
+            }
+        },
+        {
+            "u": {
+                "name": "Akademischer Abschluss",
+                "id": "Akademischer Abschluss"
+            },
+            "v": {
+                "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+            },
+            "edge_type": {
+                "name": "DIRECTED",
+                "IS_DIRECTED": true,
+                "STR_REPRESENTATION": "-->"
+            },
+            "metadata": {
+                "correlation": 0.5130344371409714,
+                "direct_effect": -1.9013687610871372e-06
+            }
+        },
+        {
+            "u": {
+                "name": "Erwerbsfaehige",
+                "id": "Erwerbsfaehige"
+            },
+            "v": {
+                "name": "Akademischer Abschluss",
+                "id": "Akademischer Abschluss"
+            },
+            "edge_type": {
+                "name": "UNDIRECTED",
+                "IS_DIRECTED": false,
+                "STR_REPRESENTATION": "---"
+            },
+            "metadata": {
+                "correlation": 0.9561933961761238
+            }
+        },
+        {
+            "u": {
+                "name": "Erwerbsfaehige",
+                "id": "Erwerbsfaehige"
+            },
+            "v": {
+                "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+            },
+            "edge_type": {
+                "name": "DIRECTED",
+                "IS_DIRECTED": true,
+                "STR_REPRESENTATION": "-->"
+            },
+            "metadata": {
+                "correlation": 0.3812508512884821,
+                "direct_effect": 5.844824854675899e-07
+            }
+        },
+        {
+            "u": {
+                "name": "Beschaeftigtenquote",
+                "id": "Beschaeftigtenquote"
+            },
+            "v": {
+                "name": "Schulabgaenger mit Hochschulreife",
+                "id": "Schulabgaenger mit Hochschulreife"
+            },
+            "edge_type": {
+                "name": "DIRECTED",
+                "IS_DIRECTED": true,
+                "STR_REPRESENTATION": "-->"
+            },
+            "metadata": {
+                "correlation": -0.4703097397346248,
+                "direct_effect": 0.5142255589363028
+            }
+        },
+        {
+            "u": {
+                "name": "Beschaeftigtenquote",
+                "id": "Beschaeftigtenquote"
+            },
+            "v": {
+                "name": "Schuldnerquote",
+                "id": "Schuldnerquote"
+            },
+            "edge_type": {
+                "name": "UNDIRECTED",
+                "IS_DIRECTED": false,
+                "STR_REPRESENTATION": "---"
+            },
+            "metadata": {
+                "correlation": -0.47028318773234723
+            }
+        }
+    ],
+    "action_history": [
+        {
+            "name": "causy.common_pipeline_steps.calculation.CalculatePearsonCorrelations",
+            "duration": 0.007574796676635742,
+            "actions": [
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": -0.10524687767456423
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.34131806036267026
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.24344288481624887
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.20757309128027923
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.5047688063955008
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": -0.4703097397346248,
+                        "direct_effect": 0.5142255589363028
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "v": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": -0.4960650904631966
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "v": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.09939936864908845
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "v": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.052165654702202344
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "v": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.2631381547184532
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "v": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.24399849614199096
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "v": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.05288424519422853
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "v": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.09060465710873451
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "v": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": -0.1089651740138611
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "v": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": -0.47028318773234723
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "v": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.9561933961761238
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "v": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.5130344371409714,
+                        "direct_effect": -1.9013687610871372e-06
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "v": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": -0.10531952989636795
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "v": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": 0.3812508512884821,
+                        "direct_effect": 5.844824854675899e-07
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "v": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": -0.1258967877109383
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "v": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "action": "UPDATE_EDGE",
+                    "data": {
+                        "correlation": -0.12123096137710031
+                    }
+                }
+            ],
+            "steps": []
+        },
+        {
+            "name": "causy.causal_discovery.constraint.independence_tests.common.CorrelationCoefficientTest",
+            "duration": 0.007049083709716797,
+            "actions": [
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "v": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "v": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "v": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "v": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "v": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "v": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "v": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "v": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {}
+                }
+            ],
+            "steps": []
+        },
+        {
+            "name": "causy.causal_discovery.constraint.independence_tests.common.PartialCorrelationTest",
+            "duration": 2.3759148120880127,
+            "actions": [
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {
+                        "separatedBy": [
+                            {
+                                "name": "Akademischer Abschluss",
+                                "id": "Akademischer Abschluss",
+                                "values": null,
+                                "metadata": {}
+                            }
+                        ]
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {
+                        "separatedBy": [
+                            {
+                                "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                                "id": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                                "values": null,
+                                "metadata": {}
+                            }
+                        ]
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "v": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "action": "REMOVE_EDGE_UNDIRECTED",
+                    "data": {
+                        "separatedBy": [
+                            {
+                                "name": "Schuldnerquote",
+                                "id": "Schuldnerquote",
+                                "values": null,
+                                "metadata": {}
+                            }
+                        ]
+                    }
+                }
+            ],
+            "steps": []
+        },
+        {
+            "name": "causy.causal_discovery.constraint.independence_tests.common.ExtendedPartialCorrelationTestMatrix",
+            "duration": 0.001725912094116211,
+            "actions": [],
+            "steps": []
+        },
+        {
+            "name": "causy.causal_discovery.constraint.independence_tests.common.ExtendedPartialCorrelationTestMatrix",
+            "duration": 1.369413137435913,
+            "actions": [],
+            "steps": []
+        },
+        {
+            "name": "causy.causal_discovery.constraint.orientation_rules.pc.ColliderTest",
+            "duration": 0.0014350414276123047,
+            "actions": [
+                {
+                    "u": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "v": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "v": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "v": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "v": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "v": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "v": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "v": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "v": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "v": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "v": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "v": {
+                        "name": "Schuldnerquote",
+                        "id": "Schuldnerquote"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Haushaltseinkommen",
+                        "id": "Haushaltseinkommen"
+                    },
+                    "v": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                },
+                {
+                    "u": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "v": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "action": "REMOVE_EDGE_DIRECTED",
+                    "data": {}
+                }
+            ],
+            "steps": []
+        },
+        {
+            "name": "causy.common_pipeline_steps.logic.Loop",
+            "duration": 0.0004761219024658203,
+            "actions": [],
+            "steps": [
+                {
+                    "name": "causy.causal_discovery.constraint.orientation_rules.pc.NonColliderTest",
+                    "duration": 4.00543212890625e-05,
+                    "actions": [],
+                    "steps": []
+                },
+                {
+                    "name": "causy.causal_discovery.constraint.orientation_rules.pc.FurtherOrientTripleTest",
+                    "duration": 0.00013494491577148438,
+                    "actions": [],
+                    "steps": []
+                },
+                {
+                    "name": "causy.causal_discovery.constraint.orientation_rules.pc.OrientQuadrupleTest",
+                    "duration": 0.0001442432403564453,
+                    "actions": [],
+                    "steps": []
+                },
+                {
+                    "name": "causy.causal_discovery.constraint.orientation_rules.pc.FurtherOrientQuadrupleTest",
+                    "duration": 0.00010323524475097656,
+                    "actions": [],
+                    "steps": []
+                }
+            ]
+        },
+        {
+            "name": "causy.causal_effect_estimation.multivariate_regression.ComputeDirectEffectsMultivariateRegression",
+            "duration": 0.0021800994873046875,
+            "actions": [
+                {
+                    "u": {
+                        "name": "Akademischer Abschluss",
+                        "id": "Akademischer Abschluss"
+                    },
+                    "v": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "action": "UPDATE_EDGE_DIRECTED",
+                    "data": {
+                        "correlation": 0.5130344371409714,
+                        "direct_effect": -1.9013687610871372e-06
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Erwerbsfaehige",
+                        "id": "Erwerbsfaehige"
+                    },
+                    "v": {
+                        "name": "Anteil Erwerbsfaehige mit akademischen Abschluss",
+                        "id": "Anteil Erwerbsfaehige mit akademischen Abschluss"
+                    },
+                    "action": "UPDATE_EDGE_DIRECTED",
+                    "data": {
+                        "correlation": 0.3812508512884821,
+                        "direct_effect": 5.844824854675899e-07
+                    }
+                },
+                {
+                    "u": {
+                        "name": "Beschaeftigtenquote",
+                        "id": "Beschaeftigtenquote"
+                    },
+                    "v": {
+                        "name": "Schulabgaenger mit Hochschulreife",
+                        "id": "Schulabgaenger mit Hochschulreife"
+                    },
+                    "action": "UPDATE_EDGE_DIRECTED",
+                    "data": {
+                        "correlation": -0.4703097397346248,
+                        "direct_effect": 0.5142255589363028
+                    }
+                }
+            ],
+            "steps": []
+        }
+    ],
+    "variables": {
+        "threshold": 0.005,
+        "every_nth_sample": 200
+    },
+    "data_loader_hash": "3749b9a43c3632ed5ec8a0244cf85b2ffad5c39125f82ec8c6f76fde6e8cb934_74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "algorithm_hash": "ae8cd3611a90d63b339c529f7314f18c8feb1043787d69e2f37501e5d769e3b3",
+    "variables_hash": "cadbaf635a414b1cf305028d8a0fbe6c937eea3aeaf7ad0349e6ef6593edfc41"
+}

@@ -21,6 +21,7 @@ from jinja2 import (
     PackageLoader,
 )
 from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
 from causy.graph_model import graph_model_factory
@@ -280,7 +281,25 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> Result:
     model = graph_model_factory(pipeline, experiment.variables)()
     model.create_graph_from_data(data_loader)
     model.create_all_possible_edges()
-    model.execute_pipeline_steps()
+    task_count = len(model.pipeline_steps)
+    current = 0
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        transient=True,
+    ) as progress:
+        prev_task = None
+        for task in model.execute_pipeline_steps():
+            current += 1
+            if prev_task is not None:
+                progress.update(
+                    prev_task,
+                    completed=True,
+                    current=1,
+                    description=f"✅ {prev_task_data['step']} ({task['previous_duration']}s)",
+                )
+            prev_task = progress.add_task(description=task["step"], total=1)
+            prev_task_data = task
 
     return Result(
         algorithm=workspace.pipelines[experiment.pipeline],
