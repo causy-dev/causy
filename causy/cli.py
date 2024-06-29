@@ -30,6 +30,10 @@ app.command(name="ui", help="run causy ui")(ui_app)
 
 @app.command()
 def eject(algorithm: str, output_file: str):
+    logging.warning(
+        f"Ejecting pipelines outside of workspace context is deprecated. Please use workspaces instead."
+    )
+
     typer.echo(f"💾 Loading algorithm {algorithm}")
     model = AVAILABLE_ALGORITHMS[algorithm]()
     result = serialize_algorithm(model, algorithm_name=algorithm)
@@ -46,6 +50,9 @@ def execute(
     output_file: str = None,
     log_level: str = "ERROR",
 ):
+    logging.warning(
+        f"Executing outside of workspaces is deprecated and will be removed in future versions. Please use workspaces instead."
+    )
     logging.basicConfig(level=log_level)
     if pipeline:
         typer.echo(f"💾 Loading pipeline from {pipeline}")

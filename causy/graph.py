@@ -13,8 +13,10 @@ from causy.interfaces import (
     NodeInterface,
     EdgeInterface,
     EdgeTypeInterface,
+    MetadataType,
 )
 from causy.models import TestResultAction, TestResult, ActionHistoryStep
+from causy.variables import VariableType
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +30,7 @@ class Node(NodeInterface):
     name: str
     id: str
     values: Optional[torch.Tensor] = None
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[Dict[str, MetadataType]] = None
 
     def __hash__(self):
         return hash(self.id)
@@ -46,7 +48,7 @@ class Edge(EdgeInterface):
     u: NodeInterface
     v: NodeInterface
     edge_type: EdgeTypeInterface
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[Dict[str, MetadataType]] = None
     deleted: Optional[bool] = False
 
     def __init__(self, *args, **kwargs):

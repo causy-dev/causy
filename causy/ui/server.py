@@ -182,6 +182,13 @@ def _set_workspace(workspace: Workspace):
     WORKSPACE = workspace
 
 
+def is_port_in_use(host: str, port: int) -> bool:
+    import socket
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex((host, port)) == 0
+
+
 def server(result: Dict[str, Any] = None, workspace: Workspace = None):
     """Create the FastAPI server."""
     app = _create_ui_app()
@@ -196,7 +203,16 @@ def server(result: Dict[str, Any] = None, workspace: Workspace = None):
         raise ValueError("No model or workspace provided")
 
     host = os.getenv("HOST", "localhost")
-    port = int(os.getenv("PORT", "8000"))
+    is_port_from_env = os.getenv("PORT")
+    if is_port_from_env:
+        port = int(is_port_from_env)
+    else:
+        port = int(os.getenv("PORT", "8000"))
+        while is_port_in_use(host, port):
+            port += 1
+            if port > 65535:
+                raise ValueError("No free port available")
+
     cors_enabled = os.getenv("CORS_ENABLED", "false").lower() == "true"
 
     # cors e.g. for development of separate frontend

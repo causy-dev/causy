@@ -21,6 +21,7 @@ from jinja2 import (
     PackageLoader,
 )
 from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
 from causy.graph_model import graph_model_factory
@@ -280,7 +281,26 @@ def _execute_experiment(workspace: Workspace, experiment: Experiment) -> Result:
     model = graph_model_factory(pipeline, experiment.variables)()
     model.create_graph_from_data(data_loader)
     model.create_all_possible_edges()
-    model.execute_pipeline_steps()
+    task_count = len(model.pipeline_steps)
+    current = 0
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        transient=True,
+    ) as progress:
+        prev_task = None
+        prev_task_data = None
+        for task in model.execute_pipeline_step_with_progress():
+            current += 1
+            if prev_task is not None:
+                progress.update(
+                    prev_task,
+                    completed=True,
+                    current=1,
+                    description=f"✅ {prev_task_data['step']} ({round(task['previous_duration'])}s)",
+                )
+            prev_task = progress.add_task(description=task["step"], total=1)
+            prev_task_data = task
 
     return Result(
         algorithm=workspace.pipelines[experiment.pipeline],
@@ -650,10 +670,12 @@ def init():
                 "Enter the name of the data loader"
             ).ask()
             data_loader_slug = slugify(data_loader_name, "_")
-            workspace.dataloaders[data_loader_slug] = {
-                "type": data_loader_type,
-                "reference": data_loader_path,
-            }
+            workspace.dataloaders[data_loader_slug] = DataLoaderReference(
+                **{
+                    "type": data_loader_type,
+                    "reference": data_loader_path,
+                }
+            )
         elif data_loader_type == "dynamic":
             data_loader_name = questionary.text(
                 "Enter the name of the data loader"

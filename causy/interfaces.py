@@ -24,6 +24,11 @@ DEFAULT_THRESHOLD = 0.01
 
 AS_MANY_AS_FIELDS = 0
 
+MetadataBaseType = Union[str, int, float, bool]
+MetadataType = Union[
+    str, int, float, bool, List[MetadataBaseType], Dict[str, MetadataBaseType]
+]
+
 
 class ComparisonSettingsInterface(BaseModel, ABC):
     min: IntegerParameter
@@ -85,7 +90,7 @@ class EdgeInterface(BaseModel, ABC):
     u: NodeInterface
     v: NodeInterface
     edge_type: EdgeTypeInterface
-    metadata: Dict[str, any] = None
+    metadata: Dict[str, MetadataType] = None
 
     class Config:
         arbitrary_types_allowed = True

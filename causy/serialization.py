@@ -3,12 +3,13 @@ import datetime
 import importlib
 import json
 from json import JSONEncoder
-from typing import Dict, Any
+from typing import Dict, Any, List
 import os
 
 import torch
 import yaml
-from pydantic import parse_obj_as
+from pydantic import TypeAdapter
+
 
 from causy.edge_types import EDGE_TYPES
 from causy.graph_utils import load_pipeline_steps_by_definition
@@ -38,7 +39,7 @@ def load_algorithm_from_specification(algorithm_dict: Dict[str, Any]):
     ]
     from causy.models import Algorithm
 
-    return parse_obj_as(Algorithm, algorithm_dict)
+    return TypeAdapter(Algorithm).validate_python(algorithm_dict)
 
 
 def load_algorithm_by_reference(reference_type: str, algorithm: str):
@@ -102,4 +103,5 @@ def deserialize_result(result: Dict[str, Any], klass=Result):
         result["edges"][i]["edge_type"] = EDGE_TYPES[edge["edge_type"]["name"]](
             **edge["edge_type"]
         )
-    return parse_obj_as(klass, result)
+
+    return TypeAdapter(klass).validate_python(result)

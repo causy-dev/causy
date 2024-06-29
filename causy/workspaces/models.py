@@ -1,9 +1,10 @@
-from typing import Optional, Dict, Any
+from typing import Optional, Dict
 
 from pydantic import BaseModel
 
 from causy.data_loader import DataLoaderReference
 from causy.models import AlgorithmReference, Algorithm
+from causy.variables import VariableType
 
 
 class Experiment(BaseModel):
@@ -15,7 +16,7 @@ class Experiment(BaseModel):
 
     pipeline: str
     dataloader: str
-    variables: Optional[Dict[str, Any]] = None
+    variables: Optional[Dict[str, VariableType]]
 
 
 class Workspace(BaseModel):

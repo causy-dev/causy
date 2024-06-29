@@ -3,7 +3,7 @@ import platform
 from abc import ABC
 from copy import deepcopy
 import time
-from typing import Optional, List, Dict, Callable, Union, Any
+from typing import Optional, List, Dict, Callable, Union, Any, Generator
 
 import torch.multiprocessing as mp
 
@@ -21,6 +21,8 @@ from causy.models import TestResultAction, Algorithm, ActionHistoryStep
 from causy.variables import (
     resolve_variables_to_algorithm_for_pipeline_steps,
     resolve_variables,
+    VariableType,
+    VariableTypes,
 )
 
 logger = logging.getLogger(__name__)
@@ -188,19 +190,26 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     continue
                 self.graph.add_edge(u, v, {})
 
-    def execute_pipeline_steps(self):
+    def execute_pipeline_steps(self) -> List[ActionHistoryStep]:
         """
         Execute all pipeline_steps
         :return: the steps taken during the step execution
         """
+        all(self.execute_pipeline_step_with_progress())
+        return self.graph.action_history
 
+    def execute_pipeline_step_with_progress(self) -> Generator:
+        started = time.time()
         for filter in self.pipeline_steps:
             logger.info(f"Executing pipeline step {filter.__class__.__name__}")
             if isinstance(filter, LogicStepInterface):
                 actions_taken = filter.execute(self.graph.graph, self)
                 self.graph.graph.action_history.append(actions_taken)
                 continue
-
+            yield {
+                "step": filter.__class__.__name__,
+                "previous_duration": time.time() - started,
+            }
             started = time.time()
             actions_taken = self.execute_pipeline_step(filter)
             self.graph.graph.action_history.append(
@@ -212,8 +221,6 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             )
 
             self.graph.purge_soft_deleted_edges()
-
-        return self.graph.action_history
 
     def _format_yield(self, test_fn, graph, generator):
         """
@@ -386,7 +393,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
 
 def graph_model_factory(
     algorithm: Algorithm = None,
-    variables: Dict[str, Any] = None,
+    variables: Dict[str, VariableTypes] = None,
 ) -> type[AbstractGraphModel]:
     """
     Create a graph model based on a List of pipeline_steps
