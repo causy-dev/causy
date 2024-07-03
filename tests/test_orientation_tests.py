@@ -43,6 +43,74 @@ class OrientationRuleTestCase(CausyTestCase):
         model.execute_pipeline_steps()
         self.assertTrue(model.graph.only_directed_edge_exists(x, y))
         self.assertTrue(model.graph.only_directed_edge_exists(z, y))
+        self.assertFalse(model.graph.edge_exists(x, z))
+
+    def test_collider_test_2(self):
+        pipeline = [ColliderTest()]
+        model = graph_model_factory(
+            Algorithm(
+                pipeline_steps=pipeline,
+                edge_types=[],
+                name="TestCollider",
+            )
+        )()
+        model.graph = GraphManager()
+        x = model.graph.add_node("X", [0, 1, 2])
+        y = model.graph.add_node("Y", [3, 4, 5])
+        z = model.graph.add_node("Z", [6, 7, 8])
+        model.graph.add_edge(x, y, {})
+        model.graph.add_edge(z, y, {})
+        model.graph.add_edge_history(
+            x,
+            z,
+            TestResult(
+                u=x,
+                v=z,
+                action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                data={"separatedBy": [y]},
+            ),
+        )
+        model.execute_pipeline_steps()
+        self.assertFalse(model.graph.only_directed_edge_exists(x, y))
+        self.assertFalse(model.graph.only_directed_edge_exists(z, y))
+        self.assertTrue(model.graph.edge_exists(x, y))
+        self.assertTrue(model.graph.edge_exists(z, y))
+        self.assertFalse(model.graph.edge_exists(x, z))
+
+    def test_collider_test_3(self):
+        pipeline = [ColliderTest()]
+        model = graph_model_factory(
+            Algorithm(
+                pipeline_steps=pipeline,
+                edge_types=[],
+                name="TestCollider",
+            )
+        )()
+        model.graph = GraphManager()
+        x = model.graph.add_node("X", [0, 1, 2])
+        y = model.graph.add_node("Y", [3, 4, 5])
+        z = model.graph.add_node("Z", [6, 7, 8])
+        a = model.graph.add_node("A", [9, 10, 11])
+        model.graph.add_edge(x, y, {})
+        model.graph.add_edge(z, y, {})
+        model.graph.add_edge(x, a, {})
+        model.graph.add_edge(z, a, {})
+        model.graph.add_edge_history(
+            x,
+            z,
+            TestResult(
+                u=x,
+                v=z,
+                action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                data={"separatedBy": []},
+            ),
+        )
+        model.execute_pipeline_steps()
+        self.assertTrue(model.graph.only_directed_edge_exists(x, y))
+        self.assertTrue(model.graph.only_directed_edge_exists(z, y))
+        self.assertTrue(model.graph.only_directed_edge_exists(x, a))
+        self.assertTrue(model.graph.only_directed_edge_exists(z, a))
+        self.assertFalse(model.graph.edge_exists(x, z))
 
     def test_collider_test_multiple_orientation_rules(self):
         pipeline = [
