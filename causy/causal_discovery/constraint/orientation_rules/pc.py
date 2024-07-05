@@ -1,3 +1,4 @@
+import enum
 from typing import Tuple, List, Optional, Generic
 import itertools
 
@@ -17,6 +18,16 @@ from causy.variables import IntegerParameter, BoolParameter
 
 # TODO: refactor ColliderTest -> ColliderRule and move to folder orientation_rules (after checking for duplicates)
 
+class ColliderTestConflictResolutionStrategies(enum.StrEnum):
+    """
+    Enum for the conflict resolution strategies for the ColliderTest.
+    """
+
+    # If a conflict occurs, the edge that was removed first is kept.
+    KEEP_FIRST = "KEEP_FIRST"
+
+    # If a conflict occurs, the edge that was removed last is kept.
+    KEEP_LAST = "KEEP_LAST"
 
 class ColliderTest(
     PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
@@ -26,6 +37,7 @@ class ColliderTest(
     )
     chunk_size_parallel_processing: IntegerParameter = 1
     parallel: BoolParameter = False
+
 
     def process(
         self, nodes: Tuple[str], graph: BaseGraphInterface
@@ -41,6 +53,7 @@ class ColliderTest(
         :returns: list of actions that will be executed on graph
         """
         # https://github.com/pgmpy/pgmpy/blob/1fe10598df5430295a8fc5cdca85cf2d9e1c4330/pgmpy/estimators/PC.py#L416
+        conflict_resolution_strategy: str = ColliderTestConflictResolutionStrategies.KEEP_FIRST
 
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
@@ -71,23 +84,27 @@ class ColliderTest(
             print(f"seperators={[graph.nodes[s].name for s in separators]}")
 
             if z.id not in separators:
-                print(f"REMOVE_EDGE_DIRECTED u: {z}, v: {x}")
-                print(f"REMOVE_EDGE_DIRECTED u: {z}, v: {y}")
-                results += [
-                    TestResult(
-                        u=z,
-                        v=x,
-                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                        data={},
-                    ),
-                    TestResult(
-                        u=z,
-                        v=y,
-                        action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                        data={},
-                    ),
-                ]
-
+                if graph.only_directed_edge_exists(x, z) or graph.only_directed_edge_exists(y, z):
+                    if ColliderTestConflictResolutionStrategies.KEEP_FIRST is conflict_resolution_strategy:
+                        continue
+                    elif ColliderTestConflictResolutionStrategies.KEEP_LAST is conflict_resolution_strategy:
+                        # TODO: remove first action from results lists
+                        pass
+                else:
+                    results += [
+                        TestResult(
+                            u=z,
+                            v=x,
+                            action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                            data={},
+                        ),
+                        TestResult(
+                            u=z,
+                            v=y,
+                            action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                            data={},
+                        ),
+                    ]
         return results
 
 
