@@ -29,14 +29,14 @@ class DirectedEdgeUIConfig(EdgeTypeConfig):
     edge_type: str = DirectedEdge().name
 
     default_ui_config: Optional[EdgeUIConfig] = EdgeUIConfig(
-        label_field="direct_effect",
-        color="#0f0fff",
+        label_field="correlation",
+        color="#333",
         width=4,
         style="dashed",
         animated=True,
         marker_start=None,
         marker_end="ArrowClosed",
-        label="Direct Effect: ${direct_effect.toFixed(4)}",
+        label="Direct Effect: ${correlation.toFixed(4)}",
     )
     conditional_ui_configs: Optional[List[ConditionalEdgeUIConfig]] = [
         ConditionalEdgeUIConfig(
@@ -53,7 +53,22 @@ class DirectedEdgeUIConfig(EdgeTypeConfig):
             condition_field="direct_effect",
             condition_value=0,
             condition_comparison=ConditionalEdgeUIConfigComparison.LESS,
-        )
+        ),
+        ConditionalEdgeUIConfig(
+            ui_config=EdgeUIConfig(
+                color="#0f0fff",
+                width=4,
+                style="dashed",
+                animated=True,
+                marker_start=None,
+                marker_end="ArrowClosed",
+                label_field="direct_effect",
+                label="Direct Effect: ${direct_effect.toFixed(4)}",
+            ),
+            condition_field="direct_effect",
+            condition_value=0,
+            condition_comparison=ConditionalEdgeUIConfigComparison.GREATER,
+        ),
     ]
 
 
