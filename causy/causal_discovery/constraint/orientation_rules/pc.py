@@ -60,6 +60,7 @@ class ColliderTest(
 
         # if u and v are not independent given z, safe action: make z a collider
         results = []
+        print(f"x: {x.name}; y: {y.name}, potential_zs: {[graph.nodes[z].name for z in potential_zs]}")
         for z in potential_zs:
             z = graph.nodes[z]
 
@@ -67,8 +68,11 @@ class ColliderTest(
             for action in actions:
                 if "separatedBy" in action.data:
                     separators += [a.id for a in action.data["separatedBy"]]
+            print(f"seperators={[graph.nodes[s].name for s in separators]}")
 
             if z.id not in separators:
+                print(f"REMOVE_EDGE_DIRECTED u: {z}, v: {x}")
+                print(f"REMOVE_EDGE_DIRECTED u: {z}, v: {y}")
                 results += [
                     TestResult(
                         u=z,
@@ -83,6 +87,7 @@ class ColliderTest(
                         data={},
                     ),
                 ]
+
         return results
 
 
