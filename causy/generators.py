@@ -51,9 +51,6 @@ class AllCombinationsGenerator(GeneratorInterface):
         # create all combinations
         for range_size in range(start, stop):
             for subset in itertools.combinations(graph.nodes, range_size):
-                print(subset)
-                print(graph.nodes[subset[0]].name)
-                print(graph.nodes[subset[1]].name)
                 yield subset
 
 

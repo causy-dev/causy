@@ -7,7 +7,7 @@ from causy.causal_discovery.constraint.orientation_rules.pc import (
     NonColliderTest,
     FurtherOrientTripleTest,
     OrientQuadrupleTest,
-    FurtherOrientQuadrupleTest,
+    FurtherOrientQuadrupleTest, ColliderTestConflictResolutionStrategies,
 )
 from causy.graph_model import graph_model_factory
 
@@ -266,7 +266,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model.graph.add_edge(z, y, {})
         model.graph.add_edge_history(
             x,
-            y,
+            z,
             TestResult(
                 u=x,
                 v=z,
@@ -274,8 +274,46 @@ class OrientationRuleTestCase(CausyTestCase):
                 data={"separatedBy": [y]},
             ),
         )
+        model.execute_pipeline_steps()
+        self.assertFalse(model.graph.only_directed_edge_exists(x, y))
+        self.assertFalse(model.graph.only_directed_edge_exists(z, y))
         self.assertTrue(model.graph.undirected_edge_exists(x, y))
         self.assertTrue(model.graph.undirected_edge_exists(y, z))
+
+    def test_collider_prioritize_collider_rules(self):
+        pipeline = [ColliderTest(conflict_resolution_strategy=
+        ColliderTestConflictResolutionStrategies.KEEP_FIRST)]
+        model = graph_model_factory(
+            Algorithm(
+                pipeline_steps=pipeline,
+                edge_types=[],
+                name="TestCollider",
+            )
+        )()
+        model.graph = GraphManager()
+        x = model.graph.add_node("X", [])
+        y = model.graph.add_node("Y", [])
+        z = model.graph.add_node("Z", [])
+        a = model.graph.add_node("A", [])
+        model.graph.add_edge(x, y, {})
+        model.graph.add_edge(z, y, {})
+        model.graph.add_directed_edge(x, a, {})
+        model.graph.add_directed_edge(z, a, {})
+        model.graph.add_edge_history(
+            x,
+            y,
+            TestResult(
+                u=x,
+                v=z,
+                action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
+                data={"separatedBy": []},
+            ),
+        )
+        model.execute_pipeline_steps()
+        self.assertTrue(model.graph.only_directed_edge_exists(x, a))
+        self.assertTrue(model.graph.only_directed_edge_exists(z, a))
+        self.assertTrue(model.graph.only_directed_edge_exists(x, y))
+        self.assertTrue(model.graph.only_directed_edge_exists(z, y))
 
     def test_non_collider_test(self):
         pipeline = [NonColliderTest()]

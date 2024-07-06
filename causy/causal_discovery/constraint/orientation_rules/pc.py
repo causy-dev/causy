@@ -123,9 +123,6 @@ class ColliderTest(
 
         # if u and v are not independent given z, safe action: make z a collider
         results = []
-        print(
-            f"x: {x.name}; y: {y.name}, potential_zs: {[graph.nodes[z].name for z in potential_zs]}"
-        )
         for z in potential_zs:
             z = graph.nodes[z]
 
@@ -133,7 +130,6 @@ class ColliderTest(
             for action in actions:
                 if "separatedBy" in action.data:
                     separators += [a.id for a in action.data["separatedBy"]]
-            print(f"seperators={[graph.nodes[s].name for s in separators]}")
 
             if z.id not in separators:
                 unapplied_actions_x_z = filter_unapplied_actions(
@@ -142,8 +138,6 @@ class ColliderTest(
                 unapplied_actions_y_z = filter_unapplied_actions(
                     unapplied_actions, y, z
                 )
-                print(f"unapplied_actions_x_z: {unapplied_actions_x_z}")
-                print(f"unapplied_actions_y_z: {unapplied_actions_y_z}")
                 if len(unapplied_actions_y_z) > 0 or len(unapplied_actions_x_z) > 0:
                     if (
                         ColliderTestConflictResolutionStrategies.KEEP_FIRST
