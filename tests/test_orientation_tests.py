@@ -7,7 +7,8 @@ from causy.causal_discovery.constraint.orientation_rules.pc import (
     NonColliderTest,
     FurtherOrientTripleTest,
     OrientQuadrupleTest,
-    FurtherOrientQuadrupleTest, ColliderTestConflictResolutionStrategies,
+    FurtherOrientQuadrupleTest,
+    ColliderTestConflictResolutionStrategies,
 )
 from causy.graph_model import graph_model_factory
 
@@ -112,7 +113,7 @@ class OrientationRuleTestCase(CausyTestCase):
                 u=y,
                 v=a,
                 action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                data={"separatedBy": [x,z]},
+                data={"separatedBy": [x, z]},
             ),
         )
         model.execute_pipeline_steps()
@@ -157,7 +158,7 @@ class OrientationRuleTestCase(CausyTestCase):
                 u=y,
                 v=a,
                 action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                data={"separatedBy": [x,z]},
+                data={"separatedBy": [x, z]},
             ),
         )
         model.execute_pipeline_steps()
@@ -281,8 +282,11 @@ class OrientationRuleTestCase(CausyTestCase):
         self.assertTrue(model.graph.undirected_edge_exists(y, z))
 
     def test_collider_prioritize_collider_rules(self):
-        pipeline = [ColliderTest(conflict_resolution_strategy=
-        ColliderTestConflictResolutionStrategies.KEEP_FIRST)]
+        pipeline = [
+            ColliderTest(
+                conflict_resolution_strategy=ColliderTestConflictResolutionStrategies.KEEP_FIRST
+            )
+        ]
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
@@ -297,8 +301,10 @@ class OrientationRuleTestCase(CausyTestCase):
         a = model.graph.add_node("A", [])
         model.graph.add_edge(x, y, {})
         model.graph.add_edge(z, y, {})
-        model.graph.add_directed_edge(x, a, {})
-        model.graph.add_directed_edge(z, a, {})
+        model.graph.add_edge(x, a, {})
+        model.graph.add_edge(z, a, {})
+        model.graph.remove_directed_edge(a, x)
+        model.graph.remove_directed_edge(a, z)
         model.graph.add_edge_history(
             x,
             y,
