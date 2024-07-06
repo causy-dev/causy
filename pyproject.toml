@@ -9,11 +9,11 @@ include = ["pyproject.toml", "README.md", "LICENSE", "causy", "causy/static/*", 
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
-scipy = "^1.13"
+scipy = "^1.14"
 typer = {extras = ["all"], version = "^0.12.3"}
-torch = "^2.1.0"
-fastapi = "^0.110.2"
-uvicorn = "^0.27.0"
+torch = "^2.3.1"
+fastapi = "^0.111.0"
+uvicorn = "^0.30.1"
 srsly = "^2.4.8"
 pydantic-yaml = "^1.2.1"
 click = "^8.1.7"
