@@ -379,6 +379,7 @@ class Graph(BaseModel, GraphAccessMixin):
     nodes: OrderedDict[str, Node] = collections.OrderedDict({})
     edges: Dict[str, Dict[str, Edge]] = dict()
     _reverse_edges: Dict[str, Dict[str, Edge]] = dict()
+    _deleted_edges: Dict[str, Dict[str, Edge]] = dict()
     edge_history: Dict[Tuple[str, str], List[TestResult]] = dict()
     action_history: List[ActionHistoryStep] = []
 
@@ -401,6 +402,10 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
     @property
     def _reverse_edges(self) -> Dict[str, Dict[str, Edge]]:
         return self.graph._reverse_edges
+
+    @property
+    def _deleted_edges(self) -> Dict[str, Dict[str, Edge]]:
+        return self.graph._deleted_edges
 
     @property
     def edge_history(self) -> Dict[Tuple[str, str], List[TestResult]]:
@@ -448,9 +453,11 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
         if u.id not in self.edges:
             self.edges[u.id] = self.__init_dict()
             self._reverse_edges[u.id] = self.__init_dict()
+            self._deleted_edges[u.id] = self.__init_dict()
         if v.id not in self.edges:
             self.edges[v.id] = self.__init_dict()
             self._reverse_edges[v.id] = self.__init_dict()
+            self._deleted_edges[v.id] = self.__init_dict()
 
         a_edge = Edge(u=u, v=v, edge_type=UndirectedEdge(), metadata=metadata)
         self.edges[u.id][v.id] = a_edge
@@ -482,6 +489,7 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
 
         if u.id not in self.edges:
             self.edges[u.id] = self.__init_dict()
+            self._deleted_edges[u.id] = self.__init_dict()
         if v.id not in self._reverse_edges:
             self._reverse_edges[v.id] = self.__init_dict()
 
@@ -528,12 +536,40 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
             return
 
         if u.id in self.edges and v.id in self.edges[u.id]:
+            self._deleted_edges[u.id][v.id] = self.edges[u.id][v.id]
             del self.edges[u.id][v.id]
             del self._reverse_edges[u.id][v.id]
 
         if v.id in self.edges and u.id in self.edges[v.id]:
+            self._deleted_edges[v.id][u.id] = self.edges[v.id][u.id]
             del self.edges[v.id][u.id]
             del self._reverse_edges[v.id][u.id]
+
+    def restore_edge(self, u: Node, v: Node):
+        """
+        Restore a deleted edge
+        :param u:
+        :param v:
+        :return:
+        """
+        if u.id not in self.nodes:
+            raise GraphError(f"Node {u} does not exist")
+        if v.id not in self.nodes:
+            raise GraphError(f"Node {v} does not exist")
+
+        if u.id in self.edges and v.id in self.edges[u.id]:
+            self.edges[u.id][v.id].deleted = False
+            self._reverse_edges[v.id][u.id].deleted = False
+        else:
+            self.add_edge(u, v, self._deleted_edges[u.id][v.id].metadata)
+            del self._deleted_edges[u.id][v.id]
+
+        if v.id in self.edges and u.id in self.edges[v.id]:
+            self.edges[v.id][u.id].deleted = False
+            self._reverse_edges[u.id][v.id].deleted = False
+        else:
+            self.add_edge(v, u, self._deleted_edges[v.id][u.id].metadata)
+            del self._deleted_edges[v.id][u.id]
 
     def remove_directed_edge(self, u: Node, v: Node, soft_delete: bool = False):
         """
@@ -557,8 +593,29 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
             self._reverse_edges[v.id][u.id].deleted = True
             return
 
+        self._deleted_edges[u.id][v.id] = self.edges[u.id][v.id]
+
         del self.edges[u.id][v.id]
         del self._reverse_edges[v.id][u.id]
+
+    def restore_directed_edge(self, u: Node, v: Node):
+        """
+        Restore a soft deleted edge
+        :param u:
+        :param v:
+        :return:
+        """
+        if u.id not in self.nodes:
+            raise GraphError(f"Node {u} does not exist")
+        if v.id not in self.nodes:
+            raise GraphError(f"Node {v} does not exist")
+
+        if u.id in self.edges and v.id in self.edges[u.id]:
+            self.edges[u.id][v.id].deleted = False
+            self._reverse_edges[v.id][u.id].deleted = False
+        else:
+            self.add_directed_edge(u, v, self._deleted_edges[u.id][v.id].metadata)
+            del self._deleted_edges[u.id][v.id]
 
     def update_edge(
         self,

@@ -326,6 +326,26 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     self.graph.update_directed_edge(i.u, i.v, edge_type=i.edge_type)
                     self.graph.add_edge_history(i.u, i.v, i)
 
+                elif i.action == TestResultAction.RESTORE_EDGE:
+                    if self.graph.edge_exists(i.u, i.v):
+                        logger.debug(
+                            f"Tried to restore edge {i.u.name} <-> {i.v.name}. But it does exist."
+                        )
+                        continue
+
+                    self.graph.restore_edge(i.u, i.v)
+                    self.graph.add_edge_history(i.u, i.v, i)
+                    self.graph.add_edge_history(i.v, i.u, i)
+
+                elif i.action == TestResultAction.RESTORE_EDGE_DIRECTED:
+                    if self.graph.directed_edge_exists(i.u, i.v):
+                        logger.debug(
+                            f"Tried to restore edge {i.u.name} <-> {i.v.name}. But it does exist."
+                        )
+                        continue
+
+                    self.graph.restore_directed_edge(i.u, i.v)
+                    self.graph.add_edge_history(i.u, i.v, i)
                 # add the action to the actions history
                 actions_taken.append(i)
         return actions_taken

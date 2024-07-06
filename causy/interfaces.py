@@ -184,7 +184,15 @@ class BaseGraphInterface(ABC):
         pass
 
     @abstractmethod
-    def edge_exists(self, u, v):
+    def edge_exists(self, u, v, ignore_soft_deleted=False):
+        pass
+
+    @abstractmethod
+    def restore_edge(self, u, v):
+        pass
+
+    @abstractmethod
+    def restore_directed_edge(self, u, v):
         pass
 
 
