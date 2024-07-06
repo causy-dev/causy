@@ -271,3 +271,23 @@ class GraphTestCase(CausyTestCase):
         self.assertEqual(
             graph.directed_paths(node1, node3), [[(node1, node2), (node2, node3)]]
         )
+
+    def test_restore_edge(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.update_edge(node1, node2, {"test": "test2"})
+        graph.remove_edge(node1, node2)
+        graph.restore_edge(node1, node2)
+        self.assertEqual(graph.edge_value(node1, node2), {"test": "test2"})
+
+    def test_restore_directed_edge(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.update_directed_edge(node1, node2, {"test": "test2"})
+        graph.remove_directed_edge(node1, node2)
+        graph.restore_directed_edge(node1, node2)
+        self.assertEqual(graph.edge_value(node1, node2), {"test": "test2"})

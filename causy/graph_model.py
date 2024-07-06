@@ -326,6 +326,26 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     self.graph.update_directed_edge(i.u, i.v, edge_type=i.edge_type)
                     self.graph.add_edge_history(i.u, i.v, i)
 
+                elif i.action == TestResultAction.RESTORE_EDGE:
+                    if self.graph.edge_exists(i.u, i.v):
+                        logger.debug(
+                            f"Tried to restore edge {i.u.name} <-> {i.v.name}. But it does exist."
+                        )
+                        continue
+
+                    self.graph.restore_edge(i.u, i.v)
+                    self.graph.add_edge_history(i.u, i.v, i)
+                    self.graph.add_edge_history(i.v, i.u, i)
+
+                elif i.action == TestResultAction.RESTORE_EDGE_DIRECTED:
+                    if self.graph.directed_edge_exists(i.u, i.v):
+                        logger.debug(
+                            f"Tried to restore edge {i.u.name} <-> {i.v.name}. But it does exist."
+                        )
+                        continue
+
+                    self.graph.restore_directed_edge(i.u, i.v)
+                    self.graph.add_edge_history(i.u, i.v, i)
                 # add the action to the actions history
                 actions_taken.append(i)
         return actions_taken
@@ -377,15 +397,26 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         self._take_action(iterator, dry_run=not apply_to_graph)
                     )
             else:
+                # this is the only mode which supports unapplied actions to be passed to the next pipeline step (for now)
+                # which are sometimes needed for e.g. conflict resolution
                 iterator = [
-                    unpack_run(i)
+                    i
                     for i in [
                         [test_fn, [*i], self.graph.graph]
                         for i in test_fn.generator.generate(self.graph.graph, self)
                     ]
                 ]
+
+                local_results = []
+                for i in iterator:
+                    rn_fn = i[0]
+                    if hasattr(rn_fn, "needs_unapplied_actions"):
+                        if rn_fn.needs_unapplied_actions:
+                            i.append(local_results)
+                    local_results.append(unpack_run(i))
+
                 actions_taken.extend(
-                    self._take_action(iterator, dry_run=not apply_to_graph)
+                    self._take_action(local_results, dry_run=not apply_to_graph)
                 )
 
         return actions_taken
