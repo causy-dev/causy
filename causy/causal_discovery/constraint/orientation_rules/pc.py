@@ -27,8 +27,13 @@ class ColliderTest(
     chunk_size_parallel_processing: IntegerParameter = 1
     parallel: BoolParameter = False
 
+    needs_unapplied_actions: BoolParameter = True
+
     def process(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
+        self,
+        nodes: Tuple[str],
+        graph: BaseGraphInterface,
+        unapplied_actions: Optional[List[TestResult]] = None,
     ) -> Optional[List[TestResult] | TestResult]:
         """
         We call triples u, v, z of nodes v structures if u and v that are NOT adjacent but share an adjacent node z.
@@ -36,6 +41,7 @@ class ColliderTest(
         We now check if z is in the separating set.
         If z is not in the separating set, we know that u and v are uncorrelated given z.
         So, the edges must be oriented from u to z and from v to z (u -> z <- v).
+        :param unapplied_actions: list of actions that have not been applied to the graph yet
         :param nodes: list of nodes
         :param graph: the current graph
         :returns: list of actions that will be executed on graph

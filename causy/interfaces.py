@@ -184,7 +184,15 @@ class BaseGraphInterface(ABC):
         pass
 
     @abstractmethod
-    def edge_exists(self, u, v):
+    def edge_exists(self, u, v, ignore_soft_deleted=False):
+        pass
+
+    @abstractmethod
+    def restore_edge(self, u, v):
+        pass
+
+    @abstractmethod
+    def restore_directed_edge(self, u, v):
         pass
 
 
@@ -260,6 +268,8 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
 
     display_name: Optional[StringParameter] = None
 
+    needs_unapplied_actions: Optional[BoolParameter] = False
+
     def __init__(
         self,
         threshold: Optional[FloatParameter] = None,
@@ -295,7 +305,10 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
 
     @abstractmethod
     def process(
-        self, nodes: List[str], graph: BaseGraphInterface
+        self,
+        nodes: List[str],
+        graph: BaseGraphInterface,
+        unapplied_actions: Optional[List[TestResultInterface]] = None,
     ) -> Optional[TestResultInterface]:
         """
         Test if u and v are independent
@@ -306,8 +319,18 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
         pass
 
     def __call__(
-        self, nodes: List[str], graph: BaseGraphInterface
+        self,
+        nodes: List[str],
+        graph: BaseGraphInterface,
+        unapplied_actions: Optional[List[TestResultInterface]] = None,
     ) -> Optional[TestResultInterface]:
+        if self.needs_unapplied_actions and unapplied_actions is None:
+            logger.warn(
+                f"Pipeline step {self.name} needs unapplied actions but none were provided"
+            )
+        elif self.needs_unapplied_actions and unapplied_actions is not None:
+            return self.process(nodes, graph, unapplied_actions)
+
         return self.process(nodes, graph)
 
 
