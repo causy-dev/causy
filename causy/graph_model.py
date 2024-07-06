@@ -397,15 +397,26 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         self._take_action(iterator, dry_run=not apply_to_graph)
                     )
             else:
+                # this is the only mode which supports unapplied actions to be passed to the next pipeline step (for now)
+                # which are sometimes needed for e.g. conflict resolution
                 iterator = [
-                    unpack_run(i)
+                    i
                     for i in [
                         [test_fn, [*i], self.graph.graph]
                         for i in test_fn.generator.generate(self.graph.graph, self)
                     ]
                 ]
+
+                local_results = []
+                for i in iterator:
+                    rn_fn = i[0]
+                    if hasattr(rn_fn, "needs_unapplied_actions"):
+                        if rn_fn.needs_unapplied_actions:
+                            i.append(local_results)
+                    local_results.append(unpack_run(i))
+
                 actions_taken.extend(
-                    self._take_action(iterator, dry_run=not apply_to_graph)
+                    self._take_action(local_results, dry_run=not apply_to_graph)
                 )
 
         return actions_taken
