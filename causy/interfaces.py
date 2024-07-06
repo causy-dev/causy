@@ -1,9 +1,10 @@
 import multiprocessing
 from abc import ABC, abstractmethod
 from typing import List, Dict, Optional, Union, TypeVar, Generic, Any
+from typing_extensions import Annotated
 import logging
 
-from pydantic import BaseModel, computed_field, Field
+from pydantic import BaseModel, computed_field, Field, PlainValidator, WithJsonSchema
 import torch
 
 from causy.graph_utils import (
@@ -47,7 +48,16 @@ class NodeInterface(BaseModel, ABC):
 
     name: str
     id: str
-    values: Optional[torch.DoubleTensor] = Field(exclude=True, default=None)
+    values: Annotated[
+        Optional[torch.DoubleTensor],
+        WithJsonSchema(
+            {
+                "type": "array",
+                "items": {"type": "number"},
+                "description": "Node values",
+            }
+        ),
+    ] = Field(exclude=True, default=None)
 
     class Config:
         arbitrary_types_allowed = True
