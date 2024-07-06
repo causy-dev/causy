@@ -37,6 +37,28 @@ def filter_unapplied_actions(actions, u, v):
     return filtered
 
 
+def generate_restores(unapplied_actions):
+    """
+    Generate restore actions for unapplied actions.
+    :param unapplied_actions: list of unapplied actions
+    :param x: node x
+    :param y: node y
+    :return: list of restore actions
+    """
+    results = []
+    for action in unapplied_actions:
+        if action.action == TestResultAction.REMOVE_EDGE_DIRECTED:
+            results.append(
+                TestResult(
+                    u=action.u,
+                    v=action.v,
+                    action=TestResultAction.RESTORE_EDGE_DIRECTED,
+                    data={},
+                )
+            )
+    return results
+
+
 class ColliderTestConflictResolutionStrategies(enum.StrEnum):
     """
     Enum for the conflict resolution strategies for the ColliderTest.
@@ -127,13 +149,32 @@ class ColliderTest(
                         ColliderTestConflictResolutionStrategies.KEEP_FIRST
                         is self.conflict_resolution_strategy
                     ):
+                        # We keep the first edge that was removed
                         continue
                     elif (
                         ColliderTestConflictResolutionStrategies.KEEP_LAST
                         is self.conflict_resolution_strategy
                     ):
-                        # TODO: remove first action from results lists
-                        pass
+                        # We keep the last edge that was removed and restore the other edges
+                        results.extend(generate_restores(unapplied_actions_x_z))
+                        results.extend(generate_restores(unapplied_actions_y_z))
+                        results.append(
+                            TestResult(
+                                u=z,
+                                v=x,
+                                action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                                data={},
+                            )
+                        )
+                        results.append(
+                            TestResult(
+                                u=z,
+                                v=y,
+                                action=TestResultAction.REMOVE_EDGE_DIRECTED,
+                                data={},
+                            )
+                        )
+
                 else:
                     results += [
                         TestResult(
