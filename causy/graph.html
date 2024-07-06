@@ -2516,7 +2516,7 @@ An inducing path from u to v is a directed reference from u to v on which all me
 </span></pre></div>
 
 
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.7/concepts/models/">https://docs.pydantic.dev/2.7/concepts/models/</a></p>
+            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.8/concepts/models/">https://docs.pydantic.dev/2.8/concepts/models/</a></p>
 
 <p>A base class for creating Pydantic models.</p>
 
@@ -2607,28 +2607,28 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">model_post_init</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span><span class="p">:</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">BaseModel</span>, </span><span class="param"><span class="n">__context</span><span class="p">:</span> <span class="n">Any</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">model_post_init</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span><span class="p">:</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">BaseModel</span>, </span><span class="param"><span class="n">context</span><span class="p">:</span> <span class="n">Any</span>, </span><span class="param"><span class="o">/</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <label class="view-source-button" for="Graph.model_post_init-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#Graph.model_post_init"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Graph.model_post_init-286"><a href="#Graph.model_post_init-286"><span class="linenos">286</span></a><span class="k">def</span> <span class="nf">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Graph.model_post_init-287"><a href="#Graph.model_post_init-287"><span class="linenos">287</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;This function is meant to behave like a BaseModel method to initialise private attributes.</span>
-</span><span id="Graph.model_post_init-288"><a href="#Graph.model_post_init-288"><span class="linenos">288</span></a>
-</span><span id="Graph.model_post_init-289"><a href="#Graph.model_post_init-289"><span class="linenos">289</span></a><span class="sd">    It takes context as an argument since that&#39;s what pydantic-core passes when calling it.</span>
-</span><span id="Graph.model_post_init-290"><a href="#Graph.model_post_init-290"><span class="linenos">290</span></a>
-</span><span id="Graph.model_post_init-291"><a href="#Graph.model_post_init-291"><span class="linenos">291</span></a><span class="sd">    Args:</span>
-</span><span id="Graph.model_post_init-292"><a href="#Graph.model_post_init-292"><span class="linenos">292</span></a><span class="sd">        self: The BaseModel instance.</span>
-</span><span id="Graph.model_post_init-293"><a href="#Graph.model_post_init-293"><span class="linenos">293</span></a><span class="sd">        __context: The context.</span>
-</span><span id="Graph.model_post_init-294"><a href="#Graph.model_post_init-294"><span class="linenos">294</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="Graph.model_post_init-295"><a href="#Graph.model_post_init-295"><span class="linenos">295</span></a>    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__pydantic_private__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Graph.model_post_init-296"><a href="#Graph.model_post_init-296"><span class="linenos">296</span></a>        <span class="n">pydantic_private</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="Graph.model_post_init-297"><a href="#Graph.model_post_init-297"><span class="linenos">297</span></a>        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">private_attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__private_attributes__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="Graph.model_post_init-298"><a href="#Graph.model_post_init-298"><span class="linenos">298</span></a>            <span class="n">default</span> <span class="o">=</span> <span class="n">private_attr</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
-</span><span id="Graph.model_post_init-299"><a href="#Graph.model_post_init-299"><span class="linenos">299</span></a>            <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">PydanticUndefined</span><span class="p">:</span>
-</span><span id="Graph.model_post_init-300"><a href="#Graph.model_post_init-300"><span class="linenos">300</span></a>                <span class="n">pydantic_private</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
-</span><span id="Graph.model_post_init-301"><a href="#Graph.model_post_init-301"><span class="linenos">301</span></a>        <span class="n">object_setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__pydantic_private__&#39;</span><span class="p">,</span> <span class="n">pydantic_private</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Graph.model_post_init-281"><a href="#Graph.model_post_init-281"><span class="linenos">281</span></a><span class="k">def</span> <span class="nf">init_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Graph.model_post_init-282"><a href="#Graph.model_post_init-282"><span class="linenos">282</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;This function is meant to behave like a BaseModel method to initialise private attributes.</span>
+</span><span id="Graph.model_post_init-283"><a href="#Graph.model_post_init-283"><span class="linenos">283</span></a>
+</span><span id="Graph.model_post_init-284"><a href="#Graph.model_post_init-284"><span class="linenos">284</span></a><span class="sd">    It takes context as an argument since that&#39;s what pydantic-core passes when calling it.</span>
+</span><span id="Graph.model_post_init-285"><a href="#Graph.model_post_init-285"><span class="linenos">285</span></a>
+</span><span id="Graph.model_post_init-286"><a href="#Graph.model_post_init-286"><span class="linenos">286</span></a><span class="sd">    Args:</span>
+</span><span id="Graph.model_post_init-287"><a href="#Graph.model_post_init-287"><span class="linenos">287</span></a><span class="sd">        self: The BaseModel instance.</span>
+</span><span id="Graph.model_post_init-288"><a href="#Graph.model_post_init-288"><span class="linenos">288</span></a><span class="sd">        context: The context.</span>
+</span><span id="Graph.model_post_init-289"><a href="#Graph.model_post_init-289"><span class="linenos">289</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="Graph.model_post_init-290"><a href="#Graph.model_post_init-290"><span class="linenos">290</span></a>    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__pydantic_private__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Graph.model_post_init-291"><a href="#Graph.model_post_init-291"><span class="linenos">291</span></a>        <span class="n">pydantic_private</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="Graph.model_post_init-292"><a href="#Graph.model_post_init-292"><span class="linenos">292</span></a>        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">private_attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__private_attributes__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="Graph.model_post_init-293"><a href="#Graph.model_post_init-293"><span class="linenos">293</span></a>            <span class="n">default</span> <span class="o">=</span> <span class="n">private_attr</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+</span><span id="Graph.model_post_init-294"><a href="#Graph.model_post_init-294"><span class="linenos">294</span></a>            <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">PydanticUndefined</span><span class="p">:</span>
+</span><span id="Graph.model_post_init-295"><a href="#Graph.model_post_init-295"><span class="linenos">295</span></a>                <span class="n">pydantic_private</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
+</span><span id="Graph.model_post_init-296"><a href="#Graph.model_post_init-296"><span class="linenos">296</span></a>        <span class="n">object_setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__pydantic_private__&#39;</span><span class="p">,</span> <span class="n">pydantic_private</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -2638,7 +2638,7 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
 <p>Args:
     self: The BaseModel instance.
-    __context: The context.</p>
+    context: The context.</p>
 </div>
 
 
