@@ -202,7 +202,12 @@ def resolve_variable_to_object(obj: Any, variables):
                 obj.__dict__[attribute] = variables[value.name]
             else:
                 raise ValueError(f'Variable "{value.name}" not found in the variables.')
-        elif hasattr(value, "__dict__"):
+        elif (
+            hasattr(value, "__dict__")
+            and not isinstance(value, NoneType)
+            and not hasattr(value, "value")
+        ):
+            # we check for value because we don't want to resolve the variable if it's a variable object itself or a Enum
             obj.__dict__[attribute] = resolve_variable_to_object(value, variables)
     return obj
 

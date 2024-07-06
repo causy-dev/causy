@@ -10,13 +10,32 @@ from causy.interfaces import (
     PipelineStepInterfaceType,
 )
 from causy.models import ComparisonSettings, TestResultAction, TestResult
-from causy.variables import IntegerParameter, BoolParameter
+from causy.variables import IntegerParameter, BoolParameter, StringParameter
 
 
 # theory for all orientation rules with pictures:
 # https://hpi.de/fileadmin/user_upload/fachgebiete/plattner/teaching/CausalInference/2019/Introduction_to_Constraint-Based_Causal_Structure_Learning.pdf
 
 # TODO: refactor ColliderTest -> ColliderRule and move to folder orientation_rules (after checking for duplicates)
+
+
+def filter_unapplied_actions(actions, u, v):
+    """
+    Filter out actions that have not been applied to the graph yet.
+    :param actions: list of actions
+    :param u: node u
+    :param v: node v
+    :return: list of actions that have not been applied to the graph yet
+    """
+    filtered = []
+    for result_set in actions:
+        if result_set is None:
+            continue
+        for result in result_set:
+            if result.u == u and result.v == v:
+                filtered.append(result)
+    return filtered
+
 
 class ColliderTestConflictResolutionStrategies(enum.StrEnum):
     """
@@ -29,6 +48,7 @@ class ColliderTestConflictResolutionStrategies(enum.StrEnum):
     # If a conflict occurs, the edge that was removed last is kept.
     KEEP_LAST = "KEEP_LAST"
 
+
 class ColliderTest(
     PipelineStepInterface[PipelineStepInterfaceType], Generic[PipelineStepInterfaceType]
 ):
@@ -38,9 +58,17 @@ class ColliderTest(
     chunk_size_parallel_processing: IntegerParameter = 1
     parallel: BoolParameter = False
 
+    conflict_resolution_strategy: StringParameter = (
+        ColliderTestConflictResolutionStrategies.KEEP_FIRST
+    )
+
+    needs_unapplied_actions: BoolParameter = True
 
     def process(
-        self, nodes: Tuple[str], graph: BaseGraphInterface
+        self,
+        nodes: Tuple[str],
+        graph: BaseGraphInterface,
+        unapplied_actions: Optional[List[TestResult]] = None,
     ) -> Optional[List[TestResult] | TestResult]:
         """
         We call triples u, v, z of nodes v structures if u and v that are NOT adjacent but share an adjacent node z.
@@ -48,12 +76,12 @@ class ColliderTest(
         We now check if z is in the separating set.
         If z is not in the separating set, we know that u and v are uncorrelated given z.
         So, the edges must be oriented from u to z and from v to z (u -> z <- v).
+        :param unapplied_actions: list of actions that have not been applied to the graph yet
         :param nodes: list of nodes
         :param graph: the current graph
         :returns: list of actions that will be executed on graph
         """
         # https://github.com/pgmpy/pgmpy/blob/1fe10598df5430295a8fc5cdca85cf2d9e1c4330/pgmpy/estimators/PC.py#L416
-        conflict_resolution_strategy: str = ColliderTestConflictResolutionStrategies.KEEP_FIRST
 
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
@@ -73,7 +101,9 @@ class ColliderTest(
 
         # if u and v are not independent given z, safe action: make z a collider
         results = []
-        print(f"x: {x.name}; y: {y.name}, potential_zs: {[graph.nodes[z].name for z in potential_zs]}")
+        print(
+            f"x: {x.name}; y: {y.name}, potential_zs: {[graph.nodes[z].name for z in potential_zs]}"
+        )
         for z in potential_zs:
             z = graph.nodes[z]
 
@@ -84,10 +114,24 @@ class ColliderTest(
             print(f"seperators={[graph.nodes[s].name for s in separators]}")
 
             if z.id not in separators:
-                if graph.only_directed_edge_exists(x, z) or graph.only_directed_edge_exists(y, z):
-                    if ColliderTestConflictResolutionStrategies.KEEP_FIRST is conflict_resolution_strategy:
+                unapplied_actions_x_z = filter_unapplied_actions(
+                    unapplied_actions, x, z
+                )
+                unapplied_actions_y_z = filter_unapplied_actions(
+                    unapplied_actions, y, z
+                )
+                print(f"unapplied_actions_x_z: {unapplied_actions_x_z}")
+                print(f"unapplied_actions_y_z: {unapplied_actions_y_z}")
+                if len(unapplied_actions_y_z) > 0 or len(unapplied_actions_x_z) > 0:
+                    if (
+                        ColliderTestConflictResolutionStrategies.KEEP_FIRST
+                        is self.conflict_resolution_strategy
+                    ):
                         continue
-                    elif ColliderTestConflictResolutionStrategies.KEEP_LAST is conflict_resolution_strategy:
+                    elif (
+                        ColliderTestConflictResolutionStrategies.KEEP_LAST
+                        is self.conflict_resolution_strategy
+                    ):
                         # TODO: remove first action from results lists
                         pass
                 else:

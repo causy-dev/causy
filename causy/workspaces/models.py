@@ -16,7 +16,7 @@ class Experiment(BaseModel):
 
     pipeline: str
     dataloader: str
-    variables: Optional[Dict[str, VariableType]]
+    variables: Optional[Dict[str, VariableType]] = {}
 
 
 class Workspace(BaseModel):
