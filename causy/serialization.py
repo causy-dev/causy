@@ -31,9 +31,12 @@ def load_algorithm_from_specification(algorithm_dict: Dict[str, Any]):
     algorithm_dict["pipeline_steps"] = load_pipeline_steps_by_definition(
         algorithm_dict["pipeline_steps"]
     )
-    algorithm_dict["extensions"] = load_pipeline_steps_by_definition(
-        algorithm_dict["extensions"]
-    )
+    if "extensions" in algorithm_dict and algorithm_dict["extensions"] is not None:
+        algorithm_dict["extensions"] = load_pipeline_steps_by_definition(
+            algorithm_dict["extensions"]
+        )
+    else:
+        algorithm_dict["extensions"] = []
     if "variables" not in algorithm_dict or algorithm_dict["variables"] is None:
         algorithm_dict["variables"] = []
 
