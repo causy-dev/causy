@@ -9,13 +9,14 @@ import torch.multiprocessing as mp
 
 from causy.data_loader import AbstractDataLoader
 from causy.edge_types import DirectedEdge
-from causy.graph import GraphManager
+from causy.graph import GraphManager, Graph
 from causy.graph_utils import unpack_run
 from causy.interfaces import (
     PipelineStepInterface,
     LogicStepInterface,
     BaseGraphInterface,
     GraphModelInterface,
+    GraphUpdateHook,
 )
 from causy.models import TestResultAction, Algorithm, ActionHistoryStep
 from causy.variables import (
@@ -233,6 +234,43 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         for i in generator:
             yield [test_fn, [*i], graph]
 
+    def _execute_pre_graph_update_hooks(
+        self,
+        hooks: List[GraphUpdateHook],
+        graph: BaseGraphInterface,
+        results: List[TestResultAction],
+    ) -> List[TestResultAction]:
+        """
+        Execute the graph update hooks
+        :param graph: the graph
+        :param hooks: the hooks
+        :param results: the results
+        :return:
+        """
+        if not hooks:
+            return results
+        for hook in hooks:
+            results = hook.execute(graph, results)
+        return results
+
+    def _execute_post_graph_update_hooks(
+        self,
+        hooks: List[GraphUpdateHook],
+        graph: BaseGraphInterface,
+        results: List[TestResultAction],
+    ) -> None:
+        """
+        Execute the graph update hooks
+        :param graph: the graph
+        :param hooks: the hooks
+        :param results: the results
+        :return:
+        """
+        if not hooks:
+            return
+        for hook in hooks:
+            hook.execute(graph, results)
+
     def _take_action(self, results, dry_run=False):
         """
         Take the actions returned by the test
@@ -244,13 +282,16 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :param results:
         :return:
         """
-        actions_taken = []
+        all_actions_taken = []
         for result_items in results:
             if result_items is None:
                 continue
             if not isinstance(result_items, list):
                 result_items = [result_items]
-
+            result_items = self._execute_pre_graph_update_hooks(
+                self.algorithm.pre_graph_update_hooks, self.graph, result_items
+            )
+            actions_taken = []
             for i in result_items:
                 if i.u is not None and i.v is not None:
                     logger.debug(f"Action: {i.action} on {i.u.name} and {i.v.name}")
@@ -348,7 +389,11 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                     self.graph.add_edge_history(i.u, i.v, i)
                 # add the action to the actions history
                 actions_taken.append(i)
-        return actions_taken
+            all_actions_taken.extend(actions_taken)
+            self._execute_post_graph_update_hooks(
+                self.algorithm.post_graph_update_hooks, self.graph, actions_taken
+            )
+        return all_actions_taken
 
     def execute_pipeline_step(
         self, test_fn: PipelineStepInterface, apply_to_graph=True
