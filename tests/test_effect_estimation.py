@@ -1,8 +1,17 @@
-from causy.causal_discovery.constraint.algorithms.pc import PC_ORIENTATION_RULES, PC_EDGE_TYPES, PC_GRAPH_UI_EXTENSION, \
-    PC_DEFAULT_THRESHOLD
-from causy.causal_discovery.constraint.independence_tests.common import CorrelationCoefficientTest, \
-    PartialCorrelationTest, ExtendedPartialCorrelationTestMatrix
-from causy.causal_effect_estimation.multivariate_regression import ComputeDirectEffectsMultivariateRegression
+from causy.causal_discovery.constraint.algorithms.pc import (
+    PC_ORIENTATION_RULES,
+    PC_EDGE_TYPES,
+    PC_GRAPH_UI_EXTENSION,
+    PC_DEFAULT_THRESHOLD,
+)
+from causy.causal_discovery.constraint.independence_tests.common import (
+    CorrelationCoefficientTest,
+    PartialCorrelationTest,
+    ExtendedPartialCorrelationTestMatrix,
+)
+from causy.causal_effect_estimation.multivariate_regression import (
+    ComputeDirectEffectsMultivariateRegression,
+)
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_model import graph_model_factory
 from causy.models import Algorithm
@@ -19,7 +28,9 @@ class EffectEstimationTestCase(CausyTestCase):
         PC = graph_model_factory(
             Algorithm(
                 pipeline_steps=[
-                    CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
+                    CalculatePearsonCorrelations(
+                        display_name="Calculate Pearson Correlations"
+                    ),
                     CorrelationCoefficientTest(
                         threshold=VariableReference(name="threshold"),
                         display_name="Correlation Coefficient Test",
@@ -60,9 +71,28 @@ class EffectEstimationTestCase(CausyTestCase):
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
 
-        self.assertAlmostEqual(tst.graph.edge_value(tst.graph.nodes["X"], tst.graph.nodes["Y"])["direct_effect"], 5, 1)
-        self.assertAlmostEqual(tst.graph.edge_value(tst.graph.nodes["Z"], tst.graph.nodes["Y"])["direct_effect"], 6, 1)
-        self.assertAlmostEqual(tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["Y"])["direct_effect"], 2, 1)
+        self.assertAlmostEqual(
+            tst.graph.edge_value(tst.graph.nodes["X"], tst.graph.nodes["Y"])[
+                "direct_effect"
+            ],
+            5,
+            1,
+        )
+        self.assertAlmostEqual(
+            tst.graph.edge_value(tst.graph.nodes["Z"], tst.graph.nodes["Y"])[
+                "direct_effect"
+            ],
+            6,
+            1,
+        )
+        self.assertAlmostEqual(
+            tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["Y"])[
+                "direct_effect"
+            ],
+            2,
+            1,
+        )
+
     def test_direct_effect_estimation_weird_graph(self):
         """
         Here, the wrong graph is discovered, so the effects are also wrong – check which assumption is violated such that the wrong graph is discovered from toy data
@@ -71,7 +101,9 @@ class EffectEstimationTestCase(CausyTestCase):
         PC = graph_model_factory(
             Algorithm(
                 pipeline_steps=[
-                    CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
+                    CalculatePearsonCorrelations(
+                        display_name="Calculate Pearson Correlations"
+                    ),
                     CorrelationCoefficientTest(
                         threshold=VariableReference(name="threshold"),
                         display_name="Correlation Coefficient Test",
