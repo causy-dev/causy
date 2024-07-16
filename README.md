@@ -1,19 +1,17 @@
 > [!WARNING]
-> causy is currently in a very early and experimental stage of development. We do not recommend using it in production.
+> causy is a prototype. Please report any issues and be mindful when using it in production.
 # causy
 
-Causal discovery made easy. Causy allows you to use and implement causal discovery algorithms with easy to use, extend and maintain pipelines. It is built based on pytorch which allows you to run the algorithms on CPUs as well as GPUs seamlessly.
+causy is a command line tool that allows you to apply causal inference methods like causal discovery and causal effect estimation. You can adjust causal discovery algorithms with easy to use, extend and maintain pipelines. causy is built based on pytorch which allows you to run the algorithms on CPUs as well as GPUs.
 
-## Background
+causy workspaces allow you to manage your data sets, algorithm adjustments, and (hyper-)parameters for your experiments.
 
-Current causal discovery algorithms are often designed for the primary purpose of research. They are often implemented in a monolithic way, which makes it hard to understand and extend them. Causy aims to solve this problem by providing a framework which allows you to easily implement and use causal discovery algorithms by splitting them up into smaller logic steps which can be stacked together to form a pipeline. This allows you to easily understand, extend, optimize, and experiment with the algorithms.
+causy UI allows you to look at your resulting graphs in the browser and gain further insights into every step of the algorithms.
 
-By shipping causy with sensitively configured default pipelines, we also aim to provide a tool that can be used by non-experts to get started with causal discovery.
-
-Causy workspaces allow you to easily manage your experiments and visualize the causal discovery process. Causy can also be used via code for researchers who want to quickly test adjustments to a causal discovery algorithm by modifying a pipeline.
+You can find the documentation [here](https://causy.dev/use/).
 
 ## Installation
-Currently, we only support python 3.11. To install causy run
+Currently, we support python 3.11 and 3.12. To install causy run
 ```bash
 pip install causy
 ```
@@ -84,64 +82,6 @@ for edge in edges:
 
 ```
 
-Use a custom algorithm
-
-```python
-from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
-from causy.graph_model import graph_model_factory
-from causy.common_pipeline_steps.logic import Loop
-from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
-from causy.independence_tests.common import (
-  CorrelationCoefficientTest,
-  PartialCorrelationTest,
-  ExtendedPartialCorrelationTestMatrix,
-)
-from causy.orientation_rules.pc import (
-  ColliderTest,
-  NonColliderTest,
-  FurtherOrientTripleTest,
-  OrientQuadrupleTest,
-  FurtherOrientQuadrupleTest,
-)
-from causy.graph_utils import retrieve_edges
-
-CustomPC = graph_model_factory(
-  pipeline_steps=[
-    CalculatePearsonCorrelations(),
-    CorrelationCoefficientTest(threshold=0.1),
-    PartialCorrelationTest(threshold=0.01),
-    ExtendedPartialCorrelationTestMatrix(threshold=0.01),
-    ColliderTest(),
-    Loop(
-      pipeline_steps=[
-        NonColliderTest(),
-        FurtherOrientTripleTest(),
-        OrientQuadrupleTest(),
-        FurtherOrientQuadrupleTest(),
-      ],
-      exit_condition=ExitOnNoActions(),
-    ),
-  ]
-)
-
-model = CustomPC()
-
-model.create_graph_from_data(
-  [
-    {"a": 1, "b": 0.3},
-    {"a": 0.5, "b": 0.2}
-  ]
-)
-model.create_all_possible_edges()
-model.execute_pipeline_steps()
-edges = retrieve_edges(model.graph)
-
-for edge in edges:
-  print(
-    f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
-  )
-```
-
 ### Supported algorithms
 Currently, causy supports the following algorithms:
 - PC (Peter-Clark)
@@ -165,6 +105,6 @@ Execute tests
 ```bash
 poetry run python -m unittest
 ```
-Funded by Prototype Fund from March 2024 until September 2024
+Funded by the Prototype Fund from March 2024 until September 2024
 
 ![pf_funding_logos](https://github.com/causy-dev/causy/assets/94297994/4d8e4b18-dbe0-4549-bf7e-71f8bd24fdac)
