@@ -427,3 +427,22 @@ class ExtensionInterface(BaseModel, Generic[ExtensionType]):
     @property
     def name(self) -> str:
         return serialize_module_name(self)
+
+
+class GraphUpdateHook(BaseModel):
+
+    """
+    A hook that is executed before or after the graph is updated. This can be used to modify the graph before or after an update.
+    """
+
+    @abstractmethod
+    def execute(
+        self, graph: BaseGraphInterface, updates: List[TestResultInterface]
+    ) -> Optional[List[TestResultInterface]]:
+        """
+        Execute the hook.
+        :param graph: current state of the graph.
+        :param updates: the planned/taken actions
+        :return: A list of updates that should be applied to the graph if it is a pre hook. If it is a post hook, it should return None.
+        """
+        pass

@@ -1,6 +1,4 @@
 import enum
-import hashlib
-import json
 from datetime import datetime
 from typing import Optional, Dict, List, Union, Any
 
@@ -19,6 +17,7 @@ from causy.interfaces import (
     ComparisonSettingsInterface,
     ExtensionInterface,
     EdgeTypeInterfaceType,
+    GraphUpdateHook,
 )
 from causy.variables import IntegerParameter, VariableInterfaceType
 
@@ -78,6 +77,8 @@ class Algorithm(BaseModel):
     edge_types: List[EdgeTypeInterfaceType]
     extensions: Optional[List[ExtensionType]] = None
     variables: Optional[List[Union[VariableInterfaceType]]] = None
+    pre_graph_update_hooks: Optional[List[GraphUpdateHook]] = None
+    post_graph_update_hooks: Optional[List[GraphUpdateHook]] = None
 
     def hash(self) -> str:
         return hash_dictionary(self.model_dump())
