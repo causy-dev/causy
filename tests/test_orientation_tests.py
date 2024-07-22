@@ -282,9 +282,7 @@ class OrientationRuleTestCase(CausyTestCase):
         self.assertTrue(model.graph.undirected_edge_exists(y, z))
 
     def test_collider_multiple_colliders(self):
-        pipeline = [
-            ColliderTest()
-        ]
+        pipeline = [ColliderTest()]
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
