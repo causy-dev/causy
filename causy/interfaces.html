@@ -381,6 +381,24 @@
                 </ul>
 
             </li>
+            <li>
+                    <a class="class" href="#GraphUpdateHook">GraphUpdateHook</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#GraphUpdateHook.execute">execute</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GraphUpdateHook.model_config">model_config</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GraphUpdateHook.model_fields">model_fields</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GraphUpdateHook.model_computed_fields">model_computed_fields</a>
+                        </li>
+                </ul>
+
+            </li>
     </ul>
 
 
@@ -831,6 +849,25 @@
 </span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>    <span class="nd">@property</span>
 </span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>
+</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>
+</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a><span class="k">class</span> <span class="nc">GraphUpdateHook</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>
+</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a><span class="sd">    A hook that is executed before or after the graph is updated. This can be used to modify the graph before or after an update.</span>
+</span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a>
+</span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-439"><a href="#L-439"><span class="linenos">439</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
+</span><span id="L-440"><a href="#L-440"><span class="linenos">440</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]</span>
+</span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]:</span>
+</span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a><span class="sd">        Execute the hook.</span>
+</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a><span class="sd">        :param graph: current state of the graph.</span>
+</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a><span class="sd">        :param updates: the planned/taken actions</span>
+</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a><span class="sd">        :return: A list of updates that should be applied to the graph if it is a pre hook. If it is a post hook, it should return None.</span>
+</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -2185,7 +2222,7 @@ inheritance.</p>
 
                             <div id="GraphModelInterface.pool" class="classattr">
                                 <div class="attr variable">
-            <span class="name">pool</span><span class="annotation">: &lt;bound method BaseContext.Pool of &lt;multiprocessing.context.DefaultContext object at 0x7f86a16bd190&gt;&gt;</span>
+            <span class="name">pool</span><span class="annotation">: &lt;bound method BaseContext.Pool of &lt;multiprocessing.context.DefaultContext object at 0x7f87985ad520&gt;&gt;</span>
 
         
     </div>
@@ -3206,6 +3243,156 @@ __pydantic_private__: Instance attribute with the values of private attributes s
                 <dd id="ExtensionInterface.update_forward_refs" class="function">update_forward_refs</dd>
                 <dd id="ExtensionInterface.model_fields" class="variable">model_fields</dd>
                 <dd id="ExtensionInterface.model_computed_fields" class="variable">model_computed_fields</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="GraphUpdateHook">
+                            <input id="GraphUpdateHook-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">GraphUpdateHook</span><wbr>(<span class="base">pydantic.main.BaseModel</span>):
+
+                <label class="view-source-button" for="GraphUpdateHook-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#GraphUpdateHook"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GraphUpdateHook-433"><a href="#GraphUpdateHook-433"><span class="linenos">433</span></a><span class="k">class</span> <span class="nc">GraphUpdateHook</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="GraphUpdateHook-434"><a href="#GraphUpdateHook-434"><span class="linenos">434</span></a>
+</span><span id="GraphUpdateHook-435"><a href="#GraphUpdateHook-435"><span class="linenos">435</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook-436"><a href="#GraphUpdateHook-436"><span class="linenos">436</span></a><span class="sd">    A hook that is executed before or after the graph is updated. This can be used to modify the graph before or after an update.</span>
+</span><span id="GraphUpdateHook-437"><a href="#GraphUpdateHook-437"><span class="linenos">437</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook-438"><a href="#GraphUpdateHook-438"><span class="linenos">438</span></a>
+</span><span id="GraphUpdateHook-439"><a href="#GraphUpdateHook-439"><span class="linenos">439</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="GraphUpdateHook-440"><a href="#GraphUpdateHook-440"><span class="linenos">440</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
+</span><span id="GraphUpdateHook-441"><a href="#GraphUpdateHook-441"><span class="linenos">441</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]</span>
+</span><span id="GraphUpdateHook-442"><a href="#GraphUpdateHook-442"><span class="linenos">442</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]:</span>
+</span><span id="GraphUpdateHook-443"><a href="#GraphUpdateHook-443"><span class="linenos">443</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook-444"><a href="#GraphUpdateHook-444"><span class="linenos">444</span></a><span class="sd">        Execute the hook.</span>
+</span><span id="GraphUpdateHook-445"><a href="#GraphUpdateHook-445"><span class="linenos">445</span></a><span class="sd">        :param graph: current state of the graph.</span>
+</span><span id="GraphUpdateHook-446"><a href="#GraphUpdateHook-446"><span class="linenos">446</span></a><span class="sd">        :param updates: the planned/taken actions</span>
+</span><span id="GraphUpdateHook-447"><a href="#GraphUpdateHook-447"><span class="linenos">447</span></a><span class="sd">        :return: A list of updates that should be applied to the graph if it is a pre hook. If it is a post hook, it should return None.</span>
+</span><span id="GraphUpdateHook-448"><a href="#GraphUpdateHook-448"><span class="linenos">448</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook-449"><a href="#GraphUpdateHook-449"><span class="linenos">449</span></a>        <span class="k">pass</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>A hook that is executed before or after the graph is updated. This can be used to modify the graph before or after an update.</p>
+</div>
+
+
+                            <div id="GraphUpdateHook.execute" class="classattr">
+                                        <input id="GraphUpdateHook.execute-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">execute</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">graph</span><span class="p">:</span> <span class="n"><a href="#BaseGraphInterface">BaseGraphInterface</a></span>,</span><span class="param">	<span class="n">updates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestResultInterface">TestResultInterface</a></span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestResultInterface">TestResultInterface</a></span><span class="p">]]</span>:</span></span>
+
+                <label class="view-source-button" for="GraphUpdateHook.execute-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#GraphUpdateHook.execute"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GraphUpdateHook.execute-439"><a href="#GraphUpdateHook.execute-439"><span class="linenos">439</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="GraphUpdateHook.execute-440"><a href="#GraphUpdateHook.execute-440"><span class="linenos">440</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
+</span><span id="GraphUpdateHook.execute-441"><a href="#GraphUpdateHook.execute-441"><span class="linenos">441</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]</span>
+</span><span id="GraphUpdateHook.execute-442"><a href="#GraphUpdateHook.execute-442"><span class="linenos">442</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]:</span>
+</span><span id="GraphUpdateHook.execute-443"><a href="#GraphUpdateHook.execute-443"><span class="linenos">443</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook.execute-444"><a href="#GraphUpdateHook.execute-444"><span class="linenos">444</span></a><span class="sd">        Execute the hook.</span>
+</span><span id="GraphUpdateHook.execute-445"><a href="#GraphUpdateHook.execute-445"><span class="linenos">445</span></a><span class="sd">        :param graph: current state of the graph.</span>
+</span><span id="GraphUpdateHook.execute-446"><a href="#GraphUpdateHook.execute-446"><span class="linenos">446</span></a><span class="sd">        :param updates: the planned/taken actions</span>
+</span><span id="GraphUpdateHook.execute-447"><a href="#GraphUpdateHook.execute-447"><span class="linenos">447</span></a><span class="sd">        :return: A list of updates that should be applied to the graph if it is a pre hook. If it is a post hook, it should return None.</span>
+</span><span id="GraphUpdateHook.execute-448"><a href="#GraphUpdateHook.execute-448"><span class="linenos">448</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook.execute-449"><a href="#GraphUpdateHook.execute-449"><span class="linenos">449</span></a>        <span class="k">pass</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Execute the hook.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>graph</strong>:  current state of the graph.</li>
+<li><strong>updates</strong>:  the planned/taken actions</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>A list of updates that should be applied to the graph if it is a pre hook. If it is a post hook, it should return None.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="GraphUpdateHook.model_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_config</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#GraphUpdateHook.model_config"></a>
+    
+    
+
+                            </div>
+                            <div id="GraphUpdateHook.model_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#GraphUpdateHook.model_fields"></a>
+    
+    
+
+                            </div>
+                            <div id="GraphUpdateHook.model_computed_fields" class="classattr">
+                                <div class="attr variable">
+            <span class="name">model_computed_fields</span>        =
+<span class="default_value">{}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#GraphUpdateHook.model_computed_fields"></a>
+    
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>pydantic.main.BaseModel</dt>
+                                <dd id="GraphUpdateHook.__init__" class="function">BaseModel</dd>
+                <dd id="GraphUpdateHook.model_extra" class="variable">model_extra</dd>
+                <dd id="GraphUpdateHook.model_fields_set" class="variable">model_fields_set</dd>
+                <dd id="GraphUpdateHook.model_construct" class="function">model_construct</dd>
+                <dd id="GraphUpdateHook.model_copy" class="function">model_copy</dd>
+                <dd id="GraphUpdateHook.model_dump" class="function">model_dump</dd>
+                <dd id="GraphUpdateHook.model_dump_json" class="function">model_dump_json</dd>
+                <dd id="GraphUpdateHook.model_json_schema" class="function">model_json_schema</dd>
+                <dd id="GraphUpdateHook.model_parametrized_name" class="function">model_parametrized_name</dd>
+                <dd id="GraphUpdateHook.model_post_init" class="function">model_post_init</dd>
+                <dd id="GraphUpdateHook.model_rebuild" class="function">model_rebuild</dd>
+                <dd id="GraphUpdateHook.model_validate" class="function">model_validate</dd>
+                <dd id="GraphUpdateHook.model_validate_json" class="function">model_validate_json</dd>
+                <dd id="GraphUpdateHook.model_validate_strings" class="function">model_validate_strings</dd>
+                <dd id="GraphUpdateHook.dict" class="function">dict</dd>
+                <dd id="GraphUpdateHook.json" class="function">json</dd>
+                <dd id="GraphUpdateHook.parse_obj" class="function">parse_obj</dd>
+                <dd id="GraphUpdateHook.parse_raw" class="function">parse_raw</dd>
+                <dd id="GraphUpdateHook.parse_file" class="function">parse_file</dd>
+                <dd id="GraphUpdateHook.from_orm" class="function">from_orm</dd>
+                <dd id="GraphUpdateHook.construct" class="function">construct</dd>
+                <dd id="GraphUpdateHook.copy" class="function">copy</dd>
+                <dd id="GraphUpdateHook.schema" class="function">schema</dd>
+                <dd id="GraphUpdateHook.schema_json" class="function">schema_json</dd>
+                <dd id="GraphUpdateHook.validate" class="function">validate</dd>
+                <dd id="GraphUpdateHook.update_forward_refs" class="function">update_forward_refs</dd>
 
             </div>
                                 </dl>
