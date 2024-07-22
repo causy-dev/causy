@@ -9,7 +9,7 @@ import torch.multiprocessing as mp
 
 from causy.data_loader import AbstractDataLoader
 from causy.edge_types import DirectedEdge
-from causy.graph import GraphManager, Graph
+from causy.graph import GraphManager, Graph, GraphError
 from causy.graph_utils import unpack_run
 from causy.interfaces import (
     PipelineStepInterface,
@@ -271,6 +271,18 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         for hook in hooks:
             hook.execute(graph, results)
 
+    def _execute_hook(self, hook: str, i: TestResultAction):
+        """
+        Execute a single hook
+        :param hook: the name of the hook
+        :param i: the test result action
+        :return:
+        """
+        try:
+            getattr(self.graph.get_edge(i.u, i.v).edge_type, hook)(self.graph, i)
+        except GraphError as e:
+            logger.error(f"Error in hook ({str(hook)}): {e}")
+
     def _take_action(self, results, dry_run=False):
         """
         Take the actions returned by the test
@@ -307,26 +319,33 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                             f"Tried to remove undirected edge {i.u.name} <-> {i.v.name}. But it does not exist."
                         )
                         continue
+                    self._execute_hook("pre_edge_remove_hook", i)
                     self.graph.remove_edge(i.u, i.v, soft_delete=True)
                     self.graph.add_edge_history(i.u, i.v, i)
                     self.graph.add_edge_history(i.v, i.u, i)
+                    self._execute_hook("post_edge_remove_hook", i)
                 elif i.action == TestResultAction.UPDATE_EDGE:
                     if not self.graph.edge_exists(i.u, i.v):
                         logger.debug(
                             f"Tried to update edge {i.u.name} -> {i.v.name}. But it does not exist."
                         )
                         continue
+                    self._execute_hook("pre_edge_update_hook", i)
                     self.graph.update_edge(i.u, i.v, metadata=i.data)
                     self.graph.add_edge_history(i.u, i.v, i)
                     self.graph.add_edge_history(i.v, i.u, i)
+                    self._execute_hook("post_edge_update_hook", i)
                 elif i.action == TestResultAction.UPDATE_EDGE_DIRECTED:
                     if not self.graph.directed_edge_exists(i.u, i.v):
                         logger.debug(
                             f"Tried to update directed edge {i.u.name} -> {i.v.name}. But it does not exist."
                         )
                         continue
+
+                    self._execute_hook("pre_edge_update_hook", i)
                     self.graph.update_directed_edge(i.u, i.v, i.data)
                     self.graph.add_edge_history(i.u, i.v, i)
+                    self._execute_hook("post_edge_update_hook", i)
                 elif i.action == TestResultAction.DO_NOTHING:
                     continue
                 elif i.action == TestResultAction.REMOVE_EDGE_DIRECTED:
@@ -337,7 +356,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                             f"Tried to remove directed edge {i.u.name} -> {i.v.name}. But it does not exist."
                         )
                         continue
-
+                    self._execute_hook("pre_edge_remove_hook", i)
                     self.graph.remove_directed_edge(i.u, i.v, soft_delete=True)
                     # TODO: move this to pre/post update hooks
                     if self.graph.edge_exists(
@@ -347,25 +366,28 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                             i.v, i.u, edge_type=DirectedEdge()
                         )
                     self.graph.add_edge_history(i.u, i.v, i)
-
+                    self._execute_hook("post_edge_remove_hook", i)
                 elif i.action == TestResultAction.UPDATE_EDGE_TYPE:
                     if not self.graph.edge_exists(i.u, i.v):
                         logger.debug(
                             f"Tried to update edge type {i.u.name} <-> {i.v.name}. But it does not exist."
                         )
                         continue
+                    self._execute_hook("pre_edge_type_change_hook", i)
                     self.graph.update_edge(i.u, i.v, edge_type=i.edge_type)
                     self.graph.add_edge_history(i.u, i.v, i)
                     self.graph.add_edge_history(i.v, i.u, i)
-
+                    self._execute_hook("post_edge_type_change_hook", i)
                 elif i.action == TestResultAction.UPDATE_EDGE_TYPE_DIRECTED:
                     if not self.graph.directed_edge_exists(i.u, i.v):
                         logger.debug(
                             f"Tried to update edge type {i.u.name} -> {i.v.name}. But it does not exist."
                         )
                         continue
+                    self._execute_hook("pre_edge_type_change_hook", i)
                     self.graph.update_directed_edge(i.u, i.v, edge_type=i.edge_type)
                     self.graph.add_edge_history(i.u, i.v, i)
+                    self._execute_hook("post_edge_type_change_hook", i)
 
                 elif i.action == TestResultAction.RESTORE_EDGE:
                     if self.graph.edge_exists(i.u, i.v):

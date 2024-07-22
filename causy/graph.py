@@ -433,6 +433,19 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
         """
         return dict()
 
+    def get_edge(self, u: Node, v: Node) -> Edge:
+        """
+        Get an edge between two nodes
+        :param u: u node
+        :param v: v node
+        :return: the edge
+        """
+        if u.id not in self.edges:
+            raise GraphError(f"Node {u} does not exist")
+        if v.id not in self.edges[u.id]:
+            raise GraphError(f"Edge {u} -> {v} does not exist")
+        return self.edges[u.id][v.id]
+
     def add_edge(
         self,
         u: Node,

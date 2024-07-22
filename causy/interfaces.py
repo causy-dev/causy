@@ -78,6 +78,77 @@ class EdgeTypeInterface(ABC, BaseModel, Generic[EdgeTypeInterfaceType]):
     IS_DIRECTED: bool = True
     STR_REPRESENTATION: str = "-"
 
+    class GraphMixins:
+        pass
+
+    def pre_edge_remove_hook(self, graph: "BaseGraphInterface", edge: "EdgeInterface"):
+        """
+        Hook that is executed before an edge is deleted.
+        :param graph: the graph
+        :param edge: the edge
+        """
+        pass
+
+    def post_edge_remove_hook(self, graph: "BaseGraphInterface", edge: "EdgeInterface"):
+        """
+        Hook that is executed after an edge is deleted.
+        :param graph: the graph
+        :param edge: the edge
+        """
+        pass
+
+    def pre_edge_add_hook(self, graph: "BaseGraphInterface", edge: "EdgeInterface"):
+        """
+        Hook that is executed before an edge is added.
+        :param graph: the graph
+        :param edge: the edge
+        """
+        pass
+
+    def post_edge_add_hook(self, graph: "BaseGraphInterface", edge: "EdgeInterface"):
+        """
+        Hook that is executed after an edge is added.
+        :param graph: the graph
+        :param edge: the edge
+        """
+        pass
+
+    def pre_edge_update_hook(self, graph: "BaseGraphInterface", edge: "EdgeInterface"):
+        """
+        Hook that is executed before an edge is updated.
+        :param graph: the graph
+        :param edge: the edge
+        """
+        pass
+
+    def post_edge_update_hook(self, graph: "BaseGraphInterface", edge: "EdgeInterface"):
+        """
+        Hook that is executed after an edge is updated.
+        :param graph: the graph
+        :param edge: the edge
+        """
+        pass
+
+    def pre_edge_type_change_hook(
+        self, graph: "BaseGraphInterface", edge: "EdgeInterface"
+    ):
+        """
+        Hook that is executed before an edge type is changed.
+        :param graph: the graph
+        :param edge: the edge
+        """
+        pass
+
+    def post_edge_type_change_hook(
+        self, graph: "BaseGraphInterface", edge: "EdgeInterface"
+    ):
+        """
+        Hook that is executed after an edge type is changed.
+        :param graph: the graph
+        :param edge: the edge
+        """
+        pass
+
     def __hash__(self):
         return hash(self.name)
 
@@ -430,7 +501,6 @@ class ExtensionInterface(BaseModel, Generic[ExtensionType]):
 
 
 class GraphUpdateHook(BaseModel):
-
     """
     A hook that is executed before or after the graph is updated. This can be used to modify the graph before or after an update.
     """
