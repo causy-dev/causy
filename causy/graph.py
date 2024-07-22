@@ -433,9 +433,16 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
         """
         return dict()
 
-    def add_edge(self, u: Node, v: Node, metadata: Dict):
+    def add_edge(
+        self,
+        u: Node,
+        v: Node,
+        metadata: Dict,
+        edge_type: EdgeTypeInterface = UndirectedEdge(),
+    ):
         """
         Add an edge to the graph
+        :param edge_type: the type of the edge (e.g. undirected, directed, bidirected)
         :param u: u node
         :param v: v node
         :param metadata: metadata of the edge
@@ -459,20 +466,27 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
             self._reverse_edges[v.id] = self.__init_dict()
             self._deleted_edges[v.id] = self.__init_dict()
 
-        a_edge = Edge(u=u, v=v, edge_type=UndirectedEdge(), metadata=metadata)
+        a_edge = Edge(u=u, v=v, edge_type=edge_type, metadata=metadata)
         self.edges[u.id][v.id] = a_edge
         self._reverse_edges[v.id][u.id] = a_edge
 
-        b_edge = Edge(u=v, v=u, edge_type=UndirectedEdge(), metadata=metadata)
+        b_edge = Edge(u=v, v=u, edge_type=edge_type, metadata=metadata)
         self.edges[v.id][u.id] = b_edge
         self._reverse_edges[u.id][v.id] = b_edge
 
         self.edge_history[(u.id, v.id)] = []
         self.edge_history[(v.id, u.id)] = []
 
-    def add_directed_edge(self, u: Node, v: Node, metadata: Dict):
+    def add_directed_edge(
+        self,
+        u: Node,
+        v: Node,
+        metadata: Dict,
+        edge_type: EdgeTypeInterface = DirectedEdge(),
+    ):
         """
         Add a directed edge from u to v to the graph
+        :param edge_type:
         :param u: u node
         :param v: v node
         :param metadata: metadata of the edge
@@ -493,7 +507,7 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
         if v.id not in self._reverse_edges:
             self._reverse_edges[v.id] = self.__init_dict()
 
-        edge = Edge(u=u, v=v, edge_type=DirectedEdge(), metadata=metadata)
+        edge = Edge(u=u, v=v, edge_type=edge_type, metadata=metadata)
 
         self.edges[u.id][v.id] = edge
         self._reverse_edges[v.id][u.id] = edge
