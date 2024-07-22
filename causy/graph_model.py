@@ -47,6 +47,8 @@ class AbstractGraphModel(GraphModelInterface, ABC):
     graph: BaseGraphInterface
     pool: mp.Pool
 
+    _graph_class: type[BaseGraphInterface]
+
     def __init__(
         self,
         graph=None,
@@ -101,7 +103,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :param data: the dictionary
         :return: the graph
         """
-        graph = GraphManager()
+        graph = GraphManager(graph_class=self._graph_class)
         for key, values in sorted(data.items()):
             graph.add_node(key, values, id_=key)
         return graph
@@ -124,7 +126,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             for key in keys:
                 nodes[key].append(row[key])
 
-        graph = GraphManager()
+        graph = GraphManager(graph_class=self._graph_class)
         for key in keys:
             graph.add_node(key, nodes[key], id_=key)
 
@@ -153,7 +155,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             for key in keys:
                 nodes[key].append(row[key])
 
-        graph = GraphManager()
+        graph = GraphManager(graph_class=self._graph_class)
         for key in keys:
             graph.add_node(key, nodes[key], id_=key)
 
@@ -509,9 +511,22 @@ def graph_model_factory(
             algorithm.pipeline_steps, variables
         )
 
+    bases = Graph.__bases__
+    if algorithm.edge_types is not None:
+        for edge_type in algorithm.edge_types:
+            bases += (edge_type.GraphAccessMixin,)
+
+    if algorithm.extensions is not None:
+        for extension in algorithm.extensions:
+            bases += (extension.GraphAccessMixin,)
+
+    Graph.__bases__ = tuple(set(bases))
+
     class GraphModel(AbstractGraphModel):
         # store the original algorithm for later use like ejecting it without the resolved variables
         _original_algorithm = original_algorithm
+
+        _graph_class = Graph
 
         def __init__(self):
             super().__init__(algorithm=algorithm)

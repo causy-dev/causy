@@ -1,5 +1,5 @@
 import enum
-from typing import Optional, List, Generic
+from typing import Optional, List, Generic, Union, Tuple
 
 from causy.contrib.graph_ui import (
     EdgeTypeConfig,
@@ -10,6 +10,8 @@ from causy.contrib.graph_ui import (
 from causy.interfaces import (
     EdgeTypeInterface,
     EdgeTypeInterfaceType,
+    BaseGraphInterface,
+    NodeInterface,
 )
 
 
@@ -23,6 +25,61 @@ class DirectedEdge(EdgeTypeInterface, Generic[EdgeTypeInterfaceType]):
     name: str = EdgeTypeEnum.DIRECTED.name
     IS_DIRECTED: bool = True
     STR_REPRESENTATION: str = "-->"  # u --> v
+
+    class GraphAccessMixin(BaseGraphInterface):
+        def only_directed_edge_exists(
+            self, u: Union[NodeInterface, str], v: Union[NodeInterface, str]
+        ) -> bool:
+            """
+            Check if a directed edge exists between u and v, but no directed edge exists between v and u. Case: u -> v
+            :param u: node u
+            :param v: node v
+            :return: True if only directed edge exists, False otherwise
+            """
+            if self.directed_edge_exists(u, v) and not self.directed_edge_exists(v, u):
+                return True
+            return False
+
+        def _resolve_node_references(
+            self,
+            u: Union[NodeInterface, str],
+            v: Optional[Union[NodeInterface, str]] = None,
+        ) -> Union[NodeInterface, Tuple[NodeInterface, NodeInterface]]:
+            """
+            Resolve node references
+            :param u:
+            :param v:
+            :return: Returns a tuple of nodes if v is not None, otherwise returns a single node
+            """
+            if isinstance(u, str):
+                u = self.node_by_id(u)
+            if v and isinstance(v, str):
+                v = self.node_by_id(v)
+
+            if v is None:
+                return u
+
+            return u, v
+
+        def directed_paths(
+            self, u: Union[NodeInterface, str], v: Union[NodeInterface, str]
+        ) -> List[List[Tuple[NodeInterface, NodeInterface]]]:
+            """
+            Return all directed paths from u to v
+            :param u: node u
+            :param v: node v
+            :return: list of directed paths
+            """
+            u, v = self._resolve_node_references(u, v)
+            # TODO: try a better data structure for this
+            if self.directed_edge_exists(u, v):
+                return [[(u, v)]]
+            paths = []
+            for w in self.edges[u.id]:
+                if self.directed_edge_exists(u, self.nodes[w]):
+                    for path in self.directed_paths(self.nodes[w], v):
+                        paths.append([(u, self.nodes[w])] + path)
+            return paths
 
 
 class DirectedEdgeUIConfig(EdgeTypeConfig):
