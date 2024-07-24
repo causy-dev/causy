@@ -78,7 +78,7 @@ class EdgeTypeInterface(ABC, BaseModel, Generic[EdgeTypeInterfaceType]):
     IS_DIRECTED: bool = True
     STR_REPRESENTATION: str = "-"
 
-    class GraphAccessMixin:
+    class GraphAccessMixin(ABC):
         pass
 
     def pre_edge_remove_hook(self, graph: "BaseGraphInterface", edge: "EdgeInterface"):
@@ -499,7 +499,7 @@ class ExtensionInterface(BaseModel, Generic[ExtensionType]):
     def name(self) -> str:
         return serialize_module_name(self)
 
-    class GraphAccessMixin:
+    class GraphAccessMixin(ABC):
         pass
 
 

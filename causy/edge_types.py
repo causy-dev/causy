@@ -10,7 +10,6 @@ from causy.contrib.graph_ui import (
 from causy.interfaces import (
     EdgeTypeInterface,
     EdgeTypeInterfaceType,
-    BaseGraphInterface,
     NodeInterface,
 )
 
@@ -26,7 +25,7 @@ class DirectedEdge(EdgeTypeInterface, Generic[EdgeTypeInterfaceType]):
     IS_DIRECTED: bool = True
     STR_REPRESENTATION: str = "-->"  # u --> v
 
-    class GraphAccessMixin(BaseGraphInterface):
+    class GraphAccessMixin:
         def only_directed_edge_exists(
             self, u: Union[NodeInterface, str], v: Union[NodeInterface, str]
         ) -> bool:

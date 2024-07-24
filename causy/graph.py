@@ -62,7 +62,7 @@ class GraphError(Exception):
     pass
 
 
-class GraphAccessMixin:
+class GraphBaseAccessMixin:
     def directed_edge_is_soft_deleted(
         self, u: Union[Node, str], v: Union[Node, str]
     ) -> bool:
@@ -299,7 +299,7 @@ class GraphAccessMixin:
         return edges
 
 
-class Graph(BaseModel, GraphAccessMixin):
+class Graph(BaseModel, GraphBaseAccessMixin):
     nodes: OrderedDict[str, Node] = collections.OrderedDict({})
     edges: Dict[str, Dict[str, Edge]] = dict()
     _reverse_edges: Dict[str, Dict[str, Edge]] = dict()
@@ -308,7 +308,7 @@ class Graph(BaseModel, GraphAccessMixin):
     action_history: List[ActionHistoryStep] = []
 
 
-class GraphManager(GraphAccessMixin, BaseGraphInterface):
+class GraphManager(GraphBaseAccessMixin, BaseGraphInterface):
     """
     The graph represents the internal data structure of causy. It is a simple graph with nodes and edges.
     But it supports to be handled as a directed graph, undirected graph and bidirected graph, which is important to implement different algorithms in different stages.

@@ -1,3 +1,4 @@
+import inspect
 import logging
 import platform
 from abc import ABC
@@ -511,16 +512,18 @@ def graph_model_factory(
             algorithm.pipeline_steps, variables
         )
 
-    bases = Graph.__bases__
+    bases = tuple()
     if algorithm.edge_types is not None:
         for edge_type in algorithm.edge_types:
-            bases += (edge_type.GraphAccessMixin,)
+            if not inspect.isabstract(edge_type.GraphAccessMixin):
+                bases += (edge_type.GraphAccessMixin,)
 
     if algorithm.extensions is not None:
         for extension in algorithm.extensions:
-            bases += (extension.GraphAccessMixin,)
+            if not inspect.isabstract(extension.GraphAccessMixin):
+                bases += (extension.GraphAccessMixin,)
 
-    Graph.__bases__ = tuple(set(bases))
+    Graph.__bases__ = tuple(set(Graph.__bases__ + bases))
 
     class GraphModel(AbstractGraphModel):
         # store the original algorithm for later use like ejecting it without the resolved variables

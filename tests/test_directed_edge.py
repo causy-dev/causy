@@ -1,5 +1,5 @@
 from causy.edge_types import DirectedEdge
-from causy.graph import GraphManager, Graph, GraphAccessMixin
+from causy.graph import GraphManager, Graph, GraphBaseAccessMixin
 from causy.interfaces import BaseGraphInterface
 from tests.utils import CausyTestCase
 
@@ -8,7 +8,7 @@ class DirectedEdgeTestCase(CausyTestCase):
     def test_directed_paths_two_nodes(self):
         new_graph_manager = GraphManager
         new_graph_manager.__bases__ = (
-            GraphAccessMixin,
+            GraphBaseAccessMixin,
             DirectedEdge.GraphAccessMixin,
         )
         graph = new_graph_manager()
@@ -20,7 +20,7 @@ class DirectedEdgeTestCase(CausyTestCase):
     def test_directed_paths_three_nodes(self):
         new_graph_manager = GraphManager
         new_graph_manager.__bases__ = (
-            GraphAccessMixin,
+            GraphBaseAccessMixin,
             DirectedEdge.GraphAccessMixin,
         )
         graph = new_graph_manager()
