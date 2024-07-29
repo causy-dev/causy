@@ -1,5 +1,6 @@
 from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
 from causy.common_pipeline_steps.logic import Loop
+from causy.edge_types import DirectedEdge, UndirectedEdge
 from causy.graph import GraphManager
 from causy.models import TestResultAction, TestResult, Algorithm
 from causy.causal_discovery.constraint.orientation_rules.pc import (
@@ -21,7 +22,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge, UndirectedEdge],
                 name="TestCollider",
             )
         )()
@@ -51,7 +52,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -83,7 +84,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -128,7 +129,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -183,7 +184,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -223,7 +224,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -255,7 +256,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -286,7 +287,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -324,7 +325,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -374,7 +375,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -420,7 +421,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -440,7 +441,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -464,7 +465,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
@@ -491,7 +492,7 @@ class OrientationRuleTestCase(CausyTestCase):
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
-                edge_types=[],
+                edge_types=[DirectedEdge(), UndirectedEdge()],
                 name="TestCollider",
             )
         )()
