@@ -1,7 +1,15 @@
 from typing import Union
 
+from causy.causal_discovery.constraint.independence_tests.common import CorrelationCoefficientTest, \
+    PartialCorrelationTest, ExtendedPartialCorrelationTestMatrix
+from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
+from causy.contrib.graph_ui import GraphUIExtension
+from causy.edge_types import DirectedEdgeUIConfig, UndirectedEdgeUIConfig, DirectedEdge, UndirectedEdge
 from causy.graph import Node
+from causy.graph_model import graph_model_factory
 from causy.interfaces import ExtensionInterface
+from causy.models import Algorithm
+from causy.variables import VariableReference, FloatVariable
 
 
 class InducingPathExtension(ExtensionInterface):
@@ -31,3 +39,51 @@ class InducingPathExtension(ExtensionInterface):
                         # TODO: check if this is correct (@sof)
                         return True
             return False
+
+FCI_DEFAULT_THRESHOLD = 0.005
+
+# wip
+FCI_ORIENTATION_RULES = [
+]
+
+# we need new edge type UI configurations for FCI
+FCI_GRAPH_UI_EXTENSION = GraphUIExtension(
+    edges=[
+        DirectedEdgeUIConfig(),
+        UndirectedEdgeUIConfig(),
+    ]
+)
+
+# wip
+FCI_EDGE_TYPES = [DirectedEdge(), UndirectedEdge()]
+
+
+class CollidersTest:
+    pass
+
+# wip
+FCI = graph_model_factory(
+    Algorithm(
+        pipeline_steps=[
+            CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
+            CorrelationCoefficientTest(
+                threshold=VariableReference(name="threshold"),
+                display_name="Correlation Coefficient Test",
+            ),
+            PartialCorrelationTest(
+                threshold=VariableReference(name="threshold"),
+                display_name="Partial Correlation Test",
+            ),
+            ExtendedPartialCorrelationTestMatrix(
+                threshold=VariableReference(name="threshold"),
+                display_name="Extended Partial Correlation Test Matrix",
+            ),
+            CollidersTest(),
+            *FCI_ORIENTATION_RULES,
+        ],
+        edge_types=FCI_EDGE_TYPES,
+        extensions=[FCI_GRAPH_UI_EXTENSION],
+        name="FCI",
+        variables=[FloatVariable(name="threshold", value=FCI_DEFAULT_THRESHOLD)],
+    )
+)
