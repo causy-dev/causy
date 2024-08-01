@@ -190,6 +190,99 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                             yield [node, neighbour] + [ks for ks in k]
 
 
+class PairsWithEdgesAndDisjointSubsets(GeneratorInterface):
+    """
+    Generates all combinations of pairs of nodes that are neighbours and all disjoint subsets of the remaining nodes of size n-2.
+    Used for CI algorithm.
+    """
+
+    shuffle_combinations: BoolParameter = True
+    chunked: BoolParameter = True
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+    def generate(
+        self, graph: BaseGraphInterface, graph_model_instance_: GraphModelInterface
+    ):
+        start = self.comparison_settings.min
+        # if min is longer then our dataset, we can't create any combinations
+        if start > len(graph.nodes):
+            return
+
+        # if max is AS_MANY_AS_FIELDS, we set it to the length of the dataset + 1
+        if self.comparison_settings.max == AS_MANY_AS_FIELDS:
+            stop = len(graph.nodes) + 1
+        else:
+            stop = self.comparison_settings.max + 1
+
+        # if start is longer then our dataset, we set it to the length of the dataset
+        if stop > len(graph.nodes) + 1:
+            stop = len(graph.nodes) + 1
+
+        # if stop is smaller then start, we can't create any combinations
+        if stop < start:
+            return
+
+        if start < 2:
+            raise ValueError("PairsWithNeighboursGenerator: start must be at least 2")
+        for range_size in range(start, stop):
+            logger.info(f"range_size = {range_size}")
+            logger.debug(f"PairsWithNeighboursGenerator: range_size={range_size}")
+            checked_combinations = set()
+            for node in graph.edges:
+                for neighbour in graph.edges[node].keys():
+                    if not graph.directed_edge_exists(node, neighbour):
+                        continue
+
+                    if (node, neighbour) or (neighbour, node) in checked_combinations:
+                        continue
+
+                    checked_combinations.add((node, neighbour))
+                    if range_size == 2:
+                        yield [[node, neighbour]]
+                        continue
+
+                    subsets = set(
+                        [
+                            k
+                            for k, value in graph.nodes.items()
+                        ]
+                    )
+                    logger.info(f"other_neighbors before removal={disjoint_subsets}")
+
+                    if neighbour in subsets:
+                        subsets.remove(neighbour)
+                    if node in subsets:
+                        subsets.remove(node)
+
+                    else:
+                        logger.debug(
+                            "PairsWithNeighboursGenerator: neighbour not in other_neighbours. This should not happen."
+                        )
+                    logger.info(f"node={node}, neighbour={neighbour}")
+                    logger.info(f"disjoint_subsets={disjoint_subsets}")
+                    disjoint_subsets = list(itertools.combinations(subsets, range_size - 2))
+
+                    if self.shuffle_combinations:
+                        import random
+
+                        random.shuffle(disjoint_subsets)
+
+                    if self.chunked:
+                        chunk = []
+                        for k in disjoint_subsets:
+                            chunk.append([node, neighbour] + [ks for ks in k])
+                        yield chunk
+                    else:
+                        for k in disjoint_subsets:
+                            yield [node, neighbour] + [ks for ks in k]
+
+
 class RandomSampleGenerator(GeneratorInterface, BaseModel):
     """
     Executes another generator and returns a random sample of the results
