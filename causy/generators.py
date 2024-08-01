@@ -190,7 +190,7 @@ class PairsWithNeighboursGenerator(GeneratorInterface):
                             yield [node, neighbour] + [ks for ks in k]
 
 
-class PairsWithEdgesAndDisjointSubsets(GeneratorInterface):
+class NeighboursAndDisjointSubsets(GeneratorInterface):
     """
     Generates all combinations of pairs of nodes that are neighbours and all disjoint subsets of the remaining nodes of size n-2.
     Used for CI algorithm.
@@ -253,7 +253,7 @@ class PairsWithEdgesAndDisjointSubsets(GeneratorInterface):
                             for k, value in graph.nodes.items()
                         ]
                     )
-                    logger.info(f"other_neighbors before removal={disjoint_subsets}")
+                    logger.info(f"subsets before removal={subsets}")
 
                     if neighbour in subsets:
                         subsets.remove(neighbour)
@@ -265,7 +265,7 @@ class PairsWithEdgesAndDisjointSubsets(GeneratorInterface):
                             "PairsWithNeighboursGenerator: neighbour not in other_neighbours. This should not happen."
                         )
                     logger.info(f"node={node}, neighbour={neighbour}")
-                    logger.info(f"disjoint_subsets={disjoint_subsets}")
+                    logger.info(f"subsets after removal={subsets}")
                     disjoint_subsets = list(itertools.combinations(subsets, range_size - 2))
 
                     if self.shuffle_combinations:
