@@ -39,7 +39,15 @@ class CalculatePearsonCorrelations(
         std_y = y_val.std(unbiased=False)
         pearson_correlation = cov_xy / (std_x * std_y)
 
-        edge_value["correlation"] = pearson_correlation.item()
+        correlation = pearson_correlation.item()
+
+        # Clamp the correlation to -1 and 1 to avoid numerical errors
+        if correlation < -1:
+            correlation = -1
+        elif correlation > 1:
+            correlation = 1
+
+        edge_value["correlation"] = correlation
 
         return TestResult(
             u=x,
