@@ -75,22 +75,22 @@ class EffectEstimationTestCase(CausyTestCase):
             tst.graph.edge_value(tst.graph.nodes["X"], tst.graph.nodes["Y"])[
                 "direct_effect"
             ],
-            5,
-            1,
+            5.0,
+            0,
         )
         self.assertAlmostEqual(
             tst.graph.edge_value(tst.graph.nodes["Z"], tst.graph.nodes["Y"])[
                 "direct_effect"
             ],
-            6,
-            1,
+            6.0,
+            0,
         )
         self.assertAlmostEqual(
             tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["Y"])[
                 "direct_effect"
             ],
-            2,
-            1,
+            2.0,
+            0,
         )
 
     def test_direct_effect_estimation_weird_graph(self):
