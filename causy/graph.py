@@ -62,7 +62,7 @@ class GraphError(Exception):
     pass
 
 
-class GraphAccessMixin:
+class GraphBaseAccessMixin:
     def directed_edge_is_soft_deleted(
         self, u: Union[Node, str], v: Union[Node, str]
     ) -> bool:
@@ -98,19 +98,6 @@ class GraphAccessMixin:
             for n in self._reverse_edges[u].keys()
             if not self.directed_edge_is_soft_deleted(n, u)
         ]
-
-    def only_directed_edge_exists(
-        self, u: Union[Node, str], v: Union[Node, str]
-    ) -> bool:
-        """
-        Check if a directed edge exists between u and v, but no directed edge exists between v and u. Case: u -> v
-        :param u: node u
-        :param v: node v
-        :return: True if only directed edge exists, False otherwise
-        """
-        if self.directed_edge_exists(u, v) and not self.directed_edge_exists(v, u):
-            return True
-        return False
 
     def edge_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
         """
@@ -177,25 +164,6 @@ class GraphAccessMixin:
         :return:
         """
         return self.nodes.get(id_)
-
-    def __resolve_node_references(
-        self, u: Union[Node, str], v: Optional[Union[Node, str]] = None
-    ) -> Union[Node, Tuple[Node, Node]]:
-        """
-        Resolve node references
-        :param u:
-        :param v:
-        :return: Returns a tuple of nodes if v is not None, otherwise returns a single node
-        """
-        if isinstance(u, str):
-            u = self.node_by_id(u)
-        if v and isinstance(v, str):
-            v = self.node_by_id(v)
-
-        if v is None:
-            return u
-
-        return u, v
 
     def edge_value(self, u: Union[Node, str], v: Union[Node, str]) -> Optional[Dict]:
         """
@@ -318,50 +286,6 @@ class GraphAccessMixin:
 
         return True
 
-    def directed_paths(
-        self, u: Union[Node, str], v: Union[Node, str]
-    ) -> List[List[Tuple[Node, Node]]]:
-        """
-        Return all directed paths from u to v
-        :param u: node u
-        :param v: node v
-        :return: list of directed paths
-        """
-        u, v = self.__resolve_node_references(u, v)
-        # TODO: try a better data structure for this
-        if self.directed_edge_exists(u, v):
-            return [[(u, v)]]
-        paths = []
-        for w in self.edges[u.id]:
-            if self.directed_edge_exists(u, self.nodes[w]):
-                for path in self.directed_paths(self.nodes[w], v):
-                    paths.append([(u, self.nodes[w])] + path)
-        return paths
-
-    def inducing_path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
-        """
-        Check if an inducing path from u to v exists.
-        An inducing path from u to v is a directed reference from u to v on which all mediators are colliders.
-        :param u: node u
-        :param v: node v
-        :return: True if an inducing path exists, False otherwise
-        """
-
-        if isinstance(u, Node):
-            u = u.id
-        if isinstance(v, Node):
-            v = v.id
-
-        if not self.directed_path_exists(u, v):
-            return False
-        for path in self.directed_paths(u, v):
-            for i in range(1, len(path) - 1):
-                r, w = path[i]
-                if not self.bidirected_edge_exists(r, w):
-                    # TODO: check if this is correct (@sof)
-                    return True
-        return False
-
     def retrieve_edges(self) -> List[Edge]:
         """
         Retrieve all edges
@@ -375,7 +299,7 @@ class GraphAccessMixin:
         return edges
 
 
-class Graph(BaseModel, GraphAccessMixin):
+class Graph(BaseModel, GraphBaseAccessMixin):
     nodes: OrderedDict[str, Node] = collections.OrderedDict({})
     edges: Dict[str, Dict[str, Edge]] = dict()
     _reverse_edges: Dict[str, Dict[str, Edge]] = dict()
@@ -384,7 +308,7 @@ class Graph(BaseModel, GraphAccessMixin):
     action_history: List[ActionHistoryStep] = []
 
 
-class GraphManager(GraphAccessMixin, BaseGraphInterface):
+class GraphManager(GraphBaseAccessMixin, BaseGraphInterface):
     """
     The graph represents the internal data structure of causy. It is a simple graph with nodes and edges.
     But it supports to be handled as a directed graph, undirected graph and bidirected graph, which is important to implement different algorithms in different stages.
@@ -417,8 +341,8 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
 
     graph: Optional[Graph] = None
 
-    def __init__(self):
-        self.graph = Graph()
+    def __init__(self, graph_class=Graph):
+        self.graph = graph_class()
         self.graph.nodes = collections.OrderedDict({})
         self.graph.edges = self.__init_dict()
         self.graph._reverse_edges = self.__init_dict()
@@ -433,9 +357,29 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
         """
         return dict()
 
-    def add_edge(self, u: Node, v: Node, metadata: Dict):
+    def get_edge(self, u: Node, v: Node) -> Edge:
+        """
+        Get an edge between two nodes
+        :param u: u node
+        :param v: v node
+        :return: the edge
+        """
+        if u.id not in self.edges:
+            raise GraphError(f"Node {u} does not exist")
+        if v.id not in self.edges[u.id]:
+            raise GraphError(f"Edge {u} -> {v} does not exist")
+        return self.edges[u.id][v.id]
+
+    def add_edge(
+        self,
+        u: Node,
+        v: Node,
+        metadata: Dict,
+        edge_type: EdgeTypeInterface = UndirectedEdge(),
+    ):
         """
         Add an edge to the graph
+        :param edge_type: the type of the edge (e.g. undirected, directed, bidirected)
         :param u: u node
         :param v: v node
         :param metadata: metadata of the edge
@@ -459,20 +403,27 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
             self._reverse_edges[v.id] = self.__init_dict()
             self._deleted_edges[v.id] = self.__init_dict()
 
-        a_edge = Edge(u=u, v=v, edge_type=UndirectedEdge(), metadata=metadata)
+        a_edge = Edge(u=u, v=v, edge_type=edge_type, metadata=metadata)
         self.edges[u.id][v.id] = a_edge
         self._reverse_edges[v.id][u.id] = a_edge
 
-        b_edge = Edge(u=v, v=u, edge_type=UndirectedEdge(), metadata=metadata)
+        b_edge = Edge(u=v, v=u, edge_type=edge_type, metadata=metadata)
         self.edges[v.id][u.id] = b_edge
         self._reverse_edges[u.id][v.id] = b_edge
 
         self.edge_history[(u.id, v.id)] = []
         self.edge_history[(v.id, u.id)] = []
 
-    def add_directed_edge(self, u: Node, v: Node, metadata: Dict):
+    def add_directed_edge(
+        self,
+        u: Node,
+        v: Node,
+        metadata: Dict,
+        edge_type: EdgeTypeInterface = DirectedEdge(),
+    ):
         """
         Add a directed edge from u to v to the graph
+        :param edge_type:
         :param u: u node
         :param v: v node
         :param metadata: metadata of the edge
@@ -493,7 +444,7 @@ class GraphManager(GraphAccessMixin, BaseGraphInterface):
         if v.id not in self._reverse_edges:
             self._reverse_edges[v.id] = self.__init_dict()
 
-        edge = Edge(u=u, v=v, edge_type=DirectedEdge(), metadata=metadata)
+        edge = Edge(u=u, v=v, edge_type=edge_type, metadata=metadata)
 
         self.edges[u.id][v.id] = edge
         self._reverse_edges[v.id][u.id] = edge

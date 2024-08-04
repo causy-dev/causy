@@ -254,24 +254,6 @@ class GraphTestCase(CausyTestCase):
         self.assertIn(node1, result)
         self.assertIn(node3, result)
 
-    def test_directed_paths_two_nodes(self):
-        graph = GraphManager()
-        node1 = graph.add_node("test1", [1, 2, 3])
-        node2 = graph.add_node("test2", [1, 2, 3])
-        graph.add_directed_edge(node1, node2, {"test": "test"})
-        self.assertEqual(graph.directed_paths(node1, node2), [[(node1, node2)]])
-
-    def test_directed_paths_three_nodes(self):
-        graph = GraphManager()
-        node1 = graph.add_node("test1", [1, 2, 3])
-        node2 = graph.add_node("test2", [1, 2, 3])
-        node3 = graph.add_node("test2", [1, 2, 3])
-        graph.add_directed_edge(node1, node2, {"test": "test"})
-        graph.add_directed_edge(node2, node3, {"test": "test"})
-        self.assertEqual(
-            graph.directed_paths(node1, node3), [[(node1, node2), (node2, node3)]]
-        )
-
     def test_restore_edge(self):
         graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
