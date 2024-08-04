@@ -95,14 +95,22 @@
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="n">std_y</span> <span class="o">=</span> <span class="n">y_val</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="n">pearson_correlation</span> <span class="o">=</span> <span class="n">cov_xy</span> <span class="o">/</span> <span class="p">(</span><span class="n">std_x</span> <span class="o">*</span> <span class="n">std_y</span><span class="p">)</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="n">edge_value</span><span class="p">[</span><span class="s2">&quot;correlation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pearson_correlation</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="n">correlation</span> <span class="o">=</span> <span class="n">pearson_correlation</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="k">return</span> <span class="n">TestResult</span><span class="p">(</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>            <span class="n">u</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>            <span class="n">v</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>            <span class="n">action</span><span class="o">=</span><span class="n">TestResultAction</span><span class="o">.</span><span class="n">UPDATE_EDGE</span><span class="p">,</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>            <span class="n">data</span><span class="o">=</span><span class="n">edge_value</span><span class="p">,</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>        <span class="p">)</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="c1"># Clamp the correlation to -1 and 1 to avoid numerical errors</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="k">if</span> <span class="n">correlation</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>            <span class="n">correlation</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="k">elif</span> <span class="n">correlation</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>            <span class="n">correlation</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>        <span class="n">edge_value</span><span class="p">[</span><span class="s2">&quot;correlation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">correlation</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>        <span class="k">return</span> <span class="n">TestResult</span><span class="p">(</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>            <span class="n">u</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>            <span class="n">v</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>            <span class="n">action</span><span class="o">=</span><span class="n">TestResultAction</span><span class="o">.</span><span class="n">UPDATE_EDGE</span><span class="p">,</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>            <span class="n">data</span><span class="o">=</span><span class="n">edge_value</span><span class="p">,</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -145,14 +153,22 @@
 </span><span id="CalculatePearsonCorrelations-40"><a href="#CalculatePearsonCorrelations-40"><span class="linenos">40</span></a>        <span class="n">std_y</span> <span class="o">=</span> <span class="n">y_val</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="CalculatePearsonCorrelations-41"><a href="#CalculatePearsonCorrelations-41"><span class="linenos">41</span></a>        <span class="n">pearson_correlation</span> <span class="o">=</span> <span class="n">cov_xy</span> <span class="o">/</span> <span class="p">(</span><span class="n">std_x</span> <span class="o">*</span> <span class="n">std_y</span><span class="p">)</span>
 </span><span id="CalculatePearsonCorrelations-42"><a href="#CalculatePearsonCorrelations-42"><span class="linenos">42</span></a>
-</span><span id="CalculatePearsonCorrelations-43"><a href="#CalculatePearsonCorrelations-43"><span class="linenos">43</span></a>        <span class="n">edge_value</span><span class="p">[</span><span class="s2">&quot;correlation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pearson_correlation</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+</span><span id="CalculatePearsonCorrelations-43"><a href="#CalculatePearsonCorrelations-43"><span class="linenos">43</span></a>        <span class="n">correlation</span> <span class="o">=</span> <span class="n">pearson_correlation</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 </span><span id="CalculatePearsonCorrelations-44"><a href="#CalculatePearsonCorrelations-44"><span class="linenos">44</span></a>
-</span><span id="CalculatePearsonCorrelations-45"><a href="#CalculatePearsonCorrelations-45"><span class="linenos">45</span></a>        <span class="k">return</span> <span class="n">TestResult</span><span class="p">(</span>
-</span><span id="CalculatePearsonCorrelations-46"><a href="#CalculatePearsonCorrelations-46"><span class="linenos">46</span></a>            <span class="n">u</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
-</span><span id="CalculatePearsonCorrelations-47"><a href="#CalculatePearsonCorrelations-47"><span class="linenos">47</span></a>            <span class="n">v</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
-</span><span id="CalculatePearsonCorrelations-48"><a href="#CalculatePearsonCorrelations-48"><span class="linenos">48</span></a>            <span class="n">action</span><span class="o">=</span><span class="n">TestResultAction</span><span class="o">.</span><span class="n">UPDATE_EDGE</span><span class="p">,</span>
-</span><span id="CalculatePearsonCorrelations-49"><a href="#CalculatePearsonCorrelations-49"><span class="linenos">49</span></a>            <span class="n">data</span><span class="o">=</span><span class="n">edge_value</span><span class="p">,</span>
-</span><span id="CalculatePearsonCorrelations-50"><a href="#CalculatePearsonCorrelations-50"><span class="linenos">50</span></a>        <span class="p">)</span>
+</span><span id="CalculatePearsonCorrelations-45"><a href="#CalculatePearsonCorrelations-45"><span class="linenos">45</span></a>        <span class="c1"># Clamp the correlation to -1 and 1 to avoid numerical errors</span>
+</span><span id="CalculatePearsonCorrelations-46"><a href="#CalculatePearsonCorrelations-46"><span class="linenos">46</span></a>        <span class="k">if</span> <span class="n">correlation</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span><span id="CalculatePearsonCorrelations-47"><a href="#CalculatePearsonCorrelations-47"><span class="linenos">47</span></a>            <span class="n">correlation</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+</span><span id="CalculatePearsonCorrelations-48"><a href="#CalculatePearsonCorrelations-48"><span class="linenos">48</span></a>        <span class="k">elif</span> <span class="n">correlation</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="CalculatePearsonCorrelations-49"><a href="#CalculatePearsonCorrelations-49"><span class="linenos">49</span></a>            <span class="n">correlation</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span id="CalculatePearsonCorrelations-50"><a href="#CalculatePearsonCorrelations-50"><span class="linenos">50</span></a>
+</span><span id="CalculatePearsonCorrelations-51"><a href="#CalculatePearsonCorrelations-51"><span class="linenos">51</span></a>        <span class="n">edge_value</span><span class="p">[</span><span class="s2">&quot;correlation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">correlation</span>
+</span><span id="CalculatePearsonCorrelations-52"><a href="#CalculatePearsonCorrelations-52"><span class="linenos">52</span></a>
+</span><span id="CalculatePearsonCorrelations-53"><a href="#CalculatePearsonCorrelations-53"><span class="linenos">53</span></a>        <span class="k">return</span> <span class="n">TestResult</span><span class="p">(</span>
+</span><span id="CalculatePearsonCorrelations-54"><a href="#CalculatePearsonCorrelations-54"><span class="linenos">54</span></a>            <span class="n">u</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+</span><span id="CalculatePearsonCorrelations-55"><a href="#CalculatePearsonCorrelations-55"><span class="linenos">55</span></a>            <span class="n">v</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+</span><span id="CalculatePearsonCorrelations-56"><a href="#CalculatePearsonCorrelations-56"><span class="linenos">56</span></a>            <span class="n">action</span><span class="o">=</span><span class="n">TestResultAction</span><span class="o">.</span><span class="n">UPDATE_EDGE</span><span class="p">,</span>
+</span><span id="CalculatePearsonCorrelations-57"><a href="#CalculatePearsonCorrelations-57"><span class="linenos">57</span></a>            <span class="n">data</span><span class="o">=</span><span class="n">edge_value</span><span class="p">,</span>
+</span><span id="CalculatePearsonCorrelations-58"><a href="#CalculatePearsonCorrelations-58"><span class="linenos">58</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
