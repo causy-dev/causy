@@ -40,6 +40,25 @@ class InducingPathExtension(ExtensionInterface):
                         return True
             return False
 
+        def is_in_possible_sepset(self, u: Union[Node, str], v: Union[Node, str], z: Union[Node, str]) -> bool:
+            """
+            WIP 
+            Check if z is in the possible separating set of u and v. Note that PossSepSet(u,v) is not equal to PossSepSet(v,u).
+            :param u: node u
+            :param v: node v
+            :param z: node z
+            :return: True if z is in the possible separating PossSepSet(u,v), False otherwise
+            """
+
+            if isinstance(u, Node):
+                u = u.id
+            if isinstance(v, Node):
+                v = v.id
+            if isinstance(z, Node):
+                z = z.id
+
+            return
+
 FCI_DEFAULT_THRESHOLD = 0.005
 
 # wip
