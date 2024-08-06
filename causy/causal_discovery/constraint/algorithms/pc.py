@@ -1,5 +1,6 @@
 from causy.causal_discovery.constraint.independence_tests.conditional_independence_calculations import (
     PearsonStudentsTTest,
+    FishersZTest,
 )
 from causy.causal_effect_estimation.multivariate_regression import (
     ComputeDirectEffectsMultivariateRegression,

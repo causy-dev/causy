@@ -387,6 +387,9 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
         if threshold:
             self.threshold = threshold
 
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
     @computed_field
     @property
     def name(self) -> str:

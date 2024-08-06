@@ -11,6 +11,9 @@ from causy.math_utils import get_t_and_critical_t
 
 def invert_matrix(matrix: torch.Tensor) -> torch.Tensor:
     if torch.det(matrix) == 0:
+        logger.warning(
+            "The covariance matrix is ill-conditioned. The precision matrix is not reliable."
+        )
         return torch.linalg.pinv(matrix)
     else:
         return torch.inverse(matrix)
@@ -143,7 +146,7 @@ class FishersZTest(
         else:
             sub_corr = torch.corrcoef(
                 torch.stack([x.values, y.values, *[zi.values for zi in z]])
-            )[0, 1]
+            )
             r = invert_matrix(sub_corr)
             r = -1 * r[0, 1] / torch.sqrt(abs(r[0, 0] * r[1, 1]))
 
@@ -154,6 +157,7 @@ class FishersZTest(
             torch.tensor(len(x.values)) - torch.tensor(len(z)) - 3
         ) * torch.atanh(r)
         p = 2 * (1 - torch.distributions.Normal(0, 1).cdf(res))
+
         return p
 
     @staticmethod
