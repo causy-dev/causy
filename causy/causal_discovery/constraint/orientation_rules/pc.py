@@ -1,4 +1,5 @@
 import enum
+import logging
 from typing import Tuple, List, Optional, Generic
 import itertools
 
@@ -17,6 +18,8 @@ from causy.variables import IntegerParameter, BoolParameter, StringParameter
 # https://hpi.de/fileadmin/user_upload/fachgebiete/plattner/teaching/CausalInference/2019/Introduction_to_Constraint-Based_Causal_Structure_Learning.pdf
 
 # TODO: refactor ColliderTest -> ColliderRule and move to folder orientation_rules (after checking for duplicates)
+
+logger = logging.getLogger(__name__)
 
 
 def filter_unapplied_actions(actions, u, v):
@@ -139,6 +142,9 @@ class ColliderTest(
                     unapplied_actions, y, z
                 )
                 if len(unapplied_actions_y_z) > 0 or len(unapplied_actions_x_z) > 0:
+                    logger.warning(
+                        f"Orientation conflict detected in ColliderTest stage when orienting the edge between {x.name} and {y.name}. The conflict is resolved using the strategy {self.conflict_resolution_strategy}, but orientation conflicts indicate assumption violations and can severely affect the accuracy of the results.",
+                    )
                     if (
                         ColliderTestConflictResolutionStrategies.KEEP_FIRST
                         is self.conflict_resolution_strategy
