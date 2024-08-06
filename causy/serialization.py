@@ -83,7 +83,7 @@ def load_algorithm_by_reference(reference_type: str, algorithm: str):
         st_function = getattr(module, ref_)
         if not st_function:
             raise ValueError(f"Algorithm {algorithm} not found")
-        return st_function()._original_algorithm
+        return copy.deepcopy(st_function()._original_algorithm)
 
 
 class CausyJSONEncoder(JSONEncoder):

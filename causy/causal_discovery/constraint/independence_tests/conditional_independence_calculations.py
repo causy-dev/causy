@@ -132,7 +132,7 @@ class PearsonStudentsTTest(
         return abs(t) < critical_t
 
 
-class FisherZTest(
+class FishersZTest(
     ConditionalIndependenceTestInterface[ConditionalIndependenceTestInterfaceType],
     Generic[ConditionalIndependenceTestInterfaceType],
 ):
@@ -169,7 +169,7 @@ class FisherZTest(
         y = graph.nodes[y]
         z = [graph.nodes[zi] for zi in z]
 
-        p = FisherZTest.calculate_correlation(x, y, z)
+        p = FishersZTest.calculate_correlation(x, y, z)
         p = p.item()
         return p < threshold
 

@@ -5,7 +5,7 @@ import logging
 import torch
 
 from causy.causal_discovery.constraint.independence_tests.conditional_independence_calculations import (
-    FisherZTest,
+    FishersZTest,
     PearsonStudentsTTest,
     ConditionalIndependenceTestInterface,
 )
