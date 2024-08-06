@@ -8,12 +8,12 @@ license = "MIT"
 include = ["pyproject.toml", "README.md", "LICENSE", "causy", "causy/static/*", "causy/static/assets/*"]
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13"
+python = "^3.11"
 scipy = "^1.14"
 typer = {extras = ["all"], version = "^0.12.3"}
-torch = "^2.3.1"
-fastapi = "^0.111.0"
-uvicorn = "^0.30.1"
+torch = "^2.4"
+fastapi = "^0.112.0"
+uvicorn = "^0.30.5"
 srsly = "^2.4.8"
 pydantic-yaml = "^1.2.1"
 click = "^8.1.7"
