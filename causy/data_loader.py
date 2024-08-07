@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from causy.graph_utils import hash_dictionary
 
 
-class DataLoaderType(enum.StrEnum):
+class DataLoaderType(str, enum.Enum):
     DYNAMIC = "dynamic"  # python function which yields data
     JSON = "json"
     JSONL = "jsonl"

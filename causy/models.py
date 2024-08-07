@@ -32,7 +32,7 @@ class ComparisonSettings(ComparisonSettingsInterface):
         return serialize_module_name(self)
 
 
-class TestResultAction(enum.StrEnum):
+class TestResultAction(str, enum.Enum):
     """
     Actions that can be taken on the graph. These actions are used to keep track of the history of the graph.
     """
@@ -59,7 +59,7 @@ class TestResult(TestResultInterface):
     data: Optional[Dict] = None
 
 
-class AlgorithmReferenceType(enum.StrEnum):
+class AlgorithmReferenceType(str, enum.Enum):
     FILE = "file"
     NAME = "name"
     PYTHON_MODULE = "python_module"

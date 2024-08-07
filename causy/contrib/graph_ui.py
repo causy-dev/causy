@@ -17,7 +17,7 @@ class EdgeUIConfig(BaseModel):
     label: Optional[str] = None
 
 
-class ConditionalEdgeUIConfigComparison(enum.StrEnum):
+class ConditionalEdgeUIConfigComparison(str, enum.Enum):
     EQUAL = "EQUAL"
     GREATER = "GREATER"
     LESS = "LESS"

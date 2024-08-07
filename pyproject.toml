@@ -8,7 +8,7 @@ license = "MIT"
 include = ["pyproject.toml", "README.md", "LICENSE", "causy", "causy/static/*", "causy/static/assets/*"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 scipy = "^1.14"
 typer = {extras = ["all"], version = "^0.12.3"}
 torch = "^2.4"
