@@ -14,7 +14,7 @@ from causy.interfaces import (
 )
 
 
-class EdgeTypeEnum(enum.StrEnum):
+class EdgeTypeEnum(str, enum.Enum):
     DIRECTED = "directed"
     UNDIRECTED = "undirected"
     BIDIRECTED = "bidirected"

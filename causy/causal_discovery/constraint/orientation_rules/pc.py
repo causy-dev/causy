@@ -62,7 +62,7 @@ def generate_restores(unapplied_actions):
     return results
 
 
-class ColliderTestConflictResolutionStrategies(enum.StrEnum):
+class ColliderTestConflictResolutionStrategies(str, enum.Enum):
     """
     Enum for the conflict resolution strategies for the ColliderTest.
     """
