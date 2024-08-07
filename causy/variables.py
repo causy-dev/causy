@@ -8,7 +8,7 @@ from pydantic import BaseModel, computed_field
 
 VariableInterfaceType = TypeVar("VariableInterfaceType")
 
-VariableType = Union[str, int, float, bool]
+VariableType = Union[str, int, float, bool, BaseModel]
 
 
 class VariableTypes(enum.Enum):
@@ -16,6 +16,7 @@ class VariableTypes(enum.Enum):
     Integer = "integer"
     Float = "float"
     Bool = "bool"
+    CausyObject = "causy_object"  # this is a reference to any object that is a subclass of BaseModel used to reference pipeline/custom objects
 
 
 class BaseVariable(BaseModel, Generic[VariableInterfaceType]):
@@ -29,8 +30,8 @@ class BaseVariable(BaseModel, Generic[VariableInterfaceType]):
         self.validate_value(self.value)
 
     name: str
-    value: Union[str, int, float, bool]
-    choices: Optional[List[Union[str, int, float, bool]]] = None
+    value: Union[str, int, float, bool, BaseModel]
+    choices: Optional[List[Union[str, int, float, bool, BaseModel]]] = None
 
     def is_valid(self):
         return self.is_valid_value(self.value)
@@ -124,6 +125,21 @@ class BoolVariable(BaseVariable[VariableInterfaceType], Generic[VariableInterfac
     _PYTHON_TYPE: Optional[type] = bool
 
 
+class CausyObjectVariable(
+    BaseVariable[VariableInterfaceType], Generic[VariableInterfaceType]
+):
+    """
+    Represents a single causy object variable.
+    causy object is a reference to any object that is a subclass of BaseModel used to reference pipeline/custom objects
+    """
+
+    value: BaseModel
+    name: str
+
+    _TYPE: str = VariableTypes.CausyObject.value
+    _PYTHON_TYPE: Optional[type] = BaseModel
+
+
 class VariableReference(BaseModel, Generic[VariableInterfaceType]):
     """
     Represents a reference to a variable.
@@ -142,13 +158,21 @@ VARIABLE_MAPPING = {
     VariableTypes.Integer.value: IntegerVariable,
     VariableTypes.Float.value: FloatVariable,
     VariableTypes.Bool.value: BoolVariable,
+    VariableTypes.CausyObject.value: CausyObjectVariable,
 }
 
 BoolParameter = Union[bool, VariableReference]
 IntegerParameter = Union[int, VariableReference]
 FloatParameter = Union[float, VariableReference]
 StringParameter = Union[str, VariableReference]
-CausyParameter = Union[BoolParameter, IntegerParameter, FloatParameter, StringParameter]
+CausyObjectParameter = Union[BaseModel, VariableReference]
+CausyParameter = Union[
+    BoolParameter,
+    IntegerParameter,
+    FloatParameter,
+    StringParameter,
+    CausyObjectParameter,
+]
 
 
 def validate_variable_values(algorithm, variable_values: Dict[str, VariableType]):
@@ -256,7 +280,10 @@ def deserialize_variable_references(element: object) -> object:
         if isinstance(value, dict) and "type" in value and value["type"] == "reference":
             setattr(element, attribute, VariableReference(name=value["name"]))
 
-        if hasattr(value, "__dict__"):
+        if isinstance(element, enum.Enum):
+            setattr(element, attribute, value)
+
+        if not isinstance(element, enum.Enum) and hasattr(value, "__dict__"):
             setattr(element, attribute, deserialize_variable_references(value))
 
     if hasattr(element, "pipeline_steps"):

@@ -1,3 +1,7 @@
+from causy.causal_discovery.constraint.independence_tests.conditional_independence_calculations import (
+    PearsonStudentsTTest,
+    FishersZTest,
+)
 from causy.causal_effect_estimation.multivariate_regression import (
     ComputeDirectEffectsMultivariateRegression,
 )
@@ -19,6 +23,7 @@ from causy.causal_discovery.constraint.independence_tests.common import (
 )
 from causy.common_pipeline_steps.calculation import (
     CalculatePearsonCorrelations,
+    CalculateEdgeCorrelations,
 )
 from causy.interfaces import AS_MANY_AS_FIELDS
 from causy.models import ComparisonSettings, Algorithm
@@ -33,6 +38,8 @@ from causy.variables import (
     FloatVariable,
     VariableReference,
     IntegerVariable,
+    CausyObjectParameter,
+    CausyObjectVariable,
 )
 
 PC_DEFAULT_THRESHOLD = 0.005
@@ -63,18 +70,32 @@ PC_EDGE_TYPES = [DirectedEdge(), UndirectedEdge()]
 PC = graph_model_factory(
     Algorithm(
         pipeline_steps=[
-            CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
+            CalculateEdgeCorrelations(
+                display_name="Calculate Edge Correlations",
+                conditional_independence_test=VariableReference(
+                    name="conditional_independence_test"
+                ),
+            ),
             CorrelationCoefficientTest(
                 threshold=VariableReference(name="threshold"),
                 display_name="Correlation Coefficient Test",
+                conditional_independence_test=VariableReference(
+                    name="conditional_independence_test"
+                ),
             ),
             PartialCorrelationTest(
                 threshold=VariableReference(name="threshold"),
                 display_name="Partial Correlation Test",
+                conditional_independence_test=VariableReference(
+                    name="conditional_independence_test"
+                ),
             ),
             ExtendedPartialCorrelationTestMatrix(
                 threshold=VariableReference(name="threshold"),
                 display_name="Extended Partial Correlation Test Matrix",
+                conditional_independence_test=VariableReference(
+                    name="conditional_independence_test"
+                ),
             ),
             *PC_ORIENTATION_RULES,
             ComputeDirectEffectsMultivariateRegression(
@@ -84,7 +105,12 @@ PC = graph_model_factory(
         edge_types=PC_EDGE_TYPES,
         extensions=[PC_GRAPH_UI_EXTENSION],
         name="PC",
-        variables=[FloatVariable(name="threshold", value=PC_DEFAULT_THRESHOLD)],
+        variables=[
+            FloatVariable(name="threshold", value=PC_DEFAULT_THRESHOLD),
+            CausyObjectVariable(
+                name="conditional_independence_test", value=PearsonStudentsTTest()
+            ),
+        ],
     )
 )
 

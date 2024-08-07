@@ -502,6 +502,9 @@ def graph_model_factory(
     :return: the graph model
     """
     original_algorithm = deepcopy(algorithm)
+    if variables is not None and len(variables) == 0:
+        variables = None
+
     if variables is None and algorithm.variables is not None:
         variables = resolve_variables(algorithm.variables, {})
     elif variables is None:
