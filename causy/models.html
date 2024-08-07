@@ -313,7 +313,7 @@
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="k">class</span> <span class="nc">TestResultAction</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">StrEnum</span><span class="p">):</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="k">class</span> <span class="nc">TestResultAction</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">    Actions that can be taken on the graph. These actions are used to keep track of the history of the graph.</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -340,7 +340,7 @@
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="k">class</span> <span class="nc">AlgorithmReferenceType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">StrEnum</span><span class="p">):</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="k">class</span> <span class="nc">AlgorithmReferenceType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">FILE</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="n">PYTHON_MODULE</span> <span class="o">=</span> <span class="s2">&quot;python_module&quot;</span>
@@ -557,13 +557,13 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">TestResultAction</span><wbr>(<span class="base">enum.StrEnum</span>):
+    <span class="name">TestResultAction</span><wbr>(<span class="base">builtins.str</span>, <span class="base">enum.Enum</span>):
 
                 <label class="view-source-button" for="TestResultAction-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#TestResultAction"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="TestResultAction-36"><a href="#TestResultAction-36"><span class="linenos">36</span></a><span class="k">class</span> <span class="nc">TestResultAction</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">StrEnum</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TestResultAction-36"><a href="#TestResultAction-36"><span class="linenos">36</span></a><span class="k">class</span> <span class="nc">TestResultAction</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
 </span><span id="TestResultAction-37"><a href="#TestResultAction-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="TestResultAction-38"><a href="#TestResultAction-38"><span class="linenos">38</span></a><span class="sd">    Actions that can be taken on the graph. These actions are used to keep track of the history of the graph.</span>
 </span><span id="TestResultAction-39"><a href="#TestResultAction-39"><span class="linenos">39</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -906,20 +906,31 @@ A test result is defined by two nodes and an action. It can also have metadata.<
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">AlgorithmReferenceType</span><wbr>(<span class="base">enum.StrEnum</span>):
+    <span class="name">AlgorithmReferenceType</span><wbr>(<span class="base">builtins.str</span>, <span class="base">enum.Enum</span>):
 
                 <label class="view-source-button" for="AlgorithmReferenceType-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#AlgorithmReferenceType"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AlgorithmReferenceType-63"><a href="#AlgorithmReferenceType-63"><span class="linenos">63</span></a><span class="k">class</span> <span class="nc">AlgorithmReferenceType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">StrEnum</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AlgorithmReferenceType-63"><a href="#AlgorithmReferenceType-63"><span class="linenos">63</span></a><span class="k">class</span> <span class="nc">AlgorithmReferenceType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
 </span><span id="AlgorithmReferenceType-64"><a href="#AlgorithmReferenceType-64"><span class="linenos">64</span></a>    <span class="n">FILE</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span>
 </span><span id="AlgorithmReferenceType-65"><a href="#AlgorithmReferenceType-65"><span class="linenos">65</span></a>    <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span>
 </span><span id="AlgorithmReferenceType-66"><a href="#AlgorithmReferenceType-66"><span class="linenos">66</span></a>    <span class="n">PYTHON_MODULE</span> <span class="o">=</span> <span class="s2">&quot;python_module&quot;</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>str(object='') -> str
+str(bytes_or_buffer[, encoding[, errors]]) -> str</p>
+
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p>
+</div>
+
 
                             <div id="AlgorithmReferenceType.FILE" class="classattr">
                                 <div class="attr variable">

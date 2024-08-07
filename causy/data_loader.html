@@ -177,7 +177,7 @@
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span> <span class="nn">causy.graph_utils</span> <span class="kn">import</span> <span class="n">hash_dictionary</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="k">class</span> <span class="nc">DataLoaderType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">StrEnum</span><span class="p">):</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="k">class</span> <span class="nc">DataLoaderType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="n">DYNAMIC</span> <span class="o">=</span> <span class="s2">&quot;dynamic&quot;</span>  <span class="c1"># python function which yields data</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="n">JSON</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>    <span class="n">JSONL</span> <span class="o">=</span> <span class="s2">&quot;jsonl&quot;</span>
@@ -317,20 +317,31 @@
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">DataLoaderType</span><wbr>(<span class="base">enum.StrEnum</span>):
+    <span class="name">DataLoaderType</span><wbr>(<span class="base">builtins.str</span>, <span class="base">enum.Enum</span>):
 
                 <label class="view-source-button" for="DataLoaderType-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#DataLoaderType"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DataLoaderType-14"><a href="#DataLoaderType-14"><span class="linenos">14</span></a><span class="k">class</span> <span class="nc">DataLoaderType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">StrEnum</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataLoaderType-14"><a href="#DataLoaderType-14"><span class="linenos">14</span></a><span class="k">class</span> <span class="nc">DataLoaderType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
 </span><span id="DataLoaderType-15"><a href="#DataLoaderType-15"><span class="linenos">15</span></a>    <span class="n">DYNAMIC</span> <span class="o">=</span> <span class="s2">&quot;dynamic&quot;</span>  <span class="c1"># python function which yields data</span>
 </span><span id="DataLoaderType-16"><a href="#DataLoaderType-16"><span class="linenos">16</span></a>    <span class="n">JSON</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span>
 </span><span id="DataLoaderType-17"><a href="#DataLoaderType-17"><span class="linenos">17</span></a>    <span class="n">JSONL</span> <span class="o">=</span> <span class="s2">&quot;jsonl&quot;</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>str(object='') -> str
+str(bytes_or_buffer[, encoding[, errors]]) -> str</p>
+
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p>
+</div>
+
 
                             <div id="DataLoaderType.DYNAMIC" class="classattr">
                                 <div class="attr variable">
