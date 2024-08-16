@@ -281,9 +281,12 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :param i: the test result action
         :return:
         """
+
         try:
             getattr(self.graph.get_edge(i.u, i.v).edge_type, hook)(self.graph, i)
         except GraphError as e:
+            logger.info(f"Graph Error in hook ({str(hook)}): {e}")
+        except Exception as e:
             logger.error(f"Error in hook ({str(hook)}): {e}")
 
     def _take_action(self, results, dry_run=False):
