@@ -9,6 +9,7 @@ from causy.causal_discovery.constraint.independence_tests.common import (
     PartialCorrelationTest,
     ExtendedPartialCorrelationTestMatrix,
 )
+from causy.causal_discovery.constraint.orientation_rules.pc import ColliderTest
 from causy.causal_effect_estimation.multivariate_regression import (
     ComputeDirectEffectsMultivariateRegression,
 )
@@ -23,8 +24,7 @@ from tests.utils import CausyTestCase
 class EffectEstimationTestCase(CausyTestCase):
     SEED = 1
 
-    def test_direct_effect_estimation(self):
-        # In this example, three direct effects are identifiable, only these can be checked
+    def test_direct_effect_estimation_trivial_case(self):
         PC = graph_model_factory(
             Algorithm(
                 pipeline_steps=[
@@ -57,13 +57,11 @@ class EffectEstimationTestCase(CausyTestCase):
 
         model = IIDSampleGenerator(
             edges=[
-                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
-                SampleEdge(NodeReference("Z"), NodeReference("Y"), 6),
-                SampleEdge(NodeReference("W"), NodeReference("Y"), 2),
-                SampleEdge(NodeReference("X"), NodeReference("Z"), 3),
-                SampleEdge(NodeReference("X"), NodeReference("W"), 4),
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
             ],
         )
+
         tst = PC()
         sample_size = 100_000
         test_data, _ = model.generate(sample_size)
@@ -72,32 +70,21 @@ class EffectEstimationTestCase(CausyTestCase):
         tst.execute_pipeline_steps()
 
         self.assertAlmostEqual(
-            tst.graph.edge_value(tst.graph.nodes["X"], tst.graph.nodes["Y"])[
+            tst.graph.edge_value(tst.graph.nodes["X"], tst.graph.nodes["Z"])[
                 "direct_effect"
             ],
             5.0,
             0,
         )
         self.assertAlmostEqual(
-            tst.graph.edge_value(tst.graph.nodes["Z"], tst.graph.nodes["Y"])[
+            tst.graph.edge_value(tst.graph.nodes["Y"], tst.graph.nodes["Z"])[
                 "direct_effect"
             ],
             6.0,
             0,
         )
-        self.assertAlmostEqual(
-            tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["Y"])[
-                "direct_effect"
-            ],
-            2.0,
-            0,
-        )
 
-    def test_direct_effect_estimation_weird_graph(self):
-        """
-        Here, the wrong graph is discovered, so the effects are also wrong – check which assumption is violated such that the wrong graph is discovered from toy data
-        Leaving this here to think about how to deal with such edge cases.
-        """
+    def test_direct_effect_estimation_basic_example(self):
         PC = graph_model_factory(
             Algorithm(
                 pipeline_steps=[
@@ -130,21 +117,49 @@ class EffectEstimationTestCase(CausyTestCase):
 
         model = IIDSampleGenerator(
             edges=[
-                SampleEdge(NodeReference("A"), NodeReference("C"), 1),
-                SampleEdge(NodeReference("B"), NodeReference("C"), 2),
-                SampleEdge(NodeReference("A"), NodeReference("D"), 3),
-                SampleEdge(NodeReference("B"), NodeReference("D"), 1),
-                SampleEdge(NodeReference("C"), NodeReference("D"), 1),
-                SampleEdge(NodeReference("B"), NodeReference("E"), 4),
-                SampleEdge(NodeReference("E"), NodeReference("F"), 5),
-                SampleEdge(NodeReference("B"), NodeReference("F"), 6),
-                SampleEdge(NodeReference("C"), NodeReference("F"), 1),
-                SampleEdge(NodeReference("D"), NodeReference("F"), 1),
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
+                SampleEdge(NodeReference("Z"), NodeReference("V"), 3),
+                SampleEdge(NodeReference("Z"), NodeReference("W"), 4),
             ],
         )
+
         tst = PC()
-        sample_size = 100_000
-        test_data, _ = model.generate(sample_size)
+        sample_size = 1000000
+        test_data, graph = model.generate(sample_size)
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
         tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+        self.assertAlmostEqual(
+            tst.graph.edge_value(tst.graph.nodes["X"], tst.graph.nodes["Z"])[
+                "direct_effect"
+            ],
+            5.0,
+            0,
+        )
+        self.assertAlmostEqual(
+            tst.graph.edge_value(tst.graph.nodes["Y"], tst.graph.nodes["Z"])[
+                "direct_effect"
+            ],
+            6.0,
+            0,
+        )
+
+        self.assertAlmostEqual(
+            tst.graph.edge_value(tst.graph.nodes["Z"], tst.graph.nodes["V"])[
+                "direct_effect"
+            ],
+            3.0,
+            0,
+        )
+
+        self.assertAlmostEqual(
+            tst.graph.edge_value(tst.graph.nodes["Z"], tst.graph.nodes["W"])[
+                "direct_effect"
+            ],
+            4.0,
+            0,
+        )
