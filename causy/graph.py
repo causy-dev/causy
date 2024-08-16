@@ -259,6 +259,39 @@ class GraphBaseAccessMixin:
                 return True
         return False
 
+    def all_paths_on_underlying_undirected_graph(
+        self, u: Union[Node, str], v: Union[Node, str], visited=None, path=None
+    ) -> List[List[Node]]:
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
+        # Initialize visited and path lists during the first call
+        if visited is None:
+            visited = set()
+        if path is None:
+            path = []
+
+        # Add the current node to the path and mark it as visited
+        visited.add(u)
+        path.append(u)
+
+        # If the current node is the target node, yield the current path
+        if u == v:
+            yield list([self.node_by_id(node_id) for node_id in path])
+        else:
+            # Explore all possible next nodes by checking edge existence
+            for next_node in self.nodes:
+                if next_node not in visited and self.edge_exists(u, next_node):
+                    yield from self.all_paths_on_underlying_undirected_graph(
+                        next_node, v, visited, path
+                    )
+
+        # Backtrack: remove the current node from the path and visited set
+        path.pop()
+        visited.remove(u)
+
     def edge_of_type_exists(
         self,
         u: Union[Node, str],
