@@ -3,6 +3,8 @@ import importlib
 import json
 from typing import List, Tuple, Dict
 
+from pydantic import BaseModel
+
 from causy.variables import deserialize_variable_references
 
 
@@ -52,12 +54,21 @@ def retrieve_edges(graph) -> List[Tuple[str, str]]:
     return edges
 
 
+class BaseModelEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, BaseModel):
+            return obj.dict()
+        # Let the base class default method raise the TypeError
+        return super().default(obj)
+
+
 def hash_dictionary(dct: Dict):
     """
     Hash a dictionary using SHA256 (e.g. for caching)
     :param dct:
     :return:
     """
+
     return hashlib.sha256(
         json.dumps(
             dct,
@@ -65,5 +76,6 @@ def hash_dictionary(dct: Dict):
             sort_keys=True,
             indent=None,
             separators=(",", ":"),
+            cls=BaseModelEncoder,
         ).encode()
     ).hexdigest()

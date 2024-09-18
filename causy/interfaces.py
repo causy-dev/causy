@@ -17,6 +17,7 @@ from causy.variables import (
     IntegerParameter,
     BoolParameter,
     FloatParameter,
+    CausyObjectParameter,
 )
 
 logger = logging.getLogger(__name__)
@@ -25,9 +26,15 @@ DEFAULT_THRESHOLD = 0.01
 
 AS_MANY_AS_FIELDS = 0
 
-MetadataBaseType = Union[str, int, float, bool]
+MetadataBaseType = Union[str, int, float, bool, BaseModel]
 MetadataType = Union[
-    str, int, float, bool, List[MetadataBaseType], Dict[str, MetadataBaseType]
+    str,
+    int,
+    float,
+    bool,
+    List[MetadataBaseType],
+    Dict[str, MetadataBaseType],
+    BaseModel,
 ]
 
 
@@ -350,6 +357,7 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
     display_name: Optional[StringParameter] = None
 
     needs_unapplied_actions: Optional[BoolParameter] = False
+    conditional_independence_test: Optional[CausyObjectParameter] = None
 
     def __init__(
         self,
@@ -378,6 +386,9 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
 
         if threshold:
             self.threshold = threshold
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     @computed_field
     @property
