@@ -215,6 +215,21 @@ class GraphBaseAccessMixin:
             return True
         return False
 
+    def get_siblings(self, v: Union[Node, str]) -> Set[Union[Node, str]]:
+        """
+        Get the set of nodes that are connected to the node v with an undirected edge.
+        :param v: node v
+        :return: A set of nodes that are connected to v with an undirected edge.
+        """
+        siblings = set()
+
+        # Assuming self.nodes is a list or set of all nodes in the graph
+        for node in self.nodes:
+            if node != v and self.undirected_edge_exists(v, node):
+                siblings.add(node)
+
+        return siblings
+
     def retrieve_edge_history(
         self, u: Union[Node, str], v: Union[Node, str], action: TestResultAction = None
     ) -> List[TestResult]:
