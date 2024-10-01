@@ -232,12 +232,12 @@ class EffectEstimationTestCase(CausyTestCase):
             tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["X"])[
                 "direct_effect"
             ],
-            None
+            None,
         )
 
         self.assertEqual(
             tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["Y"])[
                 "direct_effect"
             ],
-            None
+            None,
         )
