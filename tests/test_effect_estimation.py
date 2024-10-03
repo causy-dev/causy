@@ -11,7 +11,7 @@ from causy.causal_discovery.constraint.independence_tests.common import (
 )
 from causy.causal_discovery.constraint.orientation_rules.pc import ColliderTest
 from causy.causal_effect_estimation.multivariate_regression import (
-    ComputeDirectEffectsMultivariateRegression,
+    ComputeDirectEffectsInDAGsMultivariateRegression,
 )
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_model import graph_model_factory
@@ -44,7 +44,7 @@ class EffectEstimationTestCase(CausyTestCase):
                         display_name="Extended Partial Correlation Test Matrix",
                     ),
                     *PC_ORIENTATION_RULES,
-                    ComputeDirectEffectsMultivariateRegression(
+                    ComputeDirectEffectsInDAGsMultivariateRegression(
                         display_name="Compute Direct Effects"
                     ),
                 ],
@@ -104,7 +104,7 @@ class EffectEstimationTestCase(CausyTestCase):
                         display_name="Extended Partial Correlation Test Matrix",
                     ),
                     *PC_ORIENTATION_RULES,
-                    ComputeDirectEffectsMultivariateRegression(
+                    ComputeDirectEffectsInDAGsMultivariateRegression(
                         display_name="Compute Direct Effects"
                     ),
                 ],
@@ -162,4 +162,82 @@ class EffectEstimationTestCase(CausyTestCase):
             ],
             4.0,
             0,
+        )
+
+    def test_direct_effect_estimation_partially_directed(self):
+        PC = graph_model_factory(
+            Algorithm(
+                pipeline_steps=[
+                    CalculatePearsonCorrelations(
+                        display_name="Calculate Pearson Correlations"
+                    ),
+                    CorrelationCoefficientTest(
+                        threshold=VariableReference(name="threshold"),
+                        display_name="Correlation Coefficient Test",
+                    ),
+                    PartialCorrelationTest(
+                        threshold=VariableReference(name="threshold"),
+                        display_name="Partial Correlation Test",
+                    ),
+                    ExtendedPartialCorrelationTestMatrix(
+                        threshold=VariableReference(name="threshold"),
+                        display_name="Extended Partial Correlation Test Matrix",
+                    ),
+                    *PC_ORIENTATION_RULES,
+                    ComputeDirectEffectsInDAGsMultivariateRegression(
+                        display_name="Compute Direct Effects"
+                    ),
+                ],
+                edge_types=PC_EDGE_TYPES,
+                extensions=[PC_GRAPH_UI_EXTENSION],
+                name="PC",
+                variables=[FloatVariable(name="threshold", value=PC_DEFAULT_THRESHOLD)],
+            )
+        )
+
+        model = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
+                SampleEdge(NodeReference("W"), NodeReference("X"), 3),
+                SampleEdge(NodeReference("W"), NodeReference("Y"), 4),
+            ],
+        )
+
+        tst = PC()
+        sample_size = 1000000
+        test_data, graph = model.generate(sample_size)
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+        self.assertAlmostEqual(
+            tst.graph.edge_value(tst.graph.nodes["X"], tst.graph.nodes["Z"])[
+                "direct_effect"
+            ],
+            5.0,
+            0,
+        )
+        self.assertAlmostEqual(
+            tst.graph.edge_value(tst.graph.nodes["Y"], tst.graph.nodes["Z"])[
+                "direct_effect"
+            ],
+            6.0,
+            0,
+        )
+
+        self.assertEqual(
+            tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["X"])[
+                "direct_effect"
+            ],
+            None,
+        )
+
+        self.assertEqual(
+            tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["Y"])[
+                "direct_effect"
+            ],
+            None,
         )
