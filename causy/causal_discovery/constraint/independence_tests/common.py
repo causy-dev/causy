@@ -1,8 +1,10 @@
 import itertools
+import math
 from typing import Tuple, List, Optional, Generic
 import logging
 
 import torch
+from scipy import stats
 
 from causy.generators import AllCombinationsGenerator, PairsWithNeighboursGenerator
 from causy.math_utils import get_t_and_critical_t
@@ -30,7 +32,7 @@ class CorrelationCoefficientTest(
     parallel: BoolParameter = False
 
     def process(
-        self, nodes: List[str], graph: BaseGraphInterface
+            self, nodes: List[str], graph: BaseGraphInterface
     ) -> Optional[TestResult]:
         """
         Test if u and v are independent and delete edge in graph if they are.
@@ -40,15 +42,23 @@ class CorrelationCoefficientTest(
         x = graph.nodes[nodes[0]]
         y = graph.nodes[nodes[1]]
 
-        # make t test for independency of u and v
+        # Use Fisher's Z test for independency of u and v
         sample_size = len(x.values)
-        nb_of_control_vars = 0
         corr = graph.edge_value(x, y)["correlation"]
-        t, critical_t = get_t_and_critical_t(
-            sample_size, nb_of_control_vars, corr, self.threshold
-        )
-        if abs(t) < critical_t:
+
+        # Fisher's Z transformation
+        fisher_z = 0.5 * math.log((1 + corr) / (1 - corr))
+
+        # Use absolute value of fisher_z for a two-tailed test
+        z_value = abs(fisher_z) * math.sqrt(sample_size - 3)
+
+        # Compute the p-value
+        p_value = 2 * (1 - stats.norm.cdf(z_value))
+
+        # If the p value is smaller than the threshold, the null hypothesis (independence) is rejected, otherwise we delete the edge
+        if p_value > self.threshold:
             logger.debug(f"Nodes {x.name} and {y.name} are uncorrelated")
+            logger.debug(f"P-value: {p_value}")
             return TestResult(
                 u=x,
                 v=y,
@@ -111,15 +121,18 @@ class PartialCorrelationTest(
             # make t test for independency of u and v given z
             sample_size = len(x.values)
             nb_of_control_vars = len(nodes) - 2
-            t, critical_t = get_t_and_critical_t(
-                sample_size, nb_of_control_vars, par_corr, self.threshold
-            )
 
-            if abs(t) < critical_t:
-                logger.debug(
-                    f"Nodes {x.name} and {y.name} are uncorrelated given {z.name}"
-                )
+            # Fisher's Z transformation
+            fisher_z = 0.5 * math.log((1 + par_corr) / (1 - par_corr))
 
+            # Use absolute value of fisher_z for a two-tailed test
+            z_value = abs(fisher_z) * math.sqrt(sample_size - nb_of_control_vars - 3)
+
+            # Compute the p-value
+            p_value = 2 * (1 - stats.norm.cdf(z_value))
+
+            # If the p value is smaller than the threshold, the null hypothesis (independence) is rejected, otherwise we delete the edge
+            if p_value > self.threshold:
                 results.append(
                     TestResult(
                         u=x,
@@ -191,27 +204,21 @@ class ExtendedPartialCorrelationTestMatrix(
         helper = torch.mm(torch.sqrt(diagonal_matrix), inverse_cov_matrix)
         precision_matrix = torch.mm(helper, torch.sqrt(diagonal_matrix))
 
+        par_corr = (-1 * precision_matrix[0][1]) / torch.sqrt(precision_matrix[0][0] * precision_matrix[1][1])
+
         sample_size = len(graph.nodes[nodes[0]].values)
         nb_of_control_vars = len(nodes) - 2
 
-        # prevent math domain error
-        try:
-            t, critical_t = get_t_and_critical_t(
-                sample_size,
-                nb_of_control_vars,
-                (
-                    (-1 * precision_matrix[0][1])
-                    / torch.sqrt(precision_matrix[0][0] * precision_matrix[1][1])
-                ).item(),
-                self.threshold,
-            )
-        except ValueError:
-            logger.warning(
-                "Math domain error. The covariance matrix is ill-conditioned. The precision matrix is not reliable."
-            )
-            return
+        # Fisher's Z transformation
+        fisher_z = 0.5 * math.log((1 + par_corr) / (1 - par_corr))
 
-        if abs(t) < critical_t:
+        # Use absolute value of fisher_z for a two-tailed test
+        z_value = abs(fisher_z) * math.sqrt(sample_size - nb_of_control_vars - 3)
+
+        # Compute the p-value
+        p_value = 2 * (1 - stats.norm.cdf(z_value))
+
+        if p_value > self.threshold:
             logger.debug(
                 f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([graph.nodes[on].name for on in other_neighbours])}"
             )
