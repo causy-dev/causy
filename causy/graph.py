@@ -363,20 +363,6 @@ class GraphBaseAccessMixin:
             return False
         return True
 
-        # Check for collider conditions (X -> Z <- Y)
-        for z in self.edges.get(x, []):
-            for z_target in self.edges.get(z, []):
-                if z_target == y and z not in conditioning_set:
-                    # If z is not conditioned on and has descendants,
-                    # we need to check those descendants too.
-                    descendants = self.get_descendants(z)
-                    if not any(
-                        descendant in conditioning_set for descendant in descendants
-                    ):
-                        return False
-
-        return True
-
     def all_paths_on_underlying_undirected_graph(
         self, u: Union[Node, str], v: Union[Node, str], visited=None, path=None
     ) -> List[List[Node]]:
