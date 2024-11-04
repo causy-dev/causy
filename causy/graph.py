@@ -274,6 +274,95 @@ class GraphBaseAccessMixin:
                 return True
         return False
 
+    def edge_of_type_exists(
+        self,
+        u: Union[Node, str],
+        v: Union[Node, str],
+        edge_type: EdgeTypeInterface = DirectedEdge(),
+    ) -> bool:
+        """
+        Check if an edge of a specific type exists between u and v.
+        :param u: node u
+        :param v: node v
+        :param edge_type: the type of the edge to check for
+        :return: True if an edge of this type exists, False otherwise
+        """
+
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
+        if not self.directed_edge_exists(u, v):
+            return False
+
+        if self.edges[u][v].edge_type != edge_type:
+            return False
+
+        return True
+
+    def are_nodes_d_separated(
+        self,
+        u: Union[Node, str],
+        v: Union[Node, str],
+        conditioning_set: List[Union[Node, str]],
+    ) -> bool:
+        """
+        Check if nodes u and v are d-separated given a conditioning set. We check whether there is an open path, i.e. a path on which all colliders are in the conditioning set and all non-colliders are not in the conditioning set. If there is no open path, u and v are d-separated.
+
+        :param u: First node
+        :param v: Second node
+        :param conditioning_set: Set of nodes to condition on
+        :return: True if u and v are d-separated given conditioning_set, False otherwise
+        """
+
+        # Convert Node instances to their IDs
+        if isinstance(u, Node):
+            u = u.id
+        if isinstance(v, Node):
+            v = v.id
+
+        # u and v may not be in the conditioning set, throw error
+        if u in conditioning_set or v in conditioning_set:
+            raise ValueError("Nodes u and v may not be in the conditioning set")
+
+        # check whether there is an open path on which all colliders are in the conditioning set and all non-colliders are not in the conditioning set
+        list_of_results_for_paths = []
+        for path in self.all_paths_on_underlying_undirected_graph(u, v):
+            if len(path) == 2:
+                list_of_results_for_paths.append(False)
+
+            for i in range(1, len(path) - 1):
+                is_path_blocked = False
+
+                # paths are d-separated if a collider is not in the conditioning set
+                if path[i] not in conditioning_set:
+                    if self.edge_of_type_exists(
+                        path[i - 1].id, path[i].id, DirectedEdge()
+                    ) and self.edge_of_type_exists(
+                        path[i + 1].id, path[i].id, DirectedEdge()
+                    ):
+                        is_path_blocked = True
+
+                # paths are d-separated if a non-collider is in the conditioning set
+                elif path[i] in conditioning_set:
+                    if not (
+                        self.edge_of_type_exists(
+                            path[i - 1].id, path[i].id, DirectedEdge()
+                        )
+                        and self.edge_of_type_exists(
+                            path[i + 1].id, path[i].id, DirectedEdge()
+                        )
+                    ):
+                        is_path_blocked = True
+
+            list_of_results_for_paths.append(is_path_blocked)
+
+        # if there is at least one open path, u and v are not d-separated
+        if False in list_of_results_for_paths:
+            return False
+        return True
+
     def all_paths_on_underlying_undirected_graph(
         self, u: Union[Node, str], v: Union[Node, str], visited=None, path=None
     ) -> List[List[Node]]:
@@ -306,33 +395,6 @@ class GraphBaseAccessMixin:
         # Backtrack: remove the current node from the path and visited set
         path.pop()
         visited.remove(u)
-
-    def edge_of_type_exists(
-        self,
-        u: Union[Node, str],
-        v: Union[Node, str],
-        edge_type: EdgeTypeInterface = DirectedEdge(),
-    ) -> bool:
-        """
-        Check if an edge of a specific type exists between u and v.
-        :param u: node u
-        :param v: node v
-        :param edge_type: the type of the edge to check for
-        :return: True if an edge of this type exists, False otherwise
-        """
-
-        if isinstance(u, Node):
-            u = u.id
-        if isinstance(v, Node):
-            v = v.id
-
-        if not self.edge_exists(u, v):
-            return False
-
-        if self.edges[u][v].edge_type != edge_type:
-            return False
-
-        return True
 
     def retrieve_edges(self) -> List[Edge]:
         """

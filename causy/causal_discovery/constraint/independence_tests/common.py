@@ -32,7 +32,7 @@ class CorrelationCoefficientTest(
     parallel: BoolParameter = False
 
     def process(
-            self, nodes: List[str], graph: BaseGraphInterface
+        self, nodes: List[str], graph: BaseGraphInterface
     ) -> Optional[TestResult]:
         """
         Test if u and v are independent and delete edge in graph if they are.
@@ -204,7 +204,9 @@ class ExtendedPartialCorrelationTestMatrix(
         helper = torch.mm(torch.sqrt(diagonal_matrix), inverse_cov_matrix)
         precision_matrix = torch.mm(helper, torch.sqrt(diagonal_matrix))
 
-        par_corr = (-1 * precision_matrix[0][1]) / torch.sqrt(precision_matrix[0][0] * precision_matrix[1][1])
+        par_corr = (-1 * precision_matrix[0][1]) / torch.sqrt(
+            precision_matrix[0][0] * precision_matrix[1][1]
+        )
 
         sample_size = len(graph.nodes[nodes[0]].values)
         nb_of_control_vars = len(nodes) - 2
