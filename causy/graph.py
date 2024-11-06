@@ -328,9 +328,11 @@ class GraphBaseAccessMixin:
 
         # check whether there is an open path on which all colliders are in the conditioning set and all non-colliders are not in the conditioning set
         list_of_results_for_paths = []
+        if list(self.all_paths_on_underlying_undirected_graph(u, v)) == []:
+            return True
         for path in self.all_paths_on_underlying_undirected_graph(u, v):
             if len(path) == 2:
-                list_of_results_for_paths.append(False)
+                is_path_blocked = False
 
             for i in range(1, len(path) - 1):
                 is_path_blocked = False
