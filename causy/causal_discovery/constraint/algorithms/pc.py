@@ -77,7 +77,9 @@ PC = graph_model_factory(
                 display_name="Extended Partial Correlation Test Matrix",
             ),
             *PC_ORIENTATION_RULES,
-            ComputeDirectEffectsInDAGsMultivariateRegression,
+            ComputeDirectEffectsInDAGsMultivariateRegression(
+                display_name="Compute Direct Effects in DAGs Multivariate Regression"
+            ),
         ],
         edge_types=PC_EDGE_TYPES,
         extensions=[PC_GRAPH_UI_EXTENSION],
@@ -104,7 +106,9 @@ PCStable = graph_model_factory(
                 ]
             ),
             *PC_ORIENTATION_RULES,
-            ComputeDirectEffectsInDAGsMultivariateRegression,
+            ComputeDirectEffectsInDAGsMultivariateRegression(
+                display_name="Compute Direct Effects in DAGs Multivariate Regression"
+            ),
         ],
         edge_types=PC_EDGE_TYPES,
         extensions=[PC_GRAPH_UI_EXTENSION],
@@ -160,7 +164,9 @@ ParallelPC = graph_model_factory(
                 ),
             ),
             *PC_ORIENTATION_RULES,
-            ComputeDirectEffectsInDAGsMultivariateRegression,
+            ComputeDirectEffectsInDAGsMultivariateRegression(
+                display_name="Compute Direct Effects in DAGs Multivariate Regression"
+            ),
         ],
         edge_types=PC_EDGE_TYPES,
         extensions=[PC_GRAPH_UI_EXTENSION],
