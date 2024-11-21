@@ -29,15 +29,7 @@ class ComputeDirectEffectsInDAGsMultivariateRegression(PipelineStepInterface):
         # if there is an undirected edge, the effect is not identifiable
         if graph.undirected_edge_exists(cause_variable, effect_variable):
             edge_data = graph.edge_value(cause_variable, effect_variable)
-            if "direct_effect" in edge_data:
-                return
-            edge_data["direct_effect"] = None
-            return TestResult(
-                u=graph.nodes[nodes[0]],
-                v=graph.nodes[nodes[1]],
-                action=TestResultAction.UPDATE_EDGE_DIRECTED,
-                data=edge_data,
-            )
+            return
 
         edge_data = graph.edge_value(cause_variable, effect_variable)
 
