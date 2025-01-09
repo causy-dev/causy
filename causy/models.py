@@ -88,6 +88,9 @@ class ActionHistoryStep(BaseModel):
     name: str
     duration: Optional[float] = None  # seconds
     actions: Optional[List[TestResult]] = []
+    all_proposed_actions: Optional[
+        List[TestResult]
+    ] = []  # all actions and not only the ones that were executed
     steps: Optional[List["ActionHistoryStep"]] = []
 
 

@@ -1,4 +1,4 @@
-from causy.causal_discovery.constraint.algorithms.pc import PC_EDGE_TYPES
+from causy.causal_discovery.constraint.algorithms.pc import PC_EDGE_TYPES, PC
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
 from causy.graph_model import graph_model_factory
 from causy.causal_discovery.constraint.independence_tests.common import (
@@ -28,6 +28,89 @@ class PCTestTestCase(CausyTestCase):
             ],
             random=lambda: rdnv(0, 1),
         )
+
+    def test_pc_number_of_all_proposed_actions_two_nodes(self):
+        """
+        test if the number of all proposed actions is correct
+        """
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(1000)
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        pc_results = tst.execute_pipeline_steps()
+        self.assertEqual(len(pc_results[0].all_proposed_actions), 1)
+        self.assertEqual(len(pc_results[1].all_proposed_actions), 1)
+        self.assertEqual(len(pc_results[2].all_proposed_actions), 0)
+
+    def test_pc_number_of_actions_two_nodes(self):
+        """
+        test if the number of all actions is correct
+        """
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(1000)
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        pc_results = tst.execute_pipeline_steps()
+        self.assertEqual(len(pc_results[0].actions), 1)
+        self.assertEqual(len(pc_results[1].actions), 0)
+        self.assertEqual(len(pc_results[2].actions), 0)
+
+    def test_pc_number_of_all_proposed_actions_three_nodes(self):
+        """
+        test if the number of all proposed actions is correct
+        """
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(10)
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        pc_results = tst.execute_pipeline_steps()
+        self.assertEqual(len(pc_results[0].all_proposed_actions), 3)
+        self.assertEqual(len(pc_results[1].all_proposed_actions), 3)
+        # this should be 3, but with the current combinations generator, it does 4 tests
+        self.assertEqual(len(pc_results[2].all_proposed_actions), 4)
+
+    def test_pc_number_of_actions_three_nodes(self):
+        """
+        test if the number of all proposed actions is correct
+        """
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(1000)
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        pc_results = tst.execute_pipeline_steps()
+        self.assertEqual(len(pc_results[0].actions), 3)
+        self.assertEqual(len(pc_results[1].actions), 0)
+        self.assertEqual(len(pc_results[2].actions), 1)
 
     def test_pc_calculate_pearson_correlations(self):
         """

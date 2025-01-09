@@ -4,7 +4,7 @@ import platform
 from abc import ABC
 from copy import deepcopy
 import time
-from typing import Optional, List, Dict, Callable, Union, Any, Generator
+from typing import Optional, List, Dict, Callable, Union, Any, Generator, Tuple
 
 import torch.multiprocessing as mp
 
@@ -215,11 +215,12 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 "previous_duration": time.time() - started,
             }
             started = time.time()
-            actions_taken = self.execute_pipeline_step(filter)
+            actions_taken, all_actions = self.execute_pipeline_step(filter)
             self.graph.graph.action_history.append(
                 ActionHistoryStep(
                     name=filter.name,
                     actions=actions_taken,
+                    all_proposed_actions=all_actions,
                     duration=time.time() - started,
                 )
             )
@@ -289,7 +290,9 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         except Exception as e:
             logger.error(f"Error in hook ({str(hook)}): {e}")
 
-    def _take_action(self, results, dry_run=False):
+    def _take_action(
+        self, results, dry_run=False
+    ) -> Tuple[List[TestResultAction], List[TestResultAction]]:
         """
         Take the actions returned by the test
 
@@ -297,10 +300,12 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         This is done to make it possible to execute the tests in parallel as well as to decide proactively at which point in the decisions taken by the pipeline step should be executed.
         Actions are returned by the test and are executed on the graph. The actions are stored in the action history to make it possible to revert the actions or use them in a later step.
 
-        :param results:
-        :return:
+        :param results: the results
+
+        :return: actions taken, all actions taken
         """
         all_actions_taken = []
+        all_actions = []
         for result_items in results:
             if result_items is None:
                 continue
@@ -310,6 +315,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                 self.algorithm.pre_graph_update_hooks, self.graph, result_items
             )
             actions_taken = []
+            all_actions.extend(result_items)
             for i in result_items:
                 if i.u is not None and i.v is not None:
                     logger.debug(f"Action: {i.action} on {i.u.name} and {i.v.name}")
@@ -421,11 +427,11 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             self._execute_post_graph_update_hooks(
                 self.algorithm.post_graph_update_hooks, self.graph, actions_taken
             )
-        return all_actions_taken
+        return all_actions_taken, all_actions
 
     def execute_pipeline_step(
         self, test_fn: PipelineStepInterface, apply_to_graph=True
-    ):
+    ) -> Tuple[List[TestResultAction], List[TestResultAction]]:
         """
         Execute a single pipeline_step on the graph. either in parallel or in a single process depending on the test_fn.parallel flag
         :param apply_to_graph:  if the action should be applied to the graph
@@ -434,6 +440,7 @@ class AbstractGraphModel(GraphModelInterface, ABC):
         :return:
         """
         actions_taken = []
+        all_actions = []
         # initialize the worker pool (we currently use all available cores * 2)
 
         # run all combinations in parallel except if the number of combinations is smaller then the chunk size
@@ -456,9 +463,12 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             ):
                 if not isinstance(result, list):
                     result = [result]
-                actions_taken.extend(
-                    self._take_action(result, dry_run=not apply_to_graph)
+
+                actions_taken_current, all_actions_current = self._take_action(
+                    result, dry_run=not apply_to_graph
                 )
+                actions_taken.extend(actions_taken_current)
+                all_actions.extend(all_actions_current)
         else:
             if test_fn.generator.chunked:
                 for chunk in test_fn.generator.generate(self.graph.graph, self):
@@ -466,9 +476,11 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         unpack_run(i)
                         for i in [[test_fn, [*c], self.graph.graph] for c in chunk]
                     ]
-                    actions_taken.extend(
-                        self._take_action(iterator, dry_run=not apply_to_graph)
+                    actions_taken_current, all_actions_current = self._take_action(
+                        iterator, dry_run=not apply_to_graph
                     )
+                    actions_taken.extend(actions_taken_current)
+                    all_actions.extend(all_actions_current)
             else:
                 # this is the only mode which supports unapplied actions to be passed to the next pipeline step (for now)
                 # which are sometimes needed for e.g. conflict resolution
@@ -487,12 +499,13 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         if rn_fn.needs_unapplied_actions:
                             i.append(local_results)
                     local_results.append(unpack_run(i))
-
-                actions_taken.extend(
-                    self._take_action(local_results, dry_run=not apply_to_graph)
+                actions_taken_current, all_actions_current = self._take_action(
+                    local_results, dry_run=not apply_to_graph
                 )
+                actions_taken.extend(actions_taken_current)
+                all_actions.extend(all_actions_current)
 
-        return actions_taken
+        return actions_taken, all_actions
 
 
 def graph_model_factory(
