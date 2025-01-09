@@ -55,7 +55,7 @@ class CorrelationCoefficientTest(
         # Compute the p-value
         p_value = 2 * (1 - stats.norm.cdf(z_value))
 
-        # If the p value is smaller than the threshold, the null hypothesis (independence) is rejected, otherwise we delete the edge
+        # If the p value is smaller than the threshold, the null hypothesis (independence) is rejected, otherwise we accept it and delete the edge
         if p_value > self.threshold:
             logger.debug(f"Nodes {x.name} and {y.name} are uncorrelated")
             logger.debug(f"P-value: {p_value}")
@@ -64,6 +64,12 @@ class CorrelationCoefficientTest(
                 v=y,
                 action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
                 data={},
+            )
+        else:
+            return TestResult(
+                u=x,
+                v=y,
+                action=TestResultAction.DO_NOTHING,
             )
 
 
@@ -131,7 +137,7 @@ class PartialCorrelationTest(
             # Compute the p-value
             p_value = 2 * (1 - stats.norm.cdf(z_value))
 
-            # If the p value is smaller than the threshold, the null hypothesis (independence) is rejected, otherwise we delete the edge
+            # If the p value is smaller than the threshold, the null hypothesis (conditional independence) is rejected, otherwise we accept it and delete the edge
             if p_value > self.threshold:
                 results.append(
                     TestResult(
@@ -142,6 +148,15 @@ class PartialCorrelationTest(
                     )
                 )
                 already_deleted_edges.add((x, y))
+
+            else:
+                results.append(
+                    TestResult(
+                        u=x,
+                        v=y,
+                        action=TestResultAction.DO_NOTHING,
+                    )
+                )
 
         return results
 
@@ -220,6 +235,7 @@ class ExtendedPartialCorrelationTestMatrix(
         # Compute the p-value
         p_value = 2 * (1 - stats.norm.cdf(z_value))
 
+        # If the p value is smaller than the threshold, the null hypothesis (conditional independence) is rejected, otherwise we accept it and delete the edge
         if p_value > self.threshold:
             logger.debug(
                 f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([graph.nodes[on].name for on in other_neighbours])}"
@@ -234,6 +250,12 @@ class ExtendedPartialCorrelationTestMatrix(
                         nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
                     )
                 },
+            )
+        else:
+            return TestResult(
+                u=graph.nodes[nodes[0]],
+                v=graph.nodes[nodes[1]],
+                action=TestResultAction.DO_NOTHING,
             )
 
 
@@ -310,4 +332,10 @@ class ExtendedPartialCorrelationTestLinearRegression(
                         nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
                     )
                 },
+            )
+        else:
+            return TestResult(
+                u=graph.nodes[nodes[0]],
+                v=graph.nodes[nodes[1]],
+                action=TestResultAction.DO_NOTHING,
             )
