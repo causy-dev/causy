@@ -404,7 +404,6 @@ class GraphBaseAccessMixin:
 
         list_of_results_for_paths = []
         for path in self.all_paths_on_underlying_undirected_graph(u, v):
-
             # If the path only has two nodes, it cannot be blocked and is open. Therefore, u and v are not d-separated
             if len(path) == 2:
                 return False

@@ -228,16 +228,11 @@ class EffectEstimationTestCase(CausyTestCase):
             0,
         )
 
-        self.assertEqual(
-            tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["X"])[
-                "direct_effect"
-            ],
-            None,
+        self.assertNotIn(
+            "direct_effect",
+            tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["X"]),
         )
-
-        self.assertEqual(
-            tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["Y"])[
-                "direct_effect"
-            ],
-            None,
+        self.assertNotIn(
+            "direct_effect",
+            tst.graph.edge_value(tst.graph.nodes["W"], tst.graph.nodes["Y"]),
         )
