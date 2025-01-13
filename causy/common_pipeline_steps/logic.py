@@ -42,15 +42,19 @@ class Loop(LogicStepInterface[LogicStepInterfaceType], Generic[LogicStepInterfac
             actions_taken = []
             for pipeline_step in self.pipeline_steps:
                 started = time.time()
-                result = graph_model_instance_.execute_pipeline_step(pipeline_step)
+                (
+                    actions_taken,
+                    all_proposed_actions,
+                ) = graph_model_instance_.execute_pipeline_step(pipeline_step)
                 steps.append(
                     ActionHistoryStep(
                         name=pipeline_step.name,
-                        actions=result,
+                        actions=actions_taken,
+                        all_proposed_actions=all_proposed_actions,
                         duration=time.time() - started,
                     )
                 )
-                actions_taken.extend(result)
+                actions_taken.extend(actions_taken)
             n += 1
         return ActionHistoryStep(
             name=self.name,
@@ -80,17 +84,21 @@ class ApplyActionsTogether(
         loop_started = time.time()
         for pipeline_step in self.pipeline_steps:
             started = time.time()
-            result = graph_model_instance_.execute_pipeline_step(
+            (
+                actions_taken,
+                all_proposed_actions,
+            ) = graph_model_instance_.execute_pipeline_step(
                 pipeline_step, apply_to_graph=False
             )
             steps.append(
                 ActionHistoryStep(
                     name=pipeline_step.name,
-                    actions=result,
+                    actions=actions_taken,
+                    all_proposed_actions=all_proposed_actions,
                     duration=time.time() - started,
                 )
             )
-            actions.extend(result)
+            actions.extend(actions_taken)
 
         graph_model_instance_._take_action(actions)
 
