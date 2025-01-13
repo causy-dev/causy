@@ -202,6 +202,9 @@
                                 <a class="variable" href="#ActionHistoryStep.actions">actions</a>
                         </li>
                         <li>
+                                <a class="variable" href="#ActionHistoryStep.all_proposed_actions">all_proposed_actions</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#ActionHistoryStep.steps">steps</a>
                         </li>
                         <li>
@@ -369,19 +372,22 @@
 </span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="n">duration</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># seconds</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="n">actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="n">steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;ActionHistoryStep&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">class</span> <span class="nc">Result</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="n">algorithm</span><span class="p">:</span> <span class="n">AlgorithmReference</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="n">nodes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NodeInterface</span><span class="p">]</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EdgeInterface</span><span class="p">]</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="n">action_history</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionHistoryStep</span><span class="p">]</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="n">variables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="n">data_loader_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="n">algorithm_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="n">variables_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="n">all_proposed_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>        <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># all actions and not only the ones that were executed</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    <span class="n">steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;ActionHistoryStep&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="k">class</span> <span class="nc">Result</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="n">algorithm</span><span class="p">:</span> <span class="n">AlgorithmReference</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="n">nodes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NodeInterface</span><span class="p">]</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EdgeInterface</span><span class="p">]</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="n">action_history</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionHistoryStep</span><span class="p">]</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="n">variables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="n">data_loader_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="n">algorithm_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="n">variables_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </span></pre></div>
 
 
@@ -1409,7 +1415,10 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 </span><span id="ActionHistoryStep-89"><a href="#ActionHistoryStep-89"><span class="linenos">89</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="ActionHistoryStep-90"><a href="#ActionHistoryStep-90"><span class="linenos">90</span></a>    <span class="n">duration</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># seconds</span>
 </span><span id="ActionHistoryStep-91"><a href="#ActionHistoryStep-91"><span class="linenos">91</span></a>    <span class="n">actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="ActionHistoryStep-92"><a href="#ActionHistoryStep-92"><span class="linenos">92</span></a>    <span class="n">steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;ActionHistoryStep&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="ActionHistoryStep-92"><a href="#ActionHistoryStep-92"><span class="linenos">92</span></a>    <span class="n">all_proposed_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+</span><span id="ActionHistoryStep-93"><a href="#ActionHistoryStep-93"><span class="linenos">93</span></a>        <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span>
+</span><span id="ActionHistoryStep-94"><a href="#ActionHistoryStep-94"><span class="linenos">94</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># all actions and not only the ones that were executed</span>
+</span><span id="ActionHistoryStep-95"><a href="#ActionHistoryStep-95"><span class="linenos">95</span></a>    <span class="n">steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;ActionHistoryStep&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 </span></pre></div>
 
 
@@ -1476,6 +1485,17 @@ __pydantic_private__: Instance attribute with the values of private attributes s
     
 
                             </div>
+                            <div id="ActionHistoryStep.all_proposed_actions" class="classattr">
+                                <div class="attr variable">
+            <span class="name">all_proposed_actions</span><span class="annotation">: Optional[List[<a href="#TestResult">TestResult</a>]]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#ActionHistoryStep.all_proposed_actions"></a>
+    
+    
+
+                            </div>
                             <div id="ActionHistoryStep.steps" class="classattr">
                                 <div class="attr variable">
             <span class="name">steps</span><span class="annotation">: Optional[List[<a href="#ActionHistoryStep">ActionHistoryStep</a>]]</span>
@@ -1503,7 +1523,7 @@ __pydantic_private__: Instance attribute with the values of private attributes s
                                 <div class="attr variable">
             <span class="name">model_fields</span>        =
 <input id="ActionHistoryStep.model_fields-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="ActionHistoryStep.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True), &#39;duration&#39;: FieldInfo(annotation=Union[float, NoneType], required=False, default=None), &#39;actions&#39;: FieldInfo(annotation=Union[List[TestResult], NoneType], required=False, default=[]), &#39;steps&#39;: FieldInfo(annotation=Union[List[ActionHistoryStep], NoneType], required=False, default=[])}</span>
+            <label class="view-value-button pdoc-button" for="ActionHistoryStep.model_fields-view-value"></label><span class="default_value">{&#39;name&#39;: FieldInfo(annotation=str, required=True), &#39;duration&#39;: FieldInfo(annotation=Union[float, NoneType], required=False, default=None), &#39;actions&#39;: FieldInfo(annotation=Union[List[TestResult], NoneType], required=False, default=[]), &#39;all_proposed_actions&#39;: FieldInfo(annotation=Union[List[TestResult], NoneType], required=False, default=[]), &#39;steps&#39;: FieldInfo(annotation=Union[List[ActionHistoryStep], NoneType], required=False, default=[])}</span>
 
         
     </div>
@@ -1570,16 +1590,16 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
     </div>
     <a class="headerlink" href="#Result"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Result-95"><a href="#Result-95"><span class="linenos"> 95</span></a><span class="k">class</span> <span class="nc">Result</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="Result-96"><a href="#Result-96"><span class="linenos"> 96</span></a>    <span class="n">algorithm</span><span class="p">:</span> <span class="n">AlgorithmReference</span>
-</span><span id="Result-97"><a href="#Result-97"><span class="linenos"> 97</span></a>    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
-</span><span id="Result-98"><a href="#Result-98"><span class="linenos"> 98</span></a>    <span class="n">nodes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NodeInterface</span><span class="p">]</span>
-</span><span id="Result-99"><a href="#Result-99"><span class="linenos"> 99</span></a>    <span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EdgeInterface</span><span class="p">]</span>
-</span><span id="Result-100"><a href="#Result-100"><span class="linenos">100</span></a>    <span class="n">action_history</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionHistoryStep</span><span class="p">]</span>
-</span><span id="Result-101"><a href="#Result-101"><span class="linenos">101</span></a>    <span class="n">variables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="Result-102"><a href="#Result-102"><span class="linenos">102</span></a>    <span class="n">data_loader_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="Result-103"><a href="#Result-103"><span class="linenos">103</span></a>    <span class="n">algorithm_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="Result-104"><a href="#Result-104"><span class="linenos">104</span></a>    <span class="n">variables_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Result-98"><a href="#Result-98"><span class="linenos"> 98</span></a><span class="k">class</span> <span class="nc">Result</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="Result-99"><a href="#Result-99"><span class="linenos"> 99</span></a>    <span class="n">algorithm</span><span class="p">:</span> <span class="n">AlgorithmReference</span>
+</span><span id="Result-100"><a href="#Result-100"><span class="linenos">100</span></a>    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
+</span><span id="Result-101"><a href="#Result-101"><span class="linenos">101</span></a>    <span class="n">nodes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NodeInterface</span><span class="p">]</span>
+</span><span id="Result-102"><a href="#Result-102"><span class="linenos">102</span></a>    <span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EdgeInterface</span><span class="p">]</span>
+</span><span id="Result-103"><a href="#Result-103"><span class="linenos">103</span></a>    <span class="n">action_history</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionHistoryStep</span><span class="p">]</span>
+</span><span id="Result-104"><a href="#Result-104"><span class="linenos">104</span></a>    <span class="n">variables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Result-105"><a href="#Result-105"><span class="linenos">105</span></a>    <span class="n">data_loader_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Result-106"><a href="#Result-106"><span class="linenos">106</span></a>    <span class="n">algorithm_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Result-107"><a href="#Result-107"><span class="linenos">107</span></a>    <span class="n">variables_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </span></pre></div>
 
 
