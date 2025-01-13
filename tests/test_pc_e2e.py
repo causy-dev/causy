@@ -88,7 +88,7 @@ class PCTestTestCase(CausyTestCase):
         pc_results = tst.execute_pipeline_steps()
         self.assertEqual(len(pc_results[0].all_proposed_actions), 3)
         self.assertEqual(len(pc_results[1].all_proposed_actions), 3)
-        # this should be 3, but with the current combinations generator, it does 4 tests
+        # TODO: think about whether the pairs with neighbours generator returns what we want, but the counting seems correct
         self.assertEqual(len(pc_results[2].all_proposed_actions), 4)
 
     def test_pc_number_of_actions_three_nodes(self):
@@ -111,6 +111,31 @@ class PCTestTestCase(CausyTestCase):
         self.assertEqual(len(pc_results[0].actions), 3)
         self.assertEqual(len(pc_results[1].actions), 0)
         self.assertEqual(len(pc_results[2].actions), 1)
+
+    def test_pc_number_of_all_proposed_actions_four_nodes(self):
+        """
+        test if the number of all proposed actions is correct
+        """
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
+                SampleEdge(NodeReference("X"), NodeReference("W"), 7),
+                SampleEdge(NodeReference("W"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("W"), NodeReference("Z"), 6),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(1000)
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        pc_results = tst.execute_pipeline_steps()
+        self.assertEqual(len(pc_results[0].all_proposed_actions), 6)
+        self.assertEqual(len(pc_results[1].all_proposed_actions), 6)
+        # TODO: think about whether the pairs with neighbours generator returns what we want, but the counting seems correct
+        self.assertEqual(len(pc_results[3].all_proposed_actions), 7)
 
     def test_pc_calculate_pearson_correlations(self):
         """
