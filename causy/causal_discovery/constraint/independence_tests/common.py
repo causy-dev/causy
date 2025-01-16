@@ -96,12 +96,12 @@ class PartialCorrelationTest(
         """
         results = []
         already_deleted_edges = set()
-        for nodes in itertools.permutations(nodes):
-            x: NodeInterface = graph.nodes[nodes[0]]
-            y: NodeInterface = graph.nodes[nodes[1]]
-            z: NodeInterface = graph.nodes[nodes[2]]
+        for node in nodes:
+            remaining_nodes = [n for n in nodes if n != node]
+            x: NodeInterface = graph.nodes[remaining_nodes[0]]
+            y: NodeInterface = graph.nodes[remaining_nodes[1]]
+            z: NodeInterface = graph.nodes[node]
 
-            # Avoid division by zero
             if x is None or y is None or z is None:
                 return
 

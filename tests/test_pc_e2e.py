@@ -88,8 +88,7 @@ class PCTestTestCase(CausyTestCase):
         pc_results = tst.execute_pipeline_steps()
         self.assertEqual(len(pc_results[0].all_proposed_actions), 3)
         self.assertEqual(len(pc_results[1].all_proposed_actions), 3)
-        # TODO: think about whether the pairs with neighbours generator returns what we want, but the counting seems correct
-        self.assertEqual(len(pc_results[2].all_proposed_actions), 4)
+        self.assertEqual(len(pc_results[2].all_proposed_actions), 3)
 
     def test_pc_number_of_actions_three_nodes(self):
         """
