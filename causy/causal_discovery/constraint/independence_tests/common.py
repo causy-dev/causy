@@ -144,7 +144,8 @@ class PartialCorrelationTest(
                         u=x,
                         v=y,
                         action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                        data={"separatedBy": [z]},
+                        data={"separatedBy": [z],
+                              "triple": [x, y, [z]]},
                     )
                 )
                 already_deleted_edges.add((x, y))
@@ -155,6 +156,7 @@ class PartialCorrelationTest(
                         u=x,
                         v=y,
                         action=TestResultAction.DO_NOTHING,
+                        data={"triple": [x, y, [z]]},
                     )
                 )
 
@@ -236,11 +238,11 @@ class ExtendedPartialCorrelationTestMatrix(
         p_value = 2 * (1 - stats.norm.cdf(z_value))
 
         # If the p value is smaller than the threshold, the null hypothesis (conditional independence) is rejected, otherwise we accept it and delete the edge
+        nodes_set = set([graph.nodes[n] for n in nodes])
         if p_value > self.threshold:
             logger.debug(
                 f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([graph.nodes[on].name for on in other_neighbours])}"
             )
-            nodes_set = set([graph.nodes[n] for n in nodes])
             return TestResult(
                 u=graph.nodes[nodes[0]],
                 v=graph.nodes[nodes[1]],
@@ -248,14 +250,22 @@ class ExtendedPartialCorrelationTestMatrix(
                 data={
                     "separatedBy": list(
                         nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
-                    )
-                },
+                    ),
+                    "triple": [graph.nodes[nodes[0]], graph.nodes[nodes[1]], nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}],
+                }
             )
         else:
             return TestResult(
                 u=graph.nodes[nodes[0]],
                 v=graph.nodes[nodes[1]],
                 action=TestResultAction.DO_NOTHING,
+                data={
+                    "separatedBy": list(
+                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
+                    ),
+                    "triple": [graph.nodes[nodes[0]], graph.nodes[nodes[1]],
+                               nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}],
+                }
             )
 
 
@@ -317,12 +327,11 @@ class ExtendedPartialCorrelationTestLinearRegression(
             partial_correlation.item(),
             self.threshold,
         )
-
+        nodes_set = set([graph.nodes[n] for n in nodes])
         if abs(t) < critical_t:
             logger.debug(
                 f"Nodes {graph.nodes[nodes[0]].name} and {graph.nodes[nodes[1]].name} are uncorrelated given nodes {','.join([graph.nodes[on].name for on in other_neighbours])}"
             )
-            nodes_set = set([graph.nodes[n] for n in nodes])
             return TestResult(
                 u=graph.nodes[nodes[0]],
                 v=graph.nodes[nodes[1]],
@@ -330,7 +339,8 @@ class ExtendedPartialCorrelationTestLinearRegression(
                 data={
                     "separatedBy": list(
                         nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
-                    )
+                    ),
+                    "triple": [graph.nodes[nodes[0]], graph.nodes[nodes[1]], nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}]
                 },
             )
         else:
@@ -338,4 +348,8 @@ class ExtendedPartialCorrelationTestLinearRegression(
                 u=graph.nodes[nodes[0]],
                 v=graph.nodes[nodes[1]],
                 action=TestResultAction.DO_NOTHING,
+                data={
+                    "triple": [graph.nodes[nodes[0]], graph.nodes[nodes[1]],
+                               nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}]
+                },
             )
