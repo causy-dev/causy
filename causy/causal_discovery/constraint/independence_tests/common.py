@@ -63,13 +63,14 @@ class CorrelationCoefficientTest(
                 u=x,
                 v=y,
                 action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                data={},
+                data={"triple": [x, y, []]},
             )
         else:
             return TestResult(
                 u=x,
                 v=y,
                 action=TestResultAction.DO_NOTHING,
+                data={"triple": [x, y, []]},
             )
 
 
@@ -94,6 +95,9 @@ class PartialCorrelationTest(
 
         TODO: we are testing (C and E given B) and (E and C given B), we just need one of these, remove redundant tests.
         """
+        node_names = []
+        for node in nodes:
+            node_names.append(graph.nodes[node].name)
         results = []
         already_deleted_edges = set()
         for node in nodes:
@@ -144,8 +148,7 @@ class PartialCorrelationTest(
                         u=x,
                         v=y,
                         action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                        data={"separatedBy": [z],
-                              "triple": [x, y, [z]]},
+                        data={"separatedBy": [z], "triple": [x, y, [z]]},
                     )
                 )
                 already_deleted_edges.add((x, y))
@@ -159,7 +162,6 @@ class PartialCorrelationTest(
                         data={"triple": [x, y, [z]]},
                     )
                 )
-
         return results
 
 
@@ -251,8 +253,12 @@ class ExtendedPartialCorrelationTestMatrix(
                     "separatedBy": list(
                         nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
                     ),
-                    "triple": [graph.nodes[nodes[0]], graph.nodes[nodes[1]], nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}],
-                }
+                    "triple": [
+                        graph.nodes[nodes[0]],
+                        graph.nodes[nodes[1]],
+                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]},
+                    ],
+                },
             )
         else:
             return TestResult(
@@ -260,12 +266,12 @@ class ExtendedPartialCorrelationTestMatrix(
                 v=graph.nodes[nodes[1]],
                 action=TestResultAction.DO_NOTHING,
                 data={
-                    "separatedBy": list(
-                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
-                    ),
-                    "triple": [graph.nodes[nodes[0]], graph.nodes[nodes[1]],
-                               nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}],
-                }
+                    "triple": [
+                        graph.nodes[nodes[0]],
+                        graph.nodes[nodes[1]],
+                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]},
+                    ],
+                },
             )
 
 
@@ -340,7 +346,11 @@ class ExtendedPartialCorrelationTestLinearRegression(
                     "separatedBy": list(
                         nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
                     ),
-                    "triple": [graph.nodes[nodes[0]], graph.nodes[nodes[1]], nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}]
+                    "triple": [
+                        graph.nodes[nodes[0]],
+                        graph.nodes[nodes[1]],
+                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]},
+                    ],
                 },
             )
         else:
@@ -349,7 +359,10 @@ class ExtendedPartialCorrelationTestLinearRegression(
                 v=graph.nodes[nodes[1]],
                 action=TestResultAction.DO_NOTHING,
                 data={
-                    "triple": [graph.nodes[nodes[0]], graph.nodes[nodes[1]],
-                               nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}]
+                    "triple": [
+                        graph.nodes[nodes[0]],
+                        graph.nodes[nodes[1]],
+                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]},
+                    ]
                 },
             )
