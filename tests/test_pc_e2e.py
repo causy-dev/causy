@@ -1,14 +1,26 @@
-from causy.causal_discovery.constraint.algorithms.pc import PC_EDGE_TYPES, PC
+from causy.causal_discovery.constraint.algorithms.pc import (
+    PC_EDGE_TYPES,
+    PC,
+    PC_ORIENTATION_RULES,
+    PC_GRAPH_UI_EXTENSION,
+    PC_DEFAULT_THRESHOLD,
+)
+from causy.causal_effect_estimation.multivariate_regression import (
+    ComputeDirectEffectsInDAGsMultivariateRegression,
+)
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
+from causy.generators import PairsWithNeighboursGenerator
 from causy.graph_model import graph_model_factory
 from causy.causal_discovery.constraint.independence_tests.common import (
     CorrelationCoefficientTest,
     PartialCorrelationTest,
     ExtendedPartialCorrelationTestMatrix,
 )
-from causy.models import Algorithm
+from causy.interfaces import AS_MANY_AS_FIELDS
+from causy.models import Algorithm, ComparisonSettings
 from causy.causal_discovery.constraint.orientation_rules.pc import ColliderTest
 from causy.sample_generator import IIDSampleGenerator, SampleEdge, NodeReference
+from causy.variables import VariableReference, FloatVariable
 
 from tests.utils import CausyTestCase, load_fixture_graph
 
@@ -266,3 +278,211 @@ class PCTestTestCase(CausyTestCase):
         reference = load_fixture_graph("tests/fixtures/pc_e2e/pc_collider_test.json")
         # dump_fixture_graph(tst.graph, "fixtures/pc_e2e/pc_collider_test.json")
         self.assertGraphStructureIsEqual(reference, tst.graph)
+
+    def test_tracking_triples_two_nodes(self):
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(10000)
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        pc_results = tst.execute_pipeline_steps()
+        triples = []
+        for result in pc_results:
+            for action in result.all_proposed_actions:
+                if "triple" in action.data:
+                    triples.append(action.data["triple"])
+        self.assertEqual(len(triples), 1)
+
+    def test_tracking_triples_three_nodes(self):
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(10000)
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        pc_results = tst.execute_pipeline_steps()
+
+        triples = []
+        for result in pc_results:
+            for action in result.all_proposed_actions:
+                if "triple" in action.data:
+                    triples.append(action.data["triple"])
+        self.assertEqual(len(triples), 6)
+
+    def test_tracking_triples_four_nodes(self):
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
+                SampleEdge(NodeReference("X"), NodeReference("W"), 7),
+                SampleEdge(NodeReference("W"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("W"), NodeReference("Z"), 6),
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 5),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(10000)
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        pc_results = tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+        triples = []
+        for result in pc_results:
+            for action in result.all_proposed_actions:
+                if "triple" in action.data:
+                    triples.append(action.data["triple"])
+        # two out of four + two out of four times two given two possible conditioning nodes + two out of four times two beccause PC tests for neighbours of X and of Y.
+        self.assertEqual(len(triples), 6 + 12 + 12)
+
+    def test_track_triples_three_nodes_custom_pc(self):
+        algo = graph_model_factory(
+            Algorithm(
+                pipeline_steps=[
+                    CalculatePearsonCorrelations(
+                        display_name="Calculate Pearson Correlations"
+                    ),
+                    CorrelationCoefficientTest(
+                        threshold=VariableReference(name="threshold"),
+                        display_name="Correlation Coefficient Test",
+                    ),
+                    ExtendedPartialCorrelationTestMatrix(
+                        threshold=VariableReference(name="threshold"),
+                        display_name="Extended Partial Correlation Test Matrix",
+                        generator=PairsWithNeighboursGenerator(
+                            comparison_settings=ComparisonSettings(
+                                min=3, max=AS_MANY_AS_FIELDS
+                            ),
+                            shuffle_combinations=False,
+                        ),
+                    ),
+                    *PC_ORIENTATION_RULES,
+                    ComputeDirectEffectsInDAGsMultivariateRegression(
+                        display_name="Compute Direct Effects in DAGs Multivariate Regression"
+                    ),
+                ],
+                edge_types=PC_EDGE_TYPES,
+                extensions=[PC_GRAPH_UI_EXTENSION],
+                name="PC",
+                variables=[FloatVariable(name="threshold", value=PC_DEFAULT_THRESHOLD)],
+            )
+        )
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(10000)
+        tst = algo()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        pc_results = tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+        triples = []
+        for result in pc_results:
+            for proposed_action in result.all_proposed_actions:
+                if "triple" in proposed_action.data:
+                    triples.append(proposed_action.data["triple"])
+        # two out of four + two out of four times two given two possible conditioning nodes + two out of four times two beccause PC tests for neighbours of X and of Y.
+        self.assertIn(len(triples), [6, 7, 8])
+
+    def test_track_triples_two_nodes_custom_pc_unconditionally_independent(self):
+        algo = graph_model_factory(
+            Algorithm(
+                pipeline_steps=[
+                    CalculatePearsonCorrelations(
+                        display_name="Calculate Pearson Correlations"
+                    ),
+                    CorrelationCoefficientTest(
+                        threshold=VariableReference(name="threshold"),
+                        display_name="Correlation Coefficient Test",
+                    ),
+                    ExtendedPartialCorrelationTestMatrix(
+                        threshold=VariableReference(name="threshold"),
+                        display_name="Extended Partial Correlation Test Matrix",
+                        generator=PairsWithNeighboursGenerator(
+                            comparison_settings=ComparisonSettings(
+                                min=3, max=AS_MANY_AS_FIELDS
+                            ),
+                            shuffle_combinations=False,
+                        ),
+                    ),
+                    *PC_ORIENTATION_RULES,
+                    ComputeDirectEffectsInDAGsMultivariateRegression(
+                        display_name="Compute Direct Effects in DAGs Multivariate Regression"
+                    ),
+                ],
+                edge_types=PC_EDGE_TYPES,
+                extensions=[PC_GRAPH_UI_EXTENSION],
+                name="PC",
+                variables=[FloatVariable(name="threshold", value=PC_DEFAULT_THRESHOLD)],
+            )
+        )
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Z"), NodeReference("Y"), 6),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(10000)
+        tst = algo()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        pc_results = tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+        triples = []
+        for result in pc_results:
+            for proposed_action in result.all_proposed_actions:
+                if "triple" in proposed_action.data:
+                    triples.append(proposed_action.data["triple"])
+        # two out of four + two out of four times two given two possible conditioning nodes + two out of four times two beccause PC tests for neighbours of X and of Y.
+        self.assertEqual(len(triples), 3 + 2)
+
+    def test_track_triples_three_nodes_pc_unconditionally_independent(self):
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Z"), NodeReference("Y"), 6),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(10000)
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        pc_results = tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+
+        triples = []
+        for result in pc_results:
+            for action in result.all_proposed_actions:
+                if "triple" in action.data:
+                    triples.append(action.data["triple"])
+        # TODO: find issue with tracking in partial correlation test in this setting
+        pass
