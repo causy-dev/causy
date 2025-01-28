@@ -653,3 +653,16 @@ class GraphTestCase(CausyTestCase):
         self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, [node4]))
         self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, [node2]))
         self.assertTrue(graph.are_nodes_d_separated_cpdag(node1, node3, []))
+
+    def test_are_nodes_d_separated_cpdag_three_nodes_fully_connected_undirected_false(
+        self,
+    ):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node2, node3, {"test": "test"})
+        graph.add_edge(node1, node3, {"test": "test"})
+        self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, []))
+        self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, [node2]))
