@@ -332,3 +332,337 @@ class GraphTestCase(CausyTestCase):
         self.assertIn(node2, result)
         self.assertIn(node3, result)
         self.assertIn(node1, result)
+
+    def test_is_path_of_definite_status_directed_edges_three_nodes(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2, node3]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node3]))
+
+    def test_is_path_of_definite_status_undirected_edges_three_nodes_true(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node2, node3, {"test": "test"})
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2, node3]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node3]))
+
+    def test_is_path_of_definite_status_undirected_edges_three_nodes_false(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node2, node3, {"test": "test"})
+        graph.add_edge(node1, node3, {"test": "test"})
+        self.assertFalse(graph._is_path_of_definite_status([node1, node2, node3]))
+        self.assertFalse(graph._is_path_of_definite_status([node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node3]))
+
+    def test_is_path_of_definite_status_undirected_edges_four_nodes(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node2, node3, {"test": "test"})
+        graph.add_edge(node3, node4, {"test": "test"})
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2, node3, node4]))
+        self.assertTrue(graph._is_path_of_definite_status([node4, node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2, node3]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node3, node4]))
+        self.assertTrue(graph._is_path_of_definite_status([node4, node3, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node3]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node4]))
+        self.assertTrue(graph._is_path_of_definite_status([node4, node3]))
+
+    def test_is_path_of_definite_status_undirected_and_directed_edges_three_nodes_true(
+        self,
+    ):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2, node3]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node3]))
+
+    def test_is_path_of_definite_status_undirected_and_directed_edges_three_nodes_false(
+        self,
+    ):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node1, node3, {"test": "test"})
+        graph.add_directed_edge(node3, node2, {"test": "test"})
+        self.assertFalse(graph._is_path_of_definite_status([node1, node2, node3]))
+        self.assertFalse(graph._is_path_of_definite_status([node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node3]))
+
+    def test_is_path_of_definite_status_undirected_and_directed_edges_four_nodes_true(
+        self,
+    ):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_edge(node2, node3, {"test": "test"})
+        graph.add_directed_edge(node2, node1, {"test": "test"})
+        graph.add_directed_edge(node3, node4, {"test": "test"})
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2, node3, node4]))
+        self.assertTrue(graph._is_path_of_definite_status([node4, node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2, node3]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node3, node4]))
+        self.assertTrue(graph._is_path_of_definite_status([node4, node3, node2]))
+
+    def test_is_path_of_definite_status_undirected_and_directed_edges_four_nodes_false(
+        self,
+    ):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node2, node3, {"test": "test"})
+        graph.add_edge(node1, node3, {"test": "test"})
+        graph.add_directed_edge(node3, node4, {"test": "test"})
+        self.assertFalse(
+            graph._is_path_of_definite_status([node1, node2, node3, node4])
+        )
+        self.assertFalse(
+            graph._is_path_of_definite_status([node4, node3, node2, node1])
+        )
+        self.assertFalse(graph._is_path_of_definite_status([node1, node2, node3]))
+        self.assertFalse(graph._is_path_of_definite_status([node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node3, node4]))
+        self.assertTrue(graph._is_path_of_definite_status([node4, node3, node2]))
+
+    def test_is_path_of_definite_status_directed_edges_four_nodes(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node3, node2, {"test": "test"})
+        graph.add_directed_edge(node3, node4, {"test": "test"})
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2, node3, node4]))
+        self.assertTrue(graph._is_path_of_definite_status([node4, node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node1, node2, node3]))
+        self.assertTrue(graph._is_path_of_definite_status([node3, node2, node1]))
+        self.assertTrue(graph._is_path_of_definite_status([node2, node3, node4]))
+        self.assertTrue(graph._is_path_of_definite_status([node4, node3, node2]))
+
+    def test_is_definite_noncollider_in_conditioning_set_three_nodes_directed(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        self.assertTrue(
+            graph._is_definite_noncollider_in_conditioning_set(
+                [node1, node2, node3], [node2]
+            )
+        )
+
+    def test_is_definite_noncollider_in_conditioning_set_three_nodes_directed_false(
+        self,
+    ):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        self.assertFalse(
+            graph._is_definite_noncollider_in_conditioning_set(
+                [node1, node2, node3], []
+            )
+        )
+
+    def test_is_definite_noncollider_in_conditioning_set_three_nodes_undirected(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node2, node3, {"test": "test"})
+        self.assertTrue(
+            graph._is_definite_noncollider_in_conditioning_set(
+                [node1, node2, node3], [node2]
+            )
+        )
+
+    def test_is_definite_noncollider_in_conditioning_set_three_nodes_undirected_false(
+        self,
+    ):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node2, node3, {"test": "test"})
+        self.assertFalse(
+            graph._is_definite_noncollider_in_conditioning_set(
+                [node1, node2, node3], []
+            )
+        )
+
+    def test_is_definite_noncollider_in_conditioning_set_four_nodes_directed(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        graph.add_directed_edge(node3, node4, {"test": "test"})
+        self.assertTrue(
+            graph._is_definite_noncollider_in_conditioning_set(
+                [node1, node2, node3, node4], [node2]
+            )
+        )
+        self.assertTrue(
+            graph._is_definite_noncollider_in_conditioning_set(
+                [node1, node2, node3, node4], [node3]
+            )
+        )
+        self.assertTrue(
+            graph._is_definite_noncollider_in_conditioning_set(
+                [node4, node3, node2, node1], [node2]
+            )
+        )
+        self.assertTrue(
+            graph._is_definite_noncollider_in_conditioning_set(
+                [node4, node3, node2, node1], [node3]
+            )
+        )
+
+    def test_is_definite_noncollider_outgoing_edge(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        self.assertTrue(graph._is_definite_noncollider(node1, node2, node3))
+
+    def test_is_definite_noncollider_unshielded_triple(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node2, node3, {"test": "test"})
+        graph.add_edge(node3, node4, {"test": "test"})
+        self.assertTrue(graph._is_definite_noncollider(node1, node2, node3))
+        self.assertTrue(graph._is_definite_noncollider(node2, node3, node4))
+
+    def test_is_collider(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node3, node2, {"test": "test"})
+        self.assertTrue(graph._is_collider(node1, node2, node3))
+
+    def test_are_nodes_d_separated_cpdag_three_nodes_directed(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        self.assertTrue(graph.are_nodes_d_separated_cpdag(node1, node3, [node2]))
+        self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, []))
+
+    def test_are_nodes_d_separated_cpdag_four_nodes_no_colliders(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_edge(node2, node3, {"test": "test"})
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node3, node4, {"test": "test"})
+        self.assertTrue(graph.are_nodes_d_separated_cpdag(node1, node4, [node2, node3]))
+        self.assertTrue(graph.are_nodes_d_separated_cpdag(node1, node4, [node2]))
+        self.assertTrue(graph.are_nodes_d_separated_cpdag(node1, node4, [node3]))
+        self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node4, []))
+
+    def test_are_nodes_d_separated_four_nodes_with_colliders(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node3, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node4, {"test": "test"})
+        self.assertFalse(graph.are_nodes_d_separated_dag(node1, node3, [node4]))
+        self.assertFalse(graph.are_nodes_d_separated_dag(node1, node3, [node2]))
+        self.assertTrue(graph.are_nodes_d_separated_dag(node1, node3, []))
+
+    def test_are_nodes_d_separated_cpdag_four_nodes_with_colliders(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node3, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node4, {"test": "test"})
+        self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, [node4]))
+        self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, [node2]))
+        self.assertTrue(graph.are_nodes_d_separated_cpdag(node1, node3, []))
+
+    def test_are_nodes_d_separated_cpdag_three_nodes_fully_connected_undirected_false(
+        self,
+    ):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node2, node3, {"test": "test"})
+        graph.add_edge(node1, node3, {"test": "test"})
+        self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, []))
+        self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, [node2]))

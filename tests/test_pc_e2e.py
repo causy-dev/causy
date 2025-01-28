@@ -486,3 +486,25 @@ class PCTestTestCase(CausyTestCase):
                     triples.append(action.data["triple"])
         # TODO: find issue with tracking in partial correlation test in this setting
         pass
+
+    def test_d_separation_on_output_of_pc(self):
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 5),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(10000)
+        tst = PC()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertGraphStructureIsEqual(tst.graph, graph)
+        x = tst.graph.node_by_id("X")
+        y = tst.graph.node_by_id("Y")
+        z = tst.graph.node_by_id("Z")
+        self.assertEqual(tst.graph.are_nodes_d_separated_cpdag(x, z, []), False)
+        self.assertEqual(tst.graph.are_nodes_d_separated_cpdag(x, z, [y]), True)
