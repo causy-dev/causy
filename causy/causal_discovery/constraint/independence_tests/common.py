@@ -63,7 +63,7 @@ class CorrelationCoefficientTest(
                 u=x,
                 v=y,
                 action=TestResultAction.REMOVE_EDGE_UNDIRECTED,
-                data={"triple": [x, y, []]},
+                data={"separatedBy": [], "triple": [x, y, []]},
             )
         else:
             return TestResult(
