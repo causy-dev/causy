@@ -3,7 +3,8 @@ from causy.causal_discovery.constraint.algorithms.pc import (
     PC,
     PC_ORIENTATION_RULES,
     PC_GRAPH_UI_EXTENSION,
-    PC_DEFAULT_THRESHOLD, PCClassic,
+    PC_DEFAULT_THRESHOLD,
+    PCClassic,
 )
 from causy.causal_effect_estimation.multivariate_regression import (
     ComputeDirectEffectsInDAGsMultivariateRegression,
