@@ -88,6 +88,38 @@ PC = graph_model_factory(
     )
 )
 
+PCClassic = graph_model_factory(
+    Algorithm(
+        pipeline_steps=[
+            CalculatePearsonCorrelations(
+                display_name="Calculate Pearson Correlations"
+            ),
+            CorrelationCoefficientTest(
+                threshold=VariableReference(name="threshold"),
+                display_name="Correlation Coefficient Test",
+            ),
+            ExtendedPartialCorrelationTestMatrix(
+                threshold=VariableReference(name="threshold"),
+                display_name="Extended Partial Correlation Test Matrix",
+                generator=PairsWithNeighboursGenerator(
+                    comparison_settings=ComparisonSettings(
+                        min=3, max=AS_MANY_AS_FIELDS
+                    ),
+                    shuffle_combinations=False,
+                ),
+            ),
+            *PC_ORIENTATION_RULES,
+            ComputeDirectEffectsInDAGsMultivariateRegression(
+                display_name="Compute Direct Effects in DAGs Multivariate Regression"
+            ),
+        ],
+        edge_types=PC_EDGE_TYPES,
+        extensions=[PC_GRAPH_UI_EXTENSION],
+        name="PC",
+        variables=[FloatVariable(name="threshold", value=PC_DEFAULT_THRESHOLD)],
+    )
+)
+
 PCStable = graph_model_factory(
     Algorithm(
         pipeline_steps=[
