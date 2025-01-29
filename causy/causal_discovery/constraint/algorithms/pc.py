@@ -91,9 +91,7 @@ PC = graph_model_factory(
 PCClassic = graph_model_factory(
     Algorithm(
         pipeline_steps=[
-            CalculatePearsonCorrelations(
-                display_name="Calculate Pearson Correlations"
-            ),
+            CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
             CorrelationCoefficientTest(
                 threshold=VariableReference(name="threshold"),
                 display_name="Correlation Coefficient Test",

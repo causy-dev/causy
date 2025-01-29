@@ -256,7 +256,9 @@ class ExtendedPartialCorrelationTestMatrix(
                     "triple": [
                         graph.nodes[nodes[0]],
                         graph.nodes[nodes[1]],
-                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]},
+                        list(
+                            nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
+                        ),
                     ],
                 },
             )
@@ -269,7 +271,9 @@ class ExtendedPartialCorrelationTestMatrix(
                     "triple": [
                         graph.nodes[nodes[0]],
                         graph.nodes[nodes[1]],
-                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]},
+                        list(
+                            nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
+                        ),
                     ],
                 },
             )
@@ -349,7 +353,9 @@ class ExtendedPartialCorrelationTestLinearRegression(
                     "triple": [
                         graph.nodes[nodes[0]],
                         graph.nodes[nodes[1]],
-                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]},
+                        list(
+                            nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
+                        ),
                     ],
                 },
             )
@@ -362,7 +368,9 @@ class ExtendedPartialCorrelationTestLinearRegression(
                     "triple": [
                         graph.nodes[nodes[0]],
                         graph.nodes[nodes[1]],
-                        nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]},
+                        list(
+                            nodes_set - {graph.nodes[nodes[0]], graph.nodes[nodes[1]]}
+                        ),
                     ]
                 },
             )
