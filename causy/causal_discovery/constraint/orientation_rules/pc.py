@@ -142,15 +142,30 @@ class ColliderTest(
                     unapplied_actions, y, z
                 )
                 if len(unapplied_actions_y_z) > 0 or len(unapplied_actions_x_z) > 0:
-                    logger.warning(
-                        f"Orientation conflict detected in ColliderTest stage when orienting the edge between {x.name} and {y.name}. The conflict is resolved using the strategy {self.conflict_resolution_strategy}, but orientation conflicts indicate assumption violations and can severely affect the accuracy of the results.",
-                    )
                     if (
                         ColliderTestConflictResolutionStrategies.KEEP_FIRST
                         is self.conflict_resolution_strategy
                     ):
-                        # We keep the first edge that was removed
-                        continue
+                        # We prioritize the first edge that was removed, we do nothing
+                        if len(unapplied_actions_y_z) > 0:
+                            results.append(
+                                TestResult(
+                                    u=z,
+                                    v=y,
+                                    action=TestResultAction.DO_NOTHING,
+                                    data={"orientation_conflict": True},
+                                )
+                            )
+                        if len(unapplied_actions_x_z) > 0:
+                            results.append(
+                                TestResult(
+                                    u=z,
+                                    v=x,
+                                    action=TestResultAction.DO_NOTHING,
+                                    data={"orientation_conflict": True},
+                                )
+                            )
+
                     elif (
                         ColliderTestConflictResolutionStrategies.KEEP_LAST
                         is self.conflict_resolution_strategy
@@ -237,7 +252,12 @@ class NonColliderTest(
                         breakflag = True
                         break
                 if breakflag is True:
-                    continue
+                    return TestResult(
+                        u=y,
+                        v=z,
+                        action=TestResultAction.DO_NOTHING,
+                        data={"orientation_conflict": True},
+                    )
                 return TestResult(
                     u=y,
                     v=z,
@@ -250,7 +270,15 @@ class NonColliderTest(
             ):
                 for node in graph.nodes:
                     if graph.only_directed_edge_exists(graph.nodes[node], x):
-                        continue
+                        breakflag = True
+                        break
+                if breakflag is True:
+                    return TestResult(
+                        u=x,
+                        v=z,
+                        action=TestResultAction.DO_NOTHING,
+                        data={"orientation_conflict": True},
+                    )
                 return TestResult(
                     u=x,
                     v=z,
