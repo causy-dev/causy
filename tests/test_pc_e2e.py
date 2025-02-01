@@ -10,6 +10,7 @@ from causy.causal_effect_estimation.multivariate_regression import (
     ComputeDirectEffectsInDAGsMultivariateRegression,
 )
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
+from causy.edge_types import DirectedEdge
 from causy.generators import PairsWithNeighboursGenerator
 from causy.graph_model import graph_model_factory
 from causy.causal_discovery.constraint.independence_tests.common import (
@@ -426,6 +427,36 @@ class PCTestTestCase(CausyTestCase):
         # TODO: find issue with tracking in partial correlation test in this setting
         pass
 
+    def test_orientation_conflict_tracking(self):
+        causal_insufficiency_four_nodes = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("U1"), NodeReference("X"), 1),
+                SampleEdge(NodeReference("U1"), NodeReference("Y"), 1),
+                SampleEdge(NodeReference("U2"), NodeReference("Y"), 1),
+                SampleEdge(NodeReference("U2"), NodeReference("Z"), 1),
+                SampleEdge(NodeReference("U3"), NodeReference("Z"), 1),
+                SampleEdge(NodeReference("U3"), NodeReference("V"), 1),
+                SampleEdge(NodeReference("U4"), NodeReference("V"), 1),
+                SampleEdge(NodeReference("U4"), NodeReference("X"), 1),
+            ],
+        )
+        test_data, graph = causal_insufficiency_four_nodes.generate(10000)
+        test_data.pop("U1")
+        test_data.pop("U2")
+        test_data.pop("U3")
+        test_data.pop("U4")
+        tst = PCClassic()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        nb_of_conflicts = 0
+        for result in tst.graph.action_history:
+            for proposed_action in result.all_proposed_actions:
+                if "orientation_conflict" in proposed_action.data:
+                    nb_of_conflicts += 1
+        self.assertGreater(nb_of_conflicts, 1)
+
     def test_d_separation_on_output_of_pc(self):
         rdnv = self.seeded_random.normalvariate
         sample_generator = IIDSampleGenerator(
@@ -447,3 +478,47 @@ class PCTestTestCase(CausyTestCase):
         z = tst.graph.node_by_id("Z")
         self.assertEqual(tst.graph.are_nodes_d_separated_cpdag(x, z, []), False)
         self.assertEqual(tst.graph.are_nodes_d_separated_cpdag(x, z, [y]), True)
+
+    def test_pc_faithfulness_violation(self):
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("V"), 2),
+                SampleEdge(NodeReference("V"), NodeReference("W"), 2),
+                SampleEdge(NodeReference("W"), NodeReference("Y"), -2),
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 8),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(10000)
+        tst = PCClassic()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertEqual(tst.graph.edge_exists("X", "Y"), False)
+        self.assertEqual(tst.graph.edge_exists("V", "Y"), False)
+        self.assertEqual(tst.graph.edge_exists("W", "X"), False)
+        self.assertEqual(tst.graph.edge_exists("W", "Y"), True)
+        self.assertEqual(tst.graph.edge_exists("V", "W"), True)
+        self.assertEqual(tst.graph.edge_exists("X", "V"), True)
+
+    def test_noncollider_triple_rule_e2e(self):
+        rdnv = self.seeded_random.normalvariate
+        sample_generator = IIDSampleGenerator(
+            edges=[
+                SampleEdge(NodeReference("X"), NodeReference("Y"), 2),
+                SampleEdge(NodeReference("Z"), NodeReference("Y"), 2),
+                SampleEdge(NodeReference("Y"), NodeReference("W"), 2),
+            ],
+            random=lambda: rdnv(0, 1),
+        )
+        test_data, graph = sample_generator.generate(10000)
+        tst = PCClassic()
+        tst.create_graph_from_data(test_data)
+        tst.create_all_possible_edges()
+        tst.execute_pipeline_steps()
+
+        self.assertEqual(tst.graph.edge_of_type_exists("X", "Y", DirectedEdge()), True)
+        self.assertEqual(tst.graph.edge_of_type_exists("Z", "Y", DirectedEdge()), True)
+        self.assertEqual(tst.graph.edge_of_type_exists("Y", "W", DirectedEdge()), True)
