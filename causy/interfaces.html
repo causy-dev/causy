@@ -352,6 +352,9 @@
                                 <a class="variable" href="#PipelineStepInterface.needs_unapplied_actions">needs_unapplied_actions</a>
                         </li>
                         <li>
+                                <a class="variable" href="#PipelineStepInterface.apply_synchronous">apply_synchronous</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#PipelineStepInterface.name">name</a>
                         </li>
                         <li>
@@ -801,182 +804,193 @@
 </span><span id="L-343"><a href="#L-343"><span class="linenos">343</span></a>
 </span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a><span class="k">class</span> <span class="nc">PipelineStepInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">PipelineStepInterfaceType</span><span class="p">]):</span>
 </span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a>    <span class="n">generator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GeneratorInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a>    <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FloatParameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_THRESHOLD</span>
-</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="n">IntegerParameter</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="n">BoolParameter</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a>
-</span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a>    <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a>    <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FloatParameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_THRESHOLD</span>  <span class="c1"># threshold for the test</span>
+</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="n">IntegerParameter</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a>        <span class="mi">1</span>  <span class="c1"># chunk size for parallel processing</span>
+</span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a>    <span class="p">)</span>
+</span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="n">BoolParameter</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># if True, the pipeline step will be executed in parallel (only works non synchronous)</span>
 </span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a>
-</span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a>    <span class="n">needs_unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BoolParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a>    <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># display name of the pipeline step</span>
 </span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a>
-</span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-</span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a>        <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FloatParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a>        <span class="n">generator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GeneratorInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-358"><a href="#L-358"><span class="linenos">358</span></a>        <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IntegerParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a>        <span class="n">parallel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BoolParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-360"><a href="#L-360"><span class="linenos">360</span></a>        <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-361"><a href="#L-361"><span class="linenos">361</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-</span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a>        <span class="k">if</span> <span class="n">generator</span><span class="p">:</span>
-</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">generator</span><span class="p">)</span>
-</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">generator</span>
-</span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a>
-</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>        <span class="k">if</span> <span class="n">chunk_size_parallel_processing</span><span class="p">:</span>
-</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="n">chunk_size_parallel_processing</span>
-</span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>
-</span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>        <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
-</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span> <span class="o">=</span> <span class="n">parallel</span>
-</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a>
-</span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>        <span class="k">if</span> <span class="n">display_name</span><span class="p">:</span>
-</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
-</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a>
-</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a>        <span class="k">if</span> <span class="n">threshold</span><span class="p">:</span>
-</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
-</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>
-</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a>    <span class="nd">@computed_field</span>
-</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a>    <span class="nd">@property</span>
-</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a>    <span class="n">needs_unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+</span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a>        <span class="n">BoolParameter</span>
+</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># if True, the pipeline step needs unapplied actions to be passed to it</span>
+</span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a>    <span class="n">apply_synchronous</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+</span><span id="L-358"><a href="#L-358"><span class="linenos">358</span></a>        <span class="n">BoolParameter</span>
+</span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># if True, the result of the pipeline step will be applied synchronously (only works non chunked and non parallel)</span>
+</span><span id="L-360"><a href="#L-360"><span class="linenos">360</span></a>
+</span><span id="L-361"><a href="#L-361"><span class="linenos">361</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a>        <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FloatParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a>        <span class="n">generator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GeneratorInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a>        <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IntegerParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a>        <span class="n">apply_synchronous</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BoolParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a>        <span class="n">parallel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BoolParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a>        <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>        <span class="k">if</span> <span class="n">generator</span><span class="p">:</span>
+</span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">generator</span><span class="p">)</span>
+</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">generator</span>
+</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>
+</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a>        <span class="k">if</span> <span class="n">chunk_size_parallel_processing</span><span class="p">:</span>
+</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="n">chunk_size_parallel_processing</span>
+</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a>
+</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>        <span class="k">if</span> <span class="n">apply_synchronous</span><span class="p">:</span>
+</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">apply_synchronous</span> <span class="o">=</span> <span class="n">apply_synchronous</span>
+</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a>
+</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a>        <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
+</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span> <span class="o">=</span> <span class="n">parallel</span>
 </span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a>
-</span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
-</span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-390"><a href="#L-390"><span class="linenos">390</span></a>        <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
-</span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>        <span class="n">unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]:</span>
-</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a><span class="sd">        Test if u and v are independent</span>
-</span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a><span class="sd">        :param u: u values</span>
-</span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a><span class="sd">        :param v: v values</span>
-</span><span id="L-398"><a href="#L-398"><span class="linenos">398</span></a><span class="sd">        :return: True if independent, False otherwise</span>
-</span><span id="L-399"><a href="#L-399"><span class="linenos">399</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-400"><a href="#L-400"><span class="linenos">400</span></a>        <span class="k">pass</span>
-</span><span id="L-401"><a href="#L-401"><span class="linenos">401</span></a>
-</span><span id="L-402"><a href="#L-402"><span class="linenos">402</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
-</span><span id="L-403"><a href="#L-403"><span class="linenos">403</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-404"><a href="#L-404"><span class="linenos">404</span></a>        <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span id="L-405"><a href="#L-405"><span class="linenos">405</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
-</span><span id="L-406"><a href="#L-406"><span class="linenos">406</span></a>        <span class="n">unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-407"><a href="#L-407"><span class="linenos">407</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]:</span>
-</span><span id="L-408"><a href="#L-408"><span class="linenos">408</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_unapplied_actions</span> <span class="ow">and</span> <span class="n">unapplied_actions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-409"><a href="#L-409"><span class="linenos">409</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-</span><span id="L-410"><a href="#L-410"><span class="linenos">410</span></a>                <span class="sa">f</span><span class="s2">&quot;Pipeline step </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> needs unapplied actions but none were provided&quot;</span>
-</span><span id="L-411"><a href="#L-411"><span class="linenos">411</span></a>            <span class="p">)</span>
-</span><span id="L-412"><a href="#L-412"><span class="linenos">412</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_unapplied_actions</span> <span class="ow">and</span> <span class="n">unapplied_actions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-413"><a href="#L-413"><span class="linenos">413</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">unapplied_actions</span><span class="p">)</span>
-</span><span id="L-414"><a href="#L-414"><span class="linenos">414</span></a>
-</span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>
-</span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>
-</span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a>
-</span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a><span class="k">class</span> <span class="nc">ExitConditionInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span>
-</span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
-</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a>        <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span><span class="p">,</span>
-</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a>        <span class="n">actions_taken</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">],</span>
-</span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>        <span class="n">iteration</span><span class="p">:</span> <span class="n">IntegerParameter</span><span class="p">,</span>
-</span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a><span class="sd">        :param graph:</span>
-</span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a><span class="sd">        :param graph_model_instance_:</span>
-</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a><span class="sd">        :param actions_taken:</span>
-</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a><span class="sd">        :param iteration:</span>
-</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a><span class="sd">        :return: True if you want to break an iteration, False otherwise</span>
-</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a>        <span class="k">pass</span>
-</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a>
-</span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
-</span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
-</span><span id="L-439"><a href="#L-439"><span class="linenos">439</span></a>        <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span><span class="p">,</span>
-</span><span id="L-440"><a href="#L-440"><span class="linenos">440</span></a>        <span class="n">actions_taken</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">],</span>
-</span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a>        <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">,</span> <span class="n">actions_taken</span><span class="p">,</span> <span class="n">iteration</span><span class="p">)</span>
-</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a>
-</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>    <span class="nd">@computed_field</span>
-</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a>    <span class="nd">@property</span>
-</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a>
-</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a>
-</span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a><span class="n">LogicStepInterfaceType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;LogicStepInterfaceType&quot;</span><span class="p">)</span>
-</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>
-</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a>
-</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a><span class="k">class</span> <span class="nc">LogicStepInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">LogicStepInterfaceType</span><span class="p">]):</span>
-</span><span id="L-455"><a href="#L-455"><span class="linenos">455</span></a>    <span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">PipelineStepInterfaceType</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a>    <span class="n">exit_condition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExitConditionInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a>
-</span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a>    <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a>
-</span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a>        <span class="k">pass</span>
+</span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a>        <span class="k">if</span> <span class="n">display_name</span><span class="p">:</span>
+</span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
+</span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a>
+</span><span id="L-390"><a href="#L-390"><span class="linenos">390</span></a>        <span class="k">if</span> <span class="n">threshold</span><span class="p">:</span>
+</span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+</span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>
+</span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>    <span class="nd">@computed_field</span>
+</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>    <span class="nd">@property</span>
+</span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a>
+</span><span id="L-398"><a href="#L-398"><span class="linenos">398</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-399"><a href="#L-399"><span class="linenos">399</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
+</span><span id="L-400"><a href="#L-400"><span class="linenos">400</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-401"><a href="#L-401"><span class="linenos">401</span></a>        <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span id="L-402"><a href="#L-402"><span class="linenos">402</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
+</span><span id="L-403"><a href="#L-403"><span class="linenos">403</span></a>        <span class="n">unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-404"><a href="#L-404"><span class="linenos">404</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]:</span>
+</span><span id="L-405"><a href="#L-405"><span class="linenos">405</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-406"><a href="#L-406"><span class="linenos">406</span></a><span class="sd">        Test if u and v are independent</span>
+</span><span id="L-407"><a href="#L-407"><span class="linenos">407</span></a><span class="sd">        :param u: u values</span>
+</span><span id="L-408"><a href="#L-408"><span class="linenos">408</span></a><span class="sd">        :param v: v values</span>
+</span><span id="L-409"><a href="#L-409"><span class="linenos">409</span></a><span class="sd">        :return: True if independent, False otherwise</span>
+</span><span id="L-410"><a href="#L-410"><span class="linenos">410</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-411"><a href="#L-411"><span class="linenos">411</span></a>        <span class="k">pass</span>
+</span><span id="L-412"><a href="#L-412"><span class="linenos">412</span></a>
+</span><span id="L-413"><a href="#L-413"><span class="linenos">413</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+</span><span id="L-414"><a href="#L-414"><span class="linenos">414</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a>        <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
+</span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a>        <span class="n">unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]:</span>
+</span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_unapplied_actions</span> <span class="ow">and</span> <span class="n">unapplied_actions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+</span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a>                <span class="sa">f</span><span class="s2">&quot;Pipeline step </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> needs unapplied actions but none were provided&quot;</span>
+</span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a>            <span class="p">)</span>
+</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_unapplied_actions</span> <span class="ow">and</span> <span class="n">unapplied_actions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">unapplied_actions</span><span class="p">)</span>
+</span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>
+</span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>
+</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>
+</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>
+</span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a><span class="k">class</span> <span class="nc">ExitConditionInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span>
+</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
+</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a>        <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span><span class="p">,</span>
+</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a>        <span class="n">actions_taken</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">],</span>
+</span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a>        <span class="n">iteration</span><span class="p">:</span> <span class="n">IntegerParameter</span><span class="p">,</span>
+</span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-439"><a href="#L-439"><span class="linenos">439</span></a><span class="sd">        :param graph:</span>
+</span><span id="L-440"><a href="#L-440"><span class="linenos">440</span></a><span class="sd">        :param graph_model_instance_:</span>
+</span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a><span class="sd">        :param actions_taken:</span>
+</span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a><span class="sd">        :param iteration:</span>
+</span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a><span class="sd">        :return: True if you want to break an iteration, False otherwise</span>
+</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>        <span class="k">pass</span>
+</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a>
+</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
+</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a>        <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span><span class="p">,</span>
+</span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a>        <span class="n">actions_taken</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">],</span>
+</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>        <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">,</span> <span class="n">actions_taken</span><span class="p">,</span> <span class="n">iteration</span><span class="p">)</span>
+</span><span id="L-455"><a href="#L-455"><span class="linenos">455</span></a>
+</span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a>    <span class="nd">@computed_field</span>
+</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a>    <span class="nd">@property</span>
+</span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a>
+</span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a>
+</span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a><span class="n">LogicStepInterfaceType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;LogicStepInterfaceType&quot;</span><span class="p">)</span>
 </span><span id="L-463"><a href="#L-463"><span class="linenos">463</span></a>
-</span><span id="L-464"><a href="#L-464"><span class="linenos">464</span></a>    <span class="nd">@computed_field</span>
-</span><span id="L-465"><a href="#L-465"><span class="linenos">465</span></a>    <span class="nd">@property</span>
-</span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-467"><a href="#L-467"><span class="linenos">467</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="L-464"><a href="#L-464"><span class="linenos">464</span></a>
+</span><span id="L-465"><a href="#L-465"><span class="linenos">465</span></a><span class="k">class</span> <span class="nc">LogicStepInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">LogicStepInterfaceType</span><span class="p">]):</span>
+</span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a>    <span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">PipelineStepInterfaceType</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-467"><a href="#L-467"><span class="linenos">467</span></a>    <span class="n">exit_condition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExitConditionInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-468"><a href="#L-468"><span class="linenos">468</span></a>
-</span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-</span><span id="L-470"><a href="#L-470"><span class="linenos">470</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a>        <span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
-</span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a>            <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">PipelineStepInterfaceType</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
-</span><span id="L-473"><a href="#L-473"><span class="linenos">473</span></a>        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-474"><a href="#L-474"><span class="linenos">474</span></a>        <span class="n">exit_condition</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExitConditionInterface</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-475"><a href="#L-475"><span class="linenos">475</span></a>        <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-476"><a href="#L-476"><span class="linenos">476</span></a>    <span class="p">):</span>
-</span><span id="L-477"><a href="#L-477"><span class="linenos">477</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-</span><span id="L-478"><a href="#L-478"><span class="linenos">478</span></a>        <span class="c1"># TODO check if this is a good idea</span>
-</span><span id="L-479"><a href="#L-479"><span class="linenos">479</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exit_condition</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="L-480"><a href="#L-480"><span class="linenos">480</span></a>            <span class="n">exit_condition</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">exit_condition</span><span class="p">)</span>
-</span><span id="L-481"><a href="#L-481"><span class="linenos">481</span></a>
-</span><span id="L-482"><a href="#L-482"><span class="linenos">482</span></a>        <span class="c1"># TODO: check if this is a good idea</span>
-</span><span id="L-483"><a href="#L-483"><span class="linenos">483</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="L-484"><a href="#L-484"><span class="linenos">484</span></a>            <span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">load_pipeline_steps_by_definition</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span>
-</span><span id="L-485"><a href="#L-485"><span class="linenos">485</span></a>
-</span><span id="L-486"><a href="#L-486"><span class="linenos">486</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">pipeline_steps</span> <span class="ow">or</span> <span class="p">[]</span>
-</span><span id="L-487"><a href="#L-487"><span class="linenos">487</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit_condition</span> <span class="o">=</span> <span class="n">exit_condition</span>
-</span><span id="L-488"><a href="#L-488"><span class="linenos">488</span></a>
-</span><span id="L-489"><a href="#L-489"><span class="linenos">489</span></a>        <span class="k">if</span> <span class="n">display_name</span><span class="p">:</span>
-</span><span id="L-490"><a href="#L-490"><span class="linenos">490</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
-</span><span id="L-491"><a href="#L-491"><span class="linenos">491</span></a>
+</span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a>    <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-470"><a href="#L-470"><span class="linenos">470</span></a>
+</span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-473"><a href="#L-473"><span class="linenos">473</span></a>        <span class="k">pass</span>
+</span><span id="L-474"><a href="#L-474"><span class="linenos">474</span></a>
+</span><span id="L-475"><a href="#L-475"><span class="linenos">475</span></a>    <span class="nd">@computed_field</span>
+</span><span id="L-476"><a href="#L-476"><span class="linenos">476</span></a>    <span class="nd">@property</span>
+</span><span id="L-477"><a href="#L-477"><span class="linenos">477</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-478"><a href="#L-478"><span class="linenos">478</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="L-479"><a href="#L-479"><span class="linenos">479</span></a>
+</span><span id="L-480"><a href="#L-480"><span class="linenos">480</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="L-481"><a href="#L-481"><span class="linenos">481</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-482"><a href="#L-482"><span class="linenos">482</span></a>        <span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+</span><span id="L-483"><a href="#L-483"><span class="linenos">483</span></a>            <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">PipelineStepInterfaceType</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</span><span id="L-484"><a href="#L-484"><span class="linenos">484</span></a>        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-485"><a href="#L-485"><span class="linenos">485</span></a>        <span class="n">exit_condition</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExitConditionInterface</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-486"><a href="#L-486"><span class="linenos">486</span></a>        <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-487"><a href="#L-487"><span class="linenos">487</span></a>    <span class="p">):</span>
+</span><span id="L-488"><a href="#L-488"><span class="linenos">488</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="L-489"><a href="#L-489"><span class="linenos">489</span></a>        <span class="c1"># TODO check if this is a good idea</span>
+</span><span id="L-490"><a href="#L-490"><span class="linenos">490</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exit_condition</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-491"><a href="#L-491"><span class="linenos">491</span></a>            <span class="n">exit_condition</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">exit_condition</span><span class="p">)</span>
 </span><span id="L-492"><a href="#L-492"><span class="linenos">492</span></a>
-</span><span id="L-493"><a href="#L-493"><span class="linenos">493</span></a><span class="n">ExtensionType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ExtensionType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;ExtensionInterface&quot;</span><span class="p">)</span>
-</span><span id="L-494"><a href="#L-494"><span class="linenos">494</span></a>
-</span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a>
-</span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a><span class="k">class</span> <span class="nc">ExtensionInterface</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">ExtensionType</span><span class="p">]):</span>
-</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a>    <span class="nd">@computed_field</span>
-</span><span id="L-498"><a href="#L-498"><span class="linenos">498</span></a>    <span class="nd">@property</span>
-</span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-500"><a href="#L-500"><span class="linenos">500</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span id="L-501"><a href="#L-501"><span class="linenos">501</span></a>
-</span><span id="L-502"><a href="#L-502"><span class="linenos">502</span></a>    <span class="k">class</span> <span class="nc">GraphAccessMixin</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="L-503"><a href="#L-503"><span class="linenos">503</span></a>        <span class="k">pass</span>
-</span><span id="L-504"><a href="#L-504"><span class="linenos">504</span></a>
+</span><span id="L-493"><a href="#L-493"><span class="linenos">493</span></a>        <span class="c1"># TODO: check if this is a good idea</span>
+</span><span id="L-494"><a href="#L-494"><span class="linenos">494</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a>            <span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">load_pipeline_steps_by_definition</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span>
+</span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a>
+</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">pipeline_steps</span> <span class="ow">or</span> <span class="p">[]</span>
+</span><span id="L-498"><a href="#L-498"><span class="linenos">498</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit_condition</span> <span class="o">=</span> <span class="n">exit_condition</span>
+</span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a>
+</span><span id="L-500"><a href="#L-500"><span class="linenos">500</span></a>        <span class="k">if</span> <span class="n">display_name</span><span class="p">:</span>
+</span><span id="L-501"><a href="#L-501"><span class="linenos">501</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
+</span><span id="L-502"><a href="#L-502"><span class="linenos">502</span></a>
+</span><span id="L-503"><a href="#L-503"><span class="linenos">503</span></a>
+</span><span id="L-504"><a href="#L-504"><span class="linenos">504</span></a><span class="n">ExtensionType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ExtensionType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;ExtensionInterface&quot;</span><span class="p">)</span>
 </span><span id="L-505"><a href="#L-505"><span class="linenos">505</span></a>
-</span><span id="L-506"><a href="#L-506"><span class="linenos">506</span></a><span class="k">class</span> <span class="nc">GraphUpdateHook</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-507"><a href="#L-507"><span class="linenos">507</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-508"><a href="#L-508"><span class="linenos">508</span></a><span class="sd">    A hook that is executed before or after the graph is updated. This can be used to modify the graph before or after an update.</span>
-</span><span id="L-509"><a href="#L-509"><span class="linenos">509</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-510"><a href="#L-510"><span class="linenos">510</span></a>
-</span><span id="L-511"><a href="#L-511"><span class="linenos">511</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-512"><a href="#L-512"><span class="linenos">512</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
-</span><span id="L-513"><a href="#L-513"><span class="linenos">513</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]</span>
-</span><span id="L-514"><a href="#L-514"><span class="linenos">514</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]:</span>
-</span><span id="L-515"><a href="#L-515"><span class="linenos">515</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-516"><a href="#L-516"><span class="linenos">516</span></a><span class="sd">        Execute the hook.</span>
-</span><span id="L-517"><a href="#L-517"><span class="linenos">517</span></a><span class="sd">        :param graph: current state of the graph.</span>
-</span><span id="L-518"><a href="#L-518"><span class="linenos">518</span></a><span class="sd">        :param updates: the planned/taken actions</span>
-</span><span id="L-519"><a href="#L-519"><span class="linenos">519</span></a><span class="sd">        :return: A list of updates that should be applied to the graph if it is a pre hook. If it is a post hook, it should return None.</span>
-</span><span id="L-520"><a href="#L-520"><span class="linenos">520</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-521"><a href="#L-521"><span class="linenos">521</span></a>        <span class="k">pass</span>
+</span><span id="L-506"><a href="#L-506"><span class="linenos">506</span></a>
+</span><span id="L-507"><a href="#L-507"><span class="linenos">507</span></a><span class="k">class</span> <span class="nc">ExtensionInterface</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">ExtensionType</span><span class="p">]):</span>
+</span><span id="L-508"><a href="#L-508"><span class="linenos">508</span></a>    <span class="nd">@computed_field</span>
+</span><span id="L-509"><a href="#L-509"><span class="linenos">509</span></a>    <span class="nd">@property</span>
+</span><span id="L-510"><a href="#L-510"><span class="linenos">510</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-511"><a href="#L-511"><span class="linenos">511</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="L-512"><a href="#L-512"><span class="linenos">512</span></a>
+</span><span id="L-513"><a href="#L-513"><span class="linenos">513</span></a>    <span class="k">class</span> <span class="nc">GraphAccessMixin</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="L-514"><a href="#L-514"><span class="linenos">514</span></a>        <span class="k">pass</span>
+</span><span id="L-515"><a href="#L-515"><span class="linenos">515</span></a>
+</span><span id="L-516"><a href="#L-516"><span class="linenos">516</span></a>
+</span><span id="L-517"><a href="#L-517"><span class="linenos">517</span></a><span class="k">class</span> <span class="nc">GraphUpdateHook</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-518"><a href="#L-518"><span class="linenos">518</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-519"><a href="#L-519"><span class="linenos">519</span></a><span class="sd">    A hook that is executed before or after the graph is updated. This can be used to modify the graph before or after an update.</span>
+</span><span id="L-520"><a href="#L-520"><span class="linenos">520</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-521"><a href="#L-521"><span class="linenos">521</span></a>
+</span><span id="L-522"><a href="#L-522"><span class="linenos">522</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-523"><a href="#L-523"><span class="linenos">523</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
+</span><span id="L-524"><a href="#L-524"><span class="linenos">524</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]</span>
+</span><span id="L-525"><a href="#L-525"><span class="linenos">525</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]:</span>
+</span><span id="L-526"><a href="#L-526"><span class="linenos">526</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-527"><a href="#L-527"><span class="linenos">527</span></a><span class="sd">        Execute the hook.</span>
+</span><span id="L-528"><a href="#L-528"><span class="linenos">528</span></a><span class="sd">        :param graph: current state of the graph.</span>
+</span><span id="L-529"><a href="#L-529"><span class="linenos">529</span></a><span class="sd">        :param updates: the planned/taken actions</span>
+</span><span id="L-530"><a href="#L-530"><span class="linenos">530</span></a><span class="sd">        :return: A list of updates that should be applied to the graph if it is a pre hook. If it is a post hook, it should return None.</span>
+</span><span id="L-531"><a href="#L-531"><span class="linenos">531</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-532"><a href="#L-532"><span class="linenos">532</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -2692,7 +2706,7 @@ inheritance.</p>
 
                             <div id="GraphModelInterface.pool" class="classattr">
                                 <div class="attr variable">
-            <span class="name">pool</span><span class="annotation">: &lt;bound method BaseContext.Pool of &lt;multiprocessing.context.DefaultContext object at 0x7fb5dadc57f0&gt;&gt;</span>
+            <span class="name">pool</span><span class="annotation">: &lt;bound method BaseContext.Pool of &lt;multiprocessing.context.DefaultContext object at 0x7fcafffb0f20&gt;&gt;</span>
 
         
     </div>
@@ -3007,76 +3021,87 @@ inheritance.</p>
     <a class="headerlink" href="#PipelineStepInterface"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="PipelineStepInterface-345"><a href="#PipelineStepInterface-345"><span class="linenos">345</span></a><span class="k">class</span> <span class="nc">PipelineStepInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">PipelineStepInterfaceType</span><span class="p">]):</span>
 </span><span id="PipelineStepInterface-346"><a href="#PipelineStepInterface-346"><span class="linenos">346</span></a>    <span class="n">generator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GeneratorInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="PipelineStepInterface-347"><a href="#PipelineStepInterface-347"><span class="linenos">347</span></a>    <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FloatParameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_THRESHOLD</span>
-</span><span id="PipelineStepInterface-348"><a href="#PipelineStepInterface-348"><span class="linenos">348</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="n">IntegerParameter</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="PipelineStepInterface-349"><a href="#PipelineStepInterface-349"><span class="linenos">349</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="n">BoolParameter</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="PipelineStepInterface-350"><a href="#PipelineStepInterface-350"><span class="linenos">350</span></a>
-</span><span id="PipelineStepInterface-351"><a href="#PipelineStepInterface-351"><span class="linenos">351</span></a>    <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="PipelineStepInterface-347"><a href="#PipelineStepInterface-347"><span class="linenos">347</span></a>    <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FloatParameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_THRESHOLD</span>  <span class="c1"># threshold for the test</span>
+</span><span id="PipelineStepInterface-348"><a href="#PipelineStepInterface-348"><span class="linenos">348</span></a>    <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="n">IntegerParameter</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="PipelineStepInterface-349"><a href="#PipelineStepInterface-349"><span class="linenos">349</span></a>        <span class="mi">1</span>  <span class="c1"># chunk size for parallel processing</span>
+</span><span id="PipelineStepInterface-350"><a href="#PipelineStepInterface-350"><span class="linenos">350</span></a>    <span class="p">)</span>
+</span><span id="PipelineStepInterface-351"><a href="#PipelineStepInterface-351"><span class="linenos">351</span></a>    <span class="n">parallel</span><span class="p">:</span> <span class="n">BoolParameter</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># if True, the pipeline step will be executed in parallel (only works non synchronous)</span>
 </span><span id="PipelineStepInterface-352"><a href="#PipelineStepInterface-352"><span class="linenos">352</span></a>
-</span><span id="PipelineStepInterface-353"><a href="#PipelineStepInterface-353"><span class="linenos">353</span></a>    <span class="n">needs_unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BoolParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="PipelineStepInterface-353"><a href="#PipelineStepInterface-353"><span class="linenos">353</span></a>    <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># display name of the pipeline step</span>
 </span><span id="PipelineStepInterface-354"><a href="#PipelineStepInterface-354"><span class="linenos">354</span></a>
-</span><span id="PipelineStepInterface-355"><a href="#PipelineStepInterface-355"><span class="linenos">355</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-</span><span id="PipelineStepInterface-356"><a href="#PipelineStepInterface-356"><span class="linenos">356</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-357"><a href="#PipelineStepInterface-357"><span class="linenos">357</span></a>        <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FloatParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-358"><a href="#PipelineStepInterface-358"><span class="linenos">358</span></a>        <span class="n">generator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GeneratorInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-359"><a href="#PipelineStepInterface-359"><span class="linenos">359</span></a>        <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IntegerParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-360"><a href="#PipelineStepInterface-360"><span class="linenos">360</span></a>        <span class="n">parallel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BoolParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-361"><a href="#PipelineStepInterface-361"><span class="linenos">361</span></a>        <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-362"><a href="#PipelineStepInterface-362"><span class="linenos">362</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-363"><a href="#PipelineStepInterface-363"><span class="linenos">363</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PipelineStepInterface-364"><a href="#PipelineStepInterface-364"><span class="linenos">364</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-</span><span id="PipelineStepInterface-365"><a href="#PipelineStepInterface-365"><span class="linenos">365</span></a>        <span class="k">if</span> <span class="n">generator</span><span class="p">:</span>
-</span><span id="PipelineStepInterface-366"><a href="#PipelineStepInterface-366"><span class="linenos">366</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="PipelineStepInterface-367"><a href="#PipelineStepInterface-367"><span class="linenos">367</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">generator</span><span class="p">)</span>
-</span><span id="PipelineStepInterface-368"><a href="#PipelineStepInterface-368"><span class="linenos">368</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="PipelineStepInterface-369"><a href="#PipelineStepInterface-369"><span class="linenos">369</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">generator</span>
-</span><span id="PipelineStepInterface-370"><a href="#PipelineStepInterface-370"><span class="linenos">370</span></a>
-</span><span id="PipelineStepInterface-371"><a href="#PipelineStepInterface-371"><span class="linenos">371</span></a>        <span class="k">if</span> <span class="n">chunk_size_parallel_processing</span><span class="p">:</span>
-</span><span id="PipelineStepInterface-372"><a href="#PipelineStepInterface-372"><span class="linenos">372</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="n">chunk_size_parallel_processing</span>
-</span><span id="PipelineStepInterface-373"><a href="#PipelineStepInterface-373"><span class="linenos">373</span></a>
-</span><span id="PipelineStepInterface-374"><a href="#PipelineStepInterface-374"><span class="linenos">374</span></a>        <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
-</span><span id="PipelineStepInterface-375"><a href="#PipelineStepInterface-375"><span class="linenos">375</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span> <span class="o">=</span> <span class="n">parallel</span>
-</span><span id="PipelineStepInterface-376"><a href="#PipelineStepInterface-376"><span class="linenos">376</span></a>
-</span><span id="PipelineStepInterface-377"><a href="#PipelineStepInterface-377"><span class="linenos">377</span></a>        <span class="k">if</span> <span class="n">display_name</span><span class="p">:</span>
-</span><span id="PipelineStepInterface-378"><a href="#PipelineStepInterface-378"><span class="linenos">378</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
-</span><span id="PipelineStepInterface-379"><a href="#PipelineStepInterface-379"><span class="linenos">379</span></a>
-</span><span id="PipelineStepInterface-380"><a href="#PipelineStepInterface-380"><span class="linenos">380</span></a>        <span class="k">if</span> <span class="n">threshold</span><span class="p">:</span>
-</span><span id="PipelineStepInterface-381"><a href="#PipelineStepInterface-381"><span class="linenos">381</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
-</span><span id="PipelineStepInterface-382"><a href="#PipelineStepInterface-382"><span class="linenos">382</span></a>
-</span><span id="PipelineStepInterface-383"><a href="#PipelineStepInterface-383"><span class="linenos">383</span></a>    <span class="nd">@computed_field</span>
-</span><span id="PipelineStepInterface-384"><a href="#PipelineStepInterface-384"><span class="linenos">384</span></a>    <span class="nd">@property</span>
-</span><span id="PipelineStepInterface-385"><a href="#PipelineStepInterface-385"><span class="linenos">385</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="PipelineStepInterface-386"><a href="#PipelineStepInterface-386"><span class="linenos">386</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="PipelineStepInterface-355"><a href="#PipelineStepInterface-355"><span class="linenos">355</span></a>    <span class="n">needs_unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+</span><span id="PipelineStepInterface-356"><a href="#PipelineStepInterface-356"><span class="linenos">356</span></a>        <span class="n">BoolParameter</span>
+</span><span id="PipelineStepInterface-357"><a href="#PipelineStepInterface-357"><span class="linenos">357</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># if True, the pipeline step needs unapplied actions to be passed to it</span>
+</span><span id="PipelineStepInterface-358"><a href="#PipelineStepInterface-358"><span class="linenos">358</span></a>    <span class="n">apply_synchronous</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+</span><span id="PipelineStepInterface-359"><a href="#PipelineStepInterface-359"><span class="linenos">359</span></a>        <span class="n">BoolParameter</span>
+</span><span id="PipelineStepInterface-360"><a href="#PipelineStepInterface-360"><span class="linenos">360</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># if True, the result of the pipeline step will be applied synchronously (only works non chunked and non parallel)</span>
+</span><span id="PipelineStepInterface-361"><a href="#PipelineStepInterface-361"><span class="linenos">361</span></a>
+</span><span id="PipelineStepInterface-362"><a href="#PipelineStepInterface-362"><span class="linenos">362</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="PipelineStepInterface-363"><a href="#PipelineStepInterface-363"><span class="linenos">363</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-364"><a href="#PipelineStepInterface-364"><span class="linenos">364</span></a>        <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FloatParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-365"><a href="#PipelineStepInterface-365"><span class="linenos">365</span></a>        <span class="n">generator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GeneratorInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-366"><a href="#PipelineStepInterface-366"><span class="linenos">366</span></a>        <span class="n">chunk_size_parallel_processing</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IntegerParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-367"><a href="#PipelineStepInterface-367"><span class="linenos">367</span></a>        <span class="n">apply_synchronous</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BoolParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-368"><a href="#PipelineStepInterface-368"><span class="linenos">368</span></a>        <span class="n">parallel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BoolParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-369"><a href="#PipelineStepInterface-369"><span class="linenos">369</span></a>        <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-370"><a href="#PipelineStepInterface-370"><span class="linenos">370</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-371"><a href="#PipelineStepInterface-371"><span class="linenos">371</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PipelineStepInterface-372"><a href="#PipelineStepInterface-372"><span class="linenos">372</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="PipelineStepInterface-373"><a href="#PipelineStepInterface-373"><span class="linenos">373</span></a>        <span class="k">if</span> <span class="n">generator</span><span class="p">:</span>
+</span><span id="PipelineStepInterface-374"><a href="#PipelineStepInterface-374"><span class="linenos">374</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="PipelineStepInterface-375"><a href="#PipelineStepInterface-375"><span class="linenos">375</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">generator</span><span class="p">)</span>
+</span><span id="PipelineStepInterface-376"><a href="#PipelineStepInterface-376"><span class="linenos">376</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="PipelineStepInterface-377"><a href="#PipelineStepInterface-377"><span class="linenos">377</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">generator</span>
+</span><span id="PipelineStepInterface-378"><a href="#PipelineStepInterface-378"><span class="linenos">378</span></a>
+</span><span id="PipelineStepInterface-379"><a href="#PipelineStepInterface-379"><span class="linenos">379</span></a>        <span class="k">if</span> <span class="n">chunk_size_parallel_processing</span><span class="p">:</span>
+</span><span id="PipelineStepInterface-380"><a href="#PipelineStepInterface-380"><span class="linenos">380</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size_parallel_processing</span> <span class="o">=</span> <span class="n">chunk_size_parallel_processing</span>
+</span><span id="PipelineStepInterface-381"><a href="#PipelineStepInterface-381"><span class="linenos">381</span></a>
+</span><span id="PipelineStepInterface-382"><a href="#PipelineStepInterface-382"><span class="linenos">382</span></a>        <span class="k">if</span> <span class="n">apply_synchronous</span><span class="p">:</span>
+</span><span id="PipelineStepInterface-383"><a href="#PipelineStepInterface-383"><span class="linenos">383</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">apply_synchronous</span> <span class="o">=</span> <span class="n">apply_synchronous</span>
+</span><span id="PipelineStepInterface-384"><a href="#PipelineStepInterface-384"><span class="linenos">384</span></a>
+</span><span id="PipelineStepInterface-385"><a href="#PipelineStepInterface-385"><span class="linenos">385</span></a>        <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
+</span><span id="PipelineStepInterface-386"><a href="#PipelineStepInterface-386"><span class="linenos">386</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span> <span class="o">=</span> <span class="n">parallel</span>
 </span><span id="PipelineStepInterface-387"><a href="#PipelineStepInterface-387"><span class="linenos">387</span></a>
-</span><span id="PipelineStepInterface-388"><a href="#PipelineStepInterface-388"><span class="linenos">388</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="PipelineStepInterface-389"><a href="#PipelineStepInterface-389"><span class="linenos">389</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
-</span><span id="PipelineStepInterface-390"><a href="#PipelineStepInterface-390"><span class="linenos">390</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-391"><a href="#PipelineStepInterface-391"><span class="linenos">391</span></a>        <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span id="PipelineStepInterface-392"><a href="#PipelineStepInterface-392"><span class="linenos">392</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-393"><a href="#PipelineStepInterface-393"><span class="linenos">393</span></a>        <span class="n">unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-394"><a href="#PipelineStepInterface-394"><span class="linenos">394</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]:</span>
-</span><span id="PipelineStepInterface-395"><a href="#PipelineStepInterface-395"><span class="linenos">395</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PipelineStepInterface-396"><a href="#PipelineStepInterface-396"><span class="linenos">396</span></a><span class="sd">        Test if u and v are independent</span>
-</span><span id="PipelineStepInterface-397"><a href="#PipelineStepInterface-397"><span class="linenos">397</span></a><span class="sd">        :param u: u values</span>
-</span><span id="PipelineStepInterface-398"><a href="#PipelineStepInterface-398"><span class="linenos">398</span></a><span class="sd">        :param v: v values</span>
-</span><span id="PipelineStepInterface-399"><a href="#PipelineStepInterface-399"><span class="linenos">399</span></a><span class="sd">        :return: True if independent, False otherwise</span>
-</span><span id="PipelineStepInterface-400"><a href="#PipelineStepInterface-400"><span class="linenos">400</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PipelineStepInterface-401"><a href="#PipelineStepInterface-401"><span class="linenos">401</span></a>        <span class="k">pass</span>
-</span><span id="PipelineStepInterface-402"><a href="#PipelineStepInterface-402"><span class="linenos">402</span></a>
-</span><span id="PipelineStepInterface-403"><a href="#PipelineStepInterface-403"><span class="linenos">403</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
-</span><span id="PipelineStepInterface-404"><a href="#PipelineStepInterface-404"><span class="linenos">404</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-405"><a href="#PipelineStepInterface-405"><span class="linenos">405</span></a>        <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span id="PipelineStepInterface-406"><a href="#PipelineStepInterface-406"><span class="linenos">406</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-407"><a href="#PipelineStepInterface-407"><span class="linenos">407</span></a>        <span class="n">unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PipelineStepInterface-408"><a href="#PipelineStepInterface-408"><span class="linenos">408</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]:</span>
-</span><span id="PipelineStepInterface-409"><a href="#PipelineStepInterface-409"><span class="linenos">409</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_unapplied_actions</span> <span class="ow">and</span> <span class="n">unapplied_actions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PipelineStepInterface-410"><a href="#PipelineStepInterface-410"><span class="linenos">410</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-</span><span id="PipelineStepInterface-411"><a href="#PipelineStepInterface-411"><span class="linenos">411</span></a>                <span class="sa">f</span><span class="s2">&quot;Pipeline step </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> needs unapplied actions but none were provided&quot;</span>
-</span><span id="PipelineStepInterface-412"><a href="#PipelineStepInterface-412"><span class="linenos">412</span></a>            <span class="p">)</span>
-</span><span id="PipelineStepInterface-413"><a href="#PipelineStepInterface-413"><span class="linenos">413</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_unapplied_actions</span> <span class="ow">and</span> <span class="n">unapplied_actions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PipelineStepInterface-414"><a href="#PipelineStepInterface-414"><span class="linenos">414</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">unapplied_actions</span><span class="p">)</span>
-</span><span id="PipelineStepInterface-415"><a href="#PipelineStepInterface-415"><span class="linenos">415</span></a>
-</span><span id="PipelineStepInterface-416"><a href="#PipelineStepInterface-416"><span class="linenos">416</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>
+</span><span id="PipelineStepInterface-388"><a href="#PipelineStepInterface-388"><span class="linenos">388</span></a>        <span class="k">if</span> <span class="n">display_name</span><span class="p">:</span>
+</span><span id="PipelineStepInterface-389"><a href="#PipelineStepInterface-389"><span class="linenos">389</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
+</span><span id="PipelineStepInterface-390"><a href="#PipelineStepInterface-390"><span class="linenos">390</span></a>
+</span><span id="PipelineStepInterface-391"><a href="#PipelineStepInterface-391"><span class="linenos">391</span></a>        <span class="k">if</span> <span class="n">threshold</span><span class="p">:</span>
+</span><span id="PipelineStepInterface-392"><a href="#PipelineStepInterface-392"><span class="linenos">392</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+</span><span id="PipelineStepInterface-393"><a href="#PipelineStepInterface-393"><span class="linenos">393</span></a>
+</span><span id="PipelineStepInterface-394"><a href="#PipelineStepInterface-394"><span class="linenos">394</span></a>    <span class="nd">@computed_field</span>
+</span><span id="PipelineStepInterface-395"><a href="#PipelineStepInterface-395"><span class="linenos">395</span></a>    <span class="nd">@property</span>
+</span><span id="PipelineStepInterface-396"><a href="#PipelineStepInterface-396"><span class="linenos">396</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="PipelineStepInterface-397"><a href="#PipelineStepInterface-397"><span class="linenos">397</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="PipelineStepInterface-398"><a href="#PipelineStepInterface-398"><span class="linenos">398</span></a>
+</span><span id="PipelineStepInterface-399"><a href="#PipelineStepInterface-399"><span class="linenos">399</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="PipelineStepInterface-400"><a href="#PipelineStepInterface-400"><span class="linenos">400</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
+</span><span id="PipelineStepInterface-401"><a href="#PipelineStepInterface-401"><span class="linenos">401</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-402"><a href="#PipelineStepInterface-402"><span class="linenos">402</span></a>        <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span id="PipelineStepInterface-403"><a href="#PipelineStepInterface-403"><span class="linenos">403</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-404"><a href="#PipelineStepInterface-404"><span class="linenos">404</span></a>        <span class="n">unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-405"><a href="#PipelineStepInterface-405"><span class="linenos">405</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]:</span>
+</span><span id="PipelineStepInterface-406"><a href="#PipelineStepInterface-406"><span class="linenos">406</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PipelineStepInterface-407"><a href="#PipelineStepInterface-407"><span class="linenos">407</span></a><span class="sd">        Test if u and v are independent</span>
+</span><span id="PipelineStepInterface-408"><a href="#PipelineStepInterface-408"><span class="linenos">408</span></a><span class="sd">        :param u: u values</span>
+</span><span id="PipelineStepInterface-409"><a href="#PipelineStepInterface-409"><span class="linenos">409</span></a><span class="sd">        :param v: v values</span>
+</span><span id="PipelineStepInterface-410"><a href="#PipelineStepInterface-410"><span class="linenos">410</span></a><span class="sd">        :return: True if independent, False otherwise</span>
+</span><span id="PipelineStepInterface-411"><a href="#PipelineStepInterface-411"><span class="linenos">411</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PipelineStepInterface-412"><a href="#PipelineStepInterface-412"><span class="linenos">412</span></a>        <span class="k">pass</span>
+</span><span id="PipelineStepInterface-413"><a href="#PipelineStepInterface-413"><span class="linenos">413</span></a>
+</span><span id="PipelineStepInterface-414"><a href="#PipelineStepInterface-414"><span class="linenos">414</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+</span><span id="PipelineStepInterface-415"><a href="#PipelineStepInterface-415"><span class="linenos">415</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-416"><a href="#PipelineStepInterface-416"><span class="linenos">416</span></a>        <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span id="PipelineStepInterface-417"><a href="#PipelineStepInterface-417"><span class="linenos">417</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-418"><a href="#PipelineStepInterface-418"><span class="linenos">418</span></a>        <span class="n">unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PipelineStepInterface-419"><a href="#PipelineStepInterface-419"><span class="linenos">419</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]:</span>
+</span><span id="PipelineStepInterface-420"><a href="#PipelineStepInterface-420"><span class="linenos">420</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_unapplied_actions</span> <span class="ow">and</span> <span class="n">unapplied_actions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PipelineStepInterface-421"><a href="#PipelineStepInterface-421"><span class="linenos">421</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+</span><span id="PipelineStepInterface-422"><a href="#PipelineStepInterface-422"><span class="linenos">422</span></a>                <span class="sa">f</span><span class="s2">&quot;Pipeline step </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> needs unapplied actions but none were provided&quot;</span>
+</span><span id="PipelineStepInterface-423"><a href="#PipelineStepInterface-423"><span class="linenos">423</span></a>            <span class="p">)</span>
+</span><span id="PipelineStepInterface-424"><a href="#PipelineStepInterface-424"><span class="linenos">424</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_unapplied_actions</span> <span class="ow">and</span> <span class="n">unapplied_actions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PipelineStepInterface-425"><a href="#PipelineStepInterface-425"><span class="linenos">425</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">unapplied_actions</span><span class="p">)</span>
+</span><span id="PipelineStepInterface-426"><a href="#PipelineStepInterface-426"><span class="linenos">426</span></a>
+</span><span id="PipelineStepInterface-427"><a href="#PipelineStepInterface-427"><span class="linenos">427</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -3151,6 +3176,17 @@ inheritance.</p>
     
 
                             </div>
+                            <div id="PipelineStepInterface.apply_synchronous" class="classattr">
+                                <div class="attr variable">
+            <span class="name">apply_synchronous</span><span class="annotation">: Union[bool, <a href="variables.html#VariableReference">causy.variables.VariableReference</a>, NoneType]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#PipelineStepInterface.apply_synchronous"></a>
+    
+    
+
+                            </div>
                             <div id="PipelineStepInterface.name" class="classattr">
                                         <input id="PipelineStepInterface.name-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr variable">
@@ -3160,10 +3196,10 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#PipelineStepInterface.name"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PipelineStepInterface.name-383"><a href="#PipelineStepInterface.name-383"><span class="linenos">383</span></a>    <span class="nd">@computed_field</span>
-</span><span id="PipelineStepInterface.name-384"><a href="#PipelineStepInterface.name-384"><span class="linenos">384</span></a>    <span class="nd">@property</span>
-</span><span id="PipelineStepInterface.name-385"><a href="#PipelineStepInterface.name-385"><span class="linenos">385</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="PipelineStepInterface.name-386"><a href="#PipelineStepInterface.name-386"><span class="linenos">386</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PipelineStepInterface.name-394"><a href="#PipelineStepInterface.name-394"><span class="linenos">394</span></a>    <span class="nd">@computed_field</span>
+</span><span id="PipelineStepInterface.name-395"><a href="#PipelineStepInterface.name-395"><span class="linenos">395</span></a>    <span class="nd">@property</span>
+</span><span id="PipelineStepInterface.name-396"><a href="#PipelineStepInterface.name-396"><span class="linenos">396</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="PipelineStepInterface.name-397"><a href="#PipelineStepInterface.name-397"><span class="linenos">397</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -3182,20 +3218,20 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#PipelineStepInterface.process"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PipelineStepInterface.process-388"><a href="#PipelineStepInterface.process-388"><span class="linenos">388</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="PipelineStepInterface.process-389"><a href="#PipelineStepInterface.process-389"><span class="linenos">389</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
-</span><span id="PipelineStepInterface.process-390"><a href="#PipelineStepInterface.process-390"><span class="linenos">390</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="PipelineStepInterface.process-391"><a href="#PipelineStepInterface.process-391"><span class="linenos">391</span></a>        <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span id="PipelineStepInterface.process-392"><a href="#PipelineStepInterface.process-392"><span class="linenos">392</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
-</span><span id="PipelineStepInterface.process-393"><a href="#PipelineStepInterface.process-393"><span class="linenos">393</span></a>        <span class="n">unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PipelineStepInterface.process-394"><a href="#PipelineStepInterface.process-394"><span class="linenos">394</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]:</span>
-</span><span id="PipelineStepInterface.process-395"><a href="#PipelineStepInterface.process-395"><span class="linenos">395</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PipelineStepInterface.process-396"><a href="#PipelineStepInterface.process-396"><span class="linenos">396</span></a><span class="sd">        Test if u and v are independent</span>
-</span><span id="PipelineStepInterface.process-397"><a href="#PipelineStepInterface.process-397"><span class="linenos">397</span></a><span class="sd">        :param u: u values</span>
-</span><span id="PipelineStepInterface.process-398"><a href="#PipelineStepInterface.process-398"><span class="linenos">398</span></a><span class="sd">        :param v: v values</span>
-</span><span id="PipelineStepInterface.process-399"><a href="#PipelineStepInterface.process-399"><span class="linenos">399</span></a><span class="sd">        :return: True if independent, False otherwise</span>
-</span><span id="PipelineStepInterface.process-400"><a href="#PipelineStepInterface.process-400"><span class="linenos">400</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PipelineStepInterface.process-401"><a href="#PipelineStepInterface.process-401"><span class="linenos">401</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PipelineStepInterface.process-399"><a href="#PipelineStepInterface.process-399"><span class="linenos">399</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="PipelineStepInterface.process-400"><a href="#PipelineStepInterface.process-400"><span class="linenos">400</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span>
+</span><span id="PipelineStepInterface.process-401"><a href="#PipelineStepInterface.process-401"><span class="linenos">401</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="PipelineStepInterface.process-402"><a href="#PipelineStepInterface.process-402"><span class="linenos">402</span></a>        <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span id="PipelineStepInterface.process-403"><a href="#PipelineStepInterface.process-403"><span class="linenos">403</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
+</span><span id="PipelineStepInterface.process-404"><a href="#PipelineStepInterface.process-404"><span class="linenos">404</span></a>        <span class="n">unapplied_actions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PipelineStepInterface.process-405"><a href="#PipelineStepInterface.process-405"><span class="linenos">405</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]:</span>
+</span><span id="PipelineStepInterface.process-406"><a href="#PipelineStepInterface.process-406"><span class="linenos">406</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PipelineStepInterface.process-407"><a href="#PipelineStepInterface.process-407"><span class="linenos">407</span></a><span class="sd">        Test if u and v are independent</span>
+</span><span id="PipelineStepInterface.process-408"><a href="#PipelineStepInterface.process-408"><span class="linenos">408</span></a><span class="sd">        :param u: u values</span>
+</span><span id="PipelineStepInterface.process-409"><a href="#PipelineStepInterface.process-409"><span class="linenos">409</span></a><span class="sd">        :param v: v values</span>
+</span><span id="PipelineStepInterface.process-410"><a href="#PipelineStepInterface.process-410"><span class="linenos">410</span></a><span class="sd">        :return: True if independent, False otherwise</span>
+</span><span id="PipelineStepInterface.process-411"><a href="#PipelineStepInterface.process-411"><span class="linenos">411</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PipelineStepInterface.process-412"><a href="#PipelineStepInterface.process-412"><span class="linenos">412</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -3266,37 +3302,37 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#ExitConditionInterface"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExitConditionInterface-419"><a href="#ExitConditionInterface-419"><span class="linenos">419</span></a><span class="k">class</span> <span class="nc">ExitConditionInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="ExitConditionInterface-420"><a href="#ExitConditionInterface-420"><span class="linenos">420</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="ExitConditionInterface-421"><a href="#ExitConditionInterface-421"><span class="linenos">421</span></a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span>
-</span><span id="ExitConditionInterface-422"><a href="#ExitConditionInterface-422"><span class="linenos">422</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="ExitConditionInterface-423"><a href="#ExitConditionInterface-423"><span class="linenos">423</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
-</span><span id="ExitConditionInterface-424"><a href="#ExitConditionInterface-424"><span class="linenos">424</span></a>        <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span><span class="p">,</span>
-</span><span id="ExitConditionInterface-425"><a href="#ExitConditionInterface-425"><span class="linenos">425</span></a>        <span class="n">actions_taken</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">],</span>
-</span><span id="ExitConditionInterface-426"><a href="#ExitConditionInterface-426"><span class="linenos">426</span></a>        <span class="n">iteration</span><span class="p">:</span> <span class="n">IntegerParameter</span><span class="p">,</span>
-</span><span id="ExitConditionInterface-427"><a href="#ExitConditionInterface-427"><span class="linenos">427</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="ExitConditionInterface-428"><a href="#ExitConditionInterface-428"><span class="linenos">428</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ExitConditionInterface-429"><a href="#ExitConditionInterface-429"><span class="linenos">429</span></a><span class="sd">        :param graph:</span>
-</span><span id="ExitConditionInterface-430"><a href="#ExitConditionInterface-430"><span class="linenos">430</span></a><span class="sd">        :param graph_model_instance_:</span>
-</span><span id="ExitConditionInterface-431"><a href="#ExitConditionInterface-431"><span class="linenos">431</span></a><span class="sd">        :param actions_taken:</span>
-</span><span id="ExitConditionInterface-432"><a href="#ExitConditionInterface-432"><span class="linenos">432</span></a><span class="sd">        :param iteration:</span>
-</span><span id="ExitConditionInterface-433"><a href="#ExitConditionInterface-433"><span class="linenos">433</span></a><span class="sd">        :return: True if you want to break an iteration, False otherwise</span>
-</span><span id="ExitConditionInterface-434"><a href="#ExitConditionInterface-434"><span class="linenos">434</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ExitConditionInterface-435"><a href="#ExitConditionInterface-435"><span class="linenos">435</span></a>        <span class="k">pass</span>
-</span><span id="ExitConditionInterface-436"><a href="#ExitConditionInterface-436"><span class="linenos">436</span></a>
-</span><span id="ExitConditionInterface-437"><a href="#ExitConditionInterface-437"><span class="linenos">437</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
-</span><span id="ExitConditionInterface-438"><a href="#ExitConditionInterface-438"><span class="linenos">438</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="ExitConditionInterface-439"><a href="#ExitConditionInterface-439"><span class="linenos">439</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
-</span><span id="ExitConditionInterface-440"><a href="#ExitConditionInterface-440"><span class="linenos">440</span></a>        <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span><span class="p">,</span>
-</span><span id="ExitConditionInterface-441"><a href="#ExitConditionInterface-441"><span class="linenos">441</span></a>        <span class="n">actions_taken</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">],</span>
-</span><span id="ExitConditionInterface-442"><a href="#ExitConditionInterface-442"><span class="linenos">442</span></a>        <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="ExitConditionInterface-443"><a href="#ExitConditionInterface-443"><span class="linenos">443</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="ExitConditionInterface-444"><a href="#ExitConditionInterface-444"><span class="linenos">444</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">,</span> <span class="n">actions_taken</span><span class="p">,</span> <span class="n">iteration</span><span class="p">)</span>
-</span><span id="ExitConditionInterface-445"><a href="#ExitConditionInterface-445"><span class="linenos">445</span></a>
-</span><span id="ExitConditionInterface-446"><a href="#ExitConditionInterface-446"><span class="linenos">446</span></a>    <span class="nd">@computed_field</span>
-</span><span id="ExitConditionInterface-447"><a href="#ExitConditionInterface-447"><span class="linenos">447</span></a>    <span class="nd">@property</span>
-</span><span id="ExitConditionInterface-448"><a href="#ExitConditionInterface-448"><span class="linenos">448</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="ExitConditionInterface-449"><a href="#ExitConditionInterface-449"><span class="linenos">449</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExitConditionInterface-430"><a href="#ExitConditionInterface-430"><span class="linenos">430</span></a><span class="k">class</span> <span class="nc">ExitConditionInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="ExitConditionInterface-431"><a href="#ExitConditionInterface-431"><span class="linenos">431</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="ExitConditionInterface-432"><a href="#ExitConditionInterface-432"><span class="linenos">432</span></a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span>
+</span><span id="ExitConditionInterface-433"><a href="#ExitConditionInterface-433"><span class="linenos">433</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="ExitConditionInterface-434"><a href="#ExitConditionInterface-434"><span class="linenos">434</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
+</span><span id="ExitConditionInterface-435"><a href="#ExitConditionInterface-435"><span class="linenos">435</span></a>        <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span><span class="p">,</span>
+</span><span id="ExitConditionInterface-436"><a href="#ExitConditionInterface-436"><span class="linenos">436</span></a>        <span class="n">actions_taken</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">],</span>
+</span><span id="ExitConditionInterface-437"><a href="#ExitConditionInterface-437"><span class="linenos">437</span></a>        <span class="n">iteration</span><span class="p">:</span> <span class="n">IntegerParameter</span><span class="p">,</span>
+</span><span id="ExitConditionInterface-438"><a href="#ExitConditionInterface-438"><span class="linenos">438</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="ExitConditionInterface-439"><a href="#ExitConditionInterface-439"><span class="linenos">439</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ExitConditionInterface-440"><a href="#ExitConditionInterface-440"><span class="linenos">440</span></a><span class="sd">        :param graph:</span>
+</span><span id="ExitConditionInterface-441"><a href="#ExitConditionInterface-441"><span class="linenos">441</span></a><span class="sd">        :param graph_model_instance_:</span>
+</span><span id="ExitConditionInterface-442"><a href="#ExitConditionInterface-442"><span class="linenos">442</span></a><span class="sd">        :param actions_taken:</span>
+</span><span id="ExitConditionInterface-443"><a href="#ExitConditionInterface-443"><span class="linenos">443</span></a><span class="sd">        :param iteration:</span>
+</span><span id="ExitConditionInterface-444"><a href="#ExitConditionInterface-444"><span class="linenos">444</span></a><span class="sd">        :return: True if you want to break an iteration, False otherwise</span>
+</span><span id="ExitConditionInterface-445"><a href="#ExitConditionInterface-445"><span class="linenos">445</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ExitConditionInterface-446"><a href="#ExitConditionInterface-446"><span class="linenos">446</span></a>        <span class="k">pass</span>
+</span><span id="ExitConditionInterface-447"><a href="#ExitConditionInterface-447"><span class="linenos">447</span></a>
+</span><span id="ExitConditionInterface-448"><a href="#ExitConditionInterface-448"><span class="linenos">448</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+</span><span id="ExitConditionInterface-449"><a href="#ExitConditionInterface-449"><span class="linenos">449</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="ExitConditionInterface-450"><a href="#ExitConditionInterface-450"><span class="linenos">450</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
+</span><span id="ExitConditionInterface-451"><a href="#ExitConditionInterface-451"><span class="linenos">451</span></a>        <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span><span class="p">,</span>
+</span><span id="ExitConditionInterface-452"><a href="#ExitConditionInterface-452"><span class="linenos">452</span></a>        <span class="n">actions_taken</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">],</span>
+</span><span id="ExitConditionInterface-453"><a href="#ExitConditionInterface-453"><span class="linenos">453</span></a>        <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="ExitConditionInterface-454"><a href="#ExitConditionInterface-454"><span class="linenos">454</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="ExitConditionInterface-455"><a href="#ExitConditionInterface-455"><span class="linenos">455</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">,</span> <span class="n">actions_taken</span><span class="p">,</span> <span class="n">iteration</span><span class="p">)</span>
+</span><span id="ExitConditionInterface-456"><a href="#ExitConditionInterface-456"><span class="linenos">456</span></a>
+</span><span id="ExitConditionInterface-457"><a href="#ExitConditionInterface-457"><span class="linenos">457</span></a>    <span class="nd">@computed_field</span>
+</span><span id="ExitConditionInterface-458"><a href="#ExitConditionInterface-458"><span class="linenos">458</span></a>    <span class="nd">@property</span>
+</span><span id="ExitConditionInterface-459"><a href="#ExitConditionInterface-459"><span class="linenos">459</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="ExitConditionInterface-460"><a href="#ExitConditionInterface-460"><span class="linenos">460</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -3317,22 +3353,22 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#ExitConditionInterface.check"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExitConditionInterface.check-420"><a href="#ExitConditionInterface.check-420"><span class="linenos">420</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="ExitConditionInterface.check-421"><a href="#ExitConditionInterface.check-421"><span class="linenos">421</span></a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span>
-</span><span id="ExitConditionInterface.check-422"><a href="#ExitConditionInterface.check-422"><span class="linenos">422</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="ExitConditionInterface.check-423"><a href="#ExitConditionInterface.check-423"><span class="linenos">423</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
-</span><span id="ExitConditionInterface.check-424"><a href="#ExitConditionInterface.check-424"><span class="linenos">424</span></a>        <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span><span class="p">,</span>
-</span><span id="ExitConditionInterface.check-425"><a href="#ExitConditionInterface.check-425"><span class="linenos">425</span></a>        <span class="n">actions_taken</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">],</span>
-</span><span id="ExitConditionInterface.check-426"><a href="#ExitConditionInterface.check-426"><span class="linenos">426</span></a>        <span class="n">iteration</span><span class="p">:</span> <span class="n">IntegerParameter</span><span class="p">,</span>
-</span><span id="ExitConditionInterface.check-427"><a href="#ExitConditionInterface.check-427"><span class="linenos">427</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="ExitConditionInterface.check-428"><a href="#ExitConditionInterface.check-428"><span class="linenos">428</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ExitConditionInterface.check-429"><a href="#ExitConditionInterface.check-429"><span class="linenos">429</span></a><span class="sd">        :param graph:</span>
-</span><span id="ExitConditionInterface.check-430"><a href="#ExitConditionInterface.check-430"><span class="linenos">430</span></a><span class="sd">        :param graph_model_instance_:</span>
-</span><span id="ExitConditionInterface.check-431"><a href="#ExitConditionInterface.check-431"><span class="linenos">431</span></a><span class="sd">        :param actions_taken:</span>
-</span><span id="ExitConditionInterface.check-432"><a href="#ExitConditionInterface.check-432"><span class="linenos">432</span></a><span class="sd">        :param iteration:</span>
-</span><span id="ExitConditionInterface.check-433"><a href="#ExitConditionInterface.check-433"><span class="linenos">433</span></a><span class="sd">        :return: True if you want to break an iteration, False otherwise</span>
-</span><span id="ExitConditionInterface.check-434"><a href="#ExitConditionInterface.check-434"><span class="linenos">434</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ExitConditionInterface.check-435"><a href="#ExitConditionInterface.check-435"><span class="linenos">435</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExitConditionInterface.check-431"><a href="#ExitConditionInterface.check-431"><span class="linenos">431</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="ExitConditionInterface.check-432"><a href="#ExitConditionInterface.check-432"><span class="linenos">432</span></a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span>
+</span><span id="ExitConditionInterface.check-433"><a href="#ExitConditionInterface.check-433"><span class="linenos">433</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="ExitConditionInterface.check-434"><a href="#ExitConditionInterface.check-434"><span class="linenos">434</span></a>        <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span>
+</span><span id="ExitConditionInterface.check-435"><a href="#ExitConditionInterface.check-435"><span class="linenos">435</span></a>        <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="n">GraphModelInterface</span><span class="p">,</span>
+</span><span id="ExitConditionInterface.check-436"><a href="#ExitConditionInterface.check-436"><span class="linenos">436</span></a>        <span class="n">actions_taken</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">],</span>
+</span><span id="ExitConditionInterface.check-437"><a href="#ExitConditionInterface.check-437"><span class="linenos">437</span></a>        <span class="n">iteration</span><span class="p">:</span> <span class="n">IntegerParameter</span><span class="p">,</span>
+</span><span id="ExitConditionInterface.check-438"><a href="#ExitConditionInterface.check-438"><span class="linenos">438</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="ExitConditionInterface.check-439"><a href="#ExitConditionInterface.check-439"><span class="linenos">439</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ExitConditionInterface.check-440"><a href="#ExitConditionInterface.check-440"><span class="linenos">440</span></a><span class="sd">        :param graph:</span>
+</span><span id="ExitConditionInterface.check-441"><a href="#ExitConditionInterface.check-441"><span class="linenos">441</span></a><span class="sd">        :param graph_model_instance_:</span>
+</span><span id="ExitConditionInterface.check-442"><a href="#ExitConditionInterface.check-442"><span class="linenos">442</span></a><span class="sd">        :param actions_taken:</span>
+</span><span id="ExitConditionInterface.check-443"><a href="#ExitConditionInterface.check-443"><span class="linenos">443</span></a><span class="sd">        :param iteration:</span>
+</span><span id="ExitConditionInterface.check-444"><a href="#ExitConditionInterface.check-444"><span class="linenos">444</span></a><span class="sd">        :return: True if you want to break an iteration, False otherwise</span>
+</span><span id="ExitConditionInterface.check-445"><a href="#ExitConditionInterface.check-445"><span class="linenos">445</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ExitConditionInterface.check-446"><a href="#ExitConditionInterface.check-446"><span class="linenos">446</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -3363,10 +3399,10 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#ExitConditionInterface.name"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExitConditionInterface.name-446"><a href="#ExitConditionInterface.name-446"><span class="linenos">446</span></a>    <span class="nd">@computed_field</span>
-</span><span id="ExitConditionInterface.name-447"><a href="#ExitConditionInterface.name-447"><span class="linenos">447</span></a>    <span class="nd">@property</span>
-</span><span id="ExitConditionInterface.name-448"><a href="#ExitConditionInterface.name-448"><span class="linenos">448</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="ExitConditionInterface.name-449"><a href="#ExitConditionInterface.name-449"><span class="linenos">449</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExitConditionInterface.name-457"><a href="#ExitConditionInterface.name-457"><span class="linenos">457</span></a>    <span class="nd">@computed_field</span>
+</span><span id="ExitConditionInterface.name-458"><a href="#ExitConditionInterface.name-458"><span class="linenos">458</span></a>    <span class="nd">@property</span>
+</span><span id="ExitConditionInterface.name-459"><a href="#ExitConditionInterface.name-459"><span class="linenos">459</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="ExitConditionInterface.name-460"><a href="#ExitConditionInterface.name-460"><span class="linenos">460</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -3456,43 +3492,43 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#LogicStepInterface"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LogicStepInterface-455"><a href="#LogicStepInterface-455"><span class="linenos">455</span></a><span class="k">class</span> <span class="nc">LogicStepInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">LogicStepInterfaceType</span><span class="p">]):</span>
-</span><span id="LogicStepInterface-456"><a href="#LogicStepInterface-456"><span class="linenos">456</span></a>    <span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">PipelineStepInterfaceType</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="LogicStepInterface-457"><a href="#LogicStepInterface-457"><span class="linenos">457</span></a>    <span class="n">exit_condition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExitConditionInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="LogicStepInterface-458"><a href="#LogicStepInterface-458"><span class="linenos">458</span></a>
-</span><span id="LogicStepInterface-459"><a href="#LogicStepInterface-459"><span class="linenos">459</span></a>    <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="LogicStepInterface-460"><a href="#LogicStepInterface-460"><span class="linenos">460</span></a>
-</span><span id="LogicStepInterface-461"><a href="#LogicStepInterface-461"><span class="linenos">461</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="LogicStepInterface-462"><a href="#LogicStepInterface-462"><span class="linenos">462</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="LogicStepInterface-463"><a href="#LogicStepInterface-463"><span class="linenos">463</span></a>        <span class="k">pass</span>
-</span><span id="LogicStepInterface-464"><a href="#LogicStepInterface-464"><span class="linenos">464</span></a>
-</span><span id="LogicStepInterface-465"><a href="#LogicStepInterface-465"><span class="linenos">465</span></a>    <span class="nd">@computed_field</span>
-</span><span id="LogicStepInterface-466"><a href="#LogicStepInterface-466"><span class="linenos">466</span></a>    <span class="nd">@property</span>
-</span><span id="LogicStepInterface-467"><a href="#LogicStepInterface-467"><span class="linenos">467</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="LogicStepInterface-468"><a href="#LogicStepInterface-468"><span class="linenos">468</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LogicStepInterface-466"><a href="#LogicStepInterface-466"><span class="linenos">466</span></a><span class="k">class</span> <span class="nc">LogicStepInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">LogicStepInterfaceType</span><span class="p">]):</span>
+</span><span id="LogicStepInterface-467"><a href="#LogicStepInterface-467"><span class="linenos">467</span></a>    <span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">PipelineStepInterfaceType</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="LogicStepInterface-468"><a href="#LogicStepInterface-468"><span class="linenos">468</span></a>    <span class="n">exit_condition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExitConditionInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="LogicStepInterface-469"><a href="#LogicStepInterface-469"><span class="linenos">469</span></a>
-</span><span id="LogicStepInterface-470"><a href="#LogicStepInterface-470"><span class="linenos">470</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-</span><span id="LogicStepInterface-471"><a href="#LogicStepInterface-471"><span class="linenos">471</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="LogicStepInterface-472"><a href="#LogicStepInterface-472"><span class="linenos">472</span></a>        <span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
-</span><span id="LogicStepInterface-473"><a href="#LogicStepInterface-473"><span class="linenos">473</span></a>            <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">PipelineStepInterfaceType</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
-</span><span id="LogicStepInterface-474"><a href="#LogicStepInterface-474"><span class="linenos">474</span></a>        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="LogicStepInterface-475"><a href="#LogicStepInterface-475"><span class="linenos">475</span></a>        <span class="n">exit_condition</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExitConditionInterface</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="LogicStepInterface-476"><a href="#LogicStepInterface-476"><span class="linenos">476</span></a>        <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="LogicStepInterface-477"><a href="#LogicStepInterface-477"><span class="linenos">477</span></a>    <span class="p">):</span>
-</span><span id="LogicStepInterface-478"><a href="#LogicStepInterface-478"><span class="linenos">478</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-</span><span id="LogicStepInterface-479"><a href="#LogicStepInterface-479"><span class="linenos">479</span></a>        <span class="c1"># TODO check if this is a good idea</span>
-</span><span id="LogicStepInterface-480"><a href="#LogicStepInterface-480"><span class="linenos">480</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exit_condition</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="LogicStepInterface-481"><a href="#LogicStepInterface-481"><span class="linenos">481</span></a>            <span class="n">exit_condition</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">exit_condition</span><span class="p">)</span>
-</span><span id="LogicStepInterface-482"><a href="#LogicStepInterface-482"><span class="linenos">482</span></a>
-</span><span id="LogicStepInterface-483"><a href="#LogicStepInterface-483"><span class="linenos">483</span></a>        <span class="c1"># TODO: check if this is a good idea</span>
-</span><span id="LogicStepInterface-484"><a href="#LogicStepInterface-484"><span class="linenos">484</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="LogicStepInterface-485"><a href="#LogicStepInterface-485"><span class="linenos">485</span></a>            <span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">load_pipeline_steps_by_definition</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span>
-</span><span id="LogicStepInterface-486"><a href="#LogicStepInterface-486"><span class="linenos">486</span></a>
-</span><span id="LogicStepInterface-487"><a href="#LogicStepInterface-487"><span class="linenos">487</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">pipeline_steps</span> <span class="ow">or</span> <span class="p">[]</span>
-</span><span id="LogicStepInterface-488"><a href="#LogicStepInterface-488"><span class="linenos">488</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit_condition</span> <span class="o">=</span> <span class="n">exit_condition</span>
-</span><span id="LogicStepInterface-489"><a href="#LogicStepInterface-489"><span class="linenos">489</span></a>
-</span><span id="LogicStepInterface-490"><a href="#LogicStepInterface-490"><span class="linenos">490</span></a>        <span class="k">if</span> <span class="n">display_name</span><span class="p">:</span>
-</span><span id="LogicStepInterface-491"><a href="#LogicStepInterface-491"><span class="linenos">491</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
+</span><span id="LogicStepInterface-470"><a href="#LogicStepInterface-470"><span class="linenos">470</span></a>    <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringParameter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="LogicStepInterface-471"><a href="#LogicStepInterface-471"><span class="linenos">471</span></a>
+</span><span id="LogicStepInterface-472"><a href="#LogicStepInterface-472"><span class="linenos">472</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="LogicStepInterface-473"><a href="#LogicStepInterface-473"><span class="linenos">473</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="LogicStepInterface-474"><a href="#LogicStepInterface-474"><span class="linenos">474</span></a>        <span class="k">pass</span>
+</span><span id="LogicStepInterface-475"><a href="#LogicStepInterface-475"><span class="linenos">475</span></a>
+</span><span id="LogicStepInterface-476"><a href="#LogicStepInterface-476"><span class="linenos">476</span></a>    <span class="nd">@computed_field</span>
+</span><span id="LogicStepInterface-477"><a href="#LogicStepInterface-477"><span class="linenos">477</span></a>    <span class="nd">@property</span>
+</span><span id="LogicStepInterface-478"><a href="#LogicStepInterface-478"><span class="linenos">478</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="LogicStepInterface-479"><a href="#LogicStepInterface-479"><span class="linenos">479</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="LogicStepInterface-480"><a href="#LogicStepInterface-480"><span class="linenos">480</span></a>
+</span><span id="LogicStepInterface-481"><a href="#LogicStepInterface-481"><span class="linenos">481</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="LogicStepInterface-482"><a href="#LogicStepInterface-482"><span class="linenos">482</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="LogicStepInterface-483"><a href="#LogicStepInterface-483"><span class="linenos">483</span></a>        <span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+</span><span id="LogicStepInterface-484"><a href="#LogicStepInterface-484"><span class="linenos">484</span></a>            <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">PipelineStepInterfaceType</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</span><span id="LogicStepInterface-485"><a href="#LogicStepInterface-485"><span class="linenos">485</span></a>        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="LogicStepInterface-486"><a href="#LogicStepInterface-486"><span class="linenos">486</span></a>        <span class="n">exit_condition</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExitConditionInterface</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="LogicStepInterface-487"><a href="#LogicStepInterface-487"><span class="linenos">487</span></a>        <span class="n">display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="LogicStepInterface-488"><a href="#LogicStepInterface-488"><span class="linenos">488</span></a>    <span class="p">):</span>
+</span><span id="LogicStepInterface-489"><a href="#LogicStepInterface-489"><span class="linenos">489</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="LogicStepInterface-490"><a href="#LogicStepInterface-490"><span class="linenos">490</span></a>        <span class="c1"># TODO check if this is a good idea</span>
+</span><span id="LogicStepInterface-491"><a href="#LogicStepInterface-491"><span class="linenos">491</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exit_condition</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="LogicStepInterface-492"><a href="#LogicStepInterface-492"><span class="linenos">492</span></a>            <span class="n">exit_condition</span> <span class="o">=</span> <span class="n">load_pipeline_artefact_by_definition</span><span class="p">(</span><span class="n">exit_condition</span><span class="p">)</span>
+</span><span id="LogicStepInterface-493"><a href="#LogicStepInterface-493"><span class="linenos">493</span></a>
+</span><span id="LogicStepInterface-494"><a href="#LogicStepInterface-494"><span class="linenos">494</span></a>        <span class="c1"># TODO: check if this is a good idea</span>
+</span><span id="LogicStepInterface-495"><a href="#LogicStepInterface-495"><span class="linenos">495</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="LogicStepInterface-496"><a href="#LogicStepInterface-496"><span class="linenos">496</span></a>            <span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">load_pipeline_steps_by_definition</span><span class="p">(</span><span class="n">pipeline_steps</span><span class="p">)</span>
+</span><span id="LogicStepInterface-497"><a href="#LogicStepInterface-497"><span class="linenos">497</span></a>
+</span><span id="LogicStepInterface-498"><a href="#LogicStepInterface-498"><span class="linenos">498</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span> <span class="o">=</span> <span class="n">pipeline_steps</span> <span class="ow">or</span> <span class="p">[]</span>
+</span><span id="LogicStepInterface-499"><a href="#LogicStepInterface-499"><span class="linenos">499</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit_condition</span> <span class="o">=</span> <span class="n">exit_condition</span>
+</span><span id="LogicStepInterface-500"><a href="#LogicStepInterface-500"><span class="linenos">500</span></a>
+</span><span id="LogicStepInterface-501"><a href="#LogicStepInterface-501"><span class="linenos">501</span></a>        <span class="k">if</span> <span class="n">display_name</span><span class="p">:</span>
+</span><span id="LogicStepInterface-502"><a href="#LogicStepInterface-502"><span class="linenos">502</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
 </span></pre></div>
 
 
@@ -3546,9 +3582,9 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#LogicStepInterface.execute"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LogicStepInterface.execute-461"><a href="#LogicStepInterface.execute-461"><span class="linenos">461</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="LogicStepInterface.execute-462"><a href="#LogicStepInterface.execute-462"><span class="linenos">462</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="LogicStepInterface.execute-463"><a href="#LogicStepInterface.execute-463"><span class="linenos">463</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LogicStepInterface.execute-472"><a href="#LogicStepInterface.execute-472"><span class="linenos">472</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="LogicStepInterface.execute-473"><a href="#LogicStepInterface.execute-473"><span class="linenos">473</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">graph_model_instance_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="LogicStepInterface.execute-474"><a href="#LogicStepInterface.execute-474"><span class="linenos">474</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -3564,10 +3600,10 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#LogicStepInterface.name"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LogicStepInterface.name-465"><a href="#LogicStepInterface.name-465"><span class="linenos">465</span></a>    <span class="nd">@computed_field</span>
-</span><span id="LogicStepInterface.name-466"><a href="#LogicStepInterface.name-466"><span class="linenos">466</span></a>    <span class="nd">@property</span>
-</span><span id="LogicStepInterface.name-467"><a href="#LogicStepInterface.name-467"><span class="linenos">467</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="LogicStepInterface.name-468"><a href="#LogicStepInterface.name-468"><span class="linenos">468</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LogicStepInterface.name-476"><a href="#LogicStepInterface.name-476"><span class="linenos">476</span></a>    <span class="nd">@computed_field</span>
+</span><span id="LogicStepInterface.name-477"><a href="#LogicStepInterface.name-477"><span class="linenos">477</span></a>    <span class="nd">@property</span>
+</span><span id="LogicStepInterface.name-478"><a href="#LogicStepInterface.name-478"><span class="linenos">478</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="LogicStepInterface.name-479"><a href="#LogicStepInterface.name-479"><span class="linenos">479</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -3623,14 +3659,14 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#ExtensionInterface"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExtensionInterface-497"><a href="#ExtensionInterface-497"><span class="linenos">497</span></a><span class="k">class</span> <span class="nc">ExtensionInterface</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">ExtensionType</span><span class="p">]):</span>
-</span><span id="ExtensionInterface-498"><a href="#ExtensionInterface-498"><span class="linenos">498</span></a>    <span class="nd">@computed_field</span>
-</span><span id="ExtensionInterface-499"><a href="#ExtensionInterface-499"><span class="linenos">499</span></a>    <span class="nd">@property</span>
-</span><span id="ExtensionInterface-500"><a href="#ExtensionInterface-500"><span class="linenos">500</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="ExtensionInterface-501"><a href="#ExtensionInterface-501"><span class="linenos">501</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span id="ExtensionInterface-502"><a href="#ExtensionInterface-502"><span class="linenos">502</span></a>
-</span><span id="ExtensionInterface-503"><a href="#ExtensionInterface-503"><span class="linenos">503</span></a>    <span class="k">class</span> <span class="nc">GraphAccessMixin</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="ExtensionInterface-504"><a href="#ExtensionInterface-504"><span class="linenos">504</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExtensionInterface-508"><a href="#ExtensionInterface-508"><span class="linenos">508</span></a><span class="k">class</span> <span class="nc">ExtensionInterface</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">ExtensionType</span><span class="p">]):</span>
+</span><span id="ExtensionInterface-509"><a href="#ExtensionInterface-509"><span class="linenos">509</span></a>    <span class="nd">@computed_field</span>
+</span><span id="ExtensionInterface-510"><a href="#ExtensionInterface-510"><span class="linenos">510</span></a>    <span class="nd">@property</span>
+</span><span id="ExtensionInterface-511"><a href="#ExtensionInterface-511"><span class="linenos">511</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="ExtensionInterface-512"><a href="#ExtensionInterface-512"><span class="linenos">512</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="ExtensionInterface-513"><a href="#ExtensionInterface-513"><span class="linenos">513</span></a>
+</span><span id="ExtensionInterface-514"><a href="#ExtensionInterface-514"><span class="linenos">514</span></a>    <span class="k">class</span> <span class="nc">GraphAccessMixin</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="ExtensionInterface-515"><a href="#ExtensionInterface-515"><span class="linenos">515</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -3673,10 +3709,10 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
     </div>
     <a class="headerlink" href="#ExtensionInterface.name"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExtensionInterface.name-498"><a href="#ExtensionInterface.name-498"><span class="linenos">498</span></a>    <span class="nd">@computed_field</span>
-</span><span id="ExtensionInterface.name-499"><a href="#ExtensionInterface.name-499"><span class="linenos">499</span></a>    <span class="nd">@property</span>
-</span><span id="ExtensionInterface.name-500"><a href="#ExtensionInterface.name-500"><span class="linenos">500</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="ExtensionInterface.name-501"><a href="#ExtensionInterface.name-501"><span class="linenos">501</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExtensionInterface.name-509"><a href="#ExtensionInterface.name-509"><span class="linenos">509</span></a>    <span class="nd">@computed_field</span>
+</span><span id="ExtensionInterface.name-510"><a href="#ExtensionInterface.name-510"><span class="linenos">510</span></a>    <span class="nd">@property</span>
+</span><span id="ExtensionInterface.name-511"><a href="#ExtensionInterface.name-511"><span class="linenos">511</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="ExtensionInterface.name-512"><a href="#ExtensionInterface.name-512"><span class="linenos">512</span></a>        <span class="k">return</span> <span class="n">serialize_module_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -3732,8 +3768,8 @@ __pydantic_private__: Instance attribute with the values of private attributes s
 
     </div>
     <a class="headerlink" href="#ExtensionInterface.GraphAccessMixin"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExtensionInterface.GraphAccessMixin-503"><a href="#ExtensionInterface.GraphAccessMixin-503"><span class="linenos">503</span></a>    <span class="k">class</span> <span class="nc">GraphAccessMixin</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="ExtensionInterface.GraphAccessMixin-504"><a href="#ExtensionInterface.GraphAccessMixin-504"><span class="linenos">504</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExtensionInterface.GraphAccessMixin-514"><a href="#ExtensionInterface.GraphAccessMixin-514"><span class="linenos">514</span></a>    <span class="k">class</span> <span class="nc">GraphAccessMixin</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="ExtensionInterface.GraphAccessMixin-515"><a href="#ExtensionInterface.GraphAccessMixin-515"><span class="linenos">515</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -3754,22 +3790,22 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#GraphUpdateHook"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GraphUpdateHook-507"><a href="#GraphUpdateHook-507"><span class="linenos">507</span></a><span class="k">class</span> <span class="nc">GraphUpdateHook</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="GraphUpdateHook-508"><a href="#GraphUpdateHook-508"><span class="linenos">508</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="GraphUpdateHook-509"><a href="#GraphUpdateHook-509"><span class="linenos">509</span></a><span class="sd">    A hook that is executed before or after the graph is updated. This can be used to modify the graph before or after an update.</span>
-</span><span id="GraphUpdateHook-510"><a href="#GraphUpdateHook-510"><span class="linenos">510</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="GraphUpdateHook-511"><a href="#GraphUpdateHook-511"><span class="linenos">511</span></a>
-</span><span id="GraphUpdateHook-512"><a href="#GraphUpdateHook-512"><span class="linenos">512</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="GraphUpdateHook-513"><a href="#GraphUpdateHook-513"><span class="linenos">513</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
-</span><span id="GraphUpdateHook-514"><a href="#GraphUpdateHook-514"><span class="linenos">514</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]</span>
-</span><span id="GraphUpdateHook-515"><a href="#GraphUpdateHook-515"><span class="linenos">515</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]:</span>
-</span><span id="GraphUpdateHook-516"><a href="#GraphUpdateHook-516"><span class="linenos">516</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="GraphUpdateHook-517"><a href="#GraphUpdateHook-517"><span class="linenos">517</span></a><span class="sd">        Execute the hook.</span>
-</span><span id="GraphUpdateHook-518"><a href="#GraphUpdateHook-518"><span class="linenos">518</span></a><span class="sd">        :param graph: current state of the graph.</span>
-</span><span id="GraphUpdateHook-519"><a href="#GraphUpdateHook-519"><span class="linenos">519</span></a><span class="sd">        :param updates: the planned/taken actions</span>
-</span><span id="GraphUpdateHook-520"><a href="#GraphUpdateHook-520"><span class="linenos">520</span></a><span class="sd">        :return: A list of updates that should be applied to the graph if it is a pre hook. If it is a post hook, it should return None.</span>
-</span><span id="GraphUpdateHook-521"><a href="#GraphUpdateHook-521"><span class="linenos">521</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="GraphUpdateHook-522"><a href="#GraphUpdateHook-522"><span class="linenos">522</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GraphUpdateHook-518"><a href="#GraphUpdateHook-518"><span class="linenos">518</span></a><span class="k">class</span> <span class="nc">GraphUpdateHook</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="GraphUpdateHook-519"><a href="#GraphUpdateHook-519"><span class="linenos">519</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook-520"><a href="#GraphUpdateHook-520"><span class="linenos">520</span></a><span class="sd">    A hook that is executed before or after the graph is updated. This can be used to modify the graph before or after an update.</span>
+</span><span id="GraphUpdateHook-521"><a href="#GraphUpdateHook-521"><span class="linenos">521</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook-522"><a href="#GraphUpdateHook-522"><span class="linenos">522</span></a>
+</span><span id="GraphUpdateHook-523"><a href="#GraphUpdateHook-523"><span class="linenos">523</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="GraphUpdateHook-524"><a href="#GraphUpdateHook-524"><span class="linenos">524</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
+</span><span id="GraphUpdateHook-525"><a href="#GraphUpdateHook-525"><span class="linenos">525</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]</span>
+</span><span id="GraphUpdateHook-526"><a href="#GraphUpdateHook-526"><span class="linenos">526</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]:</span>
+</span><span id="GraphUpdateHook-527"><a href="#GraphUpdateHook-527"><span class="linenos">527</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook-528"><a href="#GraphUpdateHook-528"><span class="linenos">528</span></a><span class="sd">        Execute the hook.</span>
+</span><span id="GraphUpdateHook-529"><a href="#GraphUpdateHook-529"><span class="linenos">529</span></a><span class="sd">        :param graph: current state of the graph.</span>
+</span><span id="GraphUpdateHook-530"><a href="#GraphUpdateHook-530"><span class="linenos">530</span></a><span class="sd">        :param updates: the planned/taken actions</span>
+</span><span id="GraphUpdateHook-531"><a href="#GraphUpdateHook-531"><span class="linenos">531</span></a><span class="sd">        :return: A list of updates that should be applied to the graph if it is a pre hook. If it is a post hook, it should return None.</span>
+</span><span id="GraphUpdateHook-532"><a href="#GraphUpdateHook-532"><span class="linenos">532</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook-533"><a href="#GraphUpdateHook-533"><span class="linenos">533</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -3789,17 +3825,17 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#GraphUpdateHook.execute"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GraphUpdateHook.execute-512"><a href="#GraphUpdateHook.execute-512"><span class="linenos">512</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="GraphUpdateHook.execute-513"><a href="#GraphUpdateHook.execute-513"><span class="linenos">513</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
-</span><span id="GraphUpdateHook.execute-514"><a href="#GraphUpdateHook.execute-514"><span class="linenos">514</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]</span>
-</span><span id="GraphUpdateHook.execute-515"><a href="#GraphUpdateHook.execute-515"><span class="linenos">515</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]:</span>
-</span><span id="GraphUpdateHook.execute-516"><a href="#GraphUpdateHook.execute-516"><span class="linenos">516</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="GraphUpdateHook.execute-517"><a href="#GraphUpdateHook.execute-517"><span class="linenos">517</span></a><span class="sd">        Execute the hook.</span>
-</span><span id="GraphUpdateHook.execute-518"><a href="#GraphUpdateHook.execute-518"><span class="linenos">518</span></a><span class="sd">        :param graph: current state of the graph.</span>
-</span><span id="GraphUpdateHook.execute-519"><a href="#GraphUpdateHook.execute-519"><span class="linenos">519</span></a><span class="sd">        :param updates: the planned/taken actions</span>
-</span><span id="GraphUpdateHook.execute-520"><a href="#GraphUpdateHook.execute-520"><span class="linenos">520</span></a><span class="sd">        :return: A list of updates that should be applied to the graph if it is a pre hook. If it is a post hook, it should return None.</span>
-</span><span id="GraphUpdateHook.execute-521"><a href="#GraphUpdateHook.execute-521"><span class="linenos">521</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="GraphUpdateHook.execute-522"><a href="#GraphUpdateHook.execute-522"><span class="linenos">522</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GraphUpdateHook.execute-523"><a href="#GraphUpdateHook.execute-523"><span class="linenos">523</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="GraphUpdateHook.execute-524"><a href="#GraphUpdateHook.execute-524"><span class="linenos">524</span></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
+</span><span id="GraphUpdateHook.execute-525"><a href="#GraphUpdateHook.execute-525"><span class="linenos">525</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">BaseGraphInterface</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]</span>
+</span><span id="GraphUpdateHook.execute-526"><a href="#GraphUpdateHook.execute-526"><span class="linenos">526</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TestResultInterface</span><span class="p">]]:</span>
+</span><span id="GraphUpdateHook.execute-527"><a href="#GraphUpdateHook.execute-527"><span class="linenos">527</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook.execute-528"><a href="#GraphUpdateHook.execute-528"><span class="linenos">528</span></a><span class="sd">        Execute the hook.</span>
+</span><span id="GraphUpdateHook.execute-529"><a href="#GraphUpdateHook.execute-529"><span class="linenos">529</span></a><span class="sd">        :param graph: current state of the graph.</span>
+</span><span id="GraphUpdateHook.execute-530"><a href="#GraphUpdateHook.execute-530"><span class="linenos">530</span></a><span class="sd">        :param updates: the planned/taken actions</span>
+</span><span id="GraphUpdateHook.execute-531"><a href="#GraphUpdateHook.execute-531"><span class="linenos">531</span></a><span class="sd">        :return: A list of updates that should be applied to the graph if it is a pre hook. If it is a post hook, it should return None.</span>
+</span><span id="GraphUpdateHook.execute-532"><a href="#GraphUpdateHook.execute-532"><span class="linenos">532</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="GraphUpdateHook.execute-533"><a href="#GraphUpdateHook.execute-533"><span class="linenos">533</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 

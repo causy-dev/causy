@@ -3114,7 +3114,7 @@ Later, a cohersive naming scheme should be implemented.</p>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">Graph</span><wbr>(<span class="base"><a href="edge_types.html#DirectedEdge.GraphAccessMixin">causy.edge_types.DirectedEdge.GraphAccessMixin</a></span>, <span class="base"><a href="interfaces.html#EdgeTypeInterface.GraphAccessMixin">causy.interfaces.EdgeTypeInterface.GraphAccessMixin</a></span>, <span class="base"><a href="#GraphBaseAccessMixin">GraphBaseAccessMixin</a></span>, <span class="base">pydantic.main.BaseModel</span>, <span class="base"><a href="interfaces.html#ExtensionInterface.GraphAccessMixin">causy.interfaces.ExtensionInterface.GraphAccessMixin</a></span>):
+    <span class="name">Graph</span><wbr>(<span class="base"><a href="edge_types.html#DirectedEdge.GraphAccessMixin">causy.edge_types.DirectedEdge.GraphAccessMixin</a></span>, <span class="base"><a href="interfaces.html#EdgeTypeInterface.GraphAccessMixin">causy.interfaces.EdgeTypeInterface.GraphAccessMixin</a></span>, <span class="base"><a href="interfaces.html#ExtensionInterface.GraphAccessMixin">causy.interfaces.ExtensionInterface.GraphAccessMixin</a></span>, <span class="base"><a href="#GraphBaseAccessMixin">GraphBaseAccessMixin</a></span>, <span class="base">pydantic.main.BaseModel</span>):
 
                 <label class="view-source-button" for="Graph-view-source"><span>View Source</span></label>
 
@@ -3130,33 +3130,8 @@ Later, a cohersive naming scheme should be implemented.</p>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Usage docs: <a href="https://docs.pydantic.dev/2.8/concepts/models/">https://docs.pydantic.dev/2.8/concepts/models/</a></p>
-
-<p>A base class for creating Pydantic models.</p>
-
-<p>Attributes:
-    __class_vars__: The names of classvars defined on the model.
-    __private_attributes__: Metadata about the private attributes of the model.
-    __signature__: The signature for instantiating the model.</p>
-
-<pre><code>__pydantic_complete__: Whether model building is completed, or if there are still undefined fields.
-__pydantic_core_schema__: The pydantic-core schema used to build the SchemaValidator and SchemaSerializer.
-__pydantic_custom_init__: Whether the model has a custom `__init__` function.
-__pydantic_decorators__: Metadata containing the decorators defined on the model.
-    This replaces `Model.__validators__` and `Model.__root_validators__` from Pydantic V1.
-__pydantic_generic_metadata__: Metadata for generic models; contains data used for a similar purpose to
-    __args__, __origin__, __parameters__ in typing-module generics. May eventually be replaced by these.
-__pydantic_parent_namespace__: Parent namespace of the model, used for automatic rebuilding of models.
-__pydantic_post_init__: The name of the post-init method for the model, if defined.
-__pydantic_root_model__: Whether the model is a `RootModel`.
-__pydantic_serializer__: The pydantic-core SchemaSerializer used to dump instances of the model.
-__pydantic_validator__: The pydantic-core SchemaValidator used to validate instances of the model.
-
-__pydantic_extra__: An instance attribute with the values of extra fields from validation when
-    `model_config['extra'] == 'allow'`.
-__pydantic_fields_set__: An instance attribute with the names of fields explicitly set.
-__pydantic_private__: Instance attribute with the values of private attributes set on the model instance.
-</code></pre>
+            <div class="docstring"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
 </div>
 
 
