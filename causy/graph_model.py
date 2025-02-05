@@ -484,6 +484,14 @@ class AbstractGraphModel(GraphModelInterface, ABC):
             else:
                 # this is the only mode which supports unapplied actions to be passed to the next pipeline step (for now)
                 # which are sometimes needed for e.g. conflict resolution
+
+                is_synchronous = False
+
+                if hasattr(test_fn, "apply_synchronous"):
+                    # ensure that the graph gets changes applied synchronously - so before the next element is executed
+                    if test_fn.apply_synchronous:
+                        is_synchronous = True
+
                 iterator = [
                     i
                     for i in [
@@ -499,11 +507,21 @@ class AbstractGraphModel(GraphModelInterface, ABC):
                         if rn_fn.needs_unapplied_actions:
                             i.append(local_results)
                     local_results.append(unpack_run(i))
-                actions_taken_current, all_actions_current = self._take_action(
-                    local_results, dry_run=not apply_to_graph
-                )
-                actions_taken.extend(actions_taken_current)
-                all_actions.extend(all_actions_current)
+
+                    if is_synchronous:
+                        actions_taken_current, all_actions_current = self._take_action(
+                            local_results, dry_run=not apply_to_graph
+                        )
+                        actions_taken.extend(actions_taken_current)
+                        all_actions.extend(all_actions_current)
+                        local_results = []
+
+                if not is_synchronous:
+                    actions_taken_current, all_actions_current = self._take_action(
+                        local_results, dry_run=not apply_to_graph
+                    )
+                    actions_taken.extend(actions_taken_current)
+                    all_actions.extend(all_actions_current)
 
         return actions_taken, all_actions
 

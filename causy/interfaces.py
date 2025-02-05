@@ -343,19 +343,27 @@ PipelineStepInterfaceType = TypeVar("PipelineStepInterfaceType")
 
 class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
     generator: Optional[GeneratorInterface] = None
-    threshold: Optional[FloatParameter] = DEFAULT_THRESHOLD
-    chunk_size_parallel_processing: IntegerParameter = 1
-    parallel: BoolParameter = True
+    threshold: Optional[FloatParameter] = DEFAULT_THRESHOLD  # threshold for the test
+    chunk_size_parallel_processing: IntegerParameter = (
+        1  # chunk size for parallel processing
+    )
+    parallel: BoolParameter = True  # if True, the pipeline step will be executed in parallel (only works non synchronous)
 
-    display_name: Optional[StringParameter] = None
+    display_name: Optional[StringParameter] = None  # display name of the pipeline step
 
-    needs_unapplied_actions: Optional[BoolParameter] = False
+    needs_unapplied_actions: Optional[
+        BoolParameter
+    ] = False  # if True, the pipeline step needs unapplied actions to be passed to it
+    apply_synchronous: Optional[
+        BoolParameter
+    ] = False  # if True, the result of the pipeline step will be applied synchronously (only works non chunked and non parallel)
 
     def __init__(
         self,
         threshold: Optional[FloatParameter] = None,
         generator: Optional[GeneratorInterface] = None,
         chunk_size_parallel_processing: Optional[IntegerParameter] = None,
+        apply_synchronous: Optional[BoolParameter] = None,
         parallel: Optional[BoolParameter] = None,
         display_name: Optional[StringParameter] = None,
         **kwargs,
@@ -369,6 +377,9 @@ class PipelineStepInterface(ABC, BaseModel, Generic[PipelineStepInterfaceType]):
 
         if chunk_size_parallel_processing:
             self.chunk_size_parallel_processing = chunk_size_parallel_processing
+
+        if apply_synchronous:
+            self.apply_synchronous = apply_synchronous
 
         if parallel:
             self.parallel = parallel
