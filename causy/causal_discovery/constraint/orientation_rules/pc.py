@@ -256,13 +256,16 @@ class NonColliderTest(
                         u=y,
                         v=z,
                         action=TestResultAction.DO_NOTHING,
-                        data={"orientation_conflict": True},
+                        data={
+                            "orientation_conflict": True,
+                            "between": {"x": x, "y": y, "z": z},
+                        },
                     )
                 return TestResult(
                     u=y,
                     v=z,
                     action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                    data={},
+                    data={"between": {"x": x, "y": y, "z": z}},
                 )
 
             if graph.only_directed_edge_exists(y, z) and graph.undirected_edge_exists(
@@ -277,7 +280,10 @@ class NonColliderTest(
                         u=x,
                         v=z,
                         action=TestResultAction.DO_NOTHING,
-                        data={"orientation_conflict": True},
+                        data={
+                            "orientation_conflict": True,
+                            "between": {"x": x, "y": y, "z": z},
+                        },
                     )
                 return TestResult(
                     u=x,
@@ -326,7 +332,7 @@ class FurtherOrientTripleTest(
                         u=y,
                         v=x,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                        data={},
+                        data={"between": {"x": x, "y": y, "z": z}},
                     )
                 )
             if (
@@ -339,7 +345,7 @@ class FurtherOrientTripleTest(
                         u=x,
                         v=y,
                         action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                        data={},
+                        data={"between": {"x": x, "y": y, "z": z}},
                     )
                 )
         return results
