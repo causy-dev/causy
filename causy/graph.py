@@ -650,6 +650,28 @@ class GraphManager(GraphBaseAccessMixin, BaseGraphInterface):
             raise GraphError(f"Edge {u} -> {v} does not exist")
         return self.edges[u.id][v.id]
 
+    def _init_edge(self, u: Node, v: Node):
+        """
+        Initialize an edge between two nodes
+        :param u:
+        :param v:
+        :return:
+        """
+
+        if u.id not in self.edges:
+            self.edges[u.id] = self.__init_dict()
+            self._reverse_edges[u.id] = self.__init_dict()
+            self._deleted_edges[u.id] = self.__init_dict()
+        if v.id not in self.edges:
+            self.edges[v.id] = self.__init_dict()
+            self._reverse_edges[v.id] = self.__init_dict()
+            self._deleted_edges[v.id] = self.__init_dict()
+
+        if (u.id, v.id) not in self.edge_history:
+            self.edge_history[(u.id, v.id)] = []
+        if (v.id, u.id) not in self.edge_history:
+            self.edge_history[(v.id, u.id)] = []
+
     def add_edge(
         self,
         u: Node,
@@ -674,14 +696,7 @@ class GraphManager(GraphBaseAccessMixin, BaseGraphInterface):
         if u.id == v.id:
             raise GraphError("Self loops are currently not allowed")
 
-        if u.id not in self.edges:
-            self.edges[u.id] = self.__init_dict()
-            self._reverse_edges[u.id] = self.__init_dict()
-            self._deleted_edges[u.id] = self.__init_dict()
-        if v.id not in self.edges:
-            self.edges[v.id] = self.__init_dict()
-            self._reverse_edges[v.id] = self.__init_dict()
-            self._deleted_edges[v.id] = self.__init_dict()
+        self._init_edge(u, v)
 
         a_edge = Edge(u=u, v=v, edge_type=edge_type, metadata=metadata)
         self.edges[u.id][v.id] = a_edge
@@ -690,9 +705,6 @@ class GraphManager(GraphBaseAccessMixin, BaseGraphInterface):
         b_edge = Edge(u=v, v=u, edge_type=edge_type, metadata=metadata)
         self.edges[v.id][u.id] = b_edge
         self._reverse_edges[u.id][v.id] = b_edge
-
-        self.edge_history[(u.id, v.id)] = []
-        self.edge_history[(v.id, u.id)] = []
 
     def add_directed_edge(
         self,
@@ -718,18 +730,12 @@ class GraphManager(GraphBaseAccessMixin, BaseGraphInterface):
         if u.id == v.id:
             raise GraphError("Self loops are currently not allowed")
 
-        if u.id not in self.edges:
-            self.edges[u.id] = self.__init_dict()
-            self._deleted_edges[u.id] = self.__init_dict()
-        if v.id not in self._reverse_edges:
-            self._reverse_edges[v.id] = self.__init_dict()
+        self._init_edge(u, v)
 
         edge = Edge(u=u, v=v, edge_type=edge_type, metadata=metadata)
 
         self.edges[u.id][v.id] = edge
         self._reverse_edges[v.id][u.id] = edge
-
-        self.edge_history[(u.id, v.id)] = []
 
     def add_edge_history(self, u, v, action: TestResult):
         """

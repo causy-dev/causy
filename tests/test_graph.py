@@ -57,10 +57,22 @@ class GraphTestCase(CausyTestCase):
         node2 = graph.add_node("test2", [1, 2, 3])
         graph.add_directed_edge(node1, node2, {"test": "test"})
         self.assertEqual(len(graph.nodes), 2)
-        self.assertEqual(len(graph.edges), 1)
         self.assertEqual(graph.edge_value(node1, node2), {"test": "test"})
         self.assertTrue(graph.directed_edge_exists(node1, node2))
         self.assertFalse(graph.directed_edge_exists(node2, node1))
+
+    def test_create_undirected_edge_after_directed_edge(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node1, node2, {"test": "test"})
+        self.assertEqual(len(graph.nodes), 2)
+        self.assertEqual(graph.edge_value(node1, node2), {"test": "test"})
+        self.assertTrue(graph.undirected_edge_exists(node1, node2))
+        self.assertTrue(graph.undirected_edge_exists(node2, node1))
+        self.assertTrue(graph.edge_exists(node1, node2))
+        self.assertTrue(graph.edge_exists(node2, node1))
 
     def test_add_edge_with_non_existing_node(self):
         graph = GraphManager()
