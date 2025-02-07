@@ -102,7 +102,7 @@
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>            <span class="k">for</span> <span class="n">pipeline_step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span><span class="p">:</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>                <span class="n">started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>                <span class="p">(</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>                    <span class="n">actions_taken</span><span class="p">,</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>                    <span class="n">current_actions_taken</span><span class="p">,</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>                    <span class="n">all_proposed_actions</span><span class="p">,</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>                <span class="p">)</span> <span class="o">=</span> <span class="n">graph_model_instance_</span><span class="o">.</span><span class="n">execute_pipeline_step</span><span class="p">(</span><span class="n">pipeline_step</span><span class="p">)</span>
 </span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>                <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -113,7 +113,7 @@
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>                        <span class="n">duration</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">started</span><span class="p">,</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>                    <span class="p">)</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>                <span class="p">)</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>                <span class="n">actions_taken</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">actions_taken</span><span class="p">)</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>                <span class="n">actions_taken</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">current_actions_taken</span><span class="p">)</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>        <span class="k">return</span> <span class="n">ActionHistoryStep</span><span class="p">(</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
@@ -211,7 +211,7 @@
 </span><span id="Loop-44"><a href="#Loop-44"><span class="linenos">44</span></a>            <span class="k">for</span> <span class="n">pipeline_step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_steps</span><span class="p">:</span>
 </span><span id="Loop-45"><a href="#Loop-45"><span class="linenos">45</span></a>                <span class="n">started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 </span><span id="Loop-46"><a href="#Loop-46"><span class="linenos">46</span></a>                <span class="p">(</span>
-</span><span id="Loop-47"><a href="#Loop-47"><span class="linenos">47</span></a>                    <span class="n">actions_taken</span><span class="p">,</span>
+</span><span id="Loop-47"><a href="#Loop-47"><span class="linenos">47</span></a>                    <span class="n">current_actions_taken</span><span class="p">,</span>
 </span><span id="Loop-48"><a href="#Loop-48"><span class="linenos">48</span></a>                    <span class="n">all_proposed_actions</span><span class="p">,</span>
 </span><span id="Loop-49"><a href="#Loop-49"><span class="linenos">49</span></a>                <span class="p">)</span> <span class="o">=</span> <span class="n">graph_model_instance_</span><span class="o">.</span><span class="n">execute_pipeline_step</span><span class="p">(</span><span class="n">pipeline_step</span><span class="p">)</span>
 </span><span id="Loop-50"><a href="#Loop-50"><span class="linenos">50</span></a>                <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -222,7 +222,7 @@
 </span><span id="Loop-55"><a href="#Loop-55"><span class="linenos">55</span></a>                        <span class="n">duration</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">started</span><span class="p">,</span>
 </span><span id="Loop-56"><a href="#Loop-56"><span class="linenos">56</span></a>                    <span class="p">)</span>
 </span><span id="Loop-57"><a href="#Loop-57"><span class="linenos">57</span></a>                <span class="p">)</span>
-</span><span id="Loop-58"><a href="#Loop-58"><span class="linenos">58</span></a>                <span class="n">actions_taken</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">actions_taken</span><span class="p">)</span>
+</span><span id="Loop-58"><a href="#Loop-58"><span class="linenos">58</span></a>                <span class="n">actions_taken</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">current_actions_taken</span><span class="p">)</span>
 </span><span id="Loop-59"><a href="#Loop-59"><span class="linenos">59</span></a>            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
 </span><span id="Loop-60"><a href="#Loop-60"><span class="linenos">60</span></a>        <span class="k">return</span> <span class="n">ActionHistoryStep</span><span class="p">(</span>
 </span><span id="Loop-61"><a href="#Loop-61"><span class="linenos">61</span></a>            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
