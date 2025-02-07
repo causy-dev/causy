@@ -43,7 +43,7 @@ class Loop(LogicStepInterface[LogicStepInterfaceType], Generic[LogicStepInterfac
             for pipeline_step in self.pipeline_steps:
                 started = time.time()
                 (
-                    actions_taken,
+                    current_actions_taken,
                     all_proposed_actions,
                 ) = graph_model_instance_.execute_pipeline_step(pipeline_step)
                 steps.append(
@@ -54,7 +54,7 @@ class Loop(LogicStepInterface[LogicStepInterfaceType], Generic[LogicStepInterfac
                         duration=time.time() - started,
                     )
                 )
-                actions_taken.extend(actions_taken)
+                actions_taken.extend(current_actions_taken)
             n += 1
         return ActionHistoryStep(
             name=self.name,
