@@ -35,7 +35,7 @@ from causy.variables import (
     IntegerVariable,
 )
 
-PC_DEFAULT_THRESHOLD = 0.005
+PC_DEFAULT_THRESHOLD = 0.05
 
 PC_ORIENTATION_RULES = [
     ColliderTest(display_name="Collider Test"),
