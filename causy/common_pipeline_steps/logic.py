@@ -49,7 +49,7 @@ class Loop(LogicStepInterface[LogicStepInterfaceType], Generic[LogicStepInterfac
                 steps.append(
                     ActionHistoryStep(
                         name=pipeline_step.name,
-                        actions=actions_taken,
+                        actions=current_actions_taken,
                         all_proposed_actions=all_proposed_actions,
                         duration=time.time() - started,
                     )
