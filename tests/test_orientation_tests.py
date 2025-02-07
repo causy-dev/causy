@@ -1,3 +1,4 @@
+from causy.causal_discovery.constraint.algorithms.pc import PC_ORIENTATION_RULES
 from causy.common_pipeline_steps.exit_conditions import ExitOnNoActions
 from causy.common_pipeline_steps.logic import Loop
 from causy.edge_types import DirectedEdge, UndirectedEdge
@@ -435,6 +436,64 @@ class OrientationRuleTestCase(CausyTestCase):
         model.execute_pipeline_steps()
         self.assertTrue(model.graph.only_directed_edge_exists(x, y))
         self.assertTrue(model.graph.only_directed_edge_exists(y, z))
+
+    def test_non_collider_test_auto_mpg_graph(self):
+        pipeline = [NonColliderTest()]
+        model = graph_model_factory(
+            Algorithm(
+                pipeline_steps=pipeline,
+                edge_types=[DirectedEdge(), UndirectedEdge()],
+                name="TestCollider",
+            )
+        )()
+        model.graph = GraphManager()
+        acceleration = model.graph.add_node("acceleration", [])
+        horsepower = model.graph.add_node("horsepower", [])
+        mpg = model.graph.add_node("mpg", [])
+        cylinders = model.graph.add_node("cylinders", [])
+        displacement = model.graph.add_node("displacement", [])
+        weight = model.graph.add_node("weight", [])
+        model.graph.add_edge(mpg, weight, {})
+        model.graph.add_edge(weight, displacement, {})
+        model.graph.add_edge(displacement, cylinders, {})
+
+        model.graph.add_directed_edge(acceleration, horsepower, {})
+        model.graph.add_directed_edge(horsepower, displacement, {})
+        model.graph.add_directed_edge(mpg, horsepower, {})
+
+        model.execute_pipeline_steps()
+        self.assertTrue(model.graph.edge_of_type_exists(displacement, cylinders, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(displacement, weight, DirectedEdge()))
+
+    def test_non_collider_loop_auto_mpg_graph(self):
+        pipeline = [*PC_ORIENTATION_RULES]
+        model = graph_model_factory(
+            Algorithm(
+                pipeline_steps=pipeline,
+                edge_types=[DirectedEdge(), UndirectedEdge()],
+                name="TestCollider",
+            )
+        )()
+        model.graph = GraphManager()
+        acceleration = model.graph.add_node("acceleration", [])
+        horsepower = model.graph.add_node("horsepower", [])
+        mpg = model.graph.add_node("mpg", [])
+        cylinders = model.graph.add_node("cylinders", [])
+        displacement = model.graph.add_node("displacement", [])
+        weight = model.graph.add_node("weight", [])
+        model.graph.add_edge(mpg, weight, {})
+        model.graph.add_edge(weight, displacement, {})
+        model.graph.add_edge(displacement, cylinders, {})
+        model.graph.add_edge(horsepower, displacement, {})
+
+        model.graph.add_directed_edge(acceleration, horsepower, {})
+        model.graph.add_directed_edge(mpg, horsepower, {})
+
+        model.execute_pipeline_steps()
+        self.assertTrue(model.graph.edge_of_type_exists(displacement, cylinders, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(displacement, weight, DirectedEdge()))
+
+
 
     def test_further_orient_triple_test(self):
         pipeline = [FurtherOrientTripleTest()]
