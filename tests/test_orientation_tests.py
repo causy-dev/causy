@@ -437,7 +437,9 @@ class OrientationRuleTestCase(CausyTestCase):
         self.assertTrue(model.graph.only_directed_edge_exists(x, y))
         self.assertTrue(model.graph.only_directed_edge_exists(y, z))
 
-    def test_non_collider_test_auto_mpg_graph_after_collider_rule_noncollider_test(self):
+    def test_non_collider_test_auto_mpg_graph_after_collider_rule_noncollider_test(
+        self,
+    ):
         pipeline = [NonColliderTest()]
         model = graph_model_factory(
             Algorithm(
@@ -469,11 +471,28 @@ class OrientationRuleTestCase(CausyTestCase):
 
         model.execute_pipeline_steps()
         # test NonColliderTest
-        self.assertTrue(model.graph.edge_of_type_exists(displacement, cylinders, DirectedEdge()))
-        self.assertTrue(model.graph.edge_of_type_exists(horsepower, displacement, DirectedEdge()))
+        self.assertTrue(
+            model.graph.edge_of_type_exists(displacement, cylinders, DirectedEdge())
+        )
+        self.assertTrue(
+            model.graph.edge_of_type_exists(horsepower, displacement, DirectedEdge())
+        )
 
     def test_non_collider_test_auto_mpg_graph_after_collider_rule_whole_loop(self):
-        pipeline = [*PC_ORIENTATION_RULES]
+        pipeline = [
+            Loop(
+                pipeline_steps=[
+                    NonColliderTest(display_name="Non-Collider Test"),
+                    FurtherOrientTripleTest(display_name="Further Orient Triple Test"),
+                    OrientQuadrupleTest(display_name="Orient Quadruple Test"),
+                    FurtherOrientQuadrupleTest(
+                        display_name="Further Orient Quadruple Test"
+                    ),
+                ],
+                display_name="Orientation Rules Loop",
+                exit_condition=ExitOnNoActions(),
+            ),
+        ]
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
@@ -504,8 +523,12 @@ class OrientationRuleTestCase(CausyTestCase):
 
         model.execute_pipeline_steps()
         # test NonColliderTest
-        self.assertTrue(model.graph.edge_of_type_exists(displacement, cylinders, DirectedEdge()))
-        self.assertTrue(model.graph.edge_of_type_exists(horsepower, displacement, DirectedEdge()))
+        self.assertTrue(
+            model.graph.edge_of_type_exists(displacement, cylinders, DirectedEdge())
+        )
+        self.assertTrue(
+            model.graph.edge_of_type_exists(horsepower, displacement, DirectedEdge())
+        )
 
     def test_only_non_collider_rule_on_loop_test_model(self):
         pipeline = [NonColliderTest()]
@@ -530,7 +553,20 @@ class OrientationRuleTestCase(CausyTestCase):
         self.assertTrue(model.graph.edge_of_type_exists(z, w, DirectedEdge()))
 
     def test_loop(self):
-        pipeline = [*PC_ORIENTATION_RULES]
+        pipeline = [
+            Loop(
+                pipeline_steps=[
+                    NonColliderTest(display_name="Non-Collider Test"),
+                    FurtherOrientTripleTest(display_name="Further Orient Triple Test"),
+                    OrientQuadrupleTest(display_name="Orient Quadruple Test"),
+                    FurtherOrientQuadrupleTest(
+                        display_name="Further Orient Quadruple Test"
+                    ),
+                ],
+                display_name="Orientation Rules Loop",
+                exit_condition=ExitOnNoActions(),
+            )
+        ]
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
@@ -552,7 +588,20 @@ class OrientationRuleTestCase(CausyTestCase):
         self.assertTrue(model.graph.edge_of_type_exists(z, w, DirectedEdge()))
 
     def test_loop_two_iterations(self):
-        pipeline = [*PC_ORIENTATION_RULES]
+        pipeline = [
+            Loop(
+                pipeline_steps=[
+                    NonColliderTest(display_name="Non-Collider Test"),
+                    FurtherOrientTripleTest(display_name="Further Orient Triple Test"),
+                    OrientQuadrupleTest(display_name="Orient Quadruple Test"),
+                    FurtherOrientQuadrupleTest(
+                        display_name="Further Orient Quadruple Test"
+                    ),
+                ],
+                display_name="Orientation Rules Loop",
+                exit_condition=ExitOnNoActions(),
+            )
+        ]
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
@@ -577,7 +626,20 @@ class OrientationRuleTestCase(CausyTestCase):
         self.assertTrue(model.graph.edge_of_type_exists(w, v, DirectedEdge()))
 
     def test_only_noncollider_rule_on_loop_model_after_one_iteration(self):
-        pipeline = [NonColliderTest()]
+        pipeline = [
+            Loop(
+                pipeline_steps=[
+                    NonColliderTest(display_name="Non-Collider Test"),
+                    FurtherOrientTripleTest(display_name="Further Orient Triple Test"),
+                    OrientQuadrupleTest(display_name="Orient Quadruple Test"),
+                    FurtherOrientQuadrupleTest(
+                        display_name="Further Orient Quadruple Test"
+                    ),
+                ],
+                display_name="Orientation Rules Loop",
+                exit_condition=ExitOnNoActions(),
+            )
+        ]
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
@@ -600,8 +662,22 @@ class OrientationRuleTestCase(CausyTestCase):
         self.assertTrue(model.graph.edge_of_type_exists(y, z, DirectedEdge()))
         self.assertTrue(model.graph.edge_of_type_exists(z, w, DirectedEdge()))
         self.assertTrue(model.graph.edge_of_type_exists(w, v, DirectedEdge()))
+
     def test_non_collider_loop_auto_mpg_graph(self):
-        pipeline = [*PC_ORIENTATION_RULES]
+        pipeline = [
+            Loop(
+                pipeline_steps=[
+                    NonColliderTest(display_name="Non-Collider Test"),
+                    FurtherOrientTripleTest(display_name="Further Orient Triple Test"),
+                    OrientQuadrupleTest(display_name="Orient Quadruple Test"),
+                    FurtherOrientQuadrupleTest(
+                        display_name="Further Orient Quadruple Test"
+                    ),
+                ],
+                display_name="Orientation Rules Loop",
+                exit_condition=ExitOnNoActions(),
+            )
+        ]
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
@@ -625,10 +701,12 @@ class OrientationRuleTestCase(CausyTestCase):
         model.graph.add_directed_edge(mpg, horsepower, {})
 
         model.execute_pipeline_steps()
-        self.assertTrue(model.graph.edge_of_type_exists(displacement, cylinders, DirectedEdge()))
-        self.assertTrue(model.graph.edge_of_type_exists(displacement, weight, DirectedEdge()))
-
-
+        self.assertTrue(
+            model.graph.edge_of_type_exists(displacement, cylinders, DirectedEdge())
+        )
+        self.assertTrue(
+            model.graph.edge_of_type_exists(displacement, weight, DirectedEdge())
+        )
 
     def test_further_orient_triple_test(self):
         pipeline = [FurtherOrientTripleTest()]
