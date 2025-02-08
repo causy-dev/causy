@@ -180,6 +180,9 @@ class PCTestTestCase(CausyTestCase):
         self.assertEqual(pc.graph.edge_of_type_exists("displacement", "cylinders", UndirectedEdge()), True)
         self.assertEqual(pc.graph.edge_of_type_exists("horsepower", "displacement", UndirectedEdge()), True)
 
+        # wrongly discovered collider?
+        self.assertEqual(pc.graph.edge_of_type_exists("displacement", "horsepower", DirectedEdge()), False)
+
     def test_pc_number_of_all_proposed_actions_two_nodes(self):
         """
         test if the number of all proposed actions is correct
