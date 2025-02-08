@@ -153,7 +153,10 @@ class ColliderTest(
                                     u=z,
                                     v=y,
                                     action=TestResultAction.DO_NOTHING,
-                                    data={"orientation_conflict": True},
+                                    data={
+                                        "orientation_conflict": True,
+                                        "between": {"x": x, "y": y, "z": z},
+                                    },
                                 )
                             )
                         if len(unapplied_actions_x_z) > 0:
@@ -162,7 +165,10 @@ class ColliderTest(
                                     u=z,
                                     v=x,
                                     action=TestResultAction.DO_NOTHING,
-                                    data={"orientation_conflict": True},
+                                    data={
+                                        "orientation_conflict": True,
+                                        "between": {"x": x, "y": y, "z": z},
+                                    },
                                 )
                             )
 
@@ -178,7 +184,7 @@ class ColliderTest(
                                 u=z,
                                 v=x,
                                 action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                                data={},
+                                data={"between": {"x": x, "y": y, "z": z}},
                             )
                         )
                         results.append(
@@ -186,7 +192,7 @@ class ColliderTest(
                                 u=z,
                                 v=y,
                                 action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                                data={},
+                                data={"between": {"x": x, "y": y, "z": z}},
                             )
                         )
 
@@ -196,13 +202,13 @@ class ColliderTest(
                             u=z,
                             v=x,
                             action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                            data={},
+                            data={"between": {"x": x, "y": y, "z": z}},
                         ),
                         TestResult(
                             u=z,
                             v=y,
                             action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                            data={},
+                            data={"between": {"x": x, "y": y, "z": z}},
                         ),
                     ]
         return results
