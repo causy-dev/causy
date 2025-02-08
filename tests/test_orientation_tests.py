@@ -630,13 +630,8 @@ class OrientationRuleTestCase(CausyTestCase):
             Loop(
                 pipeline_steps=[
                     NonColliderTest(display_name="Non-Collider Test"),
-                    FurtherOrientTripleTest(display_name="Further Orient Triple Test"),
-                    OrientQuadrupleTest(display_name="Orient Quadruple Test"),
-                    FurtherOrientQuadrupleTest(
-                        display_name="Further Orient Quadruple Test"
-                    ),
                 ],
-                display_name="Orientation Rules Loop",
+                display_name="NonColliderTest",
                 exit_condition=ExitOnNoActions(),
             )
         ]
@@ -686,26 +681,31 @@ class OrientationRuleTestCase(CausyTestCase):
             )
         )()
         model.graph = GraphManager()
+
         acceleration = model.graph.add_node("acceleration", [])
         horsepower = model.graph.add_node("horsepower", [])
         mpg = model.graph.add_node("mpg", [])
         cylinders = model.graph.add_node("cylinders", [])
         displacement = model.graph.add_node("displacement", [])
         weight = model.graph.add_node("weight", [])
+
         model.graph.add_edge(mpg, weight, {})
-        model.graph.add_edge(weight, displacement, {})
         model.graph.add_edge(displacement, cylinders, {})
         model.graph.add_edge(horsepower, displacement, {})
 
         model.graph.add_directed_edge(acceleration, horsepower, {})
         model.graph.add_directed_edge(mpg, horsepower, {})
+        model.graph.add_directed_edge(weight, horsepower, {})
+        model.graph.add_directed_edge(weight, displacement, {})
+        model.graph.add_directed_edge(acceleration, displacement, {})
 
         model.execute_pipeline_steps()
+
         self.assertTrue(
             model.graph.edge_of_type_exists(displacement, cylinders, DirectedEdge())
         )
         self.assertTrue(
-            model.graph.edge_of_type_exists(displacement, weight, DirectedEdge())
+            model.graph.edge_of_type_exists(horsepower, displacement, DirectedEdge())
         )
 
     def test_further_orient_triple_test(self):
