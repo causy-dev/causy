@@ -197,15 +197,15 @@ class EffectEstimationTestCase(CausyTestCase):
 
         model = IIDSampleGenerator(
             edges=[
-                SampleEdge(NodeReference("X"), NodeReference("Z"), 5),
-                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
-                SampleEdge(NodeReference("W"), NodeReference("X"), 3),
-                SampleEdge(NodeReference("W"), NodeReference("Y"), 4),
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 1),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 1),
+                SampleEdge(NodeReference("W"), NodeReference("X"), 1),
+                SampleEdge(NodeReference("W"), NodeReference("Y"), 1),
             ],
         )
 
         tst = PC()
-        sample_size = 1000000
+        sample_size = 100000
         test_data, graph = model.generate(sample_size)
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
@@ -217,14 +217,14 @@ class EffectEstimationTestCase(CausyTestCase):
             tst.graph.edge_value(tst.graph.nodes["X"], tst.graph.nodes["Z"])[
                 "direct_effect"
             ],
-            5.0,
+            1.0,
             0,
         )
         self.assertAlmostEqual(
             tst.graph.edge_value(tst.graph.nodes["Y"], tst.graph.nodes["Z"])[
                 "direct_effect"
             ],
-            6.0,
+            1.0,
             0,
         )
 

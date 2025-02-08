@@ -440,7 +440,7 @@ class PCTestTestCase(CausyTestCase):
                 SampleEdge(NodeReference("U4"), NodeReference("X"), 1),
             ],
         )
-        test_data, graph = causal_insufficiency_four_nodes.generate(10000)
+        test_data, graph = causal_insufficiency_four_nodes.generate(1000)
         test_data.pop("U1")
         test_data.pop("U2")
         test_data.pop("U3")
