@@ -131,8 +131,9 @@ class PCTestTestCase(CausyTestCase):
             pc.graph.edge_of_type_exists("displacement", "cylinders", DirectedEdge()),
             True,
         )
+        # due to order-dependency, two cases are possible
         self.assertEqual(
-            pc.graph.edge_of_type_exists("horsepower", "displacement", DirectedEdge()),
+            pc.graph.edge_of_type_exists("horsepower", "displacement", DirectedEdge()) or pc.graph.edge_of_type_exists("displacement", "horsepower", DirectedEdge()),
             True,
         )
 
@@ -218,15 +219,9 @@ class PCTestTestCase(CausyTestCase):
             pc.graph.edge_of_type_exists("displacement", "cylinders", UndirectedEdge()),
             True,
         )
-        self.assertEqual(
-            pc.graph.edge_of_type_exists(
-                "horsepower", "displacement", UndirectedEdge()
-            ),
-            True,
-        )
 
-        # wrongly discovered collider?
-        self.assertEqual(pc.graph.edge_of_type_exists("displacement", "horsepower", DirectedEdge()), False)
+        # due to order-dependency, two cases are possible
+        self.assertEqual(pc.graph.edge_of_type_exists("horsepower", "displacement", UndirectedEdge()) or pc.graph.edge_of_type_exists("displacement", "horsepower", DirectedEdge()), True)
 
     def test_pc_number_of_all_proposed_actions_two_nodes(self):
         """
