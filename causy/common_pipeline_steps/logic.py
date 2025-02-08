@@ -46,6 +46,7 @@ class Loop(LogicStepInterface[LogicStepInterfaceType], Generic[LogicStepInterfac
                     current_actions_taken,
                     all_proposed_actions,
                 ) = graph_model_instance_.execute_pipeline_step(pipeline_step)
+
                 steps.append(
                     ActionHistoryStep(
                         name=pipeline_step.name,

@@ -32,6 +32,7 @@ from tests.utils import CausyTestCase, load_fixture_graph
 
 class PCTestTestCase(CausyTestCase):
     SEED = 1
+
     def _sample_generator(self):
         rdnv = self.seeded_random.normalvariate
         return IIDSampleGenerator(
@@ -53,7 +54,9 @@ class PCTestTestCase(CausyTestCase):
         PC_LOCAL = graph_model_factory(
             Algorithm(
                 pipeline_steps=[
-                    CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
+                    CalculatePearsonCorrelations(
+                        display_name="Calculate Pearson Correlations"
+                    ),
                     CorrelationCoefficientTest(
                         threshold=VariableReference(name="threshold"),
                         display_name="Correlation Coefficient Test",
@@ -82,11 +85,6 @@ class PCTestTestCase(CausyTestCase):
         pc.create_all_possible_edges()
         pc.execute_pipeline_steps()
 
-        for s in pc.graph.action_history:
-            print(s.name)
-            for a in s.actions:
-                print(a.u.name, a.v.name, a.action, a.data.keys())
-
         # skeleton
         self.assertEqual(pc.graph.edge_exists("mpg", "weight"), True)
         self.assertEqual(pc.graph.edge_exists("mpg", "horsepower"), True)
@@ -107,15 +105,36 @@ class PCTestTestCase(CausyTestCase):
         self.assertEqual(pc.graph.edge_exists("horsepower", "cylinders"), False)
 
         # directions
-        self.assertEqual(pc.graph.edge_of_type_exists("mpg", "weight", UndirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("weight", "horsepower", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("weight", "displacement", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("mpg", "horsepower", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("acceleration", "horsepower", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("acceleration", "displacement", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("displacement", "cylinders", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("horsepower", "displacement", DirectedEdge()), True)
-
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("mpg", "weight", UndirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("weight", "horsepower", DirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("weight", "displacement", DirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("mpg", "horsepower", DirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("acceleration", "horsepower", DirectedEdge()),
+            True,
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists(
+                "acceleration", "displacement", DirectedEdge()
+            ),
+            True,
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("displacement", "cylinders", DirectedEdge()),
+            True,
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("horsepower", "displacement", DirectedEdge()),
+            True,
+        )
 
     def test_pc_collider_rule_on_auto_mpg(self):
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -125,7 +144,9 @@ class PCTestTestCase(CausyTestCase):
         PC_LOCAL = graph_model_factory(
             Algorithm(
                 pipeline_steps=[
-                    CalculatePearsonCorrelations(display_name="Calculate Pearson Correlations"),
+                    CalculatePearsonCorrelations(
+                        display_name="Calculate Pearson Correlations"
+                    ),
                     CorrelationCoefficientTest(
                         threshold=VariableReference(name="threshold"),
                         display_name="Correlation Coefficient Test",
@@ -171,14 +192,38 @@ class PCTestTestCase(CausyTestCase):
         self.assertEqual(pc.graph.edge_exists("horsepower", "cylinders"), False)
 
         # after collider rule
-        self.assertEqual(pc.graph.edge_of_type_exists("mpg", "weight", UndirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("weight", "horsepower", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("weight", "displacement", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("mpg", "horsepower", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("acceleration", "horsepower", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("acceleration", "displacement", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("displacement", "cylinders", UndirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("horsepower", "displacement", UndirectedEdge()), True)
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("mpg", "weight", UndirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("weight", "horsepower", DirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("weight", "displacement", DirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("mpg", "horsepower", DirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("acceleration", "horsepower", DirectedEdge()),
+            True,
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists(
+                "acceleration", "displacement", DirectedEdge()
+            ),
+            True,
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("displacement", "cylinders", UndirectedEdge()),
+            True,
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists(
+                "horsepower", "displacement", UndirectedEdge()
+            ),
+            True,
+        )
 
         # wrongly discovered collider?
         self.assertEqual(pc.graph.edge_of_type_exists("displacement", "horsepower", DirectedEdge()), False)
@@ -662,7 +707,6 @@ class PCTestTestCase(CausyTestCase):
         self.assertEqual(tst.graph.edge_of_type_exists("X", "Y", DirectedEdge()), True)
         self.assertEqual(tst.graph.edge_of_type_exists("Z", "Y", DirectedEdge()), True)
         self.assertEqual(tst.graph.edge_of_type_exists("Y", "W", DirectedEdge()), True)
-
 
     def test_five_node_example_e2e(self):
         rdnv = self.seeded_random.normalvariate

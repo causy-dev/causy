@@ -249,13 +249,15 @@ class NonColliderTest(
         # It cannot be a collider because we have already oriented all unshielded triples that contain colliders.
         for z in potential_zs:
             z = graph.nodes[z]
-            print(f"x: {x.name}, y: {y.name}, z: {z.name}")
             breakflag = False
+
             if graph.only_directed_edge_exists(x, z) and graph.undirected_edge_exists(
                 z, y
             ):
                 for node in graph.nodes:
-                    if graph.only_directed_edge_exists(graph.nodes[node], y) and not graph.edge_exists(graph.nodes[node], z):
+                    if graph.only_directed_edge_exists(
+                        graph.nodes[node], y
+                    ) and not graph.edge_exists(graph.nodes[node], z):
                         breakflag = True
                         break
                 if breakflag is True:
@@ -274,19 +276,17 @@ class NonColliderTest(
                     action=TestResultAction.REMOVE_EDGE_DIRECTED,
                     data={"between": {"x": x, "y": y, "z": z}},
                 )
-            print(graph.only_directed_edge_exists(y, z))
-            print(graph.undirected_edge_exists(z, x))
-            if z.name in graph.edges:
-                if x.name in graph.edges[z.name]:
-                    print(f"{z.name} -> {x.name}")
+
             if graph.only_directed_edge_exists(y, z) and graph.undirected_edge_exists(
                 z, x
             ):
                 for node in graph.nodes:
-                    if graph.only_directed_edge_exists(graph.nodes[node], x):
+                    if graph.only_directed_edge_exists(
+                        graph.nodes[node], x
+                    ) and not graph.edge_exists(graph.nodes[node], z):
                         breakflag = True
                         break
-                print(f"breakflag: {breakflag}")
+
                 if breakflag is True:
                     return TestResult(
                         u=x,
@@ -301,7 +301,7 @@ class NonColliderTest(
                     u=x,
                     v=z,
                     action=TestResultAction.REMOVE_EDGE_DIRECTED,
-                    data={},
+                    data={"between": {"x": x, "y": y, "z": z}},
                 )
 
 
