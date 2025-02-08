@@ -13,7 +13,7 @@ from causy.causal_effect_estimation.multivariate_regression import (
     ComputeDirectEffectsInDAGsMultivariateRegression,
 )
 from causy.common_pipeline_steps.calculation import CalculatePearsonCorrelations
-from causy.edge_types import DirectedEdge
+from causy.edge_types import DirectedEdge, UndirectedEdge
 from causy.generators import PairsWithNeighboursGenerator
 from causy.graph_model import graph_model_factory
 from causy.causal_discovery.constraint.independence_tests.common import (
@@ -108,11 +108,15 @@ class PCTestTestCase(CausyTestCase):
         self.assertEqual(pc.graph.edge_exists("horsepower", "cylinders"), False)
 
         # directtions
+        self.assertEqual(pc.graph.edge_of_type_exists("mpg", "weight", UndirectedEdge()), True)
         self.assertEqual(pc.graph.edge_of_type_exists("weight", "horsepower", DirectedEdge()), True)
-        self.assertEqual(pc.graph.edge_of_type_exists("horsepower", "displacement", DirectedEdge()), True)
+        self.assertEqual(pc.graph.edge_of_type_exists("weight", "displacement", DirectedEdge()), True)
         self.assertEqual(pc.graph.edge_of_type_exists("mpg", "horsepower", DirectedEdge()), True)
         self.assertEqual(pc.graph.edge_of_type_exists("acceleration", "horsepower", DirectedEdge()), True)
         self.assertEqual(pc.graph.edge_of_type_exists("acceleration", "displacement", DirectedEdge()), True)
+        self.assertEqual(pc.graph.edge_of_type_exists("displacement", "cylinders", DirectedEdge()), True)
+        self.assertEqual(pc.graph.edge_of_type_exists("horsepower", "displacement", DirectedEdge()), True)
+
 
 
 

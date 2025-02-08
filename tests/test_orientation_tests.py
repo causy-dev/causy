@@ -437,7 +437,7 @@ class OrientationRuleTestCase(CausyTestCase):
         self.assertTrue(model.graph.only_directed_edge_exists(x, y))
         self.assertTrue(model.graph.only_directed_edge_exists(y, z))
 
-    def test_non_collider_test_auto_mpg_graph_after_collider_rule(self):
+    def test_non_collider_test_auto_mpg_graph_after_collider_rule_noncollider_test(self):
         pipeline = [NonColliderTest()]
         model = graph_model_factory(
             Algorithm(
@@ -456,24 +456,29 @@ class OrientationRuleTestCase(CausyTestCase):
 
         model.graph.add_edge(mpg, weight, {})
         model.graph.add_edge(displacement, cylinders, {})
-        model.graph.add_edge(acceleration, horsepower, {})
+        model.graph.add_edge(horsepower, displacement, {})
 
+        # collider acceleration -> horsepower <- weight
         model.graph.add_directed_edge(acceleration, horsepower, {})
-        model.graph.add_directed_edge(mpg, horsepower, {})
         model.graph.add_directed_edge(weight, horsepower, {})
+        # collider mpg -> horsepower <- acceleration
+        model.graph.add_directed_edge(mpg, horsepower, {})
+        # collider acceleration -> displacement <- weight
         model.graph.add_directed_edge(weight, displacement, {})
         model.graph.add_directed_edge(acceleration, displacement, {})
 
         model.execute_pipeline_steps()
+        # test NonColliderTest
         self.assertTrue(model.graph.edge_of_type_exists(displacement, cylinders, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(horsepower, displacement, DirectedEdge()))
 
-    def test_non_collider_test_auto_mpg_graph(self):
-        pipeline = [NonColliderTest()]
+    def test_non_collider_test_auto_mpg_graph_after_collider_rule_whole_loop(self):
+        pipeline = [*PC_ORIENTATION_RULES]
         model = graph_model_factory(
             Algorithm(
                 pipeline_steps=pipeline,
                 edge_types=[DirectedEdge(), UndirectedEdge()],
-                name="TestCollider",
+                name="TestLoopAutoMpgGraph",
             )
         )()
         model.graph = GraphManager()
@@ -483,19 +488,118 @@ class OrientationRuleTestCase(CausyTestCase):
         cylinders = model.graph.add_node("cylinders", [])
         displacement = model.graph.add_node("displacement", [])
         weight = model.graph.add_node("weight", [])
-        model.graph.add_edge(mpg, weight, {})
-        model.graph.add_edge(weight, displacement, {})
-        model.graph.add_edge(displacement, cylinders, {})
-        model.graph.add_edge(weight, horsepower, {})
-        model.graph.add_edge(acceleration, horsepower, {})
 
+        model.graph.add_edge(mpg, weight, {})
+        model.graph.add_edge(displacement, cylinders, {})
+        model.graph.add_edge(horsepower, displacement, {})
+
+        # collider acceleration -> horsepower <- weight
         model.graph.add_directed_edge(acceleration, horsepower, {})
-        model.graph.add_directed_edge(horsepower, displacement, {})
+        model.graph.add_directed_edge(weight, horsepower, {})
+        # collider mpg -> horsepower <- acceleration
         model.graph.add_directed_edge(mpg, horsepower, {})
+        # collider acceleration -> displacement <- weight
+        model.graph.add_directed_edge(weight, displacement, {})
+        model.graph.add_directed_edge(acceleration, displacement, {})
 
         model.execute_pipeline_steps()
+        # test NonColliderTest
         self.assertTrue(model.graph.edge_of_type_exists(displacement, cylinders, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(horsepower, displacement, DirectedEdge()))
 
+    def test_only_non_collider_rule_on_loop_test_model(self):
+        pipeline = [NonColliderTest()]
+        model = graph_model_factory(
+            Algorithm(
+                pipeline_steps=pipeline,
+                edge_types=[DirectedEdge(), UndirectedEdge()],
+                name="TestLoop",
+            )
+        )()
+        model.graph = GraphManager()
+        x = model.graph.add_node("X", [])
+        y = model.graph.add_node("Y", [])
+        z = model.graph.add_node("Z", [])
+        w = model.graph.add_node("W", [])
+        model.graph.add_edge(z, w, {})
+        model.graph.add_directed_edge(x, z, {})
+        model.graph.add_directed_edge(y, z, {})
+        model.execute_pipeline_steps()
+        self.assertTrue(model.graph.edge_of_type_exists(x, z, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(y, z, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(z, w, DirectedEdge()))
+
+    def test_loop(self):
+        pipeline = [*PC_ORIENTATION_RULES]
+        model = graph_model_factory(
+            Algorithm(
+                pipeline_steps=pipeline,
+                edge_types=[DirectedEdge(), UndirectedEdge()],
+                name="TestLoop",
+            )
+        )()
+        model.graph = GraphManager()
+        x = model.graph.add_node("X", [])
+        y = model.graph.add_node("Y", [])
+        z = model.graph.add_node("Z", [])
+        w = model.graph.add_node("W", [])
+        model.graph.add_edge(z, w, {})
+        model.graph.add_directed_edge(x, z, {})
+        model.graph.add_directed_edge(y, z, {})
+        model.execute_pipeline_steps()
+        self.assertTrue(model.graph.edge_of_type_exists(x, z, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(y, z, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(z, w, DirectedEdge()))
+
+    def test_loop_two_iterations(self):
+        pipeline = [*PC_ORIENTATION_RULES]
+        model = graph_model_factory(
+            Algorithm(
+                pipeline_steps=pipeline,
+                edge_types=[DirectedEdge(), UndirectedEdge()],
+                name="TestLoop",
+            )
+        )()
+        model.graph = GraphManager()
+        x = model.graph.add_node("X", [])
+        y = model.graph.add_node("Y", [])
+        z = model.graph.add_node("Z", [])
+        w = model.graph.add_node("W", [])
+        v = model.graph.add_node("V", [])
+        model.graph.add_edge(z, w, {})
+        model.graph.add_edge(w, v, {})
+        model.graph.add_directed_edge(x, z, {})
+        model.graph.add_directed_edge(y, z, {})
+        model.execute_pipeline_steps()
+        self.assertTrue(model.graph.edge_of_type_exists(x, z, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(y, z, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(z, w, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(w, v, DirectedEdge()))
+
+    def test_only_noncollider_rule_on_loop_model_after_one_iteration(self):
+        pipeline = [NonColliderTest()]
+        model = graph_model_factory(
+            Algorithm(
+                pipeline_steps=pipeline,
+                edge_types=[DirectedEdge(), UndirectedEdge()],
+                name="TestLoop",
+            )
+        )()
+        model.graph = GraphManager()
+        x = model.graph.add_node("X", [])
+        y = model.graph.add_node("Y", [])
+        z = model.graph.add_node("Z", [])
+        w = model.graph.add_node("W", [])
+        v = model.graph.add_node("V", [])
+        model.graph.add_edge(w, v, {})
+        model.graph.add_directed_edge(z, w, {})
+        model.graph.add_directed_edge(x, z, {})
+        model.graph.add_directed_edge(y, z, {})
+        model.execute_pipeline_steps()
+        self.assertTrue(model.graph.edge_of_type_exists(x, z, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(y, z, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(z, w, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(w, v, DirectedEdge()))
     def test_non_collider_loop_auto_mpg_graph(self):
         pipeline = [*PC_ORIENTATION_RULES]
         model = graph_model_factory(
