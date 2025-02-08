@@ -248,6 +248,7 @@ class NonColliderTest(
         # if one edge has an arrowhead at z, orient the other one pointing away from z.
         # It cannot be a collider because we have already oriented all unshielded triples that contain colliders.
         for z in potential_zs:
+            print(f"x: {x.name}, y: {y.name}, z: {z}")
             z = graph.nodes[z]
             breakflag = False
             if graph.only_directed_edge_exists(x, z) and graph.undirected_edge_exists(
@@ -273,7 +274,11 @@ class NonColliderTest(
                     action=TestResultAction.REMOVE_EDGE_DIRECTED,
                     data={"between": {"x": x, "y": y, "z": z}},
                 )
-
+            print(graph.only_directed_edge_exists(y, z))
+            print(graph.undirected_edge_exists(z, x))
+            if z.name in graph.edges:
+                if x.name in graph.edges[z.name]:
+                    print(f"{z.name} -> {x.name}")
             if graph.only_directed_edge_exists(y, z) and graph.undirected_edge_exists(
                 z, x
             ):
@@ -281,6 +286,7 @@ class NonColliderTest(
                     if graph.only_directed_edge_exists(graph.nodes[node], x):
                         breakflag = True
                         break
+                print(f"breakflag: {breakflag}")
                 if breakflag is True:
                     return TestResult(
                         u=x,
