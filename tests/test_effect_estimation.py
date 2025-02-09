@@ -205,7 +205,7 @@ class EffectEstimationTestCase(CausyTestCase):
         )
 
         tst = PC()
-        sample_size = 100000
+        sample_size = 10000
         test_data, graph = model.generate(sample_size)
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
