@@ -697,8 +697,12 @@ class GraphTestCase(CausyTestCase):
         graph.add_directed_edge(node3, node1, {"test": "test"})
         self.assertTrue(graph.directed_path_exists(node1, node2))
         self.assertTrue(graph.directed_path_exists(node2, node1))
+        self.assertTrue(graph.directed_path_exists(node1, node3))
+        self.assertTrue(graph.directed_path_exists(node3, node1))
+        self.assertTrue(graph.directed_path_exists(node2, node3))
+        self.assertTrue(graph.directed_path_exists(node3, node2))
 
-    def test_directed_path_mediated_path(self):
+    def test_directed_path_exists_mediated_path(self):
         graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
@@ -716,7 +720,7 @@ class GraphTestCase(CausyTestCase):
         self.assertTrue(graph.directed_path_exists(node2, node3))
         self.assertFalse(graph.directed_path_exists(node3, node2))
 
-    def test_directed_path_mediated_path_several_mediated_paths(self):
+    def test_directed_path_exists_mediated_path_several_mediated_paths(self):
         graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
@@ -742,7 +746,7 @@ class GraphTestCase(CausyTestCase):
         self.assertTrue(graph.directed_path_exists(node1, node4))
         self.assertFalse(graph.directed_path_exists(node4, node1))
 
-    def test_directed_path_mediated_path_undirected_edges(self):
+    def test_directed_path_exists_mediated_path_undirected_edges(self):
         graph = GraphManager()
         node1 = graph.add_node("test1", [1, 2, 3])
         node2 = graph.add_node("test2", [1, 2, 3])
@@ -759,3 +763,81 @@ class GraphTestCase(CausyTestCase):
         self.assertFalse(graph.directed_path_exists(node4, node2))
         self.assertFalse(graph.directed_path_exists(node2, node3))
         self.assertFalse(graph.directed_path_exists(node3, node2))
+
+    def test_directed_path_exists_mediated_path_undirected_and_directed_edges(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node2, node3, {"test": "test"})
+
+        self.assertFalse(graph.directed_path_exists(node1, node3))
+
+    def test_directed_path_exists_mediated_path_undirected_and_directed_edges_2(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        graph.add_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+
+        self.assertFalse(graph.directed_path_exists(node1, node3))
+
+    def test_directed_path_exists_mediated_path_undirected_and_directed_edges_3(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        node5 = graph.add_node("test5", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_edge(node2, node3, {"test": "test"})
+        graph.add_directed_edge(node3, node4, {"test": "test"})
+        graph.add_directed_edge(node4, node5, {"test": "test"})
+
+        self.assertFalse(graph.directed_path_exists(node1, node5))
+        self.assertFalse(graph.directed_path_exists(node1, node4))
+        self.assertFalse(graph.directed_path_exists(node1, node3))
+        self.assertTrue(graph.directed_path_exists(node1, node2))
+        self.assertTrue(graph.directed_path_exists(node3, node5))
+
+    def test_directed_path_exists_mediated_path_undirected_and_directed_edges_4(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        node5 = graph.add_node("test5", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node3, {"test": "test"})
+        graph.add_edge(node3, node4, {"test": "test"})
+        graph.add_directed_edge(node4, node5, {"test": "test"})
+
+        self.assertFalse(graph.directed_path_exists(node1, node5))
+        self.assertFalse(graph.directed_path_exists(node1, node4))
+        self.assertFalse(graph.directed_path_exists(node2, node5))
+        self.assertTrue(graph.directed_path_exists(node1, node2))
+        self.assertTrue(graph.directed_path_exists(node1, node3))
+
+    def test_directed_path_exists_mediated_paths_undirected_and_directed_edges(self):
+        graph = GraphManager()
+        X = graph.add_node("X", [1, 2, 3])
+        Y = graph.add_node("Y", [1, 2, 3])
+        Z = graph.add_node("Z", [1, 2, 3])
+        W = graph.add_node("W", [1, 2, 3])
+        V = graph.add_node("V", [1, 2, 3])
+
+        graph.add_directed_edge(X, Y, {"test": "test"})
+        graph.add_edge(Y, Z, {"test": "test"})
+        graph.add_edge(Z, W, {"test": "test"})
+        graph.add_directed_edge(W, X, {"test": "test"})
+        graph.add_directed_edge(V, X, {"test": "test"})
+
+        self.assertTrue(graph.directed_path_exists(V, X))
+        self.assertTrue(graph.directed_path_exists(V, Y))
+        self.assertFalse(graph.directed_path_exists(V, Z))
+        self.assertFalse(graph.directed_path_exists(Z, X))
+
+
+

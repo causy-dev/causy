@@ -284,7 +284,7 @@ class GraphBaseAccessMixin:
 
         # Recursive DFS through neighbors
         for w in self.edges.get(u, []):  # Use .get() to avoid KeyError if u is not in self.edges
-            if self.directed_path_exists(w, v, visited):
+            if self.edge_of_type_exists(u, w, DirectedEdge()) and self.directed_path_exists(w, v, visited):
                 return True
 
         return False
