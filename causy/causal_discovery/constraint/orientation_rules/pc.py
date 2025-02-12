@@ -3,6 +3,7 @@ import logging
 from typing import Tuple, List, Optional, Generic
 import itertools
 
+from causy.edge_types import DirectedEdge
 from causy.generators import AllCombinationsGenerator
 from causy.interfaces import (
     BaseGraphInterface,
@@ -254,12 +255,15 @@ class NonColliderTest(
             if graph.only_directed_edge_exists(x, z) and graph.undirected_edge_exists(
                 z, y
             ):
+                # orientation conflict if rule would lead to a new collider or a cycle
                 for node in graph.nodes:
                     if graph.only_directed_edge_exists(
                         graph.nodes[node], y
                     ) and not graph.edge_exists(graph.nodes[node], z):
                         breakflag = True
                         break
+                if graph.directed_path_exists(y, x):
+                    breakflag = True
                 if breakflag is True:
                     return TestResult(
                         u=y,
@@ -280,13 +284,15 @@ class NonColliderTest(
             if graph.only_directed_edge_exists(y, z) and graph.undirected_edge_exists(
                 z, x
             ):
+                # orientation conflict if rule would lead to a new collider or a cycle
                 for node in graph.nodes:
                     if graph.only_directed_edge_exists(
                         graph.nodes[node], x
                     ) and not graph.edge_exists(graph.nodes[node], z):
                         breakflag = True
                         break
-
+                if graph.directed_path_exists(x, y):
+                    breakflag = True
                 if breakflag is True:
                     return TestResult(
                         u=x,

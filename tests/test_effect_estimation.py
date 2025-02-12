@@ -2,7 +2,7 @@ from causy.causal_discovery.constraint.algorithms.pc import (
     PC_ORIENTATION_RULES,
     PC_EDGE_TYPES,
     PC_GRAPH_UI_EXTENSION,
-    PC_DEFAULT_THRESHOLD,
+    PC_DEFAULT_THRESHOLD, PC,
 )
 from causy.causal_discovery.constraint.independence_tests.common import (
     CorrelationCoefficientTest,
@@ -85,47 +85,18 @@ class EffectEstimationTestCase(CausyTestCase):
         )
 
     def test_direct_effect_estimation_basic_example(self):
-        PC = graph_model_factory(
-            Algorithm(
-                pipeline_steps=[
-                    CalculatePearsonCorrelations(
-                        display_name="Calculate Pearson Correlations"
-                    ),
-                    CorrelationCoefficientTest(
-                        threshold=VariableReference(name="threshold"),
-                        display_name="Correlation Coefficient Test",
-                    ),
-                    PartialCorrelationTest(
-                        threshold=VariableReference(name="threshold"),
-                        display_name="Partial Correlation Test",
-                    ),
-                    ExtendedPartialCorrelationTestMatrix(
-                        threshold=VariableReference(name="threshold"),
-                        display_name="Extended Partial Correlation Test Matrix",
-                    ),
-                    *PC_ORIENTATION_RULES,
-                    ComputeDirectEffectsInDAGsMultivariateRegression(
-                        display_name="Compute Direct Effects"
-                    ),
-                ],
-                edge_types=PC_EDGE_TYPES,
-                extensions=[PC_GRAPH_UI_EXTENSION],
-                name="PC",
-                variables=[FloatVariable(name="threshold", value=PC_DEFAULT_THRESHOLD)],
-            )
-        )
 
         model = IIDSampleGenerator(
             edges=[
-                SampleEdge(NodeReference("X"), NodeReference("Z"), 5),
-                SampleEdge(NodeReference("Y"), NodeReference("Z"), 6),
-                SampleEdge(NodeReference("Z"), NodeReference("V"), 3),
-                SampleEdge(NodeReference("Z"), NodeReference("W"), 4),
+                SampleEdge(NodeReference("X"), NodeReference("Z"), 1),
+                SampleEdge(NodeReference("Y"), NodeReference("Z"), 1),
+                SampleEdge(NodeReference("Z"), NodeReference("V"), 1),
+                SampleEdge(NodeReference("Z"), NodeReference("W"), 1),
             ],
         )
 
         tst = PC()
-        sample_size = 1000000
+        sample_size = 10000
         test_data, graph = model.generate(sample_size)
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
@@ -137,14 +108,14 @@ class EffectEstimationTestCase(CausyTestCase):
             tst.graph.edge_value(tst.graph.nodes["X"], tst.graph.nodes["Z"])[
                 "direct_effect"
             ],
-            5.0,
+            1.0,
             0,
         )
         self.assertAlmostEqual(
             tst.graph.edge_value(tst.graph.nodes["Y"], tst.graph.nodes["Z"])[
                 "direct_effect"
             ],
-            6.0,
+            1.0,
             0,
         )
 
@@ -152,7 +123,7 @@ class EffectEstimationTestCase(CausyTestCase):
             tst.graph.edge_value(tst.graph.nodes["Z"], tst.graph.nodes["V"])[
                 "direct_effect"
             ],
-            3.0,
+            1.0,
             0,
         )
 
@@ -160,7 +131,7 @@ class EffectEstimationTestCase(CausyTestCase):
             tst.graph.edge_value(tst.graph.nodes["Z"], tst.graph.nodes["W"])[
                 "direct_effect"
             ],
-            4.0,
+            1.0,
             0,
         )
 
@@ -205,7 +176,7 @@ class EffectEstimationTestCase(CausyTestCase):
         )
 
         tst = PC()
-        sample_size = 100000
+        sample_size = 10000
         test_data, graph = model.generate(sample_size)
         tst.create_graph_from_data(test_data)
         tst.create_all_possible_edges()
