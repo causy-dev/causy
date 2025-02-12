@@ -125,6 +125,9 @@ class DynamicDataLoader(AbstractDataLoader):
     def load(self) -> Iterator[Dict[str, Union[float, int, str]]]:
         return self.data_loader.load()
 
+    def hash(self) -> str:
+        return f"{self.data_loader.hash()}_{self._hash_options()}"
+
 
 DATA_LOADERS = {
     DataLoaderType.JSON: JSONDataLoader,
