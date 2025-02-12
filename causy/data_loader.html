@@ -124,6 +124,9 @@
                     <a class="class" href="#DynamicDataLoader">DynamicDataLoader</a>
                             <ul class="memberlist">
                         <li>
+                                <a class="function" href="#DynamicDataLoader.__init__">DynamicDataLoader</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#DynamicDataLoader.reference">reference</a>
                         </li>
                         <li>
@@ -134,6 +137,9 @@
                         </li>
                         <li>
                                 <a class="function" href="#DynamicDataLoader.load">load</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#DynamicDataLoader.hash">hash</a>
                         </li>
                 </ul>
 
@@ -292,22 +298,25 @@
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]:</span>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="n">DATA_LOADERS</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="n">DataLoaderType</span><span class="o">.</span><span class="n">JSON</span><span class="p">:</span> <span class="n">JSONDataLoader</span><span class="p">,</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="n">DataLoaderType</span><span class="o">.</span><span class="n">JSONL</span><span class="p">:</span> <span class="n">JSONLDataLoader</span><span class="p">,</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="n">DataLoaderType</span><span class="o">.</span><span class="n">DYNAMIC</span><span class="p">:</span> <span class="n">DynamicDataLoader</span><span class="p">,</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="p">}</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="k">def</span> <span class="nf">load_data_loader</span><span class="p">(</span><span class="n">reference</span><span class="p">:</span> <span class="n">DataLoaderReference</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractDataLoader</span><span class="p">:</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="sd">    loads the data loader based on the reference</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">    :param reference: a data loader reference</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">    :return:</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="k">return</span> <span class="n">DATA_LOADERS</span><span class="p">[</span><span class="n">reference</span><span class="o">.</span><span class="n">type</span><span class="p">](</span><span class="n">reference</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="n">reference</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="k">def</span> <span class="nf">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_loader</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_hash_options</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="n">DATA_LOADERS</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>    <span class="n">DataLoaderType</span><span class="o">.</span><span class="n">JSON</span><span class="p">:</span> <span class="n">JSONDataLoader</span><span class="p">,</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>    <span class="n">DataLoaderType</span><span class="o">.</span><span class="n">JSONL</span><span class="p">:</span> <span class="n">JSONLDataLoader</span><span class="p">,</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="n">DataLoaderType</span><span class="o">.</span><span class="n">DYNAMIC</span><span class="p">:</span> <span class="n">DynamicDataLoader</span><span class="p">,</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="p">}</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="k">def</span> <span class="nf">load_data_loader</span><span class="p">(</span><span class="n">reference</span><span class="p">:</span> <span class="n">DataLoaderReference</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractDataLoader</span><span class="p">:</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">    loads the data loader based on the reference</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">    :param reference: a data loader reference</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">    :return:</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="k">return</span> <span class="n">DATA_LOADERS</span><span class="p">[</span><span class="n">reference</span><span class="o">.</span><span class="n">type</span><span class="p">](</span><span class="n">reference</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="n">reference</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -978,6 +987,9 @@ inheritance.</p>
 </span><span id="DynamicDataLoader-125"><a href="#DynamicDataLoader-125"><span class="linenos">125</span></a>
 </span><span id="DynamicDataLoader-126"><a href="#DynamicDataLoader-126"><span class="linenos">126</span></a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]:</span>
 </span><span id="DynamicDataLoader-127"><a href="#DynamicDataLoader-127"><span class="linenos">127</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+</span><span id="DynamicDataLoader-128"><a href="#DynamicDataLoader-128"><span class="linenos">128</span></a>
+</span><span id="DynamicDataLoader-129"><a href="#DynamicDataLoader-129"><span class="linenos">129</span></a>    <span class="k">def</span> <span class="nf">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="DynamicDataLoader-130"><a href="#DynamicDataLoader-130"><span class="linenos">130</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_loader</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_hash_options</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
 </span></pre></div>
 
 
@@ -985,6 +997,26 @@ inheritance.</p>
 </div>
 
 
+                            <div id="DynamicDataLoader.__init__" class="classattr">
+                                        <input id="DynamicDataLoader.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">DynamicDataLoader</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">reference</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+                <label class="view-source-button" for="DynamicDataLoader.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#DynamicDataLoader.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DynamicDataLoader.__init__-113"><a href="#DynamicDataLoader.__init__-113"><span class="linenos">113</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="DynamicDataLoader.__init__-114"><a href="#DynamicDataLoader.__init__-114"><span class="linenos">114</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">reference</span>
+</span><span id="DynamicDataLoader.__init__-115"><a href="#DynamicDataLoader.__init__-115"><span class="linenos">115</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_data_loader</span><span class="p">()</span>
+</span><span id="DynamicDataLoader.__init__-116"><a href="#DynamicDataLoader.__init__-116"><span class="linenos">116</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
                             <div id="DynamicDataLoader.reference" class="classattr">
                                 <div class="attr variable">
             <span class="name">reference</span><span class="annotation">: str</span>
@@ -1042,14 +1074,28 @@ inheritance.</p>
 
 
                             </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="#AbstractDataLoader">AbstractDataLoader</a></dt>
-                                <dd id="DynamicDataLoader.hash" class="function"><a href="#AbstractDataLoader.hash">hash</a></dd>
+                            <div id="DynamicDataLoader.hash" class="classattr">
+                                        <input id="DynamicDataLoader.hash-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">hash</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
-            </div>
-                                </dl>
+                <label class="view-source-button" for="DynamicDataLoader.hash-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#DynamicDataLoader.hash"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DynamicDataLoader.hash-129"><a href="#DynamicDataLoader.hash-129"><span class="linenos">129</span></a>    <span class="k">def</span> <span class="nf">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="DynamicDataLoader.hash-130"><a href="#DynamicDataLoader.hash-130"><span class="linenos">130</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_loader</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_hash_options</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>returns a hash of the data that is loaded</p>
+
+<h6 id="returns">Returns</h6>
+</div>
+
+
                             </div>
                 </section>
                 <section id="DATA_LOADERS">
@@ -1076,14 +1122,14 @@ inheritance.</p>
 
     </div>
     <a class="headerlink" href="#load_data_loader"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="load_data_loader-137"><a href="#load_data_loader-137"><span class="linenos">137</span></a><span class="k">def</span> <span class="nf">load_data_loader</span><span class="p">(</span><span class="n">reference</span><span class="p">:</span> <span class="n">DataLoaderReference</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractDataLoader</span><span class="p">:</span>
-</span><span id="load_data_loader-138"><a href="#load_data_loader-138"><span class="linenos">138</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="load_data_loader-139"><a href="#load_data_loader-139"><span class="linenos">139</span></a><span class="sd">    loads the data loader based on the reference</span>
-</span><span id="load_data_loader-140"><a href="#load_data_loader-140"><span class="linenos">140</span></a><span class="sd">    :param reference: a data loader reference</span>
-</span><span id="load_data_loader-141"><a href="#load_data_loader-141"><span class="linenos">141</span></a><span class="sd">    :return:</span>
-</span><span id="load_data_loader-142"><a href="#load_data_loader-142"><span class="linenos">142</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="load_data_loader-143"><a href="#load_data_loader-143"><span class="linenos">143</span></a>
-</span><span id="load_data_loader-144"><a href="#load_data_loader-144"><span class="linenos">144</span></a>    <span class="k">return</span> <span class="n">DATA_LOADERS</span><span class="p">[</span><span class="n">reference</span><span class="o">.</span><span class="n">type</span><span class="p">](</span><span class="n">reference</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="n">reference</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="load_data_loader-140"><a href="#load_data_loader-140"><span class="linenos">140</span></a><span class="k">def</span> <span class="nf">load_data_loader</span><span class="p">(</span><span class="n">reference</span><span class="p">:</span> <span class="n">DataLoaderReference</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractDataLoader</span><span class="p">:</span>
+</span><span id="load_data_loader-141"><a href="#load_data_loader-141"><span class="linenos">141</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="load_data_loader-142"><a href="#load_data_loader-142"><span class="linenos">142</span></a><span class="sd">    loads the data loader based on the reference</span>
+</span><span id="load_data_loader-143"><a href="#load_data_loader-143"><span class="linenos">143</span></a><span class="sd">    :param reference: a data loader reference</span>
+</span><span id="load_data_loader-144"><a href="#load_data_loader-144"><span class="linenos">144</span></a><span class="sd">    :return:</span>
+</span><span id="load_data_loader-145"><a href="#load_data_loader-145"><span class="linenos">145</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="load_data_loader-146"><a href="#load_data_loader-146"><span class="linenos">146</span></a>
+</span><span id="load_data_loader-147"><a href="#load_data_loader-147"><span class="linenos">147</span></a>    <span class="k">return</span> <span class="n">DATA_LOADERS</span><span class="p">[</span><span class="n">reference</span><span class="o">.</span><span class="n">type</span><span class="p">](</span><span class="n">reference</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="n">reference</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
 </span></pre></div>
 
 
