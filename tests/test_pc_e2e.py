@@ -80,7 +80,100 @@ class PCTestTestCase(CausyTestCase):
                 variables=[FloatVariable(name="threshold", value=0.05)],
             )
         )
-        pc = PC_LOCAL()
+        pc = PC()
+        pc.create_graph_from_data(auto_mpg_data_set)
+        pc.create_all_possible_edges()
+        pc.execute_pipeline_steps()
+
+        # skeleton
+        self.assertEqual(pc.graph.edge_exists("mpg", "weight"), True)
+        self.assertEqual(pc.graph.edge_exists("mpg", "horsepower"), True)
+        self.assertEqual(pc.graph.edge_exists("weight", "displacement"), True)
+        self.assertEqual(pc.graph.edge_exists("weight", "horsepower"), True)
+        self.assertEqual(pc.graph.edge_exists("displacement", "cylinders"), True)
+        self.assertEqual(pc.graph.edge_exists("displacement", "acceleration"), True)
+        self.assertEqual(pc.graph.edge_exists("displacement", "horsepower"), True)
+        self.assertEqual(pc.graph.edge_exists("horsepower", "acceleration"), True)
+
+        # assert all other edges are not present
+        self.assertEqual(pc.graph.edge_exists("mpg", "displacement"), False)
+        self.assertEqual(pc.graph.edge_exists("mpg", "cylinders"), False)
+        self.assertEqual(pc.graph.edge_exists("mpg", "acceleration"), False)
+        self.assertEqual(pc.graph.edge_exists("weight", "cylinders"), False)
+        self.assertEqual(pc.graph.edge_exists("weight", "acceleration"), False)
+        self.assertEqual(pc.graph.edge_exists("acceleration", "cylinders"), False)
+        self.assertEqual(pc.graph.edge_exists("horsepower", "cylinders"), False)
+
+        # directions
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("mpg", "weight", UndirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("weight", "horsepower", DirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("weight", "displacement", DirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("mpg", "horsepower", DirectedEdge()), True
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("acceleration", "horsepower", DirectedEdge()),
+            True,
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists(
+                "acceleration", "displacement", DirectedEdge()
+            ),
+            True,
+        )
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("displacement", "cylinders", DirectedEdge()),
+            True,
+        )
+        # due to order-dependency, two cases are possible
+        self.assertEqual(
+            pc.graph.edge_of_type_exists("horsepower", "displacement", DirectedEdge()) or pc.graph.edge_of_type_exists("displacement", "horsepower", DirectedEdge()),
+            True,
+        )
+
+    def test_pc_classic_e2e_auto_mpg(self):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        folder_auto_mpg = os.path.join(script_dir, "fixtures/auto_mpg/")
+        with open(f"{folder_auto_mpg}auto_mpg.json", "r") as f:
+            auto_mpg_data_set = json.load(f)
+        PC_CLASSIC_LOCAL = graph_model_factory(
+            Algorithm(
+                pipeline_steps=[
+                    CalculatePearsonCorrelations(
+                        display_name="Calculate Pearson Correlations"
+                    ),
+                    CorrelationCoefficientTest(
+                        threshold=VariableReference(name="threshold"),
+                        display_name="Correlation Coefficient Test",
+                    ),
+                    ExtendedPartialCorrelationTestMatrix(
+                        threshold=VariableReference(name="threshold"),
+                        display_name="Extended Partial Correlation Test Matrix",
+                        generator=PairsWithNeighboursGenerator(
+                            comparison_settings=ComparisonSettings(
+                                min=3, max=AS_MANY_AS_FIELDS
+                            ),
+                            shuffle_combinations=False,
+                        ),
+                    ),
+                    *PC_ORIENTATION_RULES,
+                    ComputeDirectEffectsInDAGsMultivariateRegression(
+                        display_name="Compute Direct Effects in DAGs Multivariate Regression"
+                    ),
+                ],
+                edge_types=PC_EDGE_TYPES,
+                extensions=[PC_GRAPH_UI_EXTENSION],
+                name="PC",
+                variables=[FloatVariable(name="threshold", value=0.05)],
+            )
+        )
+        pc = PCClassic()
         pc.create_graph_from_data(auto_mpg_data_set)
         pc.create_all_possible_edges()
         pc.execute_pipeline_steps()

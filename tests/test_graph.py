@@ -666,6 +666,20 @@ class GraphTestCase(CausyTestCase):
         self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, [node2]))
         self.assertTrue(graph.are_nodes_d_separated_cpdag(node1, node3, []))
 
+    def test_are_nodes_d_separated_cpdag_condition_on_child_of_collider(self):
+        graph = GraphManager()
+        node1 = graph.add_node("test1", [1, 2, 3])
+        node2 = graph.add_node("test2", [1, 2, 3])
+        node3 = graph.add_node("test3", [1, 2, 3])
+        node4 = graph.add_node("test4", [1, 2, 3])
+        graph.add_directed_edge(node1, node2, {"test": "test"})
+        graph.add_directed_edge(node3, node2, {"test": "test"})
+        graph.add_directed_edge(node2, node4, {"test": "test"})
+        self.assertTrue(graph.are_nodes_d_separated_cpdag(node1, node3, []))
+        self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, [node2]))
+        self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, [node4]))
+        self.assertFalse(graph.are_nodes_d_separated_cpdag(node1, node3, [node2, node4]))
+
     def test_are_nodes_d_separated_cpdag_three_nodes_fully_connected_undirected_false(
         self,
     ):
