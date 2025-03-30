@@ -68,7 +68,8 @@ model = PC()
 model.create_graph_from_data(
     [
         {"a": 1, "b": 0.3},
-        {"a": 0.5, "b": 0.2}
+        {"a": 0.5, "b": 0.2},
+        {"a": 0.7, "b": 1}
     ]
 )
 model.create_all_possible_edges()
