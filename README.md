@@ -61,7 +61,7 @@ causy ui
 Use a default algorithm
 
 ```python
-from causy.algorithms import PC
+from causy.causal_discovery.constraint.algorithms import PC
 from causy.graph_utils import retrieve_edges
 
 model = PC()
@@ -77,7 +77,7 @@ edges = retrieve_edges(model.graph)
 
 for edge in edges:
     print(
-        f"{edge[0].name} -> {edge[1].name}: {model.graph.edges[edge[0]][edge[1]]}"
+        f"{edge[0]} -> {edge[1]}: {model.graph.edges[edge[0]][edge[1]]}"
     )
 
 ```
