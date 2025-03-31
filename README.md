@@ -67,9 +67,10 @@ from causy.graph_utils import retrieve_edges
 model = PC()
 model.create_graph_from_data(
     [
-        {"a": 1, "b": 0.3},
-        {"a": 0.5, "b": 0.2},
-        {"a": 0.7, "b": 1}
+        {"a": 1, "b": 0.9},
+        {"a": 0.5, "b": 0.4},
+        {"a": 3, "b": 2.8},
+        {"a": 0.7, "b": 0.5}
     ]
 )
 model.create_all_possible_edges()
