@@ -788,3 +788,75 @@ class OrientationRuleTestCase(CausyTestCase):
         self.assertFalse(model.graph.undirected_edge_exists(x, z))
         self.assertFalse(model.graph.only_directed_edge_exists(z, x))
         self.assertTrue(model.graph.only_directed_edge_exists(x, z))
+
+    def test_avoid_cycles_four_nodes(self):
+        pipeline = [Loop(
+                pipeline_steps=[
+                    NonColliderTest(),
+                    FurtherOrientTripleTest(),
+                    OrientQuadrupleTest(),
+                    FurtherOrientQuadrupleTest(),
+                ],
+                exit_condition=ExitOnNoActions(),
+            ),]
+        model = graph_model_factory(
+            Algorithm(
+                pipeline_steps=pipeline,
+                edge_types=[DirectedEdge(), UndirectedEdge()],
+                name="TestNonColliderAvoidCycles",
+            )
+        )()
+        model.graph = GraphManager()
+        x = model.graph.add_node("X", [])
+        y = model.graph.add_node("Y", [])
+        z = model.graph.add_node("Z", [])
+        w = model.graph.add_node("W", [])
+        model.graph.add_edge(x, y, {})
+        model.graph.add_edge(y, z, {})
+        model.graph.add_directed_edge(z, x, {})
+        model.graph.add_directed_edge(w, x, {})
+        model.execute_pipeline_steps()
+        # sanity check
+        self.assertTrue(model.graph.edge_of_type_exists(z, x, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(w, x, DirectedEdge()))
+
+        self.assertTrue(model.graph.edge_of_type_exists(x, y, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(z, y, DirectedEdge()))
+
+
+    def test_avoid_cycles_five_nodes(self):
+        pipeline = [Loop(
+                pipeline_steps=[
+                    NonColliderTest(),
+                    FurtherOrientTripleTest(),
+                    OrientQuadrupleTest(),
+                    FurtherOrientQuadrupleTest(),
+                ],
+                exit_condition=ExitOnNoActions(),
+            ),]
+        model = graph_model_factory(
+            Algorithm(
+                pipeline_steps=pipeline,
+                edge_types=[DirectedEdge(), UndirectedEdge()],
+                name="TestNonColliderAvoidCycles",
+            )
+        )()
+        model.graph = GraphManager()
+        x = model.graph.add_node("X", [])
+        y = model.graph.add_node("Y", [])
+        z = model.graph.add_node("Z", [])
+        w = model.graph.add_node("W", [])
+        v = model.graph.add_node("V", [])
+        model.graph.add_edge(x, y, {})
+        model.graph.add_edge(y, z, {})
+        model.graph.add_edge(z, w, {})
+        model.graph.add_directed_edge(w, x, {})
+        model.graph.add_directed_edge(v, x, {})
+        model.execute_pipeline_steps()
+        # sanity check
+        self.assertTrue(model.graph.edge_of_type_exists(w, x, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(v, x, DirectedEdge()))
+
+        self.assertTrue(model.graph.edge_of_type_exists(x, y, DirectedEdge()))
+        self.assertTrue(model.graph.edge_of_type_exists(y, z, DirectedEdge()))
+        self.assertFalse(model.graph.edge_of_type_exists(z, w, DirectedEdge()))

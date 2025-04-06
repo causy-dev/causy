@@ -254,11 +254,12 @@ class GraphBaseAccessMixin:
 
         return [i for i in self.edge_history[(u, v)] if i.action == action]
 
-    def directed_path_exists(self, u: Union[Node, str], v: Union[Node, str]) -> bool:
+    def directed_path_exists(self, u: Union[Node, str], v: Union[Node, str], visited: Set[str] = None) -> bool:
         """
         Check if a directed path from u to v exists
         :param u: node u
         :param v: node v
+        :param visited: set of visited nodes to avoid infinite recursion
         :return: True if a directed path exists, False otherwise
         """
 
@@ -267,11 +268,25 @@ class GraphBaseAccessMixin:
         if isinstance(v, Node):
             v = v.id
 
-        if self.directed_edge_exists(u, v):
+        if visited is None:
+            visited = set()
+
+        # If already visited, return False to avoid infinite loop
+        if u in visited:
+            return False
+
+        # Mark the node as visited
+        visited.add(u)
+
+        # Direct edge check
+        if self.edge_of_type_exists(u, v, DirectedEdge()):
             return True
-        for w in self.edges[u]:
-            if self.directed_path_exists(self.nodes[w], v):
+
+        # Recursive DFS through neighbors
+        for w in self.edges.get(u, []):  # Use .get() to avoid KeyError if u is not in self.edges
+            if self.edge_of_type_exists(u, w, DirectedEdge()) and self.directed_path_exists(w, v, visited):
                 return True
+
         return False
 
     def edge_of_type_exists(
